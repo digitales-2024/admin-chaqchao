@@ -1,6 +1,6 @@
 "use client";
 
-import { authSchema } from "@/schemas/authSchema";
+import { authSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertTriangle, EyeIcon, EyeOffIcon, Loader2 } from "lucide-react";
 import { useCallback, useState } from "react";
