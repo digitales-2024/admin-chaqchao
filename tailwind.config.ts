@@ -52,6 +52,12 @@ const config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        chaqchao: {
+          DEFAULT: "hsl(var(--chaqchao))",
+          orange: "hsl(var(--primary))",
+          "midning-green": "hsl(var(--chaqchao-midning-green))",
+          licorice: "hsl(var(--chaqchao-licorice))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
