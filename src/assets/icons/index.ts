@@ -1,0 +1,1 @@
+export { LogoChaqchao } from "./LogoChaqchao";
