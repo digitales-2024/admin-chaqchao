@@ -1,16 +1,12 @@
+import { Credentials } from "@/types";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-
-type User = {
-  username: string;
-  token: string;
-};
 
 export const authApi = createApi({
   reducerPath: "authApi",
-  baseQuery: fetchBaseQuery({ baseUrl: process.env.API_URL }),
+  baseQuery: fetchBaseQuery({ baseUrl: process.env.NEXT_PUBLIC_BACKEND_URL }),
   tagTypes: ["Auth"],
   endpoints: (build) => ({
-    login: build.mutation<User, { username: string; password: string }>({
+    login: build.mutation<Credentials, { email: string; password: string }>({
       query: (body) => ({
         url: "/auth/login",
         method: "POST",
