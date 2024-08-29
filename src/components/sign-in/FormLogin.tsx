@@ -1,6 +1,8 @@
 "use client";
 
+import { useLoginMutation } from "@/redux/services/authApi";
 import { authSchema } from "@/schemas";
+import { Credentials } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertTriangle, EyeIcon, EyeOffIcon, Loader2 } from "lucide-react";
 import { useCallback, useState } from "react";
@@ -11,11 +13,6 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 
-type Inputs = {
-  email: string;
-  password: string;
-};
-
 export const FormLogin = () => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -23,28 +20,18 @@ export const FormLogin = () => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<Inputs>({
+  } = useForm<Credentials>({
     resolver: zodResolver(authSchema),
   });
 
-  console.log(errors);
+  // aplicamos el redux toolkit
+  const [login, { data, error, isLoading }] = useLoginMutation();
+  console.log("data", data);
+  console.log("error", error);
 
-  const onSubmit: SubmitHandler<Inputs> = useCallback(async (data) => {
-    setIsLoading(true);
-    try {
-      console.log("Logging in with:", data);
-      // Simulate an API call
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      console.log("Logged in successfully");
-      // Here you would typically update your app's state or redirect the user
-    } catch (error) {
-      console.error("Login failed:", error);
-    } finally {
-      setIsLoading(false);
-    }
+  const onSubmit: SubmitHandler<Credentials> = useCallback(async (data) => {
+    await login(data);
   }, []);
-
-  const [isLoading, setIsLoading] = useState(false);
 
   return (
     <div className="flex flex-col gap-5">
@@ -103,7 +90,7 @@ export const FormLogin = () => {
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Auntenticando...
+                Autenticando...
               </>
             ) : (
               "Ingresar"
@@ -112,14 +99,15 @@ export const FormLogin = () => {
         </div>
       </form>
 
-      <Alert variant="destructive">
-        <AlertTriangle className="h-4 w-4" />
-        <AlertTitle>Credenciales Invalidas</AlertTitle>
-        <AlertDescription>
-          Las credenciales que ingresaste son incorrectas, por favor intenta
-          nuevamente.
-        </AlertDescription>
-      </Alert>
+      {error && (
+        <Alert variant="destructive">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertTitle>Ocurrio un problema</AlertTitle>
+          <AlertDescription>
+            {/* {translateError(error?.data?.message)} */}
+          </AlertDescription>
+        </Alert>
+      )}
     </div>
   );
 };
