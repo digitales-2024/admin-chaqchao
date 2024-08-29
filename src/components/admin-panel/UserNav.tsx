@@ -39,7 +39,7 @@ export const UserNav = () => {
               </Button>
             </DropdownMenuTrigger>
           </TooltipTrigger>
-          <TooltipContent side="bottom">Profile</TooltipContent>
+          <TooltipContent side="bottom">Perfil</TooltipContent>
         </Tooltip>
       </TooltipProvider>
 
@@ -63,7 +63,7 @@ export const UserNav = () => {
           <DropdownMenuItem className="hover:cursor-pointer" asChild>
             <Link href="/account" className="flex items-center">
               <User className="mr-3 h-4 w-4 text-muted-foreground" />
-              Account
+              Mi cuenta
             </Link>
           </DropdownMenuItem>
         </DropdownMenuGroup>
@@ -73,7 +73,7 @@ export const UserNav = () => {
           onClick={() => console.log("cerrar session")}
         >
           <LogOut className="mr-3 h-4 w-4 text-muted-foreground" />
-          Sign out
+          Cerrar sesión
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
