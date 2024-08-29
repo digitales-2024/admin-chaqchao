@@ -61,6 +61,7 @@ export const Menu = ({ isOpen }: MenuProps) => {
                               variant={active ? "secondary" : "ghost"}
                               className={cn(
                                 "mb-1 h-10 w-full justify-start border-l-4 border-transparent text-slate-600 transition-colors duration-300 hover:border-primary",
+                                active ? "border-primary" : "",
                               )}
                               asChild
                             >
@@ -126,12 +127,12 @@ export const Menu = ({ isOpen }: MenuProps) => {
                         isOpen === false ? "hidden opacity-0" : "opacity-100",
                       )}
                     >
-                      Sign out
+                      Cerrar sesión
                     </p>
                   </Button>
                 </TooltipTrigger>
                 {isOpen === false && (
-                  <TooltipContent side="right">Sign out</TooltipContent>
+                  <TooltipContent side="right">Cerrar sesión</TooltipContent>
                 )}
               </Tooltip>
             </TooltipProvider>
