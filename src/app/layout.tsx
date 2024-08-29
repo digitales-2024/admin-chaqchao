@@ -1,3 +1,4 @@
+import { Providers } from "@/redux/providers";
 import type { Metadata } from "next";
 import { Lexend_Deca } from "next/font/google";
 import "./globals.css";
@@ -16,7 +17,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={lexend.className}>{children}</body>
+      <body className={lexend.className}>
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }
