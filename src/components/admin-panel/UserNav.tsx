@@ -1,5 +1,8 @@
 "use client";
 
+import { useSignOut } from "@/hooks/use-sign-out";
+import { useProfileQuery } from "@/redux/services/adminApi";
+import { getFirstLetter } from "@/utils/getFirstLetter";
 import { LayoutGrid, LogOut, User } from "lucide-react";
 import Link from "next/link";
 
@@ -14,6 +17,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
+import { Skeleton } from "../ui/skeleton";
 import {
   Tooltip,
   TooltipContent,
@@ -22,6 +26,12 @@ import {
 } from "../ui/tooltip";
 
 export const UserNav = () => {
+  const { isLoading, data } = useProfileQuery();
+
+  const { signOut } = useSignOut();
+
+  if (isLoading) return <Skeleton className="h-8 w-8 rounded-full" />;
+
   return (
     <DropdownMenu>
       <TooltipProvider disableHoverableContent>
@@ -34,7 +44,9 @@ export const UserNav = () => {
               >
                 <Avatar className="h-8 w-8">
                   <AvatarImage src="#" alt="Avatar" />
-                  <AvatarFallback className="bg-transparent">JD</AvatarFallback>
+                  <AvatarFallback className="bg-transparent">
+                    {getFirstLetter(data?.name)}
+                  </AvatarFallback>
                 </Avatar>
               </Button>
             </DropdownMenuTrigger>
@@ -46,16 +58,18 @@ export const UserNav = () => {
       <DropdownMenuContent className="w-56" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">John Doe</p>
-            <p className="text-xs leading-none text-muted-foreground">
-              johndoe@example.com
+            <p className="truncate text-sm font-medium capitalize leading-none">
+              {data?.name}
+            </p>
+            <p className="truncate text-xs leading-none text-muted-foreground">
+              {data?.email}
             </p>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem className="hover:cursor-pointer" asChild>
-            <Link href="/dashboard" className="flex items-center">
+            <Link href="/" className="flex items-center">
               <LayoutGrid className="mr-3 h-4 w-4 text-muted-foreground" />
               Dashboard
             </Link>
@@ -68,10 +82,7 @@ export const UserNav = () => {
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem
-          className="hover:cursor-pointer"
-          onClick={() => console.log("cerrar session")}
-        >
+        <DropdownMenuItem className="hover:cursor-pointer" onClick={signOut}>
           <LogOut className="mr-3 h-4 w-4 text-muted-foreground" />
           Cerrar sesión
         </DropdownMenuItem>
