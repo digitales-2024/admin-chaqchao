@@ -1,7 +1,13 @@
 import ImagePlaceholder from "@/assets/images/placeholder.webp";
+import type { Metadata } from "next";
 import Image from "next/image";
 
 import { FormLogin } from "@/components/sign-in";
+
+export const metadata: Metadata = {
+  title: "Chaqchao - Iniciar Sesión",
+  description: "Inicia sesión en el panel administrativo de Chaqchao",
+};
 
 export default function PageSignIn() {
   return (
