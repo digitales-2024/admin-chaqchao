@@ -6,5 +6,5 @@ type ErrorTranslations = {
 
 export function translateError(errorMessage: string) {
   const translations: ErrorTranslations = errorTranslations;
-  return translations[errorMessage] || "Ocurrió un error inesperado.";
+  return translations[errorMessage] || errorMessage;
 }
