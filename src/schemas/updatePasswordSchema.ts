@@ -13,10 +13,10 @@ export const updatePasswordSchema = z.object({
   password: z.string().min(1, {
     message: "Ingrese su contraseña",
   }),
-  newPassword: z.string().min(1, {
-    message: "Ingrese su nueva contraseña",
+  newPassword: z.string().min(6, {
+    message: "La contraseña debe tener mínimo 6 caracteres",
   }),
-  confirmPassword: z.string().min(1, {
-    message: "Confirme su nueva contraseña",
+  confirmPassword: z.string().min(6, {
+    message: "La contraseña debe tener mínimo 6 caracteres",
   }),
 });
