@@ -1,8 +1,14 @@
 import ImagePlaceholder from "@/assets/images/placeholder.webp";
+import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 
 import { FormUpdatePassword } from "@/components/sign-in";
+
+export const metadata: Metadata = {
+  title: "Chaqchao - Actualizar Contraseña Temporal",
+  description: "Actualiza tu contraseña en el panel administrativo de Chaqchao",
+};
 
 export default function PageUpdatePassword() {
   return (
@@ -17,7 +23,7 @@ export default function PageUpdatePassword() {
         />
       </div>
       <div className="flex h-full items-center justify-center py-12">
-        <div className="mx-auto grid w-[350px] gap-6">
+        <div className="mx-auto grid h-[750px] w-[350px] gap-6">
           <div className="grid gap-2 text-center">
             <h1 className="text-3xl font-bold">Chaqchao Admin</h1>
             <p className="text-balance text-muted-foreground">

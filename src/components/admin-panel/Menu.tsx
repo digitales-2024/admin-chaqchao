@@ -1,4 +1,5 @@
 "use client";
+import { useSignOut } from "@/hooks/use-sign-out";
 import { Ellipsis, LogOut } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -23,6 +24,7 @@ interface MenuProps {
 export const Menu = ({ isOpen }: MenuProps) => {
   const pathname = usePathname();
   const menuList = getMenuList(pathname);
+  const { signOut } = useSignOut();
 
   return (
     <ScrollArea className="[&>div>div[style]]:!block">
@@ -114,7 +116,7 @@ export const Menu = ({ isOpen }: MenuProps) => {
               <Tooltip delayDuration={100}>
                 <TooltipTrigger asChild>
                   <Button
-                    onClick={() => console.log("cerrar session")}
+                    onClick={signOut}
                     variant="outline"
                     className="mt-5 h-10 w-full justify-center"
                   >

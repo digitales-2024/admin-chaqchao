@@ -1,50 +1,49 @@
 "use client";
 
+import { TOKEN } from "@/constants";
+import { useLoginMutation } from "@/redux/services/authApi";
 import { authSchema } from "@/schemas";
+import { Credentials, CustomErrorData } from "@/types";
+import { translateError } from "@/utils/translateError";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AlertTriangle, EyeIcon, EyeOffIcon, Loader2 } from "lucide-react";
-import { useCallback, useState } from "react";
+import Cookies from "js-cookie";
+import { AlertTriangle, Loader2 } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 
+import { InputPassword } from "../common/forms";
 import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 
-type Inputs = {
-  email: string;
-  password: string;
-};
-
 export const FormLogin = () => {
-  const [showPassword, setShowPassword] = useState(false);
+  const router = useRouter();
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<Inputs>({
+  } = useForm<Credentials>({
     resolver: zodResolver(authSchema),
   });
 
-  console.log(errors);
+  const [login, { data, error, isLoading }] = useLoginMutation();
 
-  const onSubmit: SubmitHandler<Inputs> = useCallback(async (data) => {
-    setIsLoading(true);
-    try {
-      console.log("Logging in with:", data);
-      // Simulate an API call
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      console.log("Logged in successfully");
-      // Here you would typically update your app's state or redirect the user
-    } catch (error) {
-      console.error("Login failed:", error);
-    } finally {
-      setIsLoading(false);
+  const onSubmit: SubmitHandler<Credentials> = async (credentials) => {
+    const user = await login(credentials);
+    if (user.data) {
+      router.push("/");
     }
-  }, []);
+  };
 
-  const [isLoading, setIsLoading] = useState(false);
+  useEffect(() => {
+    if (data) {
+      Cookies.set(TOKEN, data.token);
+    }
+  }, [data]);
 
   return (
     <div className="flex flex-col gap-5">
@@ -68,30 +67,12 @@ export const FormLogin = () => {
           <div className="grid gap-2">
             <div className="grid gap-2">
               <Label htmlFor="password">Contraseña</Label>
-              <div className="relative">
-                <Input
-                  type={showPassword ? "text" : "password"}
-                  placeholder="password"
-                  {...register("password")}
-                  className="hide-password-toggle pr-10"
-                  aria-invalid={errors.password ? "true" : "false"}
-                />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                  tabIndex={-1}
-                  onClick={() => setShowPassword(!showPassword)}
-                  aria-label={showPassword ? "Hide password" : "Show password"}
-                >
-                  {showPassword ? (
-                    <EyeOffIcon className="h-4 w-4" aria-hidden="true" />
-                  ) : (
-                    <EyeIcon className="h-4 w-4" aria-hidden="true" />
-                  )}
-                </Button>
-              </div>
+              <InputPassword
+                id="password"
+                {...register("password")}
+                placeholder="********"
+                autoComplete="current-password"
+              />
               {errors.password && (
                 <p className="mt-1 text-sm text-red-500">
                   {errors.password.message}
@@ -99,11 +80,15 @@ export const FormLogin = () => {
               )}
             </div>
           </div>
-          <Button type="submit" className="w-full" disabled={isLoading}>
+          <Button
+            type="submit"
+            className="w-full select-none"
+            disabled={isLoading}
+          >
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Auntenticando...
+                Autenticando...
               </>
             ) : (
               "Ingresar"
@@ -112,14 +97,22 @@ export const FormLogin = () => {
         </div>
       </form>
 
-      <Alert variant="destructive">
-        <AlertTriangle className="h-4 w-4" />
-        <AlertTitle>Credenciales Invalidas</AlertTitle>
-        <AlertDescription>
-          Las credenciales que ingresaste son incorrectas, por favor intenta
-          nuevamente.
-        </AlertDescription>
-      </Alert>
+      {error && "data" in error && typeof error.data === "object" && (
+        <Alert variant="destructive" className="flex flex-col gap-2">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertTitle>
+            {translateError((error.data as CustomErrorData).error)}
+          </AlertTitle>
+          <AlertDescription>
+            {translateError((error.data as CustomErrorData).message)}
+          </AlertDescription>
+          {(error.data as CustomErrorData).statusCode === 403 && (
+            <Link href="/update-password" className="text-slate-900">
+              Cambiar contraseña
+            </Link>
+          )}
+        </Alert>
+      )}
     </div>
   );
 };
