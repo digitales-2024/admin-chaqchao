@@ -21,7 +21,6 @@ export const adminApi = createApi({
     updatePassword: build.mutation<
       User,
       {
-        email: string;
         password: string;
         newPassword: string;
         confirmPassword: string;
@@ -29,8 +28,11 @@ export const adminApi = createApi({
     >({
       query: (body) => ({
         url: "/update-password",
-        method: "POST",
+        method: "PATCH",
         body,
+        headers: {
+          Authorization: `Bearer ${Cookies.get(TOKEN)}`,
+        },
       }),
       invalidatesTags: ["Admin"],
     }),
