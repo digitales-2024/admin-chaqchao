@@ -17,6 +17,8 @@ const errorTranslations = {
     "Ya actualizaste tu contraseña temporal",
   "Password current do not match": "La contraseña actual no coincide",
   "Passwords do not match": "Las contraseñas no coinciden",
+  "New password must be different from the current password":
+    "La nueva contraseña debe ser diferente a la actual",
 };
 
 export default errorTranslations;
