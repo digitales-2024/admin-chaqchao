@@ -1,12 +1,11 @@
 "use client";
 
-import { TOKEN } from "@/constants";
+import { useProfile } from "@/hooks/use-profile";
 import { useLoginMutation } from "@/redux/services/authApi";
 import { authSchema } from "@/schemas";
 import { Credentials, CustomErrorData } from "@/types";
 import { translateError } from "@/utils/translateError";
 import { zodResolver } from "@hookform/resolvers/zod";
-import Cookies from "js-cookie";
 import { AlertTriangle, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -39,11 +38,13 @@ export const FormLogin = () => {
     }
   };
 
+  const setProfile = useProfile((state) => state.setProfile);
+
   useEffect(() => {
     if (data) {
-      Cookies.set(TOKEN, data.token);
+      setProfile(data);
     }
-  }, [data]);
+  }, [data, setProfile]);
 
   return (
     <div className="flex flex-col gap-5">
