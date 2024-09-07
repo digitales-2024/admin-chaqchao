@@ -1,12 +1,10 @@
 "use client";
 
-import { TOKEN } from "@/constants";
 import { useLoginMutation } from "@/redux/services/authApi";
 import { authSchema } from "@/schemas";
 import { Credentials, CustomErrorData } from "@/types";
 import { translateError } from "@/utils/translateError";
 import { zodResolver } from "@hookform/resolvers/zod";
-import Cookies from "js-cookie";
 import { AlertTriangle, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -31,17 +29,13 @@ export const FormLogin = () => {
   });
 
   const [login, { data, error, isLoading }] = useLoginMutation();
-
   const onSubmit: SubmitHandler<Credentials> = async (credentials) => {
-    const user = await login(credentials);
-    if (user.data) {
-      router.push("/");
-    }
+    await login(credentials);
   };
 
   useEffect(() => {
     if (data) {
-      Cookies.set(TOKEN, data.token);
+      router.push("/");
     }
   }, [data]);
 
