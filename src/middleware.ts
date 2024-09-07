@@ -3,18 +3,19 @@ import type { NextRequest } from "next/server";
 
 const routesNotRequiringAuth = ["/sign-in", "/update-password"];
 
-export function middleware(request: NextRequest) {
-  // Assume a "Cookie:nextjs=fast" header to be present on the incoming request
-  // Getting cookies from the request using the `RequestCookies` API
-  const cookie = request.cookies.get("token");
+export async function middleware(request: NextRequest) {
+  // Extraer la cookie llamada 'token'
+  const token = request.cookies.get("access_token");
 
   // Si no hay cookie, redirigimos al usuario a la página de login
-  if (!cookie && !routesNotRequiringAuth.includes(request.nextUrl.pathname)) {
+  if (!token && !routesNotRequiringAuth.includes(request.nextUrl.pathname)) {
     return NextResponse.redirect(new URL("/sign-in", request.url));
   }
 
+  //TODO Verificar el token
+
   // Si hay cookie, redirigimos al usuario a la página de inicio
-  if (cookie && routesNotRequiringAuth.includes(request.nextUrl.pathname)) {
+  if (token && routesNotRequiringAuth.includes(request.nextUrl.pathname)) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 
