@@ -1,16 +1,13 @@
 "use client";
 
-import { useAuth } from "@/hooks/use-auth";
-import { useLoginMutation } from "@/redux/services/authApi";
+import { useLogin } from "@/hooks/use-login";
 import { authSchema } from "@/schemas";
 import { Credentials, CustomErrorData } from "@/types";
 import { translateError } from "@/utils/translateError";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertTriangle, Loader2 } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm } from "react-hook-form";
 
 import { InputPassword } from "../common/forms";
 import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
@@ -19,8 +16,6 @@ import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 
 export const FormLogin = () => {
-  const router = useRouter();
-
   const {
     register,
     handleSubmit,
@@ -29,25 +24,11 @@ export const FormLogin = () => {
     resolver: zodResolver(authSchema),
   });
 
-  const [login, { data, error, isLoading }] = useLoginMutation();
-
-  const onSubmit: SubmitHandler<Credentials> = async (credentials) => {
-    await login(credentials);
-  };
-
-  //Actualizar el estado global de la aplicación si el usuario se autentica
-  const { setUser } = useAuth();
-
-  useEffect(() => {
-    if (data) {
-      router.push("/");
-      setUser(data);
-    }
-  }, [data, router, setUser]);
+  const { onLogin, isLoading, error } = useLogin();
 
   return (
     <div className="flex flex-col gap-5">
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onLogin)}>
         <div className="grid gap-4">
           <div className="grid gap-2">
             <Label htmlFor="email">Email</Label>
