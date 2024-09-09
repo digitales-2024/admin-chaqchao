@@ -1,4 +1,4 @@
-import { useProfileQuery } from "@/redux/services/adminApi";
+import { useAuth } from "@/hooks/use-auth";
 import { useUpdateUserMutation } from "@/redux/services/usersApi";
 import { updateInfoSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -17,7 +17,6 @@ import {
 } from "../ui/card";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
-import { Skeleton } from "../ui/skeleton";
 
 interface FormUpdateInfoProps {
   email?: string;
@@ -28,7 +27,8 @@ interface FormUpdateInfoProps {
 export const FormUpdateInfo = () => {
   const [formActive, setFormActive] = useState(false);
 
-  const { data, isLoading, refetch } = useProfileQuery();
+  const { user } = useAuth();
+
   const {
     register,
     handleSubmit,
@@ -37,9 +37,9 @@ export const FormUpdateInfo = () => {
   } = useForm<FormUpdateInfoProps>({
     resolver: zodResolver(updateInfoSchema),
     values: {
-      email: data?.email,
-      name: data?.name,
-      phone: data?.phone,
+      email: user?.email,
+      name: user?.name,
+      phone: user?.phone,
     },
   });
 
@@ -54,10 +54,9 @@ export const FormUpdateInfo = () => {
 
   const onSubmit = async (dataForm: FormUpdateInfoProps) => {
     await updateUser({
-      id: data?.id,
+      id: user?.id,
       ...dataForm,
     });
-    refetch();
 
     toast.promise(
       new Promise((resolve, reject) => {
@@ -76,11 +75,11 @@ export const FormUpdateInfo = () => {
   };
 
   const isFormActive =
-    data?.name !== watch("name") || data?.phone !== watch("phone");
+    user?.name !== watch("name") || user?.phone !== watch("phone");
 
   useEffect(() => {
     setFormActive(isFormActive);
-  }, [isFormActive, watch, data?.name, data?.phone]);
+  }, [isFormActive, watch, user?.name, user?.phone]);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -94,29 +93,22 @@ export const FormUpdateInfo = () => {
         <CardContent className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
-            {isLoading ? (
-              <Skeleton className="h-[38px] w-full" />
-            ) : (
-              <Input
-                id="email"
-                placeholder="john.doe@example.com"
-                {...register("email")}
-                disabled
-              />
-            )}
+
+            <Input
+              id="email"
+              placeholder="john.doe@example.com"
+              {...register("email")}
+              disabled
+            />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="name">Nombre</Label>
-              {isLoading ? (
-                <Skeleton className="h-[38px] w-full" />
-              ) : (
-                <Input
-                  id="name"
-                  placeholder="Tu nombre completo"
-                  {...register("name")}
-                />
-              )}
+              <Input
+                id="name"
+                placeholder="Tu nombre completo"
+                {...register("name")}
+              />
               {errors.name?.message && (
                 <span className="text-xs text-red-500">
                   {errors.name?.message}
@@ -125,15 +117,11 @@ export const FormUpdateInfo = () => {
             </div>
             <div className="space-y-2">
               <Label htmlFor="phone">Teléfono</Label>
-              {isLoading ? (
-                <Skeleton className="h-[38px] w-full" />
-              ) : (
-                <Input
-                  id="phone"
-                  placeholder="+51 123 456 789"
-                  {...register("phone")}
-                />
-              )}
+              <Input
+                id="phone"
+                placeholder="+51 123 456 789"
+                {...register("phone")}
+              />
               {errors.phone?.message && (
                 <span className="text-xs text-red-500">
                   {errors.phone?.message}
