@@ -1,7 +1,6 @@
 "use client";
 
 import { useAuth } from "@/hooks/use-auth";
-import { useProfile } from "@/hooks/use-profile";
 import { useLoginMutation } from "@/redux/services/authApi";
 import { authSchema } from "@/schemas";
 import { Credentials, CustomErrorData } from "@/types";
@@ -39,15 +38,12 @@ export const FormLogin = () => {
   //Actualizar el estado global de la aplicación si el usuario se autentica
   const { setUser } = useAuth();
 
-  const setProfile = useProfile((state) => state.setProfile);
-
   useEffect(() => {
     if (data) {
       router.push("/");
       setUser(data);
-      setProfile(data);
     }
-  }, [data, setProfile]);
+  }, [data, router, setUser]);
 
   return (
     <div className="flex flex-col gap-5">
