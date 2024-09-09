@@ -1,5 +1,5 @@
 "use client";
-import { useLogoutMutation } from "@/redux/services/authApi";
+import { useLogout } from "@/hooks/use-logout";
 import { Ellipsis, LogOut } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -23,11 +23,10 @@ interface MenuProps {
 
 export const Menu = ({ isOpen }: MenuProps) => {
   const pathname = usePathname();
+
   const menuList = getMenuList(pathname);
-  const [logout] = useLogoutMutation();
-  const signOut = async () => {
-    await logout();
-  };
+
+  const { signOut } = useLogout();
 
   return (
     <ScrollArea className="[&>div>div[style]]:!block">
