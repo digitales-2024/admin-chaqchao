@@ -6,7 +6,6 @@ const routesNotRequiringAuth = ["/sign-in", "/update-password"];
 export async function middleware(request: NextRequest) {
   // Extraer la cookie llamada 'token'
   const token = request.cookies.get("access_token");
-
   // Si no hay cookie, redirigimos al usuario a la página de login
   if (!token && !routesNotRequiringAuth.includes(request.nextUrl.pathname)) {
     return NextResponse.redirect(new URL("/sign-in", request.url));
