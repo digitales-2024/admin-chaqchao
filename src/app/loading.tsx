@@ -1,7 +1,5 @@
+import DashboardSkeleton from "@/components/skeleton/DashboardSkeleton";
+
 export default function LoadingAdmin() {
-  return (
-    <div>
-      <h1>Loading...</h1>
-    </div>
-  );
+  return <DashboardSkeleton />;
 }
