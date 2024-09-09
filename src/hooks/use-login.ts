@@ -1,5 +1,6 @@
 import { useLoginMutation } from "@/redux/services/authApi";
-import { Credentials } from "@/types";
+import { Credentials, CustomErrorData } from "@/types";
+import { translateError } from "@/utils/translateError";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { SubmitHandler } from "react-hook-form";
@@ -17,6 +18,11 @@ export const useLogin = () => {
       new Promise(async (resolve, reject) => {
         try {
           const result = await login(credentials);
+          if (result.error && "data" in result.error) {
+            const error = (result.error.data as CustomErrorData).message;
+            const message = translateError(error as string);
+            reject(new Error(message));
+          }
           resolve(result);
         } catch (error) {
           reject(error);
@@ -26,7 +32,9 @@ export const useLogin = () => {
     toast.promise(promise(), {
       loading: "Iniciando sesión...",
       success: "Sesión iniciada correctamente",
-      error: "Ocurrió un error al iniciar sesión",
+      error: (error) => {
+        return error.message;
+      },
     });
   };
 
