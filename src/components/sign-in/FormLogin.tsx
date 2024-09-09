@@ -1,5 +1,6 @@
 "use client";
 
+import { useAuth } from "@/hooks/use-auth";
 import { useLoginMutation } from "@/redux/services/authApi";
 import { authSchema } from "@/schemas";
 import { Credentials, CustomErrorData } from "@/types";
@@ -29,13 +30,18 @@ export const FormLogin = () => {
   });
 
   const [login, { data, error, isLoading }] = useLoginMutation();
+
   const onSubmit: SubmitHandler<Credentials> = async (credentials) => {
     await login(credentials);
   };
 
+  //Actualizar el estado global de la aplicación si el usuario se autentica
+  const { setUser } = useAuth();
+
   useEffect(() => {
     if (data) {
       router.push("/");
+      setUser(data);
     }
   }, [data]);
 
