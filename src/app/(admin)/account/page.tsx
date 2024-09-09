@@ -1,5 +1,5 @@
 "use client";
-import { useProfileQuery } from "@/redux/services/adminApi";
+import { useAuth } from "@/hooks/use-auth";
 import { getFirstLetter } from "@/utils/getFirstLetter";
 
 import { FormConfigAdmin } from "@/components/account/FormConfigAdmin";
@@ -13,11 +13,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function PageAccount() {
-  const { data, isLoading } = useProfileQuery();
+  const { user } = useAuth();
 
   return (
     <div className="container mx-auto py-10">
@@ -31,26 +30,13 @@ export default function PageAccount() {
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col items-center space-y-4">
-            {isLoading ? (
-              <Skeleton className="h-24 w-24 rounded-full" />
-            ) : (
-              <Avatar className="h-24 w-24">
-                <AvatarImage alt="User avatar" src="" />
-                <AvatarFallback>{getFirstLetter(data?.name)}</AvatarFallback>
-              </Avatar>
-            )}
+            <Avatar className="h-24 w-24">
+              <AvatarImage alt="User avatar" src="" />
+              <AvatarFallback>{getFirstLetter(user?.name)}</AvatarFallback>
+            </Avatar>
             <div className="text-center">
-              {isLoading ? (
-                <>
-                  <Skeleton className="mb-2 h-7 w-52" />
-                  <Skeleton className="h-5" />
-                </>
-              ) : (
-                <>
-                  <h2 className="text-xl font-semibold">{data?.name}</h2>
-                  <p className="text-sm text-muted-foreground">{data?.email}</p>
-                </>
-              )}
+              <h2 className="text-xl font-semibold capitalize">{user?.name}</h2>
+              <p className="text-sm text-muted-foreground">{user?.email}</p>
             </div>
           </CardContent>
         </Card>
