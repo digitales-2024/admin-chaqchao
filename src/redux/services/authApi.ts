@@ -28,6 +28,7 @@ export const authApi = createApi({
         url: "/auth/update-password",
         method: "POST",
         body,
+        credentials: "include",
       }),
       invalidatesTags: ["Auth"],
     }),

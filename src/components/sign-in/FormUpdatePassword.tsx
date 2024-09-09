@@ -1,18 +1,18 @@
 "use client";
-import { TOKEN } from "@/constants";
+import { useAuth } from "@/hooks/use-auth";
 import { useUpdatePasswordMutation } from "@/redux/services/authApi";
 import { updatePasswordSchema } from "@/schemas";
-import { CustomErrorData, ErrorFormData } from "@/types";
+import { CustomErrorData } from "@/types";
 import { translateError } from "@/utils/translateError";
 import { zodResolver } from "@hookform/resolvers/zod";
-import Cookies from "js-cookie";
-import { AlertTriangle } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 import { InputPassword } from "../common/forms";
-import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
@@ -33,25 +33,47 @@ export const FormUpdatePassword = () => {
     resolver: zodResolver(updatePasswordSchema),
   });
 
-  const router = useRouter();
-
-  const [updatePassword, { data, error, isLoading }] =
+  const [updatePassword, { data, isSuccess, isLoading }] =
     useUpdatePasswordMutation();
 
-  const onSubmit: SubmitHandler<Inputs> = async (data: Inputs) => {
-    await updatePassword(data);
+  const { setUser } = useAuth();
+  const router = useRouter();
+
+  const onUpdatePassword: SubmitHandler<Inputs> = async (data) => {
+    const promise = () =>
+      new Promise(async (resolve, reject) => {
+        try {
+          const result = await updatePassword(data);
+          if (result.error && "data" in result.error) {
+            const error = (result.error.data as CustomErrorData).error;
+            const message = translateError(error as string);
+            reject(new Error(message));
+          }
+          resolve(result);
+        } catch (error) {
+          reject(error);
+        }
+      });
+
+    toast.promise(promise(), {
+      loading: "Actualizando contraseña...",
+      success: "Contraseña actualizada correctamente",
+      error: (error) => {
+        return error.message;
+      },
+    });
   };
 
   useEffect(() => {
-    if (data) {
-      Cookies.set(TOKEN, data.token);
+    if (isSuccess && data) {
+      setUser(data);
       router.replace("/");
     }
-  }, [data, router]);
+  }, [data, isSuccess, setUser, router]);
 
   return (
     <div className="flex flex-col gap-5">
-      <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4">
+      <form onSubmit={handleSubmit(onUpdatePassword)} className="grid gap-4">
         <div className="grid gap-2">
           <Label htmlFor="email" className="text-muted-foreground">
             Email
@@ -116,30 +138,17 @@ export const FormUpdatePassword = () => {
         <Button type="submit" className="btn" disabled={isLoading}>
           {isLoading ? "Actualizando..." : "Actualizar contraseña"}
         </Button>
+        {/* Seccion para ir a logearte */}
+        <div className="flex justify-center">
+          <Link
+            href="/sign-in"
+            className="group/return flex w-fit items-center justify-center gap-2 rounded-xl border border-transparent px-2 py-1 text-sm transition-colors duration-500 hover:border-primary hover:text-primary"
+          >
+            <ArrowLeft className="size-4 translate-x-10 scale-0 text-primary transition-all duration-500 group-hover/return:translate-x-0 group-hover/return:scale-100" />
+            Regresa a iniciar sesión
+          </Link>
+        </div>
       </form>
-
-      {error && "data" in error && typeof error.data === "object" && (
-        <Alert variant="destructive" className="flex flex-col gap-2">
-          <AlertTriangle className="h-4 w-4" />
-          <AlertTitle>
-            {translateError((error.data as CustomErrorData).error)}
-          </AlertTitle>
-          <AlertDescription>
-            {(typeof (error.data as ErrorFormData).message).toString() ===
-              "array" && (error.data as ErrorFormData).message.length > 0 ? (
-              <ul className="list-disc">
-                {(error.data as ErrorFormData).message.map((msg, i) => (
-                  <li key={i}>{translateError(msg)}</li>
-                ))}
-              </ul>
-            ) : (
-              <span>
-                {translateError((error.data as CustomErrorData).message)}
-              </span>
-            )}
-          </AlertDescription>
-        </Alert>
-      )}
     </div>
   );
 };

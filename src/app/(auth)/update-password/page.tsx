@@ -1,7 +1,6 @@
 import ImagePlaceholder from "@/assets/images/placeholder.webp";
 import { Metadata } from "next";
 import Image from "next/image";
-import Link from "next/link";
 
 import { FormUpdatePassword } from "@/components/sign-in";
 
@@ -22,24 +21,16 @@ export default function PageUpdatePassword() {
           className="h-full w-full object-cover object-center"
         />
       </div>
-      <div className="flex h-full items-center justify-center py-12">
-        <div className="mx-auto grid h-[750px] w-[350px] gap-6">
+      <div className="flex h-full items-center justify-center py-1">
+        <div className="mx-auto grid h-fit w-[350px] items-start justify-start gap-6">
           <div className="grid gap-2 text-center">
-            <h1 className="text-3xl font-bold">Chaqchao Admin</h1>
-            <p className="text-balance text-muted-foreground">
-              Cambia tu contraseña para continuar con tu sesión activa
+            <h1 className="text-3xl font-bold">Ingresa tu nueva contraseña</h1>
+            <p className="text-balance text-sm text-muted-foreground">
+              Actualiza tu contraseña temporal para acceder al panel de
+              administración de <span className="text-primary"> Chaqchao</span>
             </p>
           </div>
           <FormUpdatePassword />
-          {/* Seccion para ir a logearte */}
-          <div className="grid gap-2 text-center">
-            <p className="text-muted-foreground">
-              ¿Ya tienes tus credenciales?{" "}
-              <Link href="/sign-in" className="text-balance">
-                Inicia sesión
-              </Link>
-            </p>
-          </div>
         </div>
       </div>
     </div>
