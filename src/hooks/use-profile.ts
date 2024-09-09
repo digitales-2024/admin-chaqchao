@@ -1,27 +1,9 @@
-import { User } from "@/types";
-import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { useAuth } from "./use-auth";
 
-interface AuthState {
-  profile: User | null;
-  setProfile: (userData: User) => void;
-  logout: () => void;
-}
+export const useProfile = () => {
+  const { user } = useAuth();
 
-export const useProfile = create<AuthState>()(
-  persist(
-    (set) => ({
-      profile: null,
-      setProfile: (profile: User) => {
-        set({ profile });
-      },
-      logout: () => {
-        set({ profile: null });
-      },
-    }),
-    {
-      name: "auth-storage",
-      getStorage: () => sessionStorage,
-    },
-  ),
-);
+  return {
+    user,
+  };
+};
