@@ -2,15 +2,12 @@
 
 import { useLogin } from "@/hooks/use-login";
 import { authSchema } from "@/schemas";
-import { Credentials, CustomErrorData } from "@/types";
-import { translateError } from "@/utils/translateError";
+import { Credentials } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AlertTriangle, Loader2 } from "lucide-react";
-import Link from "next/link";
+import { Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 
 import { InputPassword } from "../common/forms";
-import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
@@ -24,7 +21,7 @@ export const FormLogin = () => {
     resolver: zodResolver(authSchema),
   });
 
-  const { onLogin, isLoading, error } = useLogin();
+  const { onLogin, isLoading } = useLogin();
 
   return (
     <div className="flex flex-col gap-5">
@@ -77,23 +74,6 @@ export const FormLogin = () => {
           </Button>
         </div>
       </form>
-
-      {error && "data" in error && typeof error.data === "object" && (
-        <Alert variant="destructive" className="flex flex-col gap-2">
-          <AlertTriangle className="h-4 w-4" />
-          <AlertTitle>
-            {translateError((error.data as CustomErrorData).error)}
-          </AlertTitle>
-          <AlertDescription>
-            {translateError((error.data as CustomErrorData).message)}
-          </AlertDescription>
-          {(error.data as CustomErrorData).statusCode === 403 && (
-            <Link href="/update-password" className="text-slate-900">
-              Cambiar contraseña
-            </Link>
-          )}
-        </Alert>
-      )}
     </div>
   );
 };
