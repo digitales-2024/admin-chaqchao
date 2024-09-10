@@ -1,10 +1,8 @@
-import { useAuth } from "@/hooks/use-auth";
-import { useUpdateUserMutation } from "@/redux/services/usersApi";
+import { useProfile } from "@/hooks/use-profile";
 import { updateInfoSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
 
 import { Button } from "../ui/button";
 import {
@@ -18,7 +16,7 @@ import {
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 
-interface FormUpdateInfoProps {
+export interface FormUpdateInfoProps {
   email?: string;
   name?: string;
   phone?: string;
@@ -27,7 +25,7 @@ interface FormUpdateInfoProps {
 export const FormUpdateInfo = () => {
   const [formActive, setFormActive] = useState(false);
 
-  const { user } = useAuth();
+  const { user, onUpdate, isLoading } = useProfile();
 
   const {
     register,
@@ -43,37 +41,6 @@ export const FormUpdateInfo = () => {
     },
   });
 
-  const [
-    updateUser,
-    {
-      data: dataUpdateResponse,
-      error: errorUpdate,
-      isLoading: isLoadingUpdate,
-    },
-  ] = useUpdateUserMutation();
-
-  const onSubmit = async (dataForm: FormUpdateInfoProps) => {
-    await updateUser({
-      id: user?.id,
-      ...dataForm,
-    });
-
-    toast.promise(
-      new Promise((resolve, reject) => {
-        if (errorUpdate) {
-          reject(errorUpdate);
-        } else {
-          resolve(dataUpdateResponse);
-        }
-      }),
-      {
-        loading: "Actualizando información...",
-        success: "Información actualizada",
-        error: "Error al actualizar la información",
-      },
-    );
-  };
-
   const isFormActive =
     user?.name !== watch("name") || user?.phone !== watch("phone");
 
@@ -82,7 +49,7 @@ export const FormUpdateInfo = () => {
   }, [isFormActive, watch, user?.name, user?.phone]);
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(onUpdate)}>
       <Card>
         <CardHeader>
           <CardTitle>Información general</CardTitle>
@@ -131,8 +98,8 @@ export const FormUpdateInfo = () => {
           </div>
         </CardContent>
         <CardFooter>
-          <Button type="submit" disabled={!formActive || isLoadingUpdate}>
-            {isLoadingUpdate ? "Actualizando..." : "Actualizar información"}
+          <Button type="submit" disabled={!formActive || isLoading}>
+            {isLoading ? "Actualizando..." : "Actualizar información"}
           </Button>
         </CardFooter>
       </Card>
