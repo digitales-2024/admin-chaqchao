@@ -1,50 +1,57 @@
 "use client";
-import { useAuth } from "@/hooks/use-auth";
+import { ChaqchaoOneColor } from "@/assets/icons";
+import { useProfile } from "@/hooks/use-profile";
 import { getFirstLetter } from "@/utils/getFirstLetter";
+import { Lock, Settings, User } from "lucide-react";
 
 import { FormConfigAdmin } from "@/components/account/FormConfigAdmin";
 import { FormUpdateInfo } from "@/components/account/FormUpdateInfo";
 import { FormUpdateSecurity } from "@/components/account/FormUpdateSecurity";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function PageAccount() {
-  const { user } = useAuth();
+  const { user } = useProfile();
 
   return (
     <div className="container mx-auto py-10">
       <h1 className="mb-6 text-3xl font-bold">Administración de la cuenta</h1>
       <div className="grid gap-6 md:grid-cols-[1fr_3fr]">
-        <Card>
+        <Card className="relative mx-auto flex h-[500px] w-[320px] flex-col gap-6 overflow-hidden">
+          <div className="pattern absolute bottom-0 left-0 right-0 top-0 opacity-5"></div>
           <CardHeader>
-            <CardTitle>Perfil de usuario</CardTitle>
-            <CardDescription>
-              Administrar información del usuario
-            </CardDescription>
+            <CardTitle className="text-balance text-xl">
+              {getFirstLetter(user?.name)}
+            </CardTitle>
           </CardHeader>
-          <CardContent className="flex flex-col items-center space-y-4">
-            <Avatar className="h-24 w-24">
-              <AvatarImage alt="User avatar" src="" />
-              <AvatarFallback>{getFirstLetter(user?.name)}</AvatarFallback>
-            </Avatar>
-            <div className="text-center">
-              <h2 className="text-xl font-semibold capitalize">{user?.name}</h2>
-              <p className="text-sm text-muted-foreground">{user?.email}</p>
+          <CardContent className="flex flex-1 flex-col justify-end space-y-10">
+            <ChaqchaoOneColor className="absolute -right-24 -top-12 size-80 fill-chaqchao-midning-green opacity-70" />
+            <div className="flex flex-col gap-4 text-start">
+              <h2 className="text-pretty text-2xl font-semibold capitalize">
+                {user?.name}
+              </h2>
+              <span className="uppercase">{user?.roles[0].name}</span>
+              <p className="truncate text-sm text-muted-foreground">
+                {user?.email}
+              </p>
+              <p className="text-end">Chaqchao</p>
             </div>
           </CardContent>
         </Card>
         <Tabs defaultValue="general">
           <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="general">General</TabsTrigger>
-            <TabsTrigger value="security">Seguridad</TabsTrigger>
-            <TabsTrigger value="admin">Controles administrativos</TabsTrigger>
+            <TabsTrigger value="general" className="truncate">
+              <User className="mr-2 h-4 w-4" />
+              General
+            </TabsTrigger>
+            <TabsTrigger value="security" className="truncate">
+              <Lock className="mr-2 h-4 w-4" />
+              <span>Seguridad</span>
+            </TabsTrigger>
+            <TabsTrigger value="admin" className="truncate">
+              <Settings className="mr-2 block size-4" />
+              <span>Preferencias</span>
+            </TabsTrigger>
           </TabsList>
           <TabsContent value="general">
             <FormUpdateInfo />
