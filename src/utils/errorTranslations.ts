@@ -25,6 +25,7 @@ const errorTranslations = {
     "La nueva contraseña es muy débil, debe contener al menos una letra mayúscula, una letra minúscula y un número, la confirmación de la contraseña es muy débil, debe contener al menos una letra mayúscula, una letra minúscula y un número",
   "The new password must be different from the current one":
     "La nueva contraseña debe ser diferente a la contraseña temporal",
+  "phone must be a phone number": "El teléfono debe ser un número de teléfono",
 };
 
 export default errorTranslations;
