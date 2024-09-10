@@ -50,7 +50,7 @@ export default function PageAccount() {
             </TabsTrigger>
             <TabsTrigger value="admin" className="truncate">
               <Settings className="mr-2 block size-4" />
-              <span>Preferencias</span>
+              <span>Permisos</span>
             </TabsTrigger>
           </TabsList>
           <TabsContent value="general">
