@@ -1,7 +1,11 @@
-import { TOKEN } from "@/constants";
 import { User } from "@/types";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import Cookies from "js-cookie";
+
+interface UserUpdate {
+  data: User;
+  message: string;
+  statusCode: number;
+}
 
 export const usersApi = createApi({
   reducerPath: "usersApi",
@@ -9,14 +13,12 @@ export const usersApi = createApi({
   tagTypes: ["Users"],
   endpoints: (build) => ({
     // Actualizar información del usuario por id del parametro /users/:id
-    updateUser: build.mutation<User, Partial<User>>({
+    updateUser: build.mutation<UserUpdate, Partial<User>>({
       query: ({ id, ...body }) => ({
         url: `users/${id}`,
         method: "PATCH",
         body,
-        headers: {
-          Authorization: `Bearer ${Cookies.get(TOKEN)}`,
-        },
+        credentials: "include",
       }),
 
       invalidatesTags: ["Users"],
