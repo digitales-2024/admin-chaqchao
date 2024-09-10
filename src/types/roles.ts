@@ -2,10 +2,10 @@ export type Role = {
   id: number;
   name: string;
   description: string;
-  modulePermissions: ModulePermission[];
+  rolPermissions: RolPermissions[];
 };
 
-export type ModulePermission = {
+export type RolPermissions = {
   id: number;
   module: Module;
   permissions: Permission[];

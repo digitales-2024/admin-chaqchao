@@ -69,3 +69,30 @@
     @apply bg-background text-foreground;
   }
 }
+
+.pattern {
+  background: linear-gradient(
+      45deg,
+      transparent 34%,
+      hsl(var(--chaqchao-midning-green)) 35%,
+      hsl(var(--chaqchao-midning-green)) 40%,
+      transparent 41%,
+      transparent 59%,
+      hsl(var(--chaqchao-midning-green)) 60%,
+      hsl(var(--chaqchao-midning-green)) 65%,
+      transparent 66%
+    ),
+    linear-gradient(
+      135deg,
+      transparent 34%,
+      hsl(var(--chaqchao-midning-green)) 35%,
+      hsl(var(--chaqchao-midning-green)) 40%,
+      transparent 41%,
+      transparent 59%,
+      hsl(var(--chaqchao-midning-green)) 60%,
+      hsl(var(--chaqchao-midning-green)) 65%,
+      transparent 66%
+    );
+  background-size: 1em 1em;
+  opacity: 0.05;
+}

@@ -20,12 +20,10 @@ export const rolesApi = createApi({
     }),
 
     // Obtener un rol por id
-    getRole: build.query<Role, { id?: string }>({
-      query: (id) => ({
+    getRole: build.query({
+      query: (id: string) => ({
         url: `rol/${id}`,
-        headers: {
-          Authorization: `Bearer ${Cookies.get(TOKEN)}`,
-        },
+        credentials: "include",
       }),
     }),
 

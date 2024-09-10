@@ -1,7 +1,5 @@
-import { TOKEN } from "@/constants";
 import { User } from "@/types";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import Cookies from "js-cookie";
 
 export const adminApi = createApi({
   reducerPath: "adminApi",
@@ -11,9 +9,7 @@ export const adminApi = createApi({
     profile: build.query<User, void>({
       query: () => ({
         url: "/profile",
-        headers: {
-          Authorization: `Bearer ${Cookies.get(TOKEN)}`,
-        },
+        credentials: "include",
       }),
 
       providesTags: ["Admin"],
@@ -30,9 +26,7 @@ export const adminApi = createApi({
         url: "/update-password",
         method: "PATCH",
         body,
-        headers: {
-          Authorization: `Bearer ${Cookies.get(TOKEN)}`,
-        },
+        credentials: "include",
       }),
       invalidatesTags: ["Admin"],
     }),

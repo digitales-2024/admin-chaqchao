@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const updateSecuritySchema = z
   .object({
-    currentPassword: z.string().min(1, {
+    password: z.string().min(1, {
       message: "Debes ingresar tu contraseña actual",
     }),
     newPassword: z
