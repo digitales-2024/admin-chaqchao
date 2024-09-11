@@ -67,7 +67,7 @@ interface DateRangePickerProps
 export function DateRangePicker({
   dateRange,
   dayCount,
-  placeholder = "Pick a date",
+  placeholder = "Elegir una fecha",
   triggerVariant = "outline",
   triggerSize = "default",
   triggerClassName,
