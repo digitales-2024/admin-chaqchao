@@ -3,8 +3,10 @@ export type User = {
   name: string;
   email: string;
   phone: string;
-  roles: {
-    id: string;
-    name: string;
-  }[];
+  roles: Role[];
+};
+
+export type Role = {
+  id: string;
+  name: string;
 };
