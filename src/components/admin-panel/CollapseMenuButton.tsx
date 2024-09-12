@@ -145,7 +145,10 @@ export const CollapseMenuButton = ({
             <DropdownMenuTrigger asChild>
               <Button
                 variant={active ? "secondary" : "ghost"}
-                className="mb-1 h-10 w-full justify-start border-l-4 border-transparent text-slate-600 transition-colors duration-300 hover:border-primary"
+                className={cn(
+                  "mb-1 h-10 w-full justify-start border-l-4 border-transparent text-slate-600 transition-colors duration-300 hover:border-primary",
+                  active ? "border-primary" : "",
+                )}
               >
                 <div className="flex w-full items-center justify-between">
                   <div className="flex items-center">
