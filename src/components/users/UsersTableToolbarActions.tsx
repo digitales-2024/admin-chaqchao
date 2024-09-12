@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { exportTableToCSV } from "@/lib/export";
 
 import { CreateUsersDialog } from "./CreateUserDialog";
+import { DeleteUsersDialog } from "./DeleteUsersDialog";
 
 export interface UsersTableToolbarActionsProps {
   table?: Table<User>;
@@ -18,15 +19,15 @@ export function UsersTableToolbarActions({
   table,
 }: UsersTableToolbarActionsProps) {
   return (
-    <div className="flex items-center gap-2">
-      {/* {table.getFilteredSelectedRowModel().rows.length > 0 ? (
+    <div className="flex w-fit items-center gap-2">
+      {table && table.getFilteredSelectedRowModel().rows.length > 0 ? (
         <DeleteUsersDialog
           users={table
             .getFilteredSelectedRowModel()
             .rows.map((row) => row.original)}
           onSuccess={() => table.toggleAllRowsSelected(false)}
         />
-      ) : null} */}
+      ) : null}
       <CreateUsersDialog />
       <Button
         variant="outline"
