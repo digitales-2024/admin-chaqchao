@@ -27,7 +27,7 @@ export function DataTableViewOptions<TData>({
           aria-label="Toggle columns"
           variant="outline"
           size="sm"
-          className="ml-auto hidden lg:flex"
+          className="ml-auto flex"
         >
           <Settings2 className="mr-2 size-4" />
           Columnas
