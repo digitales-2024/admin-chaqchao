@@ -3,7 +3,7 @@
 import { User } from "@/types";
 import { type ColumnDef } from "@tanstack/react-table";
 import { format, parseISO } from "date-fns";
-import { CircleCheck, Ellipsis, Timer, Trash } from "lucide-react";
+import { CircleCheck, Ellipsis, Squircle, Timer, Trash } from "lucide-react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -21,19 +21,21 @@ import { DataTableColumnHeader } from "../data-table/DataTableColumnHeader";
 import { Badge } from "../ui/badge";
 import { DeleteUsersDialog } from "./DeleteUsersDialog";
 
-export const getColumns = (): ColumnDef<User>[] => [
+export const usersColumns = (): ColumnDef<User>[] => [
   {
     id: "select",
     header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-        className="translate-y-0.5"
-      />
+      <div className="w-4">
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select all"
+          className="translate-y-0.5"
+        />
+      </div>
     ),
     cell: ({ row }) => (
       <Checkbox
@@ -45,74 +47,89 @@ export const getColumns = (): ColumnDef<User>[] => [
     ),
     enableSorting: false,
     enableHiding: false,
+    enablePinning: true,
   },
   {
+    id: "nombre",
     accessorKey: "name",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Nombre" />
     ),
     cell: ({ row }) => (
-      <div className="min-w-56 capitalize">{row.getValue("name")}</div>
+      <div className="truncate capitalize">{row.getValue("nombre")}</div>
     ),
-    enableSorting: false,
-    enableHiding: false,
   },
   {
+    id: "correo",
     accessorKey: "email",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Correo" />
     ),
-    cell: ({ row }) => <div>{row.getValue("email")}</div>,
+    cell: ({ row }) => <div>{row.getValue("correo")}</div>,
   },
   {
+    id: "teléfono",
     accessorKey: "phone",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Teléfono" />
     ),
-    cell: ({ row }) => <div>{row.getValue("phone")}</div>,
+    cell: ({ row }) => <div>{row.getValue("teléfono")}</div>,
   },
   {
-    accessorKey: "mustChangePassword",
+    id: "rol",
+    accessorKey: "roles",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Habilitación" />
+      <DataTableColumnHeader column={column} title="Rol" />
     ),
     cell: ({ row }) => (
-      <div>
-        <div className="inline-flex items-center gap-2 text-xs text-slate-600">
-          {row.getValue("mustChangePassword") ? (
-            <>
-              <Timer className="size-4 flex-shrink-0" aria-hidden="true" />
-              Debe cambiar contraseña
-            </>
-          ) : (
-            <>
-              <CircleCheck
-                className="size-4 text-emerald-500"
-                aria-hidden="true"
-              />
-              Habilitado
-            </>
-          )}
-        </div>
+      <div className="inline-flex items-center gap-2 capitalize">
+        <Squircle
+          className="size-4 fill-primary stroke-none"
+          aria-hidden="true"
+        />
+        {row.original.roles[0].name}
       </div>
     ),
   },
   {
+    id: "acceso",
+    accessorKey: "mustChangePassword",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Acceso" />
+    ),
+    cell: ({ row }) => (
+      <div className="text-xs">
+        {row.getValue("acceso") ? (
+          <span className="inline-flex items-center gap-2 text-slate-400">
+            <Timer className="size-4 flex-shrink-0" aria-hidden="true" />
+            Debe cambiar contraseña
+          </span>
+        ) : (
+          <span className="inline-flex items-center gap-2 text-emerald-500">
+            <CircleCheck className="size-4" aria-hidden="true" />
+            Habilitado
+          </span>
+        )}
+      </div>
+    ),
+  },
+  {
+    id: "estado",
     accessorKey: "isActive",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Estado" />
     ),
     cell: ({ row }) => (
       <div>
-        {row.getValue("isActive") ? (
+        {row.getValue("estado") ? (
           <Badge
-            variant="outline"
-            className="border-emerald-500 text-emerald-500"
+            variant="secondary"
+            className="bg-emerald-100 text-emerald-500"
           >
             Activo
           </Badge>
         ) : (
-          <Badge variant="outline" className="border-red-500 text-red-500">
+          <Badge variant="secondary" className="bg-red-100 text-red-500">
             Inactivo
           </Badge>
         )}
@@ -120,15 +137,21 @@ export const getColumns = (): ColumnDef<User>[] => [
     ),
   },
   {
+    id: "última conexión",
     accessorKey: "lastLogin",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Última conexión" />
     ),
-    cell: ({ row }) => (
-      <div>
-        {format(parseISO(row.getValue("lastLogin")), "yyyy-MM-dd HH:mm:ss")}
-      </div>
-    ),
+    cell: ({ row }) => {
+      return (
+        <div>
+          {format(
+            parseISO(row?.getValue("última conexión")),
+            "yyyy-MM-dd HH:mm:ss",
+          )}
+        </div>
+      );
+    },
   },
   {
     id: "actions",
@@ -178,5 +201,6 @@ export const getColumns = (): ColumnDef<User>[] => [
         </>
       );
     },
+    enablePinning: true,
   },
 ];
