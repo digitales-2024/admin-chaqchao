@@ -1,25 +1,25 @@
 export type Role = {
-  id: number;
+  id: string;
   name: string;
   description: string;
   rolPermissions: RolPermissions[];
 };
 
 export type RolPermissions = {
-  id: number;
+  id: string;
   module: Module;
   permissions: Permission[];
 };
 
 export interface Module {
-  id: number;
+  id: string;
   cod: string;
   name: string;
   description: string;
 }
 
 export interface Permission {
-  id: number;
+  id: string;
   cod: string;
   name: string;
   description: string;
