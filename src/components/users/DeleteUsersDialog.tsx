@@ -52,17 +52,17 @@ export function DeleteUsersDialog({
           <DialogTrigger asChild>
             <Button variant="outline" size="sm">
               <Trash className="mr-2 size-4" aria-hidden="true" />
-              Delete ({users.length})
+              Eliminar ({users.length})
             </Button>
           </DialogTrigger>
         ) : null}
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Are you absolutely sure?</DialogTitle>
+            <DialogTitle>¿Estás absolutamente seguro?</DialogTitle>
             <DialogDescription>
-              This action cannot be undone. This will permanently delete your{" "}
-              <span className="font-medium">{users.length}</span>
-              {users.length === 1 ? " task" : " users"} from our servers.
+              Esta acción no se puede deshacer. Esto eliminará a
+              <span className="font-medium"> {users.length}</span>
+              {users.length === 1 ? " usuario" : " usuarios"}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="gap-2 sm:space-x-0">
