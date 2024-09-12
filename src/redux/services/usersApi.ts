@@ -23,7 +23,16 @@ export const usersApi = createApi({
 
       invalidatesTags: ["Users"],
     }),
+
+    // Mostrar todos los usuarios
+    getUsers: build.query<User[], void>({
+      query: () => ({
+        url: "users",
+        credentials: "include",
+      }),
+      providesTags: ["Users"],
+    }),
   }),
 });
 
-export const { useUpdateUserMutation } = usersApi;
+export const { useUpdateUserMutation, useGetUsersQuery } = usersApi;
