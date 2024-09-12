@@ -1,6 +1,8 @@
 import {
+  Column,
   ColumnDef,
   ColumnFiltersState,
+  ColumnPinningState,
   flexRender,
   getCoreRowModel,
   getFacetedRowModel,
@@ -12,7 +14,7 @@ import {
   useReactTable,
   VisibilityState,
 } from "@tanstack/react-table";
-import { cloneElement, ReactElement, useState } from "react";
+import { CSSProperties, ReactElement, useState } from "react";
 
 import {
   Table,
@@ -47,6 +49,11 @@ export function DataTable<TData, TValue>({
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [sorting, setSorting] = useState<SortingState>([]);
+  const [globalFilter, setGlobalFilter] = useState("");
+  const [columnPinning, setColumnPinning] = useState<ColumnPinningState>({
+    left: ["select"],
+    right: ["actions"],
+  });
 
   const table = useReactTable({
     data,
@@ -56,11 +63,15 @@ export function DataTable<TData, TValue>({
       columnVisibility,
       rowSelection,
       columnFilters,
+      globalFilter,
+      columnPinning,
     },
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
+    onGlobalFilterChange: setGlobalFilter,
+    onColumnPinningChange: setColumnPinning,
     onColumnVisibilityChange: setColumnVisibility,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
@@ -70,23 +81,42 @@ export function DataTable<TData, TValue>({
     getFacetedUniqueValues: getFacetedUniqueValues(),
   });
 
+  const getCommonPinningStyles = (column: Column<TData>): CSSProperties => {
+    const isPinned = column.getIsPinned();
+
+    return {
+      left: isPinned === "left" ? `${column.getStart("left")}px` : undefined,
+      right: isPinned === "right" ? `${column.getAfter("right")}px` : undefined,
+      position: isPinned ? "sticky" : "relative",
+      width: column.getSize(),
+      zIndex: isPinned ? 1 : 0,
+      backgroundColor: "white",
+    };
+  };
+
   return (
     <div className="w-full space-y-2.5 overflow-auto p-1">
       <DataTableToolbar
         table={table}
         placeholder={placeholder}
         viewOptions={viewOptions}
-      >
-        {toolbarActions ? cloneElement(toolbarActions, { table }) : null}
-      </DataTableToolbar>
+        globalFilter={globalFilter}
+        setGlobalFilter={setGlobalFilter}
+        toolbarActions={toolbarActions}
+      />
       <div className="overflow-hidden rounded-md border">
         <Table>
-          <TableHeader>
+          <TableHeader className="bg-slate-50">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
+                  const { column } = header;
                   return (
-                    <TableHead key={header.id} colSpan={header.colSpan}>
+                    <TableHead
+                      key={header.id}
+                      colSpan={header.colSpan}
+                      style={{ ...getCommonPinningStyles(column) }}
+                    >
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -106,14 +136,22 @@ export function DataTable<TData, TValue>({
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
                 >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
-                    </TableCell>
-                  ))}
+                  {row.getVisibleCells().map((cell) => {
+                    const { column } = cell;
+
+                    return (
+                      <TableCell
+                        key={cell.id}
+                        className="text-slate-600"
+                        style={{ ...getCommonPinningStyles(column) }}
+                      >
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
+                      </TableCell>
+                    );
+                  })}
                 </TableRow>
               ))
             ) : (
