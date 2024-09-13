@@ -1,7 +1,9 @@
 "use client";
 
 import { useRol } from "@/hooks/use-rol";
+import { useUsers } from "@/hooks/use-users";
 import { createUsersSchema } from "@/schemas";
+import { TooltipProvider } from "@radix-ui/react-tooltip";
 import { Bot } from "lucide-react";
 import { UseFormReturn } from "react-hook-form";
 
@@ -24,6 +26,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
 interface CreateUsersFormProps
   extends Omit<React.ComponentPropsWithRef<"form">, "onSubmit"> {
@@ -38,8 +41,7 @@ export const CreateUsersForm = ({
   onSubmit,
 }: CreateUsersFormProps) => {
   const { data } = useRol();
-  console.log("🚀 ~ data:", data);
-
+  const { handleGeneratePassword, password } = useUsers();
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -94,25 +96,31 @@ export const CreateUsersForm = ({
           <FormField
             control={form.control}
             name="password"
-            render={({ field }) => (
+            render={() => (
               <FormItem>
                 <FormLabel htmlFor="password">Contraseña</FormLabel>
                 <FormControl>
                   <div className="flex items-center gap-2">
                     <Input
+                      readOnly
                       id="password"
-                      type="password"
+                      value={password?.password}
                       placeholder="********"
-                      {...field}
                     />
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      className="mt-2"
-                    >
-                      <Bot className="size-4" aria-hidden="true" />
-                    </Button>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            onClick={handleGeneratePassword}
+                          >
+                            <Bot className="size-4" aria-hidden="true" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>Generar constraseña</TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
                 </FormControl>
                 <FormMessage />
