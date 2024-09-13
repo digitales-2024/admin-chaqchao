@@ -1,3 +1,4 @@
+import { CreateUsersSchema } from "@/schemas/users/createUsersSchema";
 import { User } from "@/types";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
@@ -12,6 +13,17 @@ export const usersApi = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: process.env.NEXT_PUBLIC_BACKEND_URL }),
   tagTypes: ["Users"],
   endpoints: (build) => ({
+    // Crear un nuevo usuario
+    createUser: build.mutation<CreateUsersSchema, Partial<User>>({
+      query: (body) => ({
+        url: "users",
+        method: "POST",
+        body,
+        credentials: "include",
+      }),
+      invalidatesTags: ["Users"],
+    }),
+
     // Actualizar información del usuario por id del parametro /users/:id
     updateUser: build.mutation<UserUpdate, Partial<User>>({
       query: ({ id, ...body }) => ({
@@ -49,4 +61,5 @@ export const {
   useUpdateUserMutation,
   useGetUsersQuery,
   useGeneratePasswordMutation,
+  useCreateUserMutation,
 } = usersApi;
