@@ -26,6 +26,9 @@ const errorTranslations = {
   "The new password must be different from the current one":
     "La nueva contraseña debe ser diferente a la contraseña temporal",
   "phone must be a phone number": "El teléfono debe ser un número de teléfono",
+  "the password is too weak, it must contain at least one uppercase letter, one lowercase letter, one number,phone must be a phone number":
+    "La contraseña es muy débil, debe contener al menos una letra mayúscula, una letra minúscula y un número, el teléfono debe ser un número de teléfono",
+  "Email already exists": "El correo electrónico ya existe",
 };
 
 export default errorTranslations;
