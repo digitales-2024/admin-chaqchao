@@ -1,6 +1,7 @@
 "use client";
 
 import { useMediaQuery } from "@/hooks/use-media-query";
+import { useUsers } from "@/hooks/use-users";
 import { User } from "@/types";
 import { type Row } from "@tanstack/react-table";
 import { RefreshCcw, Trash } from "lucide-react";
@@ -30,7 +31,7 @@ import {
 
 interface DeleteUsersDialogProps
   extends ComponentPropsWithoutRef<typeof Dialog> {
-  users: Row<User | undefined>["original"][];
+  users: Row<User>["original"][];
   showTrigger?: boolean;
   onSuccess?: () => void;
 }
@@ -41,9 +42,12 @@ export function DeleteUsersDialog({
   onSuccess,
   ...props
 }: DeleteUsersDialogProps) {
+  console.log("🚀 ~ users:", users);
   console.log("🚀 ~ onSuccess:", onSuccess);
   const [isDeletePending] = useTransition();
   const isDesktop = useMediaQuery("(min-width: 640px)");
+
+  const { onDeleteUsers } = useUsers();
 
   if (isDesktop) {
     return (
@@ -72,9 +76,7 @@ export function DeleteUsersDialog({
             <Button
               aria-label="Delete selected rows"
               variant="destructive"
-              onClick={() => {
-                console.log("delete");
-              }}
+              onClick={() => onDeleteUsers(users)}
               disabled={isDeletePending}
             >
               {isDeletePending && (
@@ -117,9 +119,7 @@ export function DeleteUsersDialog({
           <Button
             aria-label="Delete selected rows"
             variant="destructive"
-            onClick={() => {
-              console.log("delete");
-            }}
+            onClick={() => onDeleteUsers(users)}
             disabled={isDeletePending}
           >
             {isDeletePending && (
