@@ -32,7 +32,21 @@ export const usersApi = createApi({
       }),
       providesTags: ["Users"],
     }),
+
+    // Generar una constraseña
+    generatePassword: build.mutation({
+      query: () => ({
+        url: "users/generate-password",
+        method: "POST",
+        credentials: "include",
+      }),
+      invalidatesTags: ["Users"],
+    }),
   }),
 });
 
-export const { useUpdateUserMutation, useGetUsersQuery } = usersApi;
+export const {
+  useUpdateUserMutation,
+  useGetUsersQuery,
+  useGeneratePasswordMutation,
+} = usersApi;
