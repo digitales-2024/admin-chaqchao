@@ -1,4 +1,4 @@
-import { BusinessConfigData } from "@/types"; // Asegúrate de que los tipos estén correctos
+import { BusinessConfigData } from "@/types";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const businessConfigApi = createApi({
