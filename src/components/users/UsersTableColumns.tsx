@@ -139,18 +139,17 @@ export const usersColumns = (): ColumnDef<User>[] => [
     ),
   },
   {
-    id: "última conexión",
+    id: "conexión",
     accessorKey: "lastLogin",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Última conexión" />
     ),
     cell: ({ row }) => {
+      const lastConnection = row?.getValue("conexión");
+      if (!lastConnection) return null;
       return (
         <div>
-          {format(
-            parseISO(row?.getValue("última conexión")),
-            "yyyy-MM-dd HH:mm:ss",
-          )}
+          {format(parseISO(row?.getValue("conexión")), "yyyy-MM-dd HH:mm:ss")}
         </div>
       );
     },
