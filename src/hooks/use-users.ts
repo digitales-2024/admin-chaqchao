@@ -1,5 +1,6 @@
 import {
   useCreateUserMutation,
+  useDeleteUsersMutation,
   useGeneratePasswordMutation,
   useGetUsersQuery,
 } from "@/redux/services/usersApi";
@@ -12,6 +13,8 @@ export const useUsers = () => {
   const [generatePassword, { data: password }] = useGeneratePasswordMutation();
   const [createUser, { isSuccess: isSuccessCreateUser }] =
     useCreateUserMutation();
+  const [deleteUsers, { isSuccess: isSuccessDeleteUsers }] =
+    useDeleteUsersMutation();
   const handleGeneratePassword = async () => {
     const promise = () =>
       new Promise(async (resolve, reject) => {
@@ -76,6 +79,44 @@ export const useUsers = () => {
     });
   };
 
+  const onDeleteUsers = async (ids: User[]) => {
+    const onlyIds = ids.map((user) => user.id);
+    const idsString = {
+      ids: onlyIds,
+    };
+    console.log("🚀 ~ onDeleteUsers ~ idsString:", idsString);
+
+    const promise = () =>
+      new Promise(async (resolve, reject) => {
+        try {
+          const result = await deleteUsers(idsString);
+          if (result.error && "data" in result.error) {
+            const error = (result.error.data as CustomErrorData).message;
+            const message = translateError(error as string);
+            reject(new Error(message));
+          }
+          if (result.error) {
+            reject(
+              new Error(
+                "Ocurrió un error inesperado, por favor intenta de nuevo",
+              ),
+            );
+          }
+          resolve(result);
+        } catch (error) {
+          reject(error);
+        }
+      });
+
+    toast.promise(promise(), {
+      loading: "Eliminando...",
+      success: "Usuarios eliminados",
+      error: (error) => {
+        return error.message;
+      },
+    });
+  };
+
   return {
     data,
     error,
@@ -84,5 +125,7 @@ export const useUsers = () => {
     password,
     onCreateUser,
     isSuccessCreateUser,
+    onDeleteUsers,
+    isSuccessDeleteUsers,
   };
 };
