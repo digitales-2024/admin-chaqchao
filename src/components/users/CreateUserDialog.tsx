@@ -1,12 +1,12 @@
 "use client";
 
 import { useMediaQuery } from "@/hooks/use-media-query";
+import { useUsers } from "@/hooks/use-users";
 import { createUsersSchema, usersSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus, RefreshCcw } from "lucide-react";
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -44,25 +44,34 @@ export function CreateUsersDialog() {
   const [isCreatePending, startCreateTransition] = useTransition();
   const isDesktop = useMediaQuery("(min-width: 640px)");
 
+  const { onCreateUser, isSuccessCreateUser } = useUsers();
+
   const form = useForm<createUsersSchema>({
     resolver: zodResolver(usersSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      phone: "",
+      password: "",
+      roles: [],
+    },
   });
 
-  function onSubmit(input: createUsersSchema) {
-    console.log("🚀 ~ onSubmit ~ input:", input);
+  const onSubmit = async (input: createUsersSchema) => {
     startCreateTransition(async () => {
-      // const { error } =;
-
-      // if (error) {
-      //   toast.error(error);
-      //   return;
-      // }
-
+      await onCreateUser(input);
+    });
+  };
+  useEffect(() => {
+    if (isSuccessCreateUser) {
       form.reset();
       setOpen(false);
-      toast.success("Task created");
-    });
-  }
+    }
+  }, [isSuccessCreateUser, form]);
+
+  const handleClose = () => {
+    form.reset();
+  };
 
   if (isDesktop)
     return (
@@ -90,7 +99,12 @@ export function CreateUsersDialog() {
                 Registrar
               </Button>
               <DialogClose asChild>
-                <Button type="button" variant="outline" className="w-full">
+                <Button
+                  onClick={handleClose}
+                  type="button"
+                  variant="outline"
+                  className="w-full"
+                >
                   Cancelar
                 </Button>
               </DialogClose>
