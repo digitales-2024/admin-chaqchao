@@ -1,7 +1,5 @@
-import { TOKEN } from "@/constants";
 import { Role } from "@/types/roles";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import Cookies from "js-cookie";
 
 export const rolesApi = createApi({
   reducerPath: "rolesApi",
@@ -12,9 +10,7 @@ export const rolesApi = createApi({
     getRoles: build.query<Role[], void>({
       query: () => ({
         url: `/rol`,
-        headers: {
-          Authorization: `Bearer ${Cookies.get(TOKEN)}`,
-        },
+        credentials: "include",
       }),
       providesTags: ["Roles"],
     }),

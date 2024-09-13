@@ -25,7 +25,7 @@ export const usersColumns = (): ColumnDef<User>[] => [
   {
     id: "select",
     header: ({ table }) => (
-      <div className="w-4">
+      <div className="px-2">
         <Checkbox
           checked={
             table.getIsAllPageRowsSelected() ||
@@ -38,12 +38,14 @@ export const usersColumns = (): ColumnDef<User>[] => [
       </div>
     ),
     cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-        className="translate-y-0.5"
-      />
+      <div className="px-2">
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+          className="translate-y-0.5"
+        />
+      </div>
     ),
     enableSorting: false,
     enableHiding: false,

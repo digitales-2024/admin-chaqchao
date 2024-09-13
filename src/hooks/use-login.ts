@@ -23,6 +23,13 @@ export const useLogin = () => {
             const message = translateError(error as string);
             reject(new Error(message));
           }
+          if (result.error) {
+            reject(
+              new Error(
+                "Ocurrió un error inesperado, por favor intenta de nuevo",
+              ),
+            );
+          }
           resolve(result);
         } catch (error) {
           reject(error);
