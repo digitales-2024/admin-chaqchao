@@ -1,14 +1,20 @@
 "use client";
 
 import { useMediaQuery } from "@/hooks/use-media-query";
+import { useUsers } from "@/hooks/use-users";
+import { createUsersSchema, usersSchema } from "@/schemas";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus, RefreshCcw } from "lucide-react";
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
+import { useForm } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -24,14 +30,48 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 
+import { CreateUsersForm } from "./CreateUsersForm";
+
+const dataForm = {
+  button: "Crear usuario",
+  title: "Crear usuarios",
+  description:
+    "Complete los detalles a continuación para crear nuevos usuarios.",
+};
+
 export function CreateUsersDialog() {
   const [open, setOpen] = useState(false);
-  const [isCreatePending] = useTransition();
+  const [isCreatePending, startCreateTransition] = useTransition();
   const isDesktop = useMediaQuery("(min-width: 640px)");
 
-  // function onSubmit(input: any) {
-  //   console.log(input);
-  // }
+  const { onCreateUser, isSuccessCreateUser } = useUsers();
+
+  const form = useForm<createUsersSchema>({
+    resolver: zodResolver(usersSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      phone: "",
+      password: "",
+      roles: [],
+    },
+  });
+
+  const onSubmit = async (input: createUsersSchema) => {
+    startCreateTransition(async () => {
+      await onCreateUser(input);
+    });
+  };
+  useEffect(() => {
+    if (isSuccessCreateUser) {
+      form.reset();
+      setOpen(false);
+    }
+  }, [isSuccessCreateUser, form]);
+
+  const handleClose = () => {
+    form.reset();
+  };
 
   if (isDesktop)
     return (
@@ -39,34 +79,37 @@ export function CreateUsersDialog() {
         <DialogTrigger asChild>
           <Button variant="outline" size="sm">
             <Plus className="mr-2 size-4" aria-hidden="true" />
-            Crear usuario
+            {dataForm.button}
           </Button>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Create users</DialogTitle>
-            <DialogDescription>
-              Fill in the details below to create a new users.
-            </DialogDescription>
+            <DialogTitle>{dataForm.title}</DialogTitle>
+            <DialogDescription>{dataForm.description}</DialogDescription>
           </DialogHeader>
-          {/* <CreateUsersForm form={form} onSubmit={onSubmit}>
-            <DialogFooter className="gap-2 pt-2 sm:space-x-0">
-              <DialogClose asChild>
-                <Button type="button" variant="outline">
-                  Cancel
-                </Button>
-              </DialogClose>
-              <Button disabled={isCreatePending}>
+          <CreateUsersForm form={form} onSubmit={onSubmit}>
+            <DialogFooter className="gap-2 sm:space-x-0">
+              <Button disabled={isCreatePending} className="w-full">
                 {isCreatePending && (
                   <RefreshCcw
                     className="mr-2 size-4 animate-spin"
                     aria-hidden="true"
                   />
                 )}
-                Create
+                Registrar
               </Button>
+              <DialogClose asChild>
+                <Button
+                  onClick={handleClose}
+                  type="button"
+                  variant="outline"
+                  className="w-full"
+                >
+                  Cancelar
+                </Button>
+              </DialogClose>
             </DialogFooter>
-          </CreateUsersForm> */}
+          </CreateUsersForm>
         </DialogContent>
       </Dialog>
     );
@@ -76,31 +119,31 @@ export function CreateUsersDialog() {
       <DrawerTrigger asChild>
         <Button variant="outline" size="sm">
           <Plus className="mr-2 size-4" aria-hidden="true" />
-          New users
+          {dataForm.button}
         </Button>
       </DrawerTrigger>
 
       <DrawerContent>
         <DrawerHeader>
-          <DrawerTitle>Create users</DrawerTitle>
-          <DrawerDescription>
-            Fill in the details below to create a new users.
-          </DrawerDescription>
+          <DrawerTitle>{dataForm.title}</DrawerTitle>
+          <DrawerDescription>{dataForm.description}</DrawerDescription>
         </DrawerHeader>
-        <DrawerFooter className="gap-2 sm:space-x-0">
-          <DrawerClose asChild>
-            <Button variant="outline">Cancel</Button>
-          </DrawerClose>
-          <Button disabled={isCreatePending}>
-            {isCreatePending && (
-              <RefreshCcw
-                className="mr-2 size-4 animate-spin"
-                aria-hidden="true"
-              />
-            )}
-            Create
-          </Button>
-        </DrawerFooter>
+        <CreateUsersForm form={form} onSubmit={onSubmit}>
+          <DrawerFooter className="gap-2 sm:space-x-0">
+            <Button disabled={isCreatePending}>
+              {isCreatePending && (
+                <RefreshCcw
+                  className="mr-2 size-4 animate-spin"
+                  aria-hidden="true"
+                />
+              )}
+              Registrar
+            </Button>
+            <DrawerClose asChild>
+              <Button variant="outline">Cancelar</Button>
+            </DrawerClose>
+          </DrawerFooter>
+        </CreateUsersForm>
       </DrawerContent>
     </Drawer>
   );
