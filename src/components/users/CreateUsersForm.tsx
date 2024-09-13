@@ -1,10 +1,10 @@
 "use client";
-
 import { useRol } from "@/hooks/use-rol";
 import { useUsers } from "@/hooks/use-users";
 import { createUsersSchema } from "@/schemas";
 import { TooltipProvider } from "@radix-ui/react-tooltip";
 import { Bot } from "lucide-react";
+import { useEffect } from "react";
 import { UseFormReturn } from "react-hook-form";
 
 import { Input } from "@/components/ui/input";
@@ -42,18 +42,27 @@ export const CreateUsersForm = ({
 }: CreateUsersFormProps) => {
   const { data } = useRol();
   const { handleGeneratePassword, password } = useUsers();
+  const { setValue, clearErrors } = form;
+
+  useEffect(() => {
+    if (password) {
+      setValue("password", password?.password);
+      clearErrors("password");
+    }
+  }, [password, setValue, clearErrors]);
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <div className="flex flex-col gap-6 p-4 sm:p-0">
           <FormField
             control={form.control}
-            name="nombre"
+            name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel htmlFor="nombre">Nombre completo</FormLabel>
+                <FormLabel htmlFor="name">Nombre completo</FormLabel>
                 <FormControl>
-                  <Input id="nombre" placeholder="john smith" {...field} />
+                  <Input id="name" placeholder="john smith" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -96,17 +105,12 @@ export const CreateUsersForm = ({
           <FormField
             control={form.control}
             name="password"
-            render={() => (
+            render={({ field }) => (
               <FormItem>
-                <FormLabel htmlFor="password">Contraseña</FormLabel>
+                <FormLabel htmlFor="password">Generar contraseña</FormLabel>
                 <FormControl>
                   <div className="flex items-center gap-2">
-                    <Input
-                      readOnly
-                      id="password"
-                      value={password?.password}
-                      placeholder="********"
-                    />
+                    <Input id="password" placeholder="********" {...field} />
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
@@ -129,13 +133,13 @@ export const CreateUsersForm = ({
           />
           <FormField
             control={form.control}
-            name="rol"
+            name="roles"
             render={({ field }) => (
               <FormItem>
                 <FormLabel htmlFor="rol">Rol</FormLabel>
                 <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
+                  onValueChange={(value) => field.onChange([value])}
+                  defaultValue={field.value[0] || ""}
                 >
                   <FormControl>
                     <SelectTrigger className="capitalize">
