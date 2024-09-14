@@ -42,8 +42,6 @@ export function DeleteUsersDialog({
   onSuccess,
   ...props
 }: DeleteUsersDialogProps) {
-  console.log("🚀 ~ users:", users);
-  console.log("🚀 ~ onSuccess:", onSuccess);
   const [isDeletePending] = useTransition();
   const isDesktop = useMediaQuery("(min-width: 640px)");
 
@@ -76,7 +74,12 @@ export function DeleteUsersDialog({
             <Button
               aria-label="Delete selected rows"
               variant="destructive"
-              onClick={() => onDeleteUsers(users)}
+              onClick={() => {
+                onDeleteUsers(users);
+                if (onSuccess) {
+                  onSuccess();
+                }
+              }}
               disabled={isDeletePending}
             >
               {isDeletePending && (
