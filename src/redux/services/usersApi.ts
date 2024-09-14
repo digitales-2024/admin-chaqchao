@@ -49,8 +49,8 @@ export const usersApi = createApi({
     // Eliminar varios usuarios
     deleteUsers: build.mutation<void, { ids: string[] }>({
       query: (ids) => ({
-        url: "users/deactivate",
-        method: "PATCH",
+        url: "users/deactivate/all",
+        method: "DELETE",
         body: ids,
         credentials: "include",
       }),
