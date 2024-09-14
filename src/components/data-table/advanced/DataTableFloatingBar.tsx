@@ -1,3 +1,4 @@
+import { useUsers } from "@/hooks/use-users";
 import { Table } from "@tanstack/react-table";
 import { Download, RefreshCcw, Trash, X } from "lucide-react";
 import { useEffect, useState, useTransition } from "react";
@@ -22,6 +23,7 @@ export const DataTableFloatingBar = <TData,>({
   table,
 }: UsersTableFloatingBarProps<TData>) => {
   const rows = table.getFilteredSelectedRowModel().rows;
+  console.log("🚀 ~ rows:", rows);
 
   const [isPending, startTransition] = useTransition();
   const [method, setMethod] = useState<"export" | "delete">();
@@ -37,6 +39,9 @@ export const DataTableFloatingBar = <TData,>({
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [table]);
+
+  const { onDeleteUsers } = useUsers();
+  console.log("🚀 ~ onDeleteUsers:", onDeleteUsers);
 
   return (
     <div className="fixed inset-x-0 bottom-4 z-50 mx-auto w-fit px-4">
@@ -113,14 +118,7 @@ export const DataTableFloatingBar = <TData,>({
                       setMethod("delete");
 
                       startTransition(async () => {
-                        // const { error } = await deleteUsers({
-                        //   ids: rows.map((row) => row.original.id),
-                        // });
-
-                        // if (error) {
-                        //   toast.error(error);
-                        //   return;
-                        // }
+                        // onDeleteUsers(rows);
 
                         table.toggleAllRowsSelected(false);
                       });
