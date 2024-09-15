@@ -36,6 +36,7 @@ interface DataTableProps<TData, TValue> {
   placeholder?: string;
   toolbarActions?: ReactElement;
   viewOptions?: boolean;
+  onDelete: (data: TData[]) => void;
 }
 
 export function DataTable<TData, TValue>({
@@ -44,6 +45,7 @@ export function DataTable<TData, TValue>({
   placeholder,
   toolbarActions,
   viewOptions,
+  onDelete,
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
@@ -169,7 +171,7 @@ export function DataTable<TData, TValue>({
       </div>
       <DataTablePagination table={table} />
       {table.getFilteredSelectedRowModel().rows.length > 0 && (
-        <DataTableFloatingBar table={table} />
+        <DataTableFloatingBar table={table} onDelete={onDelete} />
       )}
     </div>
   );
