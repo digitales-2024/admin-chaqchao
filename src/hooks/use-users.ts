@@ -84,8 +84,6 @@ export const useUsers = () => {
     const idsString = {
       ids: onlyIds,
     };
-    console.log("🚀 ~ onDeleteUsers ~ idsString:", idsString);
-
     const promise = () =>
       new Promise(async (resolve, reject) => {
         try {
