@@ -1,5 +1,5 @@
 import { Table } from "@tanstack/react-table";
-import { Download, RefreshCcw, Trash, X } from "lucide-react";
+import { Download, RefreshCcw, X } from "lucide-react";
 import { useEffect, useState, useTransition } from "react";
 
 import { Kbd } from "@/components/common/Kbd";
@@ -16,15 +16,12 @@ import { exportTableToCSV } from "@/lib/export";
 
 interface UsersTableFloatingBarProps<TData> {
   table: Table<TData>;
-  onDelete: (data: TData[]) => void;
 }
 
 export const DataTableFloatingBar = <TData,>({
   table,
-  onDelete,
 }: UsersTableFloatingBarProps<TData>) => {
   const rows = table.getFilteredSelectedRowModel().rows;
-  const data: TData[] = rows.map((row) => row.original);
 
   const [isPending, startTransition] = useTransition();
   const [method, setMethod] = useState<"export" | "delete">();
@@ -104,37 +101,6 @@ export const DataTableFloatingBar = <TData,>({
                 </TooltipTrigger>
                 <TooltipContent className="border bg-accent text-xs font-semibold text-foreground dark:bg-zinc-900">
                   <p>Exportar</p>
-                </TooltipContent>
-              </Tooltip>
-              <Tooltip delayDuration={250}>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="secondary"
-                    size="icon"
-                    className="size-7 border"
-                    onClick={() => {
-                      setMethod("delete");
-
-                      startTransition(async () => {
-                        onDelete(data);
-
-                        table.toggleAllRowsSelected(false);
-                      });
-                    }}
-                    disabled={isPending}
-                  >
-                    {isPending && method === "delete" ? (
-                      <RefreshCcw
-                        className="size-3.5 animate-spin"
-                        aria-hidden="true"
-                      />
-                    ) : (
-                      <Trash className="size-3.5" aria-hidden="true" />
-                    )}
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent className="border bg-accent text-xs font-semibold text-foreground dark:bg-zinc-900">
-                  Eliminar
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
