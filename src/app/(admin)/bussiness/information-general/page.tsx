@@ -1,108 +1,143 @@
 "use client";
-import { useBussinessConfig } from "@/hooks/use-business-config";
-import { useState, useEffect } from "react";
+import { LogoChaqchao } from "@/assets/icons";
+import {
+  useCreateBusinessConfig,
+  useUpdateBusinessConfig,
+  useBussinessConfig,
+} from "@/hooks/use-business-config";
+import {
+  CreateBusinessConfigSchema,
+  businessConfigSchema,
+} from "@/schemas/businessInformation/createBusinessConfigSchema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
 
+import { BusinessHourPopover } from "@/components/business-config/BusinessHourPopover";
+import { CreateBusinessConfigForm } from "@/components/business-config/CreateBusinessConfigForm";
 import { TitleSecction } from "@/components/common/text/TitleSecction";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const HeaderPage = () => (
   <div className="mb-6">
     <TitleSecction text="Configuración de la Empresa" />
     <span className="text-sm text-slate-600">
-      Ingrese los detalles de su empresa a continuación.
+      Complete la información de su empresa y configure su horario de atención.
     </span>
   </div>
 );
 
 export default function BusinessInformationPage() {
-  const [formData, setFormData] = useState({
-    nombre: "",
-    contacto: "",
-    email: "",
-    direccion: "",
+  const { dataBusinessConfigAll, error, isLoading } = useBussinessConfig();
+  const { onCreateBusinessConfig } = useCreateBusinessConfig();
+  const { onUpdateBusinessConfig } = useUpdateBusinessConfig();
+  const form = useForm<CreateBusinessConfigSchema>({
+    resolver: zodResolver(businessConfigSchema),
+    defaultValues: {
+      businessName: "",
+      contactNumber: "",
+      email: "",
+      address: "",
+    },
   });
-
-  const { dataBusinessConfigAll } = useBussinessConfig();
-  console.log("dataBusinessConfig", dataBusinessConfigAll);
 
   useEffect(() => {
     if (dataBusinessConfigAll && dataBusinessConfigAll.length > 0) {
       const businessConfig = dataBusinessConfigAll[0];
-      setFormData({
-        nombre: businessConfig.businessName || "",
-        contacto: businessConfig.contactNumber || "",
+      form.reset({
+        businessName: businessConfig.businessName || "",
+        contactNumber: businessConfig.contactNumber || "",
         email: businessConfig.email || "",
-        direccion: businessConfig.address || "",
+        address: businessConfig.address || "",
       });
     }
-  }, [dataBusinessConfigAll]);
+  }, [dataBusinessConfigAll, form]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
+  const handleSubmit = async (data: CreateBusinessConfigSchema) => {
+    if (dataBusinessConfigAll && dataBusinessConfigAll.length > 0) {
+      // Actualizar configuración de negocio
+      await onUpdateBusinessConfig({
+        id: dataBusinessConfigAll[0].id,
+        ...data,
+      });
+    } else {
+      // Crear nueva configuración de negocio
+      await onCreateBusinessConfig(data);
+    }
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    console.log("Datos del formulario:", formData);
-    // Aquí puedes agregar la lógica para enviar los datos a tu backend
-  };
+  if (isLoading) {
+    return <div>Cargando...</div>;
+  }
+
+  if (error) {
+    return <div>Error al cargar la configuración de negocio</div>;
+  }
 
   return (
     <div className="container mx-auto py-10">
       <HeaderPage />
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="nombre">Nombre de la Empresa</Label>
-          <Input
-            id="nombre"
-            name="nombre"
-            value={formData.nombre}
-            onChange={handleChange}
-            required
-          />
+      <div className="flex items-start space-x-8">
+        <LogoChaqchao className="mt-12 size-72" />
+        <div className="flex-grow">
+          <Tabs defaultValue="information" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="information">Información</TabsTrigger>
+              <TabsTrigger value="schedule">Horario</TabsTrigger>
+            </TabsList>
+            <TabsContent value="information">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Información</CardTitle>
+                  <CardDescription>
+                    Ingrese los detalles de su empresa a continuación.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <CreateBusinessConfigForm
+                    form={form}
+                    onSubmit={handleSubmit}
+                  />
+                </CardContent>
+              </Card>
+            </TabsContent>
+            <TabsContent value="schedule">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Horario</CardTitle>
+                  <CardDescription>
+                    Configure el horario de atención de su empresa.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  {[
+                    "Lunes",
+                    "Martes",
+                    "Miércoles",
+                    "Jueves",
+                    "Viernes",
+                    "Sábado",
+                    "Domingo",
+                  ].map((day) => (
+                    <div key={day} className="flex items-center space-x-4">
+                      <Label className="w-24">{day}</Label>
+                      <BusinessHourPopover day={day} />
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="contacto">Número de Contacto</Label>
-          <Input
-            id="contacto"
-            name="contacto"
-            type="tel"
-            value={formData.contacto}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="email">Correo Electrónico</Label>
-          <Input
-            id="email"
-            name="email"
-            type="email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="direccion">Dirección</Label>
-          <Input
-            id="direccion"
-            name="direccion"
-            value={formData.direccion}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <Button type="submit" className="w-full">
-          Guardar Configuración
-        </Button>
-      </form>
+      </div>
     </div>
   );
 }
