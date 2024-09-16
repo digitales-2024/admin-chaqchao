@@ -3,7 +3,14 @@
 import { User } from "@/types";
 import { type ColumnDef } from "@tanstack/react-table";
 import { format, parseISO } from "date-fns";
-import { CircleCheck, Ellipsis, Squircle, Timer, Trash } from "lucide-react";
+import {
+  CircleCheck,
+  Ellipsis,
+  RefreshCcwDot,
+  Squircle,
+  Timer,
+  Trash,
+} from "lucide-react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -21,7 +28,12 @@ import { DataTableColumnHeader } from "../data-table/DataTableColumnHeader";
 import { Badge } from "../ui/badge";
 import { DeleteUsersDialog } from "./DeleteUsersDialog";
 
-export const usersColumns = (): ColumnDef<User>[] => [
+/**
+ * Generar las columnas de la tabla de usuarios
+ * @param isSuperAdmin Valor si el usuario es super administrador
+ * @returns Columnas de la tabla de usuarios
+ */
+export const usersColumns = (isSuperAdmin: boolean): ColumnDef<User>[] => [
   {
     id: "select",
     header: ({ table }) => (
@@ -191,6 +203,14 @@ export const usersColumns = (): ColumnDef<User>[] => [
                 Editar
               </DropdownMenuItem>
               <DropdownMenuSeparator />
+              {isSuperAdmin && (
+                <DropdownMenuItem onSelect={() => console.log("b")}>
+                  Reactivar
+                  <DropdownMenuShortcut>
+                    <RefreshCcwDot className="size-4" aria-hidden="true" />
+                  </DropdownMenuShortcut>
+                </DropdownMenuItem>
+              )}
               <DropdownMenuItem onSelect={() => setShowDeleteTaskDialog(true)}>
                 Eliminar
                 <DropdownMenuShortcut>
