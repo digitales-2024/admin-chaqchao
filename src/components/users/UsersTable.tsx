@@ -1,6 +1,7 @@
 "use client";
 "use memo";
 
+import { useProfile } from "@/hooks/use-profile";
 import { User } from "@/types";
 import { useMemo } from "react";
 
@@ -9,7 +10,12 @@ import { usersColumns } from "./UsersTableColumns";
 import { UsersTableToolbarActions } from "./UsersTableToolbarActions";
 
 export function UsersTable({ data }: { data: User[] }) {
-  const columns = useMemo(() => usersColumns(), []);
+  const { user } = useProfile();
+  console.log("🚀 ~ UsersTable ~ user:", user);
+  const columns = useMemo(
+    () => usersColumns(user?.isSuperAdmin || false),
+    [user],
+  );
 
   return (
     <DataTable
