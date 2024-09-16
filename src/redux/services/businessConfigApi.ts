@@ -6,15 +6,9 @@ export const businessConfigApi = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: process.env.NEXT_PUBLIC_BACKEND_URL }),
   tagTypes: ["BusinessConfig"],
   endpoints: (build) => ({
-    // Mutación para crear una configuración de negocio
     createBusinessConfig: build.mutation<
-      BusinessConfigData, // Respuesta esperada
-      {
-        businessName: string;
-        contactNumber: string;
-        email: string;
-        address: string;
-      } // Parámetros de entrada
+      BusinessConfigData,
+      Partial<BusinessConfigData>
     >({
       query: (body) => ({
         url: "/business-config",
@@ -24,17 +18,9 @@ export const businessConfigApi = createApi({
       }),
       invalidatesTags: ["BusinessConfig"],
     }),
-
-    // Mutación para actualizar una configuración de negocio
     updateBusinessConfig: build.mutation<
-      BusinessConfigData, // Respuesta esperada
-      {
-        id: string;
-        businessName?: string;
-        contactNumber?: string;
-        email?: string;
-        address?: string;
-      } // Parámetros de entrada
+      BusinessConfigData,
+      Partial<BusinessConfigData> & { id: string }
     >({
       query: ({ id, ...body }) => ({
         url: `/business-config/${id}`,
@@ -44,12 +30,7 @@ export const businessConfigApi = createApi({
       }),
       invalidatesTags: ["BusinessConfig"],
     }),
-
-    // Consulta para obtener una configuración de negocio por ID
-    getBusinessConfigById: build.query<
-      BusinessConfigData, // Respuesta esperada
-      string // ID como parámetro
-    >({
+    getBusinessConfigById: build.query<BusinessConfigData, string>({
       query: (id) => ({
         url: `/business-config/${id}`,
         method: "GET",
@@ -57,7 +38,6 @@ export const businessConfigApi = createApi({
       }),
       providesTags: (result, error, id) => [{ type: "BusinessConfig", id }],
     }),
-
     getBusinessConfigAll: build.query<BusinessConfigData[], void>({
       query: () => ({
         url: "/business-config",
