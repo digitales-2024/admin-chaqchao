@@ -4,6 +4,7 @@ export type User = {
   email: string;
   phone: string;
   isActive: boolean;
+  isSuperAdmin?: boolean;
   mustChangePassword: boolean;
   lastLogin: string;
   roles: Role[];
