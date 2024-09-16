@@ -29,6 +29,8 @@ const errorTranslations = {
   "the password is too weak, it must contain at least one uppercase letter, one lowercase letter, one number,phone must be a phone number":
     "La contraseña es muy débil, debe contener al menos una letra mayúscula, una letra minúscula y un número, el teléfono debe ser un número de teléfono",
   "Email already exists": "El correo electrónico ya existe",
+  "contactNumber must be a valid phone number":
+    "El número de contacto debe ser un número de teléfono válido",
 };
 
 export default errorTranslations;
