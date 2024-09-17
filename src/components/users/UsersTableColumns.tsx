@@ -27,6 +27,7 @@ import {
 import { DataTableColumnHeader } from "../data-table/DataTableColumnHeader";
 import { Badge } from "../ui/badge";
 import { DeleteUsersDialog } from "./DeleteUsersDialog";
+import { ReactivateUsersDialog } from "./ReactivateUsersDialog";
 
 /**
  * Generar las columnas de la tabla de usuarios
@@ -169,25 +170,32 @@ export const usersColumns = (isSuperAdmin: boolean): ColumnDef<User>[] => [
   {
     id: "actions",
     cell: function Cell({ row }) {
-      // const [isUpdatePending, startUpdateTransition] = useTransition();
-      // const [showUpdateTaskSheet, setShowUpdateTaskSheet] =
-      //   useState(false);
-      const [showDeleteTaskDialog, setShowDeleteTaskDialog] = useState(false);
+      const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+      const [showReactivateDialog, setShowReactivateDialog] = useState(false);
 
+      const { isActive } = row.original;
       return (
-        <>
-          {/* <UpdateTaskSheet
-              open={showUpdateTaskSheet}
-              onOpenChange={setShowUpdateTaskSheet}
-              task={row.original}
-            /> */}
-          <DeleteUsersDialog
-            open={showDeleteTaskDialog}
-            onOpenChange={setShowDeleteTaskDialog}
-            users={[row?.original]}
-            showTrigger={false}
-            onSuccess={() => row.toggleSelected(false)}
-          />
+        <div>
+          <div>
+            <DeleteUsersDialog
+              open={showDeleteDialog}
+              onOpenChange={setShowDeleteDialog}
+              users={[row?.original]}
+              showTrigger={false}
+              onSuccess={() => {
+                row.toggleSelected(false);
+              }}
+            />
+            <ReactivateUsersDialog
+              open={showReactivateDialog}
+              onOpenChange={setShowReactivateDialog}
+              users={[row?.original]}
+              showTrigger={false}
+              onSuccess={() => {
+                row.toggleSelected(false);
+              }}
+            />
+          </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
@@ -204,14 +212,20 @@ export const usersColumns = (isSuperAdmin: boolean): ColumnDef<User>[] => [
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               {isSuperAdmin && (
-                <DropdownMenuItem onSelect={() => console.log("b")}>
+                <DropdownMenuItem
+                  onSelect={() => setShowReactivateDialog(true)}
+                  disabled={isActive}
+                >
                   Reactivar
                   <DropdownMenuShortcut>
                     <RefreshCcwDot className="size-4" aria-hidden="true" />
                   </DropdownMenuShortcut>
                 </DropdownMenuItem>
               )}
-              <DropdownMenuItem onSelect={() => setShowDeleteTaskDialog(true)}>
+              <DropdownMenuItem
+                onSelect={() => setShowDeleteDialog(true)}
+                disabled={!isActive}
+              >
                 Eliminar
                 <DropdownMenuShortcut>
                   <Trash className="size-4" aria-hidden="true" />
@@ -219,7 +233,7 @@ export const usersColumns = (isSuperAdmin: boolean): ColumnDef<User>[] => [
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-        </>
+        </div>
       );
     },
     enablePinning: true,
