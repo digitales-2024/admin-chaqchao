@@ -57,6 +57,17 @@ export const usersApi = createApi({
       invalidatesTags: ["Users"],
     }),
 
+    // Reactivar varios usuarios
+    reactivateUsers: build.mutation<void, { ids: string[] }>({
+      query: (ids) => ({
+        url: "users/reactivate/all",
+        method: "PATCH",
+        body: ids,
+        credentials: "include",
+      }),
+      invalidatesTags: ["Users"],
+    }),
+
     // Mostrar todos los usuarios
     getUsers: build.query<User[], void>({
       query: () => ({
@@ -85,4 +96,5 @@ export const {
   useCreateUserMutation,
   useDeleteUserMutation,
   useDeleteUsersMutation,
+  useReactivateUsersMutation,
 } = usersApi;
