@@ -11,7 +11,6 @@ import { UsersTableToolbarActions } from "./UsersTableToolbarActions";
 
 export function UsersTable({ data }: { data: User[] }) {
   const { user } = useProfile();
-  console.log("🚀 ~ UsersTable ~ user:", user);
   const columns = useMemo(
     () => usersColumns(user?.isSuperAdmin || false),
     [user],
