@@ -9,16 +9,6 @@ import { ComponentPropsWithoutRef, useTransition } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
   Drawer,
   DrawerClose,
   DrawerContent,
@@ -29,8 +19,20 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "../ui/alert-dialog";
+
 interface DeleteUsersDialogProps
-  extends ComponentPropsWithoutRef<typeof Dialog> {
+  extends ComponentPropsWithoutRef<typeof AlertDialog> {
   users: Row<User>["original"][];
   showTrigger?: boolean;
   onSuccess?: () => void;
@@ -49,36 +51,32 @@ export function DeleteUsersDialog({
 
   if (isDesktop) {
     return (
-      <Dialog {...props}>
+      <AlertDialog {...props}>
         {showTrigger ? (
-          <DialogTrigger asChild>
+          <AlertDialogTrigger asChild>
             <Button variant="outline" size="sm">
               <Trash className="mr-2 size-4" aria-hidden="true" />
               Eliminar ({users.length})
             </Button>
-          </DialogTrigger>
+          </AlertDialogTrigger>
         ) : null}
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>¿Estás absolutamente seguro?</DialogTitle>
-            <DialogDescription>
-              Esta acción no se puede deshacer. Esto eliminará a
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>¿Estás absolutamente seguro?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta acción eliminará a
               <span className="font-medium"> {users.length}</span>
               {users.length === 1 ? " usuario" : " usuarios"}
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter className="gap-2 sm:space-x-0">
-            <DialogClose asChild>
-              <Button variant="outline">Cancel</Button>
-            </DialogClose>
-            <Button
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="gap-2 sm:space-x-0">
+            <AlertDialogCancel asChild>
+              <Button variant="outline">Cancelar</Button>
+            </AlertDialogCancel>
+            <AlertDialogAction
               aria-label="Delete selected rows"
-              variant="destructive"
               onClick={() => {
                 onDeleteUsers(users);
-                if (onSuccess) {
-                  onSuccess();
-                }
               }}
               disabled={isDeletePending}
             >
@@ -88,11 +86,11 @@ export function DeleteUsersDialog({
                   aria-hidden="true"
                 />
               )}
-              Delete
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+              Eliminar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     );
   }
 
@@ -102,27 +100,32 @@ export function DeleteUsersDialog({
         <DrawerTrigger asChild>
           <Button variant="outline" size="sm">
             <Trash className="mr-2 size-4" aria-hidden="true" />
-            Delete ({users.length})
+            Eliminar ({users.length})
           </Button>
         </DrawerTrigger>
       ) : null}
       <DrawerContent>
         <DrawerHeader>
-          <DrawerTitle>Are you absolutely sure?</DrawerTitle>
+          <DrawerTitle>¿Estás absolutamente seguro?</DrawerTitle>
           <DrawerDescription>
-            This action cannot be undone. This will permanently delete your{" "}
+            Esta acción no se puede deshacer. Esto eliminará a
             <span className="font-medium">{users.length}</span>
-            {users.length === 1 ? " task" : " users"} from our servers.
+            {users.length === 1 ? " usuario" : " usuarios"}
           </DrawerDescription>
         </DrawerHeader>
         <DrawerFooter className="gap-2 sm:space-x-0">
           <DrawerClose asChild>
-            <Button variant="outline">Cancel</Button>
+            <Button variant="outline">Cancelar</Button>
           </DrawerClose>
           <Button
             aria-label="Delete selected rows"
             variant="destructive"
-            onClick={() => onDeleteUsers(users)}
+            onClick={() => {
+              onDeleteUsers(users);
+              if (onSuccess) {
+                onSuccess();
+              }
+            }}
             disabled={isDeletePending}
           >
             {isDeletePending && (
@@ -131,7 +134,7 @@ export function DeleteUsersDialog({
                 aria-hidden="true"
               />
             )}
-            Delete
+            Eliminar
           </Button>
         </DrawerFooter>
       </DrawerContent>
