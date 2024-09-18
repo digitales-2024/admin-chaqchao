@@ -4,5 +4,6 @@ export { updateInfoSchema } from "./account/updateInfoSchema";
 export {
   type CreateUsersSchema,
   type UpdateUsersSchema,
+  updateUsersSchema,
   usersSchema,
 } from "./users/createUsersSchema";
