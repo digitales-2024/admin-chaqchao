@@ -45,6 +45,12 @@ export const ReactivateUsersDialog = ({
 
   const { onReactivateUsers, isLoadingReactivateUsers } = useUsers();
 
+  const onReactivateUsersHandler = () => {
+    onReactivateUsers(users);
+    props.onOpenChange?.(false);
+    onSuccess?.();
+  };
+
   if (isDesktop) {
     return (
       <AlertDialog {...props}>
@@ -71,12 +77,7 @@ export const ReactivateUsersDialog = ({
             </AlertDialogCancel>
             <AlertDialogAction
               aria-label="Reactivate selected rows"
-              onClick={() => {
-                onReactivateUsers(users);
-                if (onSuccess) {
-                  onSuccess();
-                }
-              }}
+              onClick={onReactivateUsersHandler}
               disabled={isLoadingReactivateUsers}
             >
               {isLoadingReactivateUsers && (
@@ -112,17 +113,9 @@ export const ReactivateUsersDialog = ({
           </DrawerDescription>
         </DrawerHeader>
         <DrawerFooter className="gap-2 sm:space-x-0">
-          <DrawerClose asChild>
-            <Button variant="outline">Cancelar</Button>
-          </DrawerClose>
           <Button
             aria-label="Reactivate selected rows"
-            onClick={() => {
-              onReactivateUsers(users);
-              if (onSuccess) {
-                onSuccess();
-              }
-            }}
+            onClick={onReactivateUsersHandler}
             disabled={isLoadingReactivateUsers}
           >
             {isLoadingReactivateUsers && (
@@ -133,6 +126,9 @@ export const ReactivateUsersDialog = ({
             )}
             Reactivar
           </Button>
+          <DrawerClose asChild>
+            <Button variant="outline">Cancelar</Button>
+          </DrawerClose>
         </DrawerFooter>
       </DrawerContent>
     </Drawer>
