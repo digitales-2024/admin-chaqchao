@@ -86,8 +86,8 @@ export const useUsers = () => {
       });
 
     toast.promise(promise(), {
-      loading: "Creando...",
-      success: "Usuario creado",
+      loading: "Creando y Enviando correo...",
+      success: "Usuario creado y envío exitoso.",
       error: (error) => {
         return error.message;
       },
