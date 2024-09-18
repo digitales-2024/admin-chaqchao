@@ -28,7 +28,7 @@ import { DataTableColumnHeader } from "../data-table/DataTableColumnHeader";
 import { Badge } from "../ui/badge";
 import { DeleteUsersDialog } from "./DeleteUsersDialog";
 import { ReactivateUsersDialog } from "./ReactivateUsersDialog";
-import { UpdateUserDialog } from "./UpdateUserDialog";
+import { UpdateUserSheet } from "./UpdateUserSheet";
 
 /**
  * Generar las columnas de la tabla de usuarios
@@ -179,7 +179,7 @@ export const usersColumns = (isSuperAdmin: boolean): ColumnDef<User>[] => [
       return (
         <div>
           <div>
-            <UpdateUserDialog
+            <UpdateUserSheet
               open={showEditDialog}
               onOpenChange={setShowEditDialog}
               user={row?.original}
