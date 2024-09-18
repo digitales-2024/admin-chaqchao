@@ -214,7 +214,10 @@ export const usersColumns = (isSuperAdmin: boolean): ColumnDef<User>[] => [
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-40">
-              <DropdownMenuItem onSelect={() => setShowEditDialog(true)}>
+              <DropdownMenuItem
+                onSelect={() => setShowEditDialog(true)}
+                disabled={!isActive}
+              >
                 Editar
               </DropdownMenuItem>
               <DropdownMenuSeparator />
