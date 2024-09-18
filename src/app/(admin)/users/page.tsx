@@ -6,7 +6,6 @@ import { useUsers } from "@/hooks/use-users";
 import { Shell } from "@/components/common/Shell";
 import { TitleSecction } from "@/components/common/text/TitleSecction";
 import { DataTableSkeleton } from "@/components/data-table/DataTableSkeleton";
-import { DateRangePicker } from "@/components/date/DateRangePicker";
 import { Skeleton } from "@/components/ui/skeleton";
 import { UsersTable } from "@/components/users/UsersTable";
 
@@ -45,11 +44,6 @@ export default function PageUsers() {
   return (
     <Shell className="gap-6">
       <HeaderPage />
-      <DateRangePicker
-        triggerSize="sm"
-        triggerClassName="ml-auto w-fit"
-        align="end"
-      />
       <UsersTable data={data} />
     </Shell>
   );
