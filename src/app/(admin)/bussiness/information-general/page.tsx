@@ -5,6 +5,7 @@ import {
   useUpdateBusinessConfig,
   useBussinessConfig,
 } from "@/hooks/use-business-config";
+import { useBusinessHours } from "@/hooks/use-business-hours";
 import {
   CreateBusinessConfigSchema,
   businessConfigSchema,
@@ -13,18 +14,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 
-import { BusinessHourPopover } from "@/components/business-config/BusinessHourPopover";
-import { CreateBusinessConfigForm } from "@/components/business-config/CreateBusinessConfigForm";
+import { BusinessTabs } from "@/components/business-config/BusinessTabs";
 import { TitleSecction } from "@/components/common/text/TitleSecction";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const HeaderPage = () => (
   <div className="mb-6">
@@ -39,6 +30,11 @@ export default function BusinessInformationPage() {
   const { dataBusinessConfigAll, error, isLoading } = useBussinessConfig();
   const { onCreateBusinessConfig } = useCreateBusinessConfig();
   const { onUpdateBusinessConfig } = useUpdateBusinessConfig();
+  const {
+    dataBusinessHoursAll,
+    error: errorBusinessHours,
+    isLoading: isLoadingBusinessHours,
+  } = useBusinessHours();
   const form = useForm<CreateBusinessConfigSchema>({
     resolver: zodResolver(businessConfigSchema),
     defaultValues: {
@@ -74,13 +70,25 @@ export default function BusinessInformationPage() {
     }
   };
 
-  if (isLoading) {
+  if (isLoading || isLoadingBusinessHours) {
     return <div>Cargando...</div>;
   }
 
-  if (error) {
+  if (error || errorBusinessHours) {
     return <div>Error al cargar la configuración de negocio</div>;
   }
+
+  const daysOfWeek = {
+    MONDAY: "Lunes",
+    TUESDAY: "Martes",
+    WEDNESDAY: "Miércoles",
+    THURSDAY: "Jueves",
+    FRIDAY: "Viernes",
+    SATURDAY: "Sábado",
+    SUNDAY: "Domingo",
+  };
+
+  const businessHoursArray = dataBusinessHoursAll?.businessHours || [];
 
   return (
     <div className="container mx-auto py-10">
@@ -88,54 +96,12 @@ export default function BusinessInformationPage() {
       <div className="flex items-start space-x-8">
         <LogoChaqchao className="mt-12 size-72" />
         <div className="flex-grow">
-          <Tabs defaultValue="information" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="information">Información</TabsTrigger>
-              <TabsTrigger value="schedule">Horario</TabsTrigger>
-            </TabsList>
-            <TabsContent value="information">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Información</CardTitle>
-                  <CardDescription>
-                    Ingrese los detalles de su empresa a continuación.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <CreateBusinessConfigForm
-                    form={form}
-                    onSubmit={handleSubmit}
-                  />
-                </CardContent>
-              </Card>
-            </TabsContent>
-            <TabsContent value="schedule">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Horario</CardTitle>
-                  <CardDescription>
-                    Configure el horario de atención de su empresa.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-2">
-                  {[
-                    "Lunes",
-                    "Martes",
-                    "Miércoles",
-                    "Jueves",
-                    "Viernes",
-                    "Sábado",
-                    "Domingo",
-                  ].map((day) => (
-                    <div key={day} className="flex items-center space-x-4">
-                      <Label className="w-24">{day}</Label>
-                      <BusinessHourPopover day={day} />
-                    </div>
-                  ))}
-                </CardContent>
-              </Card>
-            </TabsContent>
-          </Tabs>
+          <BusinessTabs
+            form={form}
+            handleSubmit={handleSubmit}
+            daysOfWeek={daysOfWeek}
+            businessHoursArray={businessHoursArray}
+          />
         </div>
       </div>
     </div>
