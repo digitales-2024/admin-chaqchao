@@ -1,4 +1,4 @@
-import { CreateUsersSchema } from "@/schemas/users/createUsersSchema";
+import { CreateUsersSchema, UpdateUsersSchema } from "@/schemas";
 import { User } from "@/types";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
@@ -14,7 +14,7 @@ export const usersApi = createApi({
   tagTypes: ["Users"],
   endpoints: (build) => ({
     // Crear un nuevo usuario
-    createUser: build.mutation<CreateUsersSchema, Partial<User>>({
+    createUser: build.mutation<CreateUsersSchema, CreateUsersSchema>({
       query: (body) => ({
         url: "users",
         method: "POST",
@@ -25,7 +25,7 @@ export const usersApi = createApi({
     }),
 
     // Actualizar información del usuario por id del parametro /users/:id
-    updateUser: build.mutation<UserUpdate, Partial<User>>({
+    updateUser: build.mutation<UserUpdate, UpdateUsersSchema & { id: string }>({
       query: ({ id, ...body }) => ({
         url: `users/${id}`,
         method: "PATCH",
@@ -33,6 +33,38 @@ export const usersApi = createApi({
         credentials: "include",
       }),
 
+      invalidatesTags: ["Users"],
+    }),
+
+    // Eliminar un usuario por id del parametro /users/:id
+    deleteUser: build.mutation<User, string>({
+      query: (id) => ({
+        url: `users/${id}`,
+        method: "DELETE",
+        credentials: "include",
+      }),
+      invalidatesTags: ["Users"],
+    }),
+
+    // Eliminar varios usuarios
+    deleteUsers: build.mutation<void, { ids: string[] }>({
+      query: (ids) => ({
+        url: "users/deactivate/all",
+        method: "DELETE",
+        body: ids,
+        credentials: "include",
+      }),
+      invalidatesTags: ["Users"],
+    }),
+
+    // Reactivar varios usuarios
+    reactivateUsers: build.mutation<void, { ids: string[] }>({
+      query: (ids) => ({
+        url: "users/reactivate/all",
+        method: "PATCH",
+        body: ids,
+        credentials: "include",
+      }),
       invalidatesTags: ["Users"],
     }),
 
@@ -62,4 +94,7 @@ export const {
   useGetUsersQuery,
   useGeneratePasswordMutation,
   useCreateUserMutation,
+  useDeleteUserMutation,
+  useDeleteUsersMutation,
+  useReactivateUsersMutation,
 } = usersApi;
