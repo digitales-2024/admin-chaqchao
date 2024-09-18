@@ -28,6 +28,7 @@ import { DataTableColumnHeader } from "../data-table/DataTableColumnHeader";
 import { Badge } from "../ui/badge";
 import { DeleteUsersDialog } from "./DeleteUsersDialog";
 import { ReactivateUsersDialog } from "./ReactivateUsersDialog";
+import { UpdateUserSheet } from "./UpdateUserSheet";
 
 /**
  * Generar las columnas de la tabla de usuarios
@@ -71,7 +72,9 @@ export const usersColumns = (isSuperAdmin: boolean): ColumnDef<User>[] => [
       <DataTableColumnHeader column={column} title="Nombre" />
     ),
     cell: ({ row }) => (
-      <div className="truncate capitalize">{row.getValue("nombre")}</div>
+      <div className="min-w-40 truncate capitalize">
+        {row.getValue("nombre")}
+      </div>
     ),
   },
   {
@@ -172,11 +175,17 @@ export const usersColumns = (isSuperAdmin: boolean): ColumnDef<User>[] => [
     cell: function Cell({ row }) {
       const [showDeleteDialog, setShowDeleteDialog] = useState(false);
       const [showReactivateDialog, setShowReactivateDialog] = useState(false);
+      const [showEditDialog, setShowEditDialog] = useState(false);
 
       const { isActive } = row.original;
       return (
         <div>
           <div>
+            <UpdateUserSheet
+              open={showEditDialog}
+              onOpenChange={setShowEditDialog}
+              user={row?.original}
+            />
             <DeleteUsersDialog
               open={showDeleteDialog}
               onOpenChange={setShowDeleteDialog}
@@ -207,7 +216,10 @@ export const usersColumns = (isSuperAdmin: boolean): ColumnDef<User>[] => [
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-40">
-              <DropdownMenuItem onSelect={() => console.log("a")}>
+              <DropdownMenuItem
+                onSelect={() => setShowEditDialog(true)}
+                disabled={!isActive}
+              >
                 Editar
               </DropdownMenuItem>
               <DropdownMenuSeparator />

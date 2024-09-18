@@ -30,6 +30,7 @@ const errorTranslations = {
     "La contraseña es muy débil, debe contener al menos una letra mayúscula, una letra minúscula y un número, el teléfono debe ser un número de teléfono",
   "Email already exists": "El correo electrónico ya existe",
   "You cannot deactivate yourself": "No puedes desactivarte",
+  "User not found or inactive": "Usuario no encontrado o inactivo",
 };
 
 export default errorTranslations;

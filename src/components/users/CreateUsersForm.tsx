@@ -1,7 +1,7 @@
 "use client";
 import { useRol } from "@/hooks/use-rol";
 import { useUsers } from "@/hooks/use-users";
-import { createUsersSchema } from "@/schemas";
+import { CreateUsersSchema } from "@/schemas";
 import { TooltipProvider } from "@radix-ui/react-tooltip";
 import { Bot } from "lucide-react";
 import { useEffect } from "react";
@@ -31,8 +31,8 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 interface CreateUsersFormProps
   extends Omit<React.ComponentPropsWithRef<"form">, "onSubmit"> {
   children: React.ReactNode;
-  form: UseFormReturn<createUsersSchema>;
-  onSubmit: (data: createUsersSchema) => void;
+  form: UseFormReturn<CreateUsersSchema>;
+  onSubmit: (data: CreateUsersSchema) => void;
 }
 
 export const CreateUsersForm = ({
