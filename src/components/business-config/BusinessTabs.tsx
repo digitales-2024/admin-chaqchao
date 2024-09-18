@@ -1,5 +1,5 @@
 import { CreateBusinessConfigSchema } from "@/schemas/businessInformation/createBusinessConfigSchema";
-import { DoorClosed, DoorOpen } from "lucide-react";
+import { Building2, CalendarDays, DoorClosed, DoorOpen } from "lucide-react";
 import { useForm } from "react-hook-form";
 
 import { BusinessHourPopover } from "@/components/business-config/BusinessHourPopover";
@@ -37,8 +37,14 @@ export function BusinessTabs({
   return (
     <Tabs defaultValue="information" className="w-full">
       <TabsList className="grid w-full grid-cols-2">
-        <TabsTrigger value="information">Información</TabsTrigger>
-        <TabsTrigger value="schedule">Horario</TabsTrigger>
+        <TabsTrigger value="information">
+          <Building2 className="mr-2 h-4 w-4" />
+          Información
+        </TabsTrigger>
+        <TabsTrigger value="schedule">
+          <CalendarDays className="mr-2 h-4 w-4" />
+          Horario
+        </TabsTrigger>
       </TabsList>
       <TabsContent value="information">
         <Card>
