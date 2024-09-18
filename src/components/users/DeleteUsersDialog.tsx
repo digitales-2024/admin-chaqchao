@@ -49,6 +49,12 @@ export function DeleteUsersDialog({
 
   const { onDeleteUsers } = useUsers();
 
+  const onDeleteUsersHandler = () => {
+    onDeleteUsers(users);
+    props.onOpenChange?.(false);
+    onSuccess?.();
+  };
+
   if (isDesktop) {
     return (
       <AlertDialog {...props}>
@@ -75,9 +81,7 @@ export function DeleteUsersDialog({
             </AlertDialogCancel>
             <AlertDialogAction
               aria-label="Delete selected rows"
-              onClick={() => {
-                onDeleteUsers(users);
-              }}
+              onClick={onDeleteUsersHandler}
               disabled={isDeletePending}
             >
               {isDeletePending && (
@@ -108,24 +112,15 @@ export function DeleteUsersDialog({
         <DrawerHeader>
           <DrawerTitle>¿Estás absolutamente seguro?</DrawerTitle>
           <DrawerDescription>
-            Esta acción no se puede deshacer. Esto eliminará a
+            Esta acción eliminará a
             <span className="font-medium">{users.length}</span>
             {users.length === 1 ? " usuario" : " usuarios"}
           </DrawerDescription>
         </DrawerHeader>
         <DrawerFooter className="gap-2 sm:space-x-0">
-          <DrawerClose asChild>
-            <Button variant="outline">Cancelar</Button>
-          </DrawerClose>
           <Button
             aria-label="Delete selected rows"
-            variant="destructive"
-            onClick={() => {
-              onDeleteUsers(users);
-              if (onSuccess) {
-                onSuccess();
-              }
-            }}
+            onClick={onDeleteUsersHandler}
             disabled={isDeletePending}
           >
             {isDeletePending && (
@@ -136,6 +131,9 @@ export function DeleteUsersDialog({
             )}
             Eliminar
           </Button>
+          <DrawerClose asChild>
+            <Button variant="outline">Cancelar</Button>
+          </DrawerClose>
         </DrawerFooter>
       </DrawerContent>
     </Drawer>
