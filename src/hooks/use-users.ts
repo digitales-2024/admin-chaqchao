@@ -4,7 +4,9 @@ import {
   useGeneratePasswordMutation,
   useGetUsersQuery,
   useReactivateUsersMutation,
+  useUpdateUserMutation,
 } from "@/redux/services/usersApi";
+import { CreateUsersSchema, UpdateUsersSchema } from "@/schemas";
 import { CustomErrorData, User } from "@/types";
 import { translateError } from "@/utils/translateError";
 import { toast } from "sonner";
@@ -14,6 +16,10 @@ export const useUsers = () => {
   const [generatePassword, { data: password }] = useGeneratePasswordMutation();
   const [createUser, { isSuccess: isSuccessCreateUser }] =
     useCreateUserMutation();
+  const [
+    updateUser,
+    { isSuccess: isSuccessUpdateUser, isLoading: isLoadingUpdateUser },
+  ] = useUpdateUserMutation();
   const [deleteUsers, { isSuccess: isSuccessDeleteUsers }] =
     useDeleteUsersMutation();
   const [
@@ -56,7 +62,7 @@ export const useUsers = () => {
     });
   };
 
-  const onCreateUser = async (input: Partial<User>) => {
+  const onCreateUser = async (input: CreateUsersSchema) => {
     const promise = () =>
       new Promise(async (resolve, reject) => {
         try {
@@ -82,6 +88,38 @@ export const useUsers = () => {
     toast.promise(promise(), {
       loading: "Creando...",
       success: "Usuario creado",
+      error: (error) => {
+        return error.message;
+      },
+    });
+  };
+
+  const onUpdateUser = async (input: UpdateUsersSchema) => {
+    const promise = () =>
+      new Promise(async (resolve, reject) => {
+        try {
+          const result = await updateUser(input);
+          if (result.error && "data" in result.error) {
+            const error = (result.error.data as CustomErrorData).message;
+            const message = translateError(error as string);
+            reject(new Error(message));
+          }
+          if (result.error) {
+            reject(
+              new Error(
+                "Ocurrió un error inesperado, por favor intenta de nuevo",
+              ),
+            );
+          }
+          resolve(result);
+        } catch (error) {
+          reject(error);
+        }
+      });
+
+    toast.promise(promise(), {
+      loading: "Actualizando...",
+      success: "Usuario actualizado",
       error: (error) => {
         return error.message;
       },
@@ -173,5 +211,8 @@ export const useUsers = () => {
     onReactivateUsers,
     isSuccessReactivateUsers,
     isLoadingReactivateUsers,
+    onUpdateUser,
+    isSuccessUpdateUser,
+    isLoadingUpdateUser,
   };
 };
