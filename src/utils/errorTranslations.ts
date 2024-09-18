@@ -31,6 +31,10 @@ const errorTranslations = {
   "Email already exists": "El correo electrónico ya existe",
   "You cannot deactivate yourself": "No puedes desactivarte",
   "User not found or inactive": "Usuario no encontrado o inactivo",
+  "service unavailable, please try again later":
+    "Servicio no disponible, por favor intenta más tarde",
+  "Email already exists but inactive, contact the administrator to reactivate the account":
+    "El correo electrónico ya existe pero está inactivo, contacta al administrador para reactivar la cuenta",
 };
 
 export default errorTranslations;
