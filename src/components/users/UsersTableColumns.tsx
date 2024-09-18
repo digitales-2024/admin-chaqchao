@@ -72,7 +72,9 @@ export const usersColumns = (isSuperAdmin: boolean): ColumnDef<User>[] => [
       <DataTableColumnHeader column={column} title="Nombre" />
     ),
     cell: ({ row }) => (
-      <div className="truncate capitalize">{row.getValue("nombre")}</div>
+      <div className="min-w-40 truncate capitalize">
+        {row.getValue("nombre")}
+      </div>
     ),
   },
   {
