@@ -36,6 +36,38 @@ export const usersApi = createApi({
       invalidatesTags: ["Users"],
     }),
 
+    // Eliminar un usuario por id del parametro /users/:id
+    deleteUser: build.mutation<User, string>({
+      query: (id) => ({
+        url: `users/${id}`,
+        method: "DELETE",
+        credentials: "include",
+      }),
+      invalidatesTags: ["Users"],
+    }),
+
+    // Eliminar varios usuarios
+    deleteUsers: build.mutation<void, { ids: string[] }>({
+      query: (ids) => ({
+        url: "users/deactivate/all",
+        method: "DELETE",
+        body: ids,
+        credentials: "include",
+      }),
+      invalidatesTags: ["Users"],
+    }),
+
+    // Reactivar varios usuarios
+    reactivateUsers: build.mutation<void, { ids: string[] }>({
+      query: (ids) => ({
+        url: "users/reactivate/all",
+        method: "PATCH",
+        body: ids,
+        credentials: "include",
+      }),
+      invalidatesTags: ["Users"],
+    }),
+
     // Mostrar todos los usuarios
     getUsers: build.query<User[], void>({
       query: () => ({
@@ -62,4 +94,7 @@ export const {
   useGetUsersQuery,
   useGeneratePasswordMutation,
   useCreateUserMutation,
+  useDeleteUserMutation,
+  useDeleteUsersMutation,
+  useReactivateUsersMutation,
 } = usersApi;
