@@ -94,7 +94,7 @@ export const useUsers = () => {
     });
   };
 
-  const onUpdateUser = async (input: UpdateUsersSchema) => {
+  const onUpdateUser = async (input: UpdateUsersSchema & { id: string }) => {
     const promise = () =>
       new Promise(async (resolve, reject) => {
         try {
