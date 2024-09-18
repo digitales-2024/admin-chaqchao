@@ -36,7 +36,7 @@ const dataForm = {
   button: "Crear usuario",
   title: "Crear usuarios",
   description:
-    "Complete los detalles a continuación para crear nuevos usuarios.",
+    "Complete los detalles a continuación para crear nuevos usuarios y enviar las credenciales",
 };
 
 export function CreateUsersDialog() {
@@ -96,7 +96,7 @@ export function CreateUsersDialog() {
                     aria-hidden="true"
                   />
                 )}
-                Registrar
+                Registrar y enviar correo
               </Button>
               <DialogClose asChild>
                 <Button
@@ -137,7 +137,7 @@ export function CreateUsersDialog() {
                   aria-hidden="true"
                 />
               )}
-              Registrar
+              Registrar y enviar correo
             </Button>
             <DrawerClose asChild>
               <Button variant="outline">Cancelar</Button>
