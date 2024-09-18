@@ -1,7 +1,4 @@
-import {
-  CreateUsersSchema,
-  UpdateUsersSchema,
-} from "@/schemas/users/createUsersSchema";
+import { CreateUsersSchema, UpdateUsersSchema } from "@/schemas";
 import { User } from "@/types";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
@@ -28,7 +25,7 @@ export const usersApi = createApi({
     }),
 
     // Actualizar información del usuario por id del parametro /users/:id
-    updateUser: build.mutation<UserUpdate, UpdateUsersSchema>({
+    updateUser: build.mutation<UserUpdate, UpdateUsersSchema & { id: string }>({
       query: ({ id, ...body }) => ({
         url: `users/${id}`,
         method: "PATCH",
