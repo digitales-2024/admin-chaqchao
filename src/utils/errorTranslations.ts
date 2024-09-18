@@ -31,6 +31,8 @@ const errorTranslations = {
   "Email already exists": "El correo electrónico ya existe",
   "contactNumber must be a valid phone number":
     "El número de contacto debe ser un número de teléfono válido",
+  "Opening time must be earlier than closing time.":
+    "El horario de apertura debe ser anterior al horario de cierre.",
 };
 
 export default errorTranslations;
