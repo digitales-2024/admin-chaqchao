@@ -21,11 +21,8 @@ export const usersSchema = z.object({
 
 export type CreateUsersSchema = z.infer<typeof usersSchema>;
 
-// export const updateTaskSchema = z.object({
-//   title: z.string().optional(),
-//   label: z.enum(users.label.enumValues).optional(),
-//   status: z.enum(tasks.status.enumValues).optional(),
-//   priority: z.enum(tasks.priority.enumValues).optional(),
-// });
+export const updateUsersSchema = usersSchema.partial();
 
-// export type UpdateTaskSchema = z.infer<typeof updateTaskSchema>;
+export type UpdateUsersSchema = z.infer<typeof updateUsersSchema> & {
+  id: string;
+};
