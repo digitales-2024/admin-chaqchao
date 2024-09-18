@@ -1,3 +1,7 @@
+import { useUpdateBusinessHour } from "@/hooks/use-business-hours";
+import { CalendarCog } from "lucide-react";
+import { useState } from "react";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,13 +13,43 @@ import {
 
 interface SchedulePopoverProps {
   day: string;
+  openingTime: string;
+  closingTime: string;
+  id: string;
 }
 
-export function BusinessHourPopover({ day }: SchedulePopoverProps) {
+export function BusinessHourPopover({
+  day,
+  openingTime,
+  closingTime,
+  id,
+}: SchedulePopoverProps) {
+  const { onUpdateBusinessHour } = useUpdateBusinessHour();
+  const [opening, setOpening] = useState(openingTime);
+  const [closing, setClosing] = useState(closingTime);
+
+  const handleOpeningChange = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const newOpeningTime = e.target.value;
+    setOpening(newOpeningTime);
+    await onUpdateBusinessHour({ id, openingTime: newOpeningTime });
+  };
+
+  const handleClosingChange = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const newClosingTime = e.target.value;
+    setClosing(newClosingTime);
+    await onUpdateBusinessHour({ id, closingTime: newClosingTime });
+  };
+
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button size="sm">Configurar</Button>
+        <Button size="sm" variant={"ghost"}>
+          <CalendarCog className="size-6 text-slate-500" />
+        </Button>
       </PopoverTrigger>
       <PopoverContent className="w-80">
         <div className="grid gap-4">
@@ -31,6 +65,8 @@ export function BusinessHourPopover({ day }: SchedulePopoverProps) {
               <Input
                 id={`openingTime-${day}`}
                 type="time"
+                value={opening}
+                onChange={handleOpeningChange}
                 className="col-span-2 h-8"
               />
             </div>
@@ -39,6 +75,8 @@ export function BusinessHourPopover({ day }: SchedulePopoverProps) {
               <Input
                 id={`closingTime-${day}`}
                 type="time"
+                value={closing}
+                onChange={handleClosingChange}
                 className="col-span-2 h-8"
               />
             </div>
