@@ -2,7 +2,7 @@
 
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { useUsers } from "@/hooks/use-users";
-import { createUsersSchema, usersSchema } from "@/schemas";
+import { CreateUsersSchema, usersSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus, RefreshCcw } from "lucide-react";
 import { useEffect, useState, useTransition } from "react";
@@ -46,7 +46,7 @@ export function CreateUsersDialog() {
 
   const { onCreateUser, isSuccessCreateUser } = useUsers();
 
-  const form = useForm<createUsersSchema>({
+  const form = useForm<CreateUsersSchema>({
     resolver: zodResolver(usersSchema),
     defaultValues: {
       name: "",
@@ -57,7 +57,7 @@ export function CreateUsersDialog() {
     },
   });
 
-  const onSubmit = async (input: createUsersSchema) => {
+  const onSubmit = async (input: CreateUsersSchema) => {
     startCreateTransition(async () => {
       await onCreateUser(input);
     });
