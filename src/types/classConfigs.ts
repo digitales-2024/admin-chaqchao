@@ -3,6 +3,7 @@ export type ClassPriceConfigData = {
   classTypeUser: string;
   price: number;
   typeCurrency: string;
+  businessId: string;
 };
 export type ClassLanguageData = {
   id: string;
