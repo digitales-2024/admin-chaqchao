@@ -2,7 +2,7 @@
 
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { useUsers } from "@/hooks/use-users";
-import { createUsersSchema, usersSchema } from "@/schemas";
+import { CreateUsersSchema, usersSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus, RefreshCcw } from "lucide-react";
 import { useEffect, useState, useTransition } from "react";
@@ -36,7 +36,7 @@ const dataForm = {
   button: "Crear usuario",
   title: "Crear usuarios",
   description:
-    "Complete los detalles a continuación para crear nuevos usuarios.",
+    "Complete los detalles a continuación para crear nuevos usuarios y enviar las credenciales",
 };
 
 export function CreateUsersDialog() {
@@ -46,7 +46,7 @@ export function CreateUsersDialog() {
 
   const { onCreateUser, isSuccessCreateUser } = useUsers();
 
-  const form = useForm<createUsersSchema>({
+  const form = useForm<CreateUsersSchema>({
     resolver: zodResolver(usersSchema),
     defaultValues: {
       name: "",
@@ -57,7 +57,7 @@ export function CreateUsersDialog() {
     },
   });
 
-  const onSubmit = async (input: createUsersSchema) => {
+  const onSubmit = async (input: CreateUsersSchema) => {
     startCreateTransition(async () => {
       await onCreateUser(input);
     });
@@ -96,7 +96,7 @@ export function CreateUsersDialog() {
                     aria-hidden="true"
                   />
                 )}
-                Registrar
+                Registrar y enviar correo
               </Button>
               <DialogClose asChild>
                 <Button
@@ -137,7 +137,7 @@ export function CreateUsersDialog() {
                   aria-hidden="true"
                 />
               )}
-              Registrar
+              Registrar y enviar correo
             </Button>
             <DrawerClose asChild>
               <Button variant="outline">Cancelar</Button>

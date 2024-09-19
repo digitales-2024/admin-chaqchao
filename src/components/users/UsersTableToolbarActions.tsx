@@ -10,6 +10,7 @@ import { exportTableToCSV } from "@/lib/export";
 
 import { CreateUsersDialog } from "./CreateUserDialog";
 import { DeleteUsersDialog } from "./DeleteUsersDialog";
+import { ReactivateUsersDialog } from "./ReactivateUsersDialog";
 
 export interface UsersTableToolbarActionsProps {
   table?: Table<User>;
@@ -21,12 +22,20 @@ export function UsersTableToolbarActions({
   return (
     <div className="flex w-fit flex-wrap items-center gap-2">
       {table && table.getFilteredSelectedRowModel().rows.length > 0 ? (
-        <DeleteUsersDialog
-          users={table
-            .getFilteredSelectedRowModel()
-            .rows.map((row) => row.original)}
-          onSuccess={() => table.toggleAllRowsSelected(false)}
-        />
+        <>
+          <DeleteUsersDialog
+            users={table
+              .getFilteredSelectedRowModel()
+              .rows.map((row) => row.original)}
+            onSuccess={() => table.toggleAllRowsSelected(false)}
+          />
+          <ReactivateUsersDialog
+            users={table
+              .getFilteredSelectedRowModel()
+              .rows.map((row) => row.original)}
+            onSuccess={() => table.toggleAllRowsSelected(false)}
+          />
+        </>
       ) : null}
       <CreateUsersDialog />
       <Button

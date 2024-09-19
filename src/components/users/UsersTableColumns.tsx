@@ -3,7 +3,14 @@
 import { User } from "@/types";
 import { type ColumnDef } from "@tanstack/react-table";
 import { format, parseISO } from "date-fns";
-import { CircleCheck, Ellipsis, Squircle, Timer, Trash } from "lucide-react";
+import {
+  CircleCheck,
+  Ellipsis,
+  RefreshCcwDot,
+  Squircle,
+  Timer,
+  Trash,
+} from "lucide-react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -20,8 +27,15 @@ import {
 import { DataTableColumnHeader } from "../data-table/DataTableColumnHeader";
 import { Badge } from "../ui/badge";
 import { DeleteUsersDialog } from "./DeleteUsersDialog";
+import { ReactivateUsersDialog } from "./ReactivateUsersDialog";
+import { UpdateUserSheet } from "./UpdateUserSheet";
 
-export const usersColumns = (): ColumnDef<User>[] => [
+/**
+ * Generar las columnas de la tabla de usuarios
+ * @param isSuperAdmin Valor si el usuario es super administrador
+ * @returns Columnas de la tabla de usuarios
+ */
+export const usersColumns = (isSuperAdmin: boolean): ColumnDef<User>[] => [
   {
     id: "select",
     header: ({ table }) => (
@@ -58,7 +72,9 @@ export const usersColumns = (): ColumnDef<User>[] => [
       <DataTableColumnHeader column={column} title="Nombre" />
     ),
     cell: ({ row }) => (
-      <div className="truncate capitalize">{row.getValue("nombre")}</div>
+      <div className="min-w-40 truncate capitalize">
+        {row.getValue("nombre")}
+      </div>
     ),
   },
   {
@@ -139,18 +155,17 @@ export const usersColumns = (): ColumnDef<User>[] => [
     ),
   },
   {
-    id: "última conexión",
+    id: "conexión",
     accessorKey: "lastLogin",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Última conexión" />
     ),
     cell: ({ row }) => {
+      const lastConnection = row?.getValue("conexión");
+      if (!lastConnection) return null;
       return (
         <div>
-          {format(
-            parseISO(row?.getValue("última conexión")),
-            "yyyy-MM-dd HH:mm:ss",
-          )}
+          {format(parseISO(row?.getValue("conexión")), "yyyy-MM-dd HH:mm:ss")}
         </div>
       );
     },
@@ -158,25 +173,38 @@ export const usersColumns = (): ColumnDef<User>[] => [
   {
     id: "actions",
     cell: function Cell({ row }) {
-      // const [isUpdatePending, startUpdateTransition] = useTransition();
-      // const [showUpdateTaskSheet, setShowUpdateTaskSheet] =
-      //   useState(false);
-      const [showDeleteTaskDialog, setShowDeleteTaskDialog] = useState(false);
+      const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+      const [showReactivateDialog, setShowReactivateDialog] = useState(false);
+      const [showEditDialog, setShowEditDialog] = useState(false);
 
+      const { isActive } = row.original;
       return (
-        <>
-          {/* <UpdateTaskSheet
-              open={showUpdateTaskSheet}
-              onOpenChange={setShowUpdateTaskSheet}
-              task={row.original}
-            /> */}
-          <DeleteUsersDialog
-            open={showDeleteTaskDialog}
-            onOpenChange={setShowDeleteTaskDialog}
-            users={[row?.original]}
-            showTrigger={false}
-            onSuccess={() => row.toggleSelected(false)}
-          />
+        <div>
+          <div>
+            <UpdateUserSheet
+              open={showEditDialog}
+              onOpenChange={setShowEditDialog}
+              user={row?.original}
+            />
+            <DeleteUsersDialog
+              open={showDeleteDialog}
+              onOpenChange={setShowDeleteDialog}
+              users={[row?.original]}
+              showTrigger={false}
+              onSuccess={() => {
+                row.toggleSelected(false);
+              }}
+            />
+            <ReactivateUsersDialog
+              open={showReactivateDialog}
+              onOpenChange={setShowReactivateDialog}
+              users={[row?.original]}
+              showTrigger={false}
+              onSuccess={() => {
+                row.toggleSelected(false);
+              }}
+            />
+          </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
@@ -188,11 +216,28 @@ export const usersColumns = (): ColumnDef<User>[] => [
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-40">
-              <DropdownMenuItem onSelect={() => console.log("a")}>
+              <DropdownMenuItem
+                onSelect={() => setShowEditDialog(true)}
+                disabled={!isActive}
+              >
                 Editar
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onSelect={() => setShowDeleteTaskDialog(true)}>
+              {isSuperAdmin && (
+                <DropdownMenuItem
+                  onSelect={() => setShowReactivateDialog(true)}
+                  disabled={isActive}
+                >
+                  Reactivar
+                  <DropdownMenuShortcut>
+                    <RefreshCcwDot className="size-4" aria-hidden="true" />
+                  </DropdownMenuShortcut>
+                </DropdownMenuItem>
+              )}
+              <DropdownMenuItem
+                onSelect={() => setShowDeleteDialog(true)}
+                disabled={!isActive}
+              >
                 Eliminar
                 <DropdownMenuShortcut>
                   <Trash className="size-4" aria-hidden="true" />
@@ -200,7 +245,7 @@ export const usersColumns = (): ColumnDef<User>[] => [
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-        </>
+        </div>
       );
     },
     enablePinning: true,

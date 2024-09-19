@@ -29,6 +29,15 @@ const errorTranslations = {
   "the password is too weak, it must contain at least one uppercase letter, one lowercase letter, one number,phone must be a phone number":
     "La contraseña es muy débil, debe contener al menos una letra mayúscula, una letra minúscula y un número, el teléfono debe ser un número de teléfono",
   "Email already exists": "El correo electrónico ya existe",
+  "You cannot deactivate yourself": "No puedes desactivarte",
+  "User not found or inactive": "Usuario no encontrado o inactivo",
+  "service unavailable, please try again later":
+    "Servicio no disponible, por favor intenta más tarde",
+  "Email already exists but inactive, contact the administrator to reactivate the account":
+    "El correo electrónico ya existe pero está inactivo, contacta al administrador para reactivar la cuenta",
+  "You cannot update your own password":
+    "Puedes actualizar tu propia contraseña en la sección de perfil",
+  "Email not found": "Correo electrónico no encontrado",
 };
 
 export default errorTranslations;

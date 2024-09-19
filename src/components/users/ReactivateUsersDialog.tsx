@@ -1,23 +1,9 @@
-"use client";
-
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { useUsers } from "@/hooks/use-users";
 import { User } from "@/types";
-import { type Row } from "@tanstack/react-table";
-import { RefreshCcw, Trash } from "lucide-react";
-import { ComponentPropsWithoutRef, useTransition } from "react";
-
-import { Button } from "@/components/ui/button";
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from "@/components/ui/drawer";
+import { Row } from "@tanstack/react-table";
+import { RefreshCcw, RefreshCcwDot } from "lucide-react";
+import { ComponentPropsWithoutRef } from "react";
 
 import {
   AlertDialog,
@@ -30,27 +16,37 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "../ui/alert-dialog";
+import { Button } from "../ui/button";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "../ui/drawer";
 
-interface DeleteUsersDialogProps
+interface ReactivateUsersDialogProps
   extends ComponentPropsWithoutRef<typeof AlertDialog> {
   users: Row<User>["original"][];
   showTrigger?: boolean;
   onSuccess?: () => void;
 }
 
-export function DeleteUsersDialog({
+export const ReactivateUsersDialog = ({
   users,
   showTrigger = true,
   onSuccess,
   ...props
-}: DeleteUsersDialogProps) {
-  const [isDeletePending] = useTransition();
+}: ReactivateUsersDialogProps) => {
   const isDesktop = useMediaQuery("(min-width: 640px)");
 
-  const { onDeleteUsers } = useUsers();
+  const { onReactivateUsers, isLoadingReactivateUsers } = useUsers();
 
-  const onDeleteUsersHandler = () => {
-    onDeleteUsers(users);
+  const onReactivateUsersHandler = () => {
+    onReactivateUsers(users);
     props.onOpenChange?.(false);
     onSuccess?.();
   };
@@ -61,8 +57,8 @@ export function DeleteUsersDialog({
         {showTrigger ? (
           <AlertDialogTrigger asChild>
             <Button variant="outline" size="sm">
-              <Trash className="mr-2 size-4" aria-hidden="true" />
-              Eliminar ({users.length})
+              <RefreshCcwDot className="mr-2 size-4" aria-hidden="true" />
+              Reactivar ({users.length})
             </Button>
           </AlertDialogTrigger>
         ) : null}
@@ -70,7 +66,7 @@ export function DeleteUsersDialog({
           <AlertDialogHeader>
             <AlertDialogTitle>¿Estás absolutamente seguro?</AlertDialogTitle>
             <AlertDialogDescription>
-              Esta acción eliminará a
+              Esta acción reactivará a{" "}
               <span className="font-medium"> {users.length}</span>
               {users.length === 1 ? " usuario" : " usuarios"}
             </AlertDialogDescription>
@@ -80,31 +76,30 @@ export function DeleteUsersDialog({
               <Button variant="outline">Cancelar</Button>
             </AlertDialogCancel>
             <AlertDialogAction
-              aria-label="Delete selected rows"
-              onClick={onDeleteUsersHandler}
-              disabled={isDeletePending}
+              aria-label="Reactivate selected rows"
+              onClick={onReactivateUsersHandler}
+              disabled={isLoadingReactivateUsers}
             >
-              {isDeletePending && (
+              {isLoadingReactivateUsers && (
                 <RefreshCcw
                   className="mr-2 size-4 animate-spin"
                   aria-hidden="true"
                 />
               )}
-              Eliminar
+              Reactivar
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
     );
   }
-
   return (
     <Drawer {...props}>
       {showTrigger ? (
         <DrawerTrigger asChild>
           <Button variant="outline" size="sm">
-            <Trash className="mr-2 size-4" aria-hidden="true" />
-            Eliminar ({users.length})
+            <RefreshCcwDot className="mr-2 size-4" aria-hidden="true" />
+            Reactivar ({users.length})
           </Button>
         </DrawerTrigger>
       ) : null}
@@ -112,24 +107,24 @@ export function DeleteUsersDialog({
         <DrawerHeader>
           <DrawerTitle>¿Estás absolutamente seguro?</DrawerTitle>
           <DrawerDescription>
-            Esta acción eliminará a
+            Esta acción reactivará a
             <span className="font-medium">{users.length}</span>
             {users.length === 1 ? " usuario" : " usuarios"}
           </DrawerDescription>
         </DrawerHeader>
         <DrawerFooter className="gap-2 sm:space-x-0">
           <Button
-            aria-label="Delete selected rows"
-            onClick={onDeleteUsersHandler}
-            disabled={isDeletePending}
+            aria-label="Reactivate selected rows"
+            onClick={onReactivateUsersHandler}
+            disabled={isLoadingReactivateUsers}
           >
-            {isDeletePending && (
+            {isLoadingReactivateUsers && (
               <RefreshCcw
                 className="mr-2 size-4 animate-spin"
                 aria-hidden="true"
               />
             )}
-            Eliminar
+            Reactivar
           </Button>
           <DrawerClose asChild>
             <Button variant="outline">Cancelar</Button>
@@ -138,4 +133,4 @@ export function DeleteUsersDialog({
       </DrawerContent>
     </Drawer>
   );
-}
+};
