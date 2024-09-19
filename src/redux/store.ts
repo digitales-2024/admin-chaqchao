@@ -5,6 +5,7 @@ import { adminApi } from "./services/adminApi";
 import { authApi } from "./services/authApi";
 import { businessConfigApi } from "./services/businessConfigApi";
 import { businessHoursApi } from "./services/businessHoursApi";
+import { classPriceApi } from "./services/classPriceApi";
 import { rolesApi } from "./services/rolesApi";
 import { usersApi } from "./services/usersApi";
 
@@ -16,6 +17,7 @@ export const store = configureStore({
     [rolesApi.reducerPath]: rolesApi.reducer,
     [businessConfigApi.reducerPath]: businessConfigApi.reducer,
     [businessHoursApi.reducerPath]: businessHoursApi.reducer,
+    [classPriceApi.reducerPath]: classPriceApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
@@ -24,7 +26,8 @@ export const store = configureStore({
       .concat(usersApi.middleware)
       .concat(rolesApi.middleware)
       .concat(businessConfigApi.middleware)
-      .concat(businessHoursApi.middleware),
+      .concat(businessHoursApi.middleware)
+      .concat(classPriceApi.middleware),
 });
 setupListeners(store.dispatch);
 
