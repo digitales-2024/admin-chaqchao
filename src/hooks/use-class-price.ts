@@ -12,9 +12,10 @@ export const useClassPrices = () => {
     error,
     isLoading,
     isSuccess,
+    refetch,
   } = useGetClassPricesAllQuery();
 
-  return { dataClassPricesAll, error, isLoading, isSuccess };
+  return { dataClassPricesAll, error, isLoading, isSuccess, refetch };
 };
 
 export const useCreateClassPrice = () => {
