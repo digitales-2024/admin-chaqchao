@@ -228,6 +228,7 @@ export const useUsers = () => {
               ),
             );
           }
+
           resolve(result);
         } catch (error) {
           reject(error);
