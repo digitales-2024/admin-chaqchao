@@ -22,8 +22,8 @@ interface MenuProps {
 }
 
 export const Menu = ({ isOpen }: MenuProps) => {
-  const pathname = usePathname();
-
+  
+  const pathname = usePathname() ?? ""; // Si pathname es null, se usará ""
   const menuList = getMenuList(pathname);
 
   const { signOut } = useLogout();
