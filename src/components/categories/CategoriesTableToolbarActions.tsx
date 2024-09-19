@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import { exportTableToCSV } from "@/lib/export";
 
 import { CreateCategoryDialog } from "./CreateCategoryDialog";
-import { DeleteCategoriesDialog } from "./DeleteCategoriesDialog";
 
 export interface CategoriesTableToolbarActionsProps {
   table?: Table<Category>;
@@ -19,14 +18,7 @@ export function CategoriesTableToolbarActions({
 }: CategoriesTableToolbarActionsProps) {
   return (
     <div className="flex w-fit flex-wrap items-center gap-2">
-      {table && table.getFilteredSelectedRowModel().rows.length > 0 ? (
-        <DeleteCategoriesDialog
-          categories={table
-            .getFilteredSelectedRowModel()
-            .rows.map((row) => row.original)}
-          onSuccess={() => table.toggleAllRowsSelected(false)}
-        />
-      ) : null}
+      {/* Eliminado el componente DeleteCategoriesDialog */}
       <CreateCategoryDialog />
       <Button
         variant="outline"
