@@ -8,6 +8,12 @@ export type {
   AllBusinessHoursData,
   BusinessHoursDataWithId,
 } from "./businessHours";
+export type {
+  ClassPriceConfigData,
+  ClassLanguageData,
+  ClassRegistrationData,
+  ClassScheduleData,
+} from "./classConfigs";
 
 export interface Option {
   label: string;
