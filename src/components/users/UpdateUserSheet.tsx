@@ -36,7 +36,11 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 
+import { Badge } from "../ui/badge";
 import { Input } from "../ui/input";
+import { ScrollArea } from "../ui/scroll-area";
+import { Separator } from "../ui/separator";
+import { SendNewPasswordForm } from "./SendNewPasswordForm";
 
 const infoSheet = {
   title: "Actualizar Usuario",
@@ -87,100 +91,112 @@ export function UpdateUserSheet({ user, ...props }: UpdateUserSheetProps) {
     <Sheet {...props}>
       <SheetContent className="flex flex-col gap-6 sm:max-w-md">
         <SheetHeader className="text-left">
-          <SheetTitle>{infoSheet.title}</SheetTitle>
+          <SheetTitle className="flex flex-col items-start">
+            {infoSheet.title}
+            <Badge
+              className="bg-emerald-100 text-emerald-700"
+              variant="secondary"
+            >
+              {user.email}
+            </Badge>
+          </SheetTitle>
           <SheetDescription>{infoSheet.description}</SheetDescription>
         </SheetHeader>
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="flex flex-col gap-4"
-          >
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nombre</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="john smith"
-                      className="resize-none"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="phone"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Teléfono</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="985523221"
-                      className="resize-none"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="roles"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel htmlFor="rol">Rol</FormLabel>
-                  <Select
-                    onValueChange={(value) => field.onChange([value])}
-                    defaultValue={field.value[0] || ""}
-                  >
+        <ScrollArea className="mt-4 w-full gap-4 rounded-md border p-4">
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="flex flex-col gap-4"
+            >
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Nombre</FormLabel>
                     <FormControl>
-                      <SelectTrigger className="capitalize">
-                        <SelectValue placeholder="Selecciona un rol" />
-                      </SelectTrigger>
+                      <Input
+                        placeholder="john smith"
+                        className="resize-none"
+                        {...field}
+                      />
                     </FormControl>
-                    <SelectContent>
-                      <SelectGroup>
-                        {data.map((rol) => (
-                          <SelectItem
-                            key={rol.id}
-                            value={rol.id}
-                            className="capitalize"
-                          >
-                            {rol.name}
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <SheetFooter className="gap-2 pt-2 sm:space-x-0">
-              <SheetClose asChild>
-                <Button type="button" variant="outline">
-                  Cancelar
-                </Button>
-              </SheetClose>
-              <Button disabled={isLoadingUpdateUser}>
-                {isLoadingUpdateUser && (
-                  <RefreshCcw
-                    className="mr-2 size-4 animate-spin"
-                    aria-hidden="true"
-                  />
+                    <FormMessage />
+                  </FormItem>
                 )}
-                Actualizar
-              </Button>
-            </SheetFooter>
-          </form>
-        </Form>
+              />
+              <FormField
+                control={form.control}
+                name="phone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Teléfono</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="985523221"
+                        className="resize-none"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="roles"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel htmlFor="rol">Rol</FormLabel>
+                    <Select
+                      onValueChange={(value) => field.onChange([value])}
+                      defaultValue={field.value[0] || ""}
+                    >
+                      <FormControl>
+                        <SelectTrigger className="capitalize">
+                          <SelectValue placeholder="Selecciona un rol" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectGroup>
+                          {data.map((rol) => (
+                            <SelectItem
+                              key={rol.id}
+                              value={rol.id}
+                              className="capitalize"
+                            >
+                              {rol.name}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <SheetFooter className="gap-2 pt-2 sm:space-x-0">
+                <SheetClose asChild>
+                  <Button type="button" variant="outline">
+                    Cancelar
+                  </Button>
+                </SheetClose>
+                <Button disabled={isLoadingUpdateUser}>
+                  {isLoadingUpdateUser && (
+                    <RefreshCcw
+                      className="mr-2 size-4 animate-spin"
+                      aria-hidden="true"
+                    />
+                  )}
+                  Actualizar
+                </Button>
+              </SheetFooter>
+            </form>
+          </Form>
+          <Separator className="my-6" />
+          <SendNewPasswordForm user={user} />
+        </ScrollArea>
       </SheetContent>
     </Sheet>
   );
