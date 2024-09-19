@@ -8,7 +8,7 @@ const HeaderPage = () => (
   <div className="mb-6">
     <TitleSecction text="Configuración de las Clases" />
     <span className="text-sm text-slate-600">
-      Complete la información de las clases.
+      Complete la configuración de las clases.
     </span>
   </div>
 );
