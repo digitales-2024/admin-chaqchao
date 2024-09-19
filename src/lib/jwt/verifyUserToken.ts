@@ -22,7 +22,7 @@ export async function verifyUserToken(
   );
 
   if (!response.ok) {
-    throw new Error("Token inválido o usuario no autorizado");
+    return response.json();
   }
 
   const setCookieHeader = response.headers.get("set-cookie");
