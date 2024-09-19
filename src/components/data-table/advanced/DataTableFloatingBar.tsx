@@ -41,7 +41,7 @@ export const DataTableFloatingBar = <TData,>({
   return (
     <div className="fixed inset-x-0 bottom-4 z-50 mx-auto w-fit px-4">
       <div className="w-full overflow-x-auto">
-        <div className="bg-card mx-auto flex w-fit items-center gap-2 rounded-md border p-2 shadow-2xl">
+        <div className="mx-auto flex w-fit items-center gap-2 rounded-md border bg-card p-2 shadow-2xl">
           <div className="flex h-7 items-center rounded-md border border-dashed pl-2.5 pr-1">
             <span className="whitespace-nowrap text-xs">
               {rows.length} seleccionado{rows.length > 1 ? "s" : ""}
@@ -59,7 +59,7 @@ export const DataTableFloatingBar = <TData,>({
                     <X className="size-3.5 shrink-0" aria-hidden="true" />
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent className="bg-accent text-foreground flex items-center border px-2 py-1 text-xs font-semibold dark:bg-zinc-900">
+                <TooltipContent className="flex items-center border bg-accent px-2 py-1 text-xs font-semibold text-foreground dark:bg-zinc-900">
                   <p className="mr-2">Limpiar selección</p>
                   <Kbd abbrTitle="Escape" variant="outline">
                     Esc
@@ -99,7 +99,7 @@ export const DataTableFloatingBar = <TData,>({
                     )}
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent className="bg-accent text-foreground border text-xs font-semibold dark:bg-zinc-900">
+                <TooltipContent className="border bg-accent text-xs font-semibold text-foreground dark:bg-zinc-900">
                   <p>Exportar</p>
                 </TooltipContent>
               </Tooltip>

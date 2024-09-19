@@ -102,7 +102,7 @@ export const usersColumns = (isSuperAdmin: boolean): ColumnDef<User>[] => [
     cell: ({ row }) => (
       <div className="inline-flex items-center gap-2 capitalize">
         <Squircle
-          className="fill-primary size-4 stroke-none"
+          className="size-4 fill-primary stroke-none"
           aria-hidden="true"
         />
         {row.original.roles[0].name}
@@ -210,7 +210,7 @@ export const usersColumns = (isSuperAdmin: boolean): ColumnDef<User>[] => [
               <Button
                 aria-label="Open menu"
                 variant="ghost"
-                className="data-[state=open]:bg-muted flex size-8 p-0"
+                className="flex size-8 p-0 data-[state=open]:bg-muted"
               >
                 <Ellipsis className="size-4" aria-hidden="true" />
               </Button>
