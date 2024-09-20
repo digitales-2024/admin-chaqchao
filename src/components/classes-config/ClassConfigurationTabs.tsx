@@ -4,8 +4,8 @@ import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
+import { GeneralConfigForm } from "./class-general-config/GeneralConfigForm";
 import { PriceConfigSection } from "./class-price-config/PriceConfigSection";
-import { GeneralConfigForm } from "./GeneralConfigForm";
 
 export default function ClassConfigurationTabs() {
   const [generalFormData, setGeneralFormData] = useState({
