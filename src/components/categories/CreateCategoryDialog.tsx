@@ -1,9 +1,11 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
-import { useForm } from "react-hook-form";
+import { useCategories } from "@/hooks/use-categories";
+import { CreateCategoriesSchema, categoriesSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus, RefreshCcw } from "lucide-react";
+import { useEffect, useState, useTransition } from "react";
+import { useForm } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -18,8 +20,6 @@ import {
 } from "@/components/ui/dialog";
 
 import { CreateCategoryForm } from "./CreateCategoryForm";
-import { useCategories } from "@/hooks/use-categories";
-import { createCategoriesSchema, categoriesSchema } from "@/schemas";
 
 const dataForm = {
   button: "Crear categoría",
@@ -34,7 +34,7 @@ export function CreateCategoryDialog() {
 
   const { onCreateCategory, isSuccessCreateCategory } = useCategories();
 
-  const form = useForm<createCategoriesSchema>({
+  const form = useForm<CreateCategoriesSchema>({
     resolver: zodResolver(categoriesSchema),
     defaultValues: {
       name: "",
@@ -42,7 +42,7 @@ export function CreateCategoryDialog() {
     },
   });
 
-  const onSubmit = async (input: createCategoriesSchema) => {
+  const onSubmit = async (input: CreateCategoriesSchema) => {
     startCreateTransition(async () => {
       await onCreateCategory(input);
     });
