@@ -9,13 +9,13 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { createCategoriesSchema } from "@/schemas";
+import { CreateCategoriesSchema } from "@/schemas";
 
 interface CreateCategoryFormProps
   extends Omit<React.ComponentPropsWithRef<"form">, "onSubmit"> {
   children: React.ReactNode;
-  form: UseFormReturn<createCategoriesSchema>;
-  onSubmit: (data: createCategoriesSchema) => void;
+  form: UseFormReturn<CreateCategoriesSchema>;
+  onSubmit: (data: CreateCategoriesSchema) => void;
 }
 
 export const CreateCategoryForm = ({
