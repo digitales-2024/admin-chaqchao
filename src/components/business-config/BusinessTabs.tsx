@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 
 import { BusinessHourPopover } from "@/components/business-config/BusinessHourPopover";
 import { CreateBusinessConfigForm } from "@/components/business-config/CreateBusinessConfigForm";
+import { UpdateBusinessHoursSheet } from "@/components/business-config/UpdateBusinessHoursSheet";
 import {
   Card,
   CardContent,
@@ -19,6 +20,7 @@ interface BusinessHour {
   dayOfWeek: string;
   openingTime: string;
   closingTime: string;
+  isOpen: boolean;
 }
 
 interface BusinessTabsProps {
@@ -26,6 +28,7 @@ interface BusinessTabsProps {
   handleSubmit: (data: CreateBusinessConfigSchema) => Promise<void>;
   daysOfWeek: { [key: string]: string };
   businessHoursArray: BusinessHour[];
+  refetchBusinessHours: () => void;
 }
 
 export function BusinessTabs({
@@ -33,6 +36,7 @@ export function BusinessTabs({
   handleSubmit,
   daysOfWeek,
   businessHoursArray,
+  refetchBusinessHours,
 }: BusinessTabsProps) {
   return (
     <Tabs defaultValue="information" className="w-full">
@@ -46,6 +50,7 @@ export function BusinessTabs({
           Horario
         </TabsTrigger>
       </TabsList>
+
       <TabsContent value="information">
         <Card>
           <CardHeader>
@@ -59,14 +64,26 @@ export function BusinessTabs({
           </CardContent>
         </Card>
       </TabsContent>
+
       <TabsContent value="schedule">
         <Card>
-          <CardHeader>
-            <CardTitle>Horario</CardTitle>
-            <CardDescription>
-              Configure el horario de atención de su empresa.
-            </CardDescription>
-          </CardHeader>
+          <div>
+            <CardHeader>
+              <div>
+                <CardTitle>Horario</CardTitle>
+                <CardDescription>
+                  Configure el horario de atención de su empresa.
+                </CardDescription>
+              </div>
+              <div>
+                <UpdateBusinessHoursSheet
+                  daysOfWeek={daysOfWeek}
+                  businessHoursArray={businessHoursArray}
+                  refetchBusinessHours={refetchBusinessHours}
+                />
+              </div>
+            </CardHeader>
+          </div>
           <CardContent className="space-y-2">
             <div className="grid grid-cols-2 gap-4">
               {Object.entries(daysOfWeek).map(([day, dayInSpanish]) => {
