@@ -2,6 +2,7 @@ import { Category } from "@/types";
 import { type ColumnDef } from "@tanstack/react-table";
 import { Ellipsis, Trash } from "lucide-react";
 import { useState } from "react";
+
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -12,6 +13,7 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+
 import { DataTableColumnHeader } from "../data-table/DataTableColumnHeader";
 import { UpdateCategorySheet } from "./UpdateCategorySheet";
 
