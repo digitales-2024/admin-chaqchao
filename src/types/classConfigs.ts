@@ -18,4 +18,5 @@ export type ClassRegistrationData = {
 export type ClassScheduleData = {
   id: string;
   startTime: string;
+  businessId: string;
 };
