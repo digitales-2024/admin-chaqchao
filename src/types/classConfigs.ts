@@ -8,6 +8,7 @@ export type ClassPriceConfigData = {
 export type ClassLanguageData = {
   id: string;
   languageName: string;
+  businessId: string;
 };
 export type ClassRegistrationData = {
   id: string;
