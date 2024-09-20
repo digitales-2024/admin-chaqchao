@@ -13,9 +13,10 @@ export const useClassLanguages = () => {
     error,
     isLoading,
     isSuccess,
+    refetch,
   } = useGetClassLanguagesAllQuery();
 
-  return { dataClassLanguagesAll, error, isLoading, isSuccess };
+  return { dataClassLanguagesAll, error, isLoading, isSuccess, refetch };
 };
 
 export const useCreateClassLanguage = () => {
