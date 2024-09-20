@@ -1,25 +1,14 @@
-import { CalendarClock, CreditCard, NotebookTabs } from "lucide-react";
+import { CalendarClock, Clock2, CreditCard, Languages } from "lucide-react";
 import { useState } from "react";
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-import { GeneralConfigForm } from "./GeneralConfigForm";
-import { PriceConfigSection } from "./PriceConfigSection";
+import { LanguageConfigSection } from "./class-language-config/LanguageConfigSection";
+import { PriceConfigSection } from "./class-price-config/PriceConfigSection";
 
 export default function ClassConfigurationTabs() {
-  const [generalFormData, setGeneralFormData] = useState({
-    languageName: "",
-    closeBeforeStartInterval: 0,
-    finalRegistrationCloseInterval: 0,
-  });
-
   const [activeTab, setActiveTab] = useState("schedule");
-
-  const handleGeneralInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setGeneralFormData((prev) => ({ ...prev, [name]: value }));
-  };
 
   return (
     <Card className="mx-auto w-full">
@@ -28,16 +17,21 @@ export default function ClassConfigurationTabs() {
         onValueChange={(value) => setActiveTab(value)}
         className="w-full"
       >
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="schedule">
             {" "}
             <CalendarClock className="mr-2 h-4 w-4" />
             Horario
           </TabsTrigger>
-          <TabsTrigger value="config">
+          <TabsTrigger value="language">
             {" "}
-            <NotebookTabs className="mr-2 h-4 w-4" />
-            General
+            <Languages className="mr-2 h-4 w-4" />
+            Lenguaje
+          </TabsTrigger>
+          <TabsTrigger value="registration">
+            {" "}
+            <Clock2 className="mr-2 h-4 w-4" />
+            Registro
           </TabsTrigger>
           <TabsTrigger value="price">
             {" "}
@@ -48,12 +42,10 @@ export default function ClassConfigurationTabs() {
         <TabsContent value="schedule">
           <CardContent className="space-y-4"></CardContent>
         </TabsContent>
-        <TabsContent value="config">
-          <GeneralConfigForm
-            formData={generalFormData}
-            handleInputChange={handleGeneralInputChange}
-          />
+        <TabsContent value="language">
+          <LanguageConfigSection />
         </TabsContent>
+        <TabsContent value="registration"></TabsContent>
         <TabsContent value="price">
           <PriceConfigSection />
         </TabsContent>

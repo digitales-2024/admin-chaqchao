@@ -1,5 +1,6 @@
 import {
   useCreateClassRegistrationMutation,
+  useDeleteClassRegistrationMutation,
   useGetClassRegistrationsAllQuery,
   useUpdateClassRegistrationMutation,
 } from "@/redux/services/classRegistrationApi";
@@ -91,4 +92,39 @@ export const useUpdateClassRegistration = () => {
   };
 
   return { onUpdateClassRegistration };
+};
+export const useDeleteClassRegistration = () => {
+  const [deleteClassRegistration] = useDeleteClassRegistrationMutation();
+
+  const onDeleteClassRegistration = async (id: string) => {
+    const promise = () =>
+      new Promise(async (resolve, reject) => {
+        try {
+          const result = await deleteClassRegistration({ id });
+          if (result.error && "data" in result.error) {
+            const error = (result.error.data as CustomErrorData).message;
+            const message = translateError(error as string);
+            reject(new Error(message));
+          } else if (result.error) {
+            reject(
+              new Error(
+                "Ocurrió un error inesperado, por favor intenta de nuevo",
+              ),
+            );
+          } else {
+            resolve(result);
+          }
+        } catch (error) {
+          reject(error);
+        }
+      });
+
+    return toast.promise(promise(), {
+      loading: "Eliminando configuracion de registro de la clase...",
+      success: "Configuracion de registro de la clase eliminado con éxito",
+      error: (err) => err.message,
+    });
+  };
+
+  return { onDeleteClassRegistration };
 };
