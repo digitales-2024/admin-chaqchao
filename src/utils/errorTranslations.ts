@@ -51,6 +51,7 @@ const errorTranslations = {
   "Only one price in SOL is allowed for ADULT":
     "Sole se permite un precio en Sol para Adulto",
   "Language name already exists": "El nombre de lenguaje ya existe",
+  "Start time already exists": "La hora de inicio ya existe",
 };
 
 export default errorTranslations;
