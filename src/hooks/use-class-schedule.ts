@@ -1,5 +1,6 @@
 import {
   useCreateClassScheduleMutation,
+  useDeleteClassScheduleMutation,
   useGetClassSchedulesAllQuery,
   useUpdateClassScheduleMutation,
 } from "@/redux/services/classScheduleApi";
@@ -13,9 +14,10 @@ export const useClassSchedules = () => {
     error,
     isLoading,
     isSuccess,
+    refetch,
   } = useGetClassSchedulesAllQuery();
 
-  return { dataClassSchedulesAll, error, isLoading, isSuccess };
+  return { dataClassSchedulesAll, error, isLoading, isSuccess, refetch };
 };
 
 export const useCreateClassSchedule = () => {
@@ -90,4 +92,40 @@ export const useUpdateClassSchedule = () => {
   };
 
   return { onUpdateClassSchedule };
+};
+
+export const useDeleteClassSchedule = () => {
+  const [deleteClassSchedule] = useDeleteClassScheduleMutation();
+
+  const onDeleteClassSchedule = async (id: string) => {
+    const promise = () =>
+      new Promise(async (resolve, reject) => {
+        try {
+          const result = await deleteClassSchedule({ id });
+          if (result.error && "data" in result.error) {
+            const error = (result.error.data as CustomErrorData).message;
+            const message = translateError(error as string);
+            reject(new Error(message));
+          } else if (result.error) {
+            reject(
+              new Error(
+                "Ocurrió un error inesperado, por favor intenta de nuevo",
+              ),
+            );
+          } else {
+            resolve(result);
+          }
+        } catch (error) {
+          reject(error);
+        }
+      });
+
+    return toast.promise(promise(), {
+      loading: "Eliminando horario de clase...",
+      success: "Horario de clase eliminado con éxito",
+      error: (err) => err.message,
+    });
+  };
+
+  return { onDeleteClassSchedule };
 };

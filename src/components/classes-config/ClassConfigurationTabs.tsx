@@ -1,11 +1,12 @@
 import { CalendarClock, Clock2, CreditCard, Languages } from "lucide-react";
 import { useState } from "react";
 
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { LanguageConfigSection } from "./class-language-config/LanguageConfigSection";
 import { PriceConfigSection } from "./class-price-config/PriceConfigSection";
+import { ScheduleConfigSection } from "./class-schedule-config/ScheduleConfigSection";
 
 export default function ClassConfigurationTabs() {
   const [activeTab, setActiveTab] = useState("schedule");
@@ -40,7 +41,7 @@ export default function ClassConfigurationTabs() {
           </TabsTrigger>
         </TabsList>
         <TabsContent value="schedule">
-          <CardContent className="space-y-4"></CardContent>
+          <ScheduleConfigSection />
         </TabsContent>
         <TabsContent value="language">
           <LanguageConfigSection />
