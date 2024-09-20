@@ -4,9 +4,11 @@ import {
   useGeneratePasswordMutation,
   useGetUsersQuery,
   useReactivateUsersMutation,
+  useSendNewPasswordMutation,
   useUpdateUserMutation,
 } from "@/redux/services/usersApi";
 import { CreateUsersSchema, UpdateUsersSchema } from "@/schemas";
+import { SendNewPasswordSchema } from "@/schemas/users/sendNewPasswordSchema";
 import { CustomErrorData, User } from "@/types";
 import { translateError } from "@/utils/translateError";
 import { toast } from "sonner";
@@ -29,6 +31,15 @@ export const useUsers = () => {
       isLoading: isLoadingReactivateUsers,
     },
   ] = useReactivateUsersMutation();
+
+  const [
+    sendNewPassword,
+    {
+      data: dataSendNewPassword,
+      isSuccess: isSuccessSendNewPassword,
+      isLoading: isLoadingSendNewPasswrod,
+    },
+  ] = useSendNewPasswordMutation();
 
   const handleGeneratePassword = async () => {
     const promise = () =>
@@ -198,6 +209,41 @@ export const useUsers = () => {
     });
   };
 
+  const onSendNewPassword = async (
+    data: SendNewPasswordSchema & { email: string },
+  ) => {
+    const promise = () =>
+      new Promise(async (resolve, reject) => {
+        try {
+          const result = await sendNewPassword(data);
+          if (result.error && "data" in result.error) {
+            const error = (result.error.data as CustomErrorData).message;
+            const message = translateError(error as string);
+            reject(new Error(message));
+          }
+          if (result.error) {
+            reject(
+              new Error(
+                "Ocurrió un error inesperado, por favor intenta de nuevo",
+              ),
+            );
+          }
+
+          resolve(result);
+        } catch (error) {
+          reject(error);
+        }
+      });
+
+    toast.promise(promise(), {
+      loading: "Enviando correo...",
+      success: "Envío exitoso.",
+      error: (error) => {
+        return error.message;
+      },
+    });
+  };
+
   return {
     data,
     error,
@@ -214,5 +260,9 @@ export const useUsers = () => {
     onUpdateUser,
     isSuccessUpdateUser,
     isLoadingUpdateUser,
+    onSendNewPassword,
+    isSuccessSendNewPassword,
+    isLoadingSendNewPasswrod,
+    dataSendNewPassword,
   };
 };

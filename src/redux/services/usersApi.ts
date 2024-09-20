@@ -1,4 +1,5 @@
 import { CreateUsersSchema, UpdateUsersSchema } from "@/schemas";
+import { SendNewPasswordSchema } from "@/schemas/users/sendNewPasswordSchema";
 import { User } from "@/types";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
@@ -86,6 +87,20 @@ export const usersApi = createApi({
       }),
       invalidatesTags: ["Users"],
     }),
+
+    // Enviar un correo con una nueva contraseña
+    sendNewPassword: build.mutation<
+      SendNewPasswordSchema & { email: string },
+      SendNewPasswordSchema & { email: string }
+    >({
+      query: (data) => ({
+        url: "users/send-new-password",
+        method: "POST",
+        body: data,
+        credentials: "include",
+      }),
+      invalidatesTags: ["Users"],
+    }),
   }),
 });
 
@@ -97,4 +112,5 @@ export const {
   useDeleteUserMutation,
   useDeleteUsersMutation,
   useReactivateUsersMutation,
+  useSendNewPasswordMutation,
 } = usersApi;
