@@ -13,9 +13,10 @@ export const useBusinessHours = () => {
     error,
     isLoading,
     isSuccess,
+    refetch,
   } = useGetBusinessHoursAllQuery();
 
-  return { dataBusinessHoursAll, error, isLoading, isSuccess };
+  return { dataBusinessHoursAll, error, isLoading, isSuccess, refetch };
 };
 
 export const useCreateBusinessHour = () => {
