@@ -1,6 +1,7 @@
 import { Category } from "@/types";
 import { type ColumnDef } from "@tanstack/react-table";
 import { Ellipsis, Trash } from "lucide-react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -12,6 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { DataTableColumnHeader } from "../data-table/DataTableColumnHeader";
+import { UpdateCategorySheet } from "./UpdateCategorySheet";
 
 export const categoriesColumns = (): ColumnDef<Category>[] => {
   return [
@@ -68,9 +70,17 @@ export const categoriesColumns = (): ColumnDef<Category>[] => {
     },
     {
       id: "actions",
-      cell: function Cell() {
+      cell: function Cell({ row }) {
+        const [showEditDialog, setShowEditDialog] = useState(false);
         return (
-          <>
+          <div>
+            <div>
+              <UpdateCategorySheet
+                open={showEditDialog}
+                onOpenChange={setShowEditDialog}
+                category={row?.original}
+              />
+            </div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
@@ -82,11 +92,7 @@ export const categoriesColumns = (): ColumnDef<Category>[] => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-40">
-                <DropdownMenuItem
-                  onSelect={() => {
-                    console.log("Falta implementar esta funcion");
-                  }}
-                >
+                <DropdownMenuItem onSelect={() => setShowEditDialog(true)}>
                   Editar
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
@@ -98,7 +104,7 @@ export const categoriesColumns = (): ColumnDef<Category>[] => {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-          </>
+          </div>
         );
       },
       enablePinning: true,
