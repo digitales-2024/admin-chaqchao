@@ -74,7 +74,7 @@ export function AddPriceDialog({ refetchClassPrices }: AddPriceDialogProps) {
   return (
     <>
       <Button onClick={() => setIsOpen(true)}>
-        <Plus className="mr-2 h-4 w-4" />
+        <Plus className="h-4 w-4" />
         Agregar Precio
       </Button>
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
