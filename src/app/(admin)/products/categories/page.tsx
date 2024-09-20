@@ -1,12 +1,12 @@
 "use client";
 "use memo";
-
 import { useCategories } from "@/hooks/use-categories"; // Usar el hook de categorías
+
+import { CategoriesTable } from "@/components/categories/CategoriesTable"; // Tabla de categorías
 import { Shell } from "@/components/common/Shell";
 import { TitleSecction } from "@/components/common/text/TitleSecction";
 import { DataTableSkeleton } from "@/components/data-table/DataTableSkeleton";
 import { Skeleton } from "@/components/ui/skeleton";
-import { CategoriesTable } from "@/components/categories/CategoriesTable"; // Tabla de categorías
 
 const HeaderPage = () => (
   <div>
