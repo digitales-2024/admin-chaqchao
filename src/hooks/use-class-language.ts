@@ -1,5 +1,6 @@
 import {
   useCreateClassLanguageMutation,
+  useDeleteClassLanguageMutation,
   useGetClassLanguagesAllQuery,
   useUpdateClassLanguageMutation,
 } from "@/redux/services/classLanguageApi";
@@ -89,4 +90,40 @@ export const useUpdateClassLanguage = () => {
   };
 
   return { onUpdateClassLanguage };
+};
+
+export const useDeleteClassLanguage = () => {
+  const [deleteClassLanguage] = useDeleteClassLanguageMutation();
+
+  const onDeleteClassLanguage = async (id: string) => {
+    const promise = () =>
+      new Promise(async (resolve, reject) => {
+        try {
+          const result = await deleteClassLanguage({ id });
+          if (result.error && "data" in result.error) {
+            const error = (result.error.data as CustomErrorData).message;
+            const message = translateError(error as string);
+            reject(new Error(message));
+          } else if (result.error) {
+            reject(
+              new Error(
+                "Ocurrió un error inesperado, por favor intenta de nuevo",
+              ),
+            );
+          } else {
+            resolve(result);
+          }
+        } catch (error) {
+          reject(error);
+        }
+      });
+
+    return toast.promise(promise(), {
+      loading: "Eliminando lenguaje de clase...",
+      success: "Lenguaje de clase eliminado con éxito",
+      error: (err) => err.message,
+    });
+  };
+
+  return { onDeleteClassLanguage };
 };
