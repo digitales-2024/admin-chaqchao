@@ -50,6 +50,7 @@ const errorTranslations = {
     "Sole se permite un precio en Dólar para Adulto",
   "Only one price in SOL is allowed for ADULT":
     "Sole se permite un precio en Sol para Adulto",
+  "Language name already exists": "El nombre de lenguaje ya existe",
 };
 
 export default errorTranslations;
