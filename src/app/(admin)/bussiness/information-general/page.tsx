@@ -1,4 +1,5 @@
 "use client";
+
 import { LogoChaqchao } from "@/assets/icons";
 import {
   useCreateBusinessConfig,
@@ -34,7 +35,9 @@ export default function BusinessInformationPage() {
     dataBusinessHoursAll,
     error: errorBusinessHours,
     isLoading: isLoadingBusinessHours,
+    refetch: refetchBusinessHours,
   } = useBusinessHours();
+
   const form = useForm<CreateBusinessConfigSchema>({
     resolver: zodResolver(businessConfigSchema),
     defaultValues: {
@@ -101,6 +104,7 @@ export default function BusinessInformationPage() {
             handleSubmit={handleSubmit}
             daysOfWeek={daysOfWeek}
             businessHoursArray={businessHoursArray}
+            refetchBusinessHours={refetchBusinessHours}
           />
         </div>
       </div>
