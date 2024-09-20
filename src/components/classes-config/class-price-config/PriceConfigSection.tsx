@@ -14,9 +14,9 @@ import {
   DropdownMenuShortcut,
 } from "@/components/ui/dropdown-menu";
 
-import { EditPriceSheet } from "./EditPriceSheet";
 import { AddPriceDialog } from "./AddPriceDialog";
 import { DeletePriceDialog } from "./DeletePriceDialog";
+import { EditPriceSheet } from "./EditPriceSheet";
 
 export function PriceConfigSection() {
   const [selectedPrice, setSelectedPrice] =
