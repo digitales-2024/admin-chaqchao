@@ -3,6 +3,9 @@ import { setupListeners } from "@reduxjs/toolkit/query";
 
 import { adminApi } from "./services/adminApi";
 import { authApi } from "./services/authApi";
+import { businessConfigApi } from "./services/businessConfigApi";
+import { businessHoursApi } from "./services/businessHoursApi";
+import { classPriceApi } from "./services/classPriceApi";
 import { rolesApi } from "./services/rolesApi";
 import { usersApi } from "./services/usersApi";
 
@@ -12,13 +15,19 @@ export const store = configureStore({
     [adminApi.reducerPath]: adminApi.reducer,
     [usersApi.reducerPath]: usersApi.reducer,
     [rolesApi.reducerPath]: rolesApi.reducer,
+    [businessConfigApi.reducerPath]: businessConfigApi.reducer,
+    [businessHoursApi.reducerPath]: businessHoursApi.reducer,
+    [classPriceApi.reducerPath]: classPriceApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
       .concat(authApi.middleware)
       .concat(adminApi.middleware)
       .concat(usersApi.middleware)
-      .concat(rolesApi.middleware),
+      .concat(rolesApi.middleware)
+      .concat(businessConfigApi.middleware)
+      .concat(businessHoursApi.middleware)
+      .concat(classPriceApi.middleware),
 });
 setupListeners(store.dispatch);
 

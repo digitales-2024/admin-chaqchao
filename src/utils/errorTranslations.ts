@@ -38,6 +38,18 @@ const errorTranslations = {
   "You cannot update your own password":
     "Puedes actualizar tu propia contraseña en la sección de perfil",
   "Email not found": "Correo electrónico no encontrado",
+  "contactNumber must be a valid phone number":
+    "El número de contacto debe ser un número de teléfono válido",
+  "Opening time must be earlier than closing time.":
+    "El horario de apertura debe ser anterior al horario de cierre.",
+  "Only one price in DOLAR is allowed for CHILD":
+    "Solo se permite un precio en Dólar para Niño",
+  "Only one price in SOL is allowed for CHILD":
+    "Solo se permite un precio en Sol para Niño",
+  "Only one price in DOLAR is allowed for ADULT":
+    "Sole se permite un precio en Dólar para Adulto",
+  "Only one price in SOL is allowed for ADULT":
+    "Sole se permite un precio en Sol para Adulto",
 };
 
 export default errorTranslations;
