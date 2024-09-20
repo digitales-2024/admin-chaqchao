@@ -5,7 +5,6 @@ import { useCategories } from "@/hooks/use-categories"; // Usar el hook de categ
 import { Shell } from "@/components/common/Shell";
 import { TitleSecction } from "@/components/common/text/TitleSecction";
 import { DataTableSkeleton } from "@/components/data-table/DataTableSkeleton";
-import { DateRangePicker } from "@/components/date/DateRangePicker";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CategoriesTable } from "@/components/categories/CategoriesTable"; // Tabla de categorías
 
@@ -46,11 +45,6 @@ export default function PageCategories() {
   return (
     <Shell className="gap-6">
       <HeaderPage />
-      <DateRangePicker
-        triggerSize="sm"
-        triggerClassName="ml-auto w-fit"
-        align="end"
-      />
       <CategoriesTable data={data} /> {/* Tabla de categorías */}
     </Shell>
   );
