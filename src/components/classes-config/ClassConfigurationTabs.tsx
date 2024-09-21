@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { LanguageConfigSection } from "./class-language-config/LanguageConfigSection";
 import { PriceConfigSection } from "./class-price-config/PriceConfigSection";
+import { RegistrationConfigSection } from "./class-registration-config/RegistrationConfigSection";
 import { ScheduleConfigSection } from "./class-schedule-config/ScheduleConfigSection";
 
 export default function ClassConfigurationTabs() {
@@ -46,7 +47,9 @@ export default function ClassConfigurationTabs() {
         <TabsContent value="language">
           <LanguageConfigSection />
         </TabsContent>
-        <TabsContent value="registration"></TabsContent>
+        <TabsContent value="registration">
+          <RegistrationConfigSection />
+        </TabsContent>
         <TabsContent value="price">
           <PriceConfigSection />
         </TabsContent>
