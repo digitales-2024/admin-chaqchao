@@ -10,12 +10,19 @@ import { toast } from "sonner";
 export const useClassRegistrations = () => {
   const {
     data: dataClassRegistrationsAll,
-    error,
+    error: errorClassRegistrations,
     isLoading,
     isSuccess,
+    refetch,
   } = useGetClassRegistrationsAllQuery();
 
-  return { dataClassRegistrationsAll, error, isLoading, isSuccess };
+  return {
+    dataClassRegistrationsAll,
+    errorClassRegistrations,
+    isLoading,
+    isSuccess,
+    refetch,
+  };
 };
 
 export const useCreateClassRegistration = () => {
