@@ -52,6 +52,10 @@ const errorTranslations = {
     "Sole se permite un precio en Sol para Adulto",
   "Language name already exists": "El nombre de lenguaje ya existe",
   "Start time already exists": "La hora de inicio ya existe",
+  "closeBeforeStartInterval cannot be greater than 300":
+    "El intervalo de cierre antes del inicio no puede ser mayor a 300",
+  "finalRegistrationCloseInterval cannot be greater than 300":
+    "El intervalo final de cierre de registro no puede ser mayor a 300",
 };
 
 export default errorTranslations;
