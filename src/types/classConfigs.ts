@@ -12,8 +12,9 @@ export type ClassLanguageData = {
 };
 export type ClassRegistrationData = {
   id: string;
-  closeBeforeStartInterval: string;
-  finalRegistrationCloseInterval: string;
+  closeBeforeStartInterval: number;
+  finalRegistrationCloseInterval: number;
+  businessId: string;
 };
 export type ClassScheduleData = {
   id: string;
