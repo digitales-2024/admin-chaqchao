@@ -44,6 +44,11 @@ export function LanguageConfigSection() {
     setShowDeleteDialog(true);
   };
 
+  // Función para capitalizar la primera letra
+  const capitalizeFirstLetter = (string: string) => {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  };
+
   return (
     <div className="container mx-auto flex flex-col py-5">
       <div className="mb-8 flex flex-wrap items-center justify-between px-4">
@@ -67,7 +72,7 @@ export function LanguageConfigSection() {
                   <BookType className="mr-4 mt-4" aria-hidden="true" />
                   <div>
                     <p className="mt-4 text-base font-semibold">
-                      {language.languageName}
+                      {capitalizeFirstLetter(language.languageName)}
                     </p>
                   </div>
                 </div>
