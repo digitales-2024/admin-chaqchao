@@ -3,7 +3,7 @@ import {
   useDeleteClassLanguageMutation,
   useGetClassLanguagesAllQuery,
   useUpdateClassLanguageMutation,
-} from "@/redux/services/classLanguageApi";
+} from "@/redux/services/classLanguageConfigApi";
 import { ClassLanguageData, CustomErrorData } from "@/types";
 import { translateError } from "@/utils/translateError";
 import { toast } from "sonner";

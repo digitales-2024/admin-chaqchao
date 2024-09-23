@@ -45,7 +45,6 @@ export function AddPriceDialog({ refetchClassPrices }: AddPriceDialogProps) {
     resolver: zodResolver(createClassPriceSchema),
     defaultValues: {
       classTypeUser: "",
-      price: 0,
       typeCurrency: "",
     },
   });

@@ -74,7 +74,7 @@ export function UpdateBusinessHoursSheet({
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
-        <Button variant="outline">Actualizar Horarios</Button>
+        <Button variant="secondary">Actualizar Horarios</Button>
       </SheetTrigger>
       <SheetContent>
         <SheetHeader>

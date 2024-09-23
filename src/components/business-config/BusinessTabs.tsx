@@ -1,5 +1,13 @@
+import { useBussinessConfig } from "@/hooks/use-business-config";
 import { CreateBusinessConfigSchema } from "@/schemas/businessInformation/createBusinessConfigSchema";
-import { Building2, CalendarDays, DoorClosed, DoorOpen } from "lucide-react";
+import {
+  Building2,
+  CalendarDays,
+  DoorClosed,
+  DoorOpen,
+  Minus,
+} from "lucide-react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
 import { BusinessHourPopover } from "@/components/business-config/BusinessHourPopover";
@@ -14,6 +22,9 @@ import {
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+import { Badge } from "../ui/badge";
+import { Separator } from "../ui/separator";
 
 interface BusinessHour {
   id: string;
@@ -31,6 +42,19 @@ interface BusinessTabsProps {
   refetchBusinessHours: () => void;
 }
 
+const tabs = [
+  {
+    id: "information",
+    label: "Información",
+    icon: Building2,
+  },
+  {
+    id: "schedule",
+    label: "Horario",
+    icon: CalendarDays,
+  },
+];
+
 export function BusinessTabs({
   form,
   handleSubmit,
@@ -38,17 +62,40 @@ export function BusinessTabs({
   businessHoursArray,
   refetchBusinessHours,
 }: BusinessTabsProps) {
+  const {
+    dataBusinessConfigAll: businessConfigData,
+    isSuccess,
+    refetch: refetchBusinessConfig,
+  } = useBussinessConfig();
+  const [isBusinessConfigCreated, setIsBusinessConfigCreated] = useState(false);
+
+  useEffect(() => {
+    if (isSuccess && businessConfigData && businessConfigData.length > 0) {
+      setIsBusinessConfigCreated(true);
+    } else {
+      setIsBusinessConfigCreated(false);
+    }
+  }, [isSuccess, businessConfigData]);
+
+  const onSubmit = async (data: CreateBusinessConfigSchema) => {
+    await handleSubmit(data);
+    refetchBusinessConfig(); // Refrescar datos después de la sumisión
+  };
+
   return (
     <Tabs defaultValue="information" className="w-full">
       <TabsList className="grid w-full grid-cols-2">
-        <TabsTrigger value="information">
-          <Building2 className="mr-2 h-4 w-4" />
-          Información
-        </TabsTrigger>
-        <TabsTrigger value="schedule">
-          <CalendarDays className="mr-2 h-4 w-4" />
-          Horario
-        </TabsTrigger>
+        {tabs.map((tab) => (
+          <TabsTrigger
+            key={tab.id}
+            className="flex"
+            value={tab.id}
+            disabled={tab.id === "schedule" && !isBusinessConfigCreated}
+          >
+            <tab.icon className="mr-2 h-4 w-4 flex-shrink-0" />
+            <span className="truncate text-ellipsis">{tab.label}</span>
+          </TabsTrigger>
+        ))}
       </TabsList>
 
       <TabsContent value="information">
@@ -60,55 +107,67 @@ export function BusinessTabs({
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <CreateBusinessConfigForm form={form} onSubmit={handleSubmit} />
+            <CreateBusinessConfigForm form={form} onSubmit={onSubmit} />
           </CardContent>
         </Card>
       </TabsContent>
 
       <TabsContent value="schedule">
         <Card>
-          <div>
-            <CardHeader>
-              <div>
-                <CardTitle>Horario</CardTitle>
-                <CardDescription>
-                  Configure el horario de atención de su empresa.
-                </CardDescription>
-              </div>
-              <div>
-                <UpdateBusinessHoursSheet
-                  daysOfWeek={daysOfWeek}
-                  businessHoursArray={businessHoursArray}
-                  refetchBusinessHours={refetchBusinessHours}
-                />
-              </div>
-            </CardHeader>
-          </div>
-          <CardContent className="space-y-2">
-            <div className="grid grid-cols-2 gap-4">
+          <CardHeader>
+            <CardTitle>Horario</CardTitle>
+            <CardDescription>
+              Configure el horario de atención de su empresa.
+            </CardDescription>
+            <div className="flex justify-start">
+              <UpdateBusinessHoursSheet
+                daysOfWeek={daysOfWeek}
+                businessHoursArray={businessHoursArray}
+                refetchBusinessHours={refetchBusinessHours}
+              />
+            </div>
+          </CardHeader>
+          <Separator className="mb-6" />
+          <CardContent className="w-full space-y-2">
+            <div className="flex w-full flex-col gap-6">
               {Object.entries(daysOfWeek).map(([day, dayInSpanish]) => {
                 const businessHour = businessHoursArray.find(
                   (bh: BusinessHour) => bh.dayOfWeek === day,
                 );
                 return (
-                  <div key={day} className="flex items-center space-x-4">
-                    <Label className="w-24">{dayInSpanish}</Label>
-                    <div className="flex gap-2">
-                      <span className="text-xs text-slate-500">
-                        <DoorOpen />
-                      </span>{" "}
-                      {businessHour?.openingTime} -
-                      <span className="text-xs text-slate-500">
-                        <DoorClosed />
-                      </span>
+                  <div
+                    key={day}
+                    className="flex flex-wrap items-center justify-between gap-x-10 space-x-0"
+                  >
+                    <Label className="w-16 uppercase">
+                      <Badge
+                        variant="outline"
+                        className="border border-emerald-600"
+                      >
+                        {dayInSpanish}
+                      </Badge>
+                    </Label>
+                    <div className="flex items-center gap-2">
+                      <DoorOpen
+                        className="size-4 flex-wrap text-slate-500"
+                        strokeWidth={1}
+                      />
+                      {businessHour?.openingTime}
+                      <Minus className="text-emerald-500" />
                       {businessHour?.closingTime}
+                      <DoorClosed
+                        className="size-4 flex-wrap text-slate-500"
+                        strokeWidth={1}
+                      />
                     </div>
-                    <BusinessHourPopover
-                      day={dayInSpanish}
-                      openingTime={businessHour?.openingTime || "00:00"}
-                      closingTime={businessHour?.closingTime || "00:00"}
-                      id={businessHour?.id || ""}
-                    />
+                    <div className="">
+                      <BusinessHourPopover
+                        day={dayInSpanish}
+                        openingTime={businessHour?.openingTime || "00:00"}
+                        closingTime={businessHour?.closingTime || "00:00"}
+                        id={businessHour?.id || ""}
+                      />
+                    </div>
                   </div>
                 );
               })}

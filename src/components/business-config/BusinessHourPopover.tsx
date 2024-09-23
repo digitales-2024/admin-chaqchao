@@ -11,6 +11,13 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../ui/tooltip";
+
 interface SchedulePopoverProps {
   day: string;
   openingTime: string;
@@ -46,11 +53,20 @@ export function BusinessHourPopover({
 
   return (
     <Popover>
-      <PopoverTrigger asChild>
-        <Button size="sm" variant={"ghost"}>
-          <CalendarCog className="size-6 text-slate-500" />
-        </Button>
-      </PopoverTrigger>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <PopoverTrigger asChild>
+              <Button size="sm" variant={"secondary"}>
+                <CalendarCog className="size-6 text-slate-500 hover:text-emerald-500" />
+              </Button>
+            </PopoverTrigger>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Cambiar el horario</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
       <PopoverContent className="w-80">
         <div className="grid gap-4">
           <div className="space-y-2">

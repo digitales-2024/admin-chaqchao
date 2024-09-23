@@ -9,6 +9,33 @@ import { PriceConfigSection } from "./class-price-config/PriceConfigSection";
 import { RegistrationConfigSection } from "./class-registration-config/RegistrationConfigSection";
 import { ScheduleConfigSection } from "./class-schedule-config/ScheduleConfigSection";
 
+const tabs = [
+  {
+    id: "schedule",
+    icon: CalendarClock,
+    label: "Horario",
+    content: <ScheduleConfigSection />,
+  },
+  {
+    id: "language",
+    icon: Languages,
+    label: "Lenguaje",
+    content: <LanguageConfigSection />,
+  },
+  {
+    id: "registration",
+    icon: Clock2,
+    label: "Registro",
+    content: <RegistrationConfigSection />,
+  },
+  {
+    id: "price",
+    icon: CreditCard,
+    label: "Precio",
+    content: <PriceConfigSection />,
+  },
+];
+
 export default function ClassConfigurationTabs() {
   const [activeTab, setActiveTab] = useState("schedule");
 
@@ -20,39 +47,18 @@ export default function ClassConfigurationTabs() {
         className="w-full"
       >
         <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="schedule">
-            {" "}
-            <CalendarClock className="mr-2 h-4 w-4" />
-            Horario
-          </TabsTrigger>
-          <TabsTrigger value="language">
-            {" "}
-            <Languages className="mr-2 h-4 w-4" />
-            Lenguaje
-          </TabsTrigger>
-          <TabsTrigger value="registration">
-            {" "}
-            <Clock2 className="mr-2 h-4 w-4" />
-            Registro
-          </TabsTrigger>
-          <TabsTrigger value="price">
-            {" "}
-            <CreditCard className="mr-2 h-4 w-4" />
-            Precio
-          </TabsTrigger>
+          {tabs.map((tab) => (
+            <TabsTrigger key={tab.id} className="flex" value={tab.id}>
+              <tab.icon className="mr-2 h-4 w-4 flex-shrink-0" />
+              <span className="truncate text-ellipsis">{tab.label}</span>
+            </TabsTrigger>
+          ))}
         </TabsList>
-        <TabsContent value="schedule">
-          <ScheduleConfigSection />
-        </TabsContent>
-        <TabsContent value="language">
-          <LanguageConfigSection />
-        </TabsContent>
-        <TabsContent value="registration">
-          <RegistrationConfigSection />
-        </TabsContent>
-        <TabsContent value="price">
-          <PriceConfigSection />
-        </TabsContent>
+        {tabs.map((tab) => (
+          <TabsContent key={tab.id} value={tab.id}>
+            {tab.content}
+          </TabsContent>
+        ))}
       </Tabs>
     </Card>
   );
