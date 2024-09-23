@@ -53,7 +53,7 @@ export function CreateCategoryDialog() {
       form.reset();
       setOpen(false);
     }
-  }, [isSuccessCreateCategory]);
+  }, [isSuccessCreateCategory, form]);
 
   const handleClose = () => {
     form.reset();
