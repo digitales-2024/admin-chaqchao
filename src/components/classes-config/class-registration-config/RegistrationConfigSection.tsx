@@ -32,9 +32,8 @@ export function RegistrationConfigSection() {
   const {
     register,
     handleSubmit,
-    setValue,
     reset,
-    formState: { errors },
+    formState: { errors, isDirty },
   } = useForm<CreateClassRegistrationSchema>({
     resolver: zodResolver(createClassRegistrationSchema),
   });
@@ -46,16 +45,14 @@ export function RegistrationConfigSection() {
       dataClassRegistrationsAll.length > 0
     ) {
       const existingData = dataClassRegistrationsAll[0];
-      setValue(
-        "closeBeforeStartInterval",
-        Number(existingData.closeBeforeStartInterval),
-      );
-      setValue(
-        "finalRegistrationCloseInterval",
-        Number(existingData.finalRegistrationCloseInterval),
-      );
+      reset({
+        closeBeforeStartInterval: Number(existingData.closeBeforeStartInterval),
+        finalRegistrationCloseInterval: Number(
+          existingData.finalRegistrationCloseInterval,
+        ),
+      });
     }
-  }, [isSuccess, dataClassRegistrationsAll, setValue]);
+  }, [isSuccess, dataClassRegistrationsAll, reset]);
 
   const onSubmit = async (data: CreateClassRegistrationSchema) => {
     if (
@@ -79,6 +76,9 @@ export function RegistrationConfigSection() {
           await onCreateClassRegistration({ ...data, businessId });
         }
         refetch(); // Refrescar datos
+
+        // Resetear el formulario con los nuevos valores
+        reset(data);
       } catch (error) {
         // Restablecer valores del formulario a los valores originales en caso de error
         if (dataClassRegistrationsAll && dataClassRegistrationsAll.length > 0) {
@@ -148,7 +148,9 @@ export function RegistrationConfigSection() {
             </p>
           )}
         </div>
-        <Button type="submit">Guardar</Button>
+        <Button type="submit" disabled={!isDirty}>
+          Guardar
+        </Button>
       </form>
     </div>
   );

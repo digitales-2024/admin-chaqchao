@@ -24,9 +24,10 @@ export const useBussinessConfig = () => {
     error,
     isLoading,
     isSuccess,
+    refetch,
   } = useGetBusinessConfigAllQuery();
 
-  return { dataBusinessConfigAll, error, isLoading, isSuccess };
+  return { dataBusinessConfigAll, error, isLoading, isSuccess, refetch };
 };
 
 export const useCreateBusinessConfig = () => {

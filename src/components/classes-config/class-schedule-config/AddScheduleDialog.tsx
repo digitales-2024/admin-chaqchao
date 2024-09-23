@@ -62,10 +62,12 @@ export function AddScheduleDialog({
 
   return (
     <>
-      <Button onClick={() => setIsOpen(true)}>
-        <Plus className="h-4 w-4" />
-        Agregar Horario
-      </Button>
+      <div>
+        <Button onClick={() => setIsOpen(true)}>
+          <Plus className="h-4 w-4" />
+          Agregar Horario
+        </Button>
+      </div>
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent>
           <DialogHeader>

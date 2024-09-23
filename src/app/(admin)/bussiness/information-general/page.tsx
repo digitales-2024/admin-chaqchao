@@ -94,10 +94,10 @@ export default function BusinessInformationPage() {
   const businessHoursArray = dataBusinessHoursAll?.businessHours || [];
 
   return (
-    <div className="container mx-auto py-10">
+    <>
       <HeaderPage />
-      <div className="flex items-start space-x-8">
-        <LogoChaqchao className="mt-12 size-72" />
+      <div className="flex items-start gap-x-6">
+        <LogoChaqchao className="mt-12 hidden size-72 flex-shrink-0 md:block" />
         <div className="flex-grow">
           <BusinessTabs
             form={form}
@@ -108,6 +108,6 @@ export default function BusinessInformationPage() {
           />
         </div>
       </div>
-    </div>
+    </>
   );
 }

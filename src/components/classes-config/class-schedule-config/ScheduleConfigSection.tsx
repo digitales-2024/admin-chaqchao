@@ -83,8 +83,8 @@ export function ScheduleConfigSection() {
   };
 
   return (
-    <div className="container mx-auto py-5">
-      <div className="mb-8 flex items-center justify-between px-4">
+    <div className="container mx-auto flex flex-col py-5">
+      <div className="mb-8 flex flex-wrap items-center justify-between px-4">
         <div>
           <h2 className="text-2xl font-bold">Configuración del Horario</h2>
           <span className="text-gray-600">
