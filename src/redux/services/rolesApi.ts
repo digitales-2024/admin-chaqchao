@@ -1,9 +1,11 @@
 import { Role } from "@/types/roles";
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi } from "@reduxjs/toolkit/query/react";
+
+import baseQueryWithReauth from "./baseQuery";
 
 export const rolesApi = createApi({
   reducerPath: "rolesApi",
-  baseQuery: fetchBaseQuery({ baseUrl: process.env.NEXT_PUBLIC_BACKEND_URL }),
+  baseQuery: baseQueryWithReauth,
   tagTypes: ["Roles"],
   endpoints: (build) => ({
     // Obtener todos los roles
