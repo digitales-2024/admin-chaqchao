@@ -8,7 +8,8 @@ export {
   usersSchema,
 } from "./users/createUsersSchema";
 export {
-  type createCategoriesSchema,
+  type CreateCategoriesSchema,
+  type UpdateCategoriesSchema,
+  updateCategoriesSchema,
   categoriesSchema,
 } from "./categories/createCategoriesSchema";
-export { type updateCategoriesSchema } from "./categories/updateCategoriesSchema";
