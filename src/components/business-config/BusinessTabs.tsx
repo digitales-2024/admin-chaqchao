@@ -1,3 +1,4 @@
+import { useBussinessConfig } from "@/hooks/use-business-config";
 import { CreateBusinessConfigSchema } from "@/schemas/businessInformation/createBusinessConfigSchema";
 import {
   Building2,
@@ -6,6 +7,7 @@ import {
   DoorOpen,
   Minus,
 } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
 import { BusinessHourPopover } from "@/components/business-config/BusinessHourPopover";
@@ -39,6 +41,7 @@ interface BusinessTabsProps {
   businessHoursArray: BusinessHour[];
   refetchBusinessHours: () => void;
 }
+
 const tabs = [
   {
     id: "information",
@@ -51,6 +54,7 @@ const tabs = [
     icon: CalendarDays,
   },
 ];
+
 export function BusinessTabs({
   form,
   handleSubmit,
@@ -58,11 +62,36 @@ export function BusinessTabs({
   businessHoursArray,
   refetchBusinessHours,
 }: BusinessTabsProps) {
+  const {
+    dataBusinessConfigAll: businessConfigData,
+    isSuccess,
+    refetch: refetchBusinessConfig,
+  } = useBussinessConfig();
+  const [isBusinessConfigCreated, setIsBusinessConfigCreated] = useState(false);
+
+  useEffect(() => {
+    if (isSuccess && businessConfigData && businessConfigData.length > 0) {
+      setIsBusinessConfigCreated(true);
+    } else {
+      setIsBusinessConfigCreated(false);
+    }
+  }, [isSuccess, businessConfigData]);
+
+  const onSubmit = async (data: CreateBusinessConfigSchema) => {
+    await handleSubmit(data);
+    refetchBusinessConfig(); // Refrescar datos después de la sumisión
+  };
+
   return (
     <Tabs defaultValue="information" className="w-full">
       <TabsList className="grid w-full grid-cols-2">
         {tabs.map((tab) => (
-          <TabsTrigger key={tab.id} className="flex" value={tab.id}>
+          <TabsTrigger
+            key={tab.id}
+            className="flex"
+            value={tab.id}
+            disabled={tab.id === "schedule" && !isBusinessConfigCreated}
+          >
             <tab.icon className="mr-2 h-4 w-4 flex-shrink-0" />
             <span className="truncate text-ellipsis">{tab.label}</span>
           </TabsTrigger>
@@ -78,7 +107,7 @@ export function BusinessTabs({
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <CreateBusinessConfigForm form={form} onSubmit={handleSubmit} />
+            <CreateBusinessConfigForm form={form} onSubmit={onSubmit} />
           </CardContent>
         </Card>
       </TabsContent>
