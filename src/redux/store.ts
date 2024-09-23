@@ -5,7 +5,7 @@ import { adminApi } from "./services/adminApi";
 import { authApi } from "./services/authApi";
 import { businessConfigApi } from "./services/businessConfigApi";
 import { businessHoursApi } from "./services/businessHoursApi";
-import { classLanguageApi } from "./services/classLanguageApi";
+import { classLanguageApi } from "./services/classLanguageConfigApi";
 import { classPriceApi } from "./services/classPriceApi";
 import { classRegistrationApi } from "./services/classRegistrationApi";
 import { classScheduleApi } from "./services/classScheduleApi";
