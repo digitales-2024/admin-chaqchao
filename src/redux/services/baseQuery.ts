@@ -30,6 +30,8 @@ const baseQueryWithReauth: BaseQueryFn = async (args, api, extraOptions) => {
         api,
         extraOptions,
       );
+
+      window.location.href = "/sign-in";
     }
   }
 
