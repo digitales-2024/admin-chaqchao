@@ -24,3 +24,14 @@ export interface Permission {
   name: string;
   description: string;
 }
+
+export interface ModulePermissions {
+  module: Module;
+  permissions: {
+    id: string;
+    cod: string;
+    name: string;
+    description: string;
+    idModulePermission: string;
+  }[];
+}
