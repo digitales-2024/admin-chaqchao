@@ -85,8 +85,6 @@ export const DataTableSkeleton = (props: DataTableSkeletonProps) => {
   } = props;
 
   const isDesktop = useMediaQuery("(min-width: 624px)");
-  console.log("🚀 ~ DataTableSkeleton ~ isDesktop:", isDesktop);
-
   return (
     <div
       className={cn("w-full space-y-2.5 overflow-auto", className)}
