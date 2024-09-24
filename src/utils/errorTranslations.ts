@@ -56,6 +56,7 @@ const errorTranslations = {
     "El intervalo de cierre antes del inicio no puede ser mayor a 300",
   "finalRegistrationCloseInterval cannot be greater than 300":
     "El intervalo final de cierre de registro no puede ser mayor a 300",
+  "Role already exists": "El rol con este nombre ya existe",
 };
 
 export default errorTranslations;
