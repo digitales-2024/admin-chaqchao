@@ -3,9 +3,15 @@ import { setupListeners } from "@reduxjs/toolkit/query";
 
 import { adminApi } from "./services/adminApi";
 import { authApi } from "./services/authApi";
+import { businessConfigApi } from "./services/businessConfigApi";
+import { businessHoursApi } from "./services/businessHoursApi";
+import { categoriesApi } from "./services/categoriesApi";
+import { classLanguageApi } from "./services/classLanguageConfigApi";
+import { classPriceApi } from "./services/classPriceApi";
+import { classRegistrationApi } from "./services/classRegistrationApi";
+import { classScheduleApi } from "./services/classScheduleApi";
 import { rolesApi } from "./services/rolesApi";
 import { usersApi } from "./services/usersApi";
-import { categoriesApi } from "./services/categoriesApi";
 
 export const store = configureStore({
   reducer: {
@@ -13,6 +19,12 @@ export const store = configureStore({
     [adminApi.reducerPath]: adminApi.reducer,
     [usersApi.reducerPath]: usersApi.reducer,
     [rolesApi.reducerPath]: rolesApi.reducer,
+    [businessConfigApi.reducerPath]: businessConfigApi.reducer,
+    [businessHoursApi.reducerPath]: businessHoursApi.reducer,
+    [classPriceApi.reducerPath]: classPriceApi.reducer,
+    [classLanguageApi.reducerPath]: classLanguageApi.reducer,
+    [classScheduleApi.reducerPath]: classScheduleApi.reducer,
+    [classRegistrationApi.reducerPath]: classRegistrationApi.reducer,
     [categoriesApi.reducerPath]: categoriesApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
@@ -21,7 +33,13 @@ export const store = configureStore({
       .concat(adminApi.middleware)
       .concat(usersApi.middleware)
       .concat(rolesApi.middleware)
-      .concat(categoriesApi.middleware),
+      .concat(categoriesApi.middleware)
+      .concat(businessConfigApi.middleware)
+      .concat(businessHoursApi.middleware)
+      .concat(classPriceApi.middleware)
+      .concat(classLanguageApi.middleware)
+      .concat(classScheduleApi.middleware)
+      .concat(classRegistrationApi.middleware),
 });
 setupListeners(store.dispatch);
 
