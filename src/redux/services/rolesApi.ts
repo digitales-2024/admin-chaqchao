@@ -1,5 +1,8 @@
-import { Role } from "@/types/roles";
+import { CreateRolesSchema } from "@/schemas";
+import { ModulePermissions, Role } from "@/types/roles";
 import { createApi } from "@reduxjs/toolkit/query/react";
+
+import { UpdateRoleSchema } from "@/components/users/roles/UpdateRoleSheet";
 
 import baseQueryWithReauth from "./baseQuery";
 
@@ -26,18 +29,18 @@ export const rolesApi = createApi({
     }),
 
     // Crear un nuevo rol
-    createRole: build.mutation<Role, Partial<Role>>({
+    createRole: build.mutation<Role, CreateRolesSchema>({
       query: (body) => ({
-        url: `roles`,
+        url: `rol`,
         method: "POST",
         body,
       }),
       invalidatesTags: ["Roles"],
     }),
     // Actualizar un rol por id
-    updateRole: build.mutation<Role, Partial<Role>>({
+    updateRole: build.mutation<Role, UpdateRoleSchema>({
       query: ({ id, ...body }) => ({
-        url: `roles/${id}`,
+        url: `rol/${id}`,
         method: "PATCH",
         body,
       }),
@@ -46,10 +49,41 @@ export const rolesApi = createApi({
     // Eliminar un rol por id
     deleteRole: build.mutation<void, number>({
       query: (id) => ({
-        url: `roles/${id}`,
+        url: `rol/${id}`,
         method: "DELETE",
       }),
       invalidatesTags: ["Roles"],
+    }),
+
+    // Eliminar varios roles
+    deleteRoles: build.mutation<void, { ids: string[] }>({
+      query: (ids) => ({
+        url: "rol/remove/all",
+        method: "DELETE",
+        body: ids,
+        credentials: "include",
+      }),
+      invalidatesTags: ["Roles"],
+    }),
+
+    // Reactivar varios roles
+    reactivateRoles: build.mutation<void, { ids: string[] }>({
+      query: (ids) => ({
+        url: "rol/reactivate/all",
+        method: "PATCH",
+        body: ids,
+        credentials: "include",
+      }),
+      invalidatesTags: ["Roles"],
+    }),
+
+    // Mostrar todos los modulos con sus permisos
+    getRolPermissions: build.query<ModulePermissions[], void>({
+      query: () => ({
+        url: `rol/modules-permissions/all`,
+        credentials: "include",
+      }),
+      providesTags: ["Roles"],
     }),
   }),
 });
@@ -60,4 +94,7 @@ export const {
   useCreateRoleMutation,
   useUpdateRoleMutation,
   useDeleteRoleMutation,
+  useDeleteRolesMutation,
+  useGetRolPermissionsQuery,
+  useReactivateRolesMutation,
 } = rolesApi;
