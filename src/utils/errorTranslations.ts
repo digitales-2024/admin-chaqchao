@@ -59,6 +59,8 @@ const errorTranslations = {
   "Role already exists": "El rol con este nombre ya existe",
   "Role name cannot be SUPER_ADMIN": "Solo puede existir un rol superadmin",
   "Role already exists with this name": "El rol ya existe con este nombre",
+  "You cannot deactivate a role in use":
+    "No puedes eliminar/desactivar un rol en uso",
 };
 
 export default errorTranslations;
