@@ -14,6 +14,11 @@ export type {
   ClassRegistrationData,
   ClassScheduleData,
 } from "./classConfigs";
+export type {
+  ProductData,
+  ProductVariationData,
+  CategoryData,
+} from "./product";
 
 export interface Option {
   label: string;
