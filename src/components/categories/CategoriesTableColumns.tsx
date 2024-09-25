@@ -2,7 +2,7 @@
 
 import { Category } from "@/types";
 import { type ColumnDef } from "@tanstack/react-table";
-import { Ellipsis } from "lucide-react";
+import { Ellipsis, Trash } from "lucide-react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
+  DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
@@ -104,7 +105,10 @@ export const categoriesColumns = (): ColumnDef<Category>[] => {
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onSelect={() => setIsDialogOpen(true)}>
-                  Desactivar
+                  Eliminar
+                  <DropdownMenuShortcut>
+                    <Trash className="size-4" aria-hidden="true" />
+                  </DropdownMenuShortcut>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
