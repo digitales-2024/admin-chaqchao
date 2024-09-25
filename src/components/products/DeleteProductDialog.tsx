@@ -33,13 +33,13 @@ import {
 
 interface DeleteProductsDialogProps
   extends ComponentPropsWithoutRef<typeof AlertDialog> {
-  users: Row<ProductData>["original"][];
+  products: Row<ProductData>["original"][];
   showTrigger?: boolean;
   onSuccess?: () => void;
 }
 
 export function DeleteProductsDialog({
-  users,
+  products,
   showTrigger = true,
   onSuccess,
   ...props
@@ -50,7 +50,7 @@ export function DeleteProductsDialog({
   const { onDeleteProducts } = useDeleteProducts();
 
   const onDeleteProductsHandler = () => {
-    onDeleteProducts(users);
+    onDeleteProducts(products);
     props.onOpenChange?.(false);
     onSuccess?.();
   };
@@ -62,7 +62,7 @@ export function DeleteProductsDialog({
           <AlertDialogTrigger asChild>
             <Button variant="outline" size="sm">
               <Trash className="mr-2 size-4" aria-hidden="true" />
-              Eliminar ({users.length})
+              Eliminar ({products.length})
             </Button>
           </AlertDialogTrigger>
         ) : null}
@@ -71,8 +71,8 @@ export function DeleteProductsDialog({
             <AlertDialogTitle>¿Estás absolutamente seguro?</AlertDialogTitle>
             <AlertDialogDescription>
               Esta acción eliminará a
-              <span className="font-medium"> {users.length}</span>
-              {users.length === 1 ? " producto" : " productos"}
+              <span className="font-medium"> {products.length}</span>
+              {products.length === 1 ? " producto" : " productos"}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="gap-2 sm:space-x-0">
@@ -104,7 +104,7 @@ export function DeleteProductsDialog({
         <DrawerTrigger asChild>
           <Button variant="outline" size="sm">
             <Trash className="mr-2 size-4" aria-hidden="true" />
-            Eliminar ({users.length})
+            Eliminar ({products.length})
           </Button>
         </DrawerTrigger>
       ) : null}
@@ -113,8 +113,8 @@ export function DeleteProductsDialog({
           <DrawerTitle>¿Estás absolutamente seguro?</DrawerTitle>
           <DrawerDescription>
             Esta acción eliminará a
-            <span className="font-medium">{users.length}</span>
-            {users.length === 1 ? " producto" : " productos"}
+            <span className="font-medium">{products.length}</span>
+            {products.length === 1 ? " producto" : " productos"}
           </DrawerDescription>
         </DrawerHeader>
         <DrawerFooter className="gap-2 sm:space-x-0">
