@@ -1,6 +1,13 @@
+import { useProfile } from "@/hooks/use-profile";
 import { Role } from "@/types";
 import { ColumnDef } from "@tanstack/react-table";
-import { ChevronDown, ChevronUp, Ellipsis, Trash } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronUp,
+  Ellipsis,
+  RefreshCcwDot,
+  Trash,
+} from "lucide-react";
 import { useState } from "react";
 
 import { DataTableColumnHeader } from "@/components/data-table/DataTableColumnHeader";
@@ -17,6 +24,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import { DeleteRolesDialog } from "./DeleteRolesDialog";
+import { ReactivateRolesDialog } from "./ReactivateRolesDialog";
 import { UpdateRoleSheet } from "./UpdateRoleSheet";
 
 export const rolesTableColumns = (): ColumnDef<Role>[] => [
@@ -125,7 +133,10 @@ export const rolesTableColumns = (): ColumnDef<Role>[] => [
     size: 5,
     cell: function Cell({ row }) {
       const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+      const [showReactivateDialog, setShowReactivateDialog] = useState(false);
       const [showEditDialog, setShowEditDialog] = useState(false);
+
+      const { user } = useProfile();
 
       return (
         <div>
@@ -138,6 +149,15 @@ export const rolesTableColumns = (): ColumnDef<Role>[] => [
             <DeleteRolesDialog
               open={showDeleteDialog}
               onOpenChange={setShowDeleteDialog}
+              roles={[row?.original]}
+              showTrigger={false}
+              onSuccess={() => {
+                row.toggleSelected(false);
+              }}
+            />
+            <ReactivateRolesDialog
+              open={showReactivateDialog}
+              onOpenChange={setShowReactivateDialog}
               roles={[row?.original]}
               showTrigger={false}
               onSuccess={() => {
@@ -160,6 +180,17 @@ export const rolesTableColumns = (): ColumnDef<Role>[] => [
                 Editar
               </DropdownMenuItem>
               <DropdownMenuSeparator />
+              {user?.isSuperAdmin && (
+                <DropdownMenuItem
+                  onSelect={() => setShowReactivateDialog(true)}
+                  disabled={row.original.isActive}
+                >
+                  Reactivar
+                  <DropdownMenuShortcut>
+                    <RefreshCcwDot className="size-4" aria-hidden="true" />
+                  </DropdownMenuShortcut>
+                </DropdownMenuItem>
+              )}
               <DropdownMenuItem onSelect={() => setShowDeleteDialog(true)}>
                 Eliminar
                 <DropdownMenuShortcut>
