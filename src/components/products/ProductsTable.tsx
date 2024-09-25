@@ -8,7 +8,7 @@ import { useMemo } from "react";
 
 import { DataTable } from "../data-table/DataTable";
 import { productsColumns } from "./ProductsTableColumns";
-import { UsersTableToolbarActions } from "./UsersTableToolbarActions";
+import { ProductsTableToolbarActions } from "./ProductsTableToolbarActions";
 
 export function ProductsTable({ data }: { data: ProductData[] }) {
   const { user } = useProfile();
@@ -34,7 +34,7 @@ export function ProductsTable({ data }: { data: ProductData[] }) {
     <DataTable
       data={data}
       columns={columns}
-      toolbarActions={<UsersTableToolbarActions />}
+      toolbarActions={<ProductsTableToolbarActions />}
       placeholder="Buscar productos..."
     />
   );
