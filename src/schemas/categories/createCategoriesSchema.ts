@@ -18,7 +18,7 @@ export const createCategoriesSchema = categoriesSchema;
 
 // Esquema para actualizar categorías
 export const updateCategoriesSchema = categoriesSchema.extend({
-  id: z.string().uuid({ message: "ID inválido" }),
+  id: z.string().uuid({ message: "ID inválido" }), // No se necesita .required()
 });
 
 // Tipos derivados de los esquemas
