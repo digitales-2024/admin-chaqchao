@@ -56,6 +56,8 @@ const errorTranslations = {
     "El intervalo de cierre antes del inicio no puede ser mayor a 300",
   "finalRegistrationCloseInterval cannot be greater than 300":
     "El intervalo final de cierre de registro no puede ser mayor a 300",
+  "name should not be empty": "El nombre no puede estar en blanco",
+  "This category exists": "Esta categoría ya existe",
 };
 
 export default errorTranslations;
