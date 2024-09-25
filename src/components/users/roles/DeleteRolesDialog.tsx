@@ -71,7 +71,7 @@ export function DeleteRolesDialog({
             <AlertDialogDescription>
               Esta acción eliminará a
               <span className="font-medium"> {roles.length}</span>
-              {roles.length === 1 ? " usuario" : " usuarios"}
+              {roles.length === 1 ? " rol" : " roles"}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="gap-2 sm:space-x-0">
@@ -113,7 +113,7 @@ export function DeleteRolesDialog({
           <DrawerDescription>
             Esta acción eliminará a
             <span className="font-medium">{roles.length}</span>
-            {roles.length === 1 ? " usuario" : " usuarios"}
+            {roles.length === 1 ? " rol" : " roles"}
           </DrawerDescription>
         </DrawerHeader>
         <DrawerFooter className="gap-2 sm:space-x-0">
