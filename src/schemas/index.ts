@@ -7,6 +7,8 @@ export {
   updateUsersSchema,
   usersSchema,
 } from "./users/createUsersSchema";
+
+export { createRolesSchema, type CreateRolesSchema } from "./users/rolesSchema";
 export {
   type CreateCategoriesSchema,
   type UpdateCategoriesSchema,

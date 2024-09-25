@@ -98,7 +98,7 @@ export function getMenuList(pathname: string): Group[] {
             {
               href: "/users",
               label: "Usuarios",
-              active: pathname.includes("/users"),
+              active: pathname === "/users",
             },
             {
               href: "/users/roles",
