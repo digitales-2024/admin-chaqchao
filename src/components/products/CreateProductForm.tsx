@@ -1,5 +1,6 @@
 "use client";
-import { useCategory } from "@/hooks/use-category";
+
+import { useCategories } from "@/hooks/use-categories";
 import { CreateProductsSchema } from "@/schemas/products/createProductsSchema";
 import { ImagePlus } from "lucide-react";
 import Image from "next/image";
@@ -24,6 +25,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import { Textarea } from "../ui/textarea";
 
 interface CreateProductsFormProps
   extends Omit<React.ComponentPropsWithRef<"form">, "onSubmit"> {
@@ -32,14 +34,14 @@ interface CreateProductsFormProps
   onSubmit: (data: CreateProductsSchema) => void;
 }
 const URL_IMAGE =
-  "https://images.unsplash.com/photo-1506619216599-9d16d0903dfd?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
+  "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=1998&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
 
 export const CreateProductsForm = ({
   children,
   form,
   onSubmit,
 }: CreateProductsFormProps) => {
-  const { dataCategoriesAll } = useCategory();
+  const { data } = useCategories();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
 
@@ -112,7 +114,7 @@ export const CreateProductsForm = ({
               <FormItem>
                 <FormLabel htmlFor="description">Descripción</FormLabel>
                 <FormControl>
-                  <Input
+                  <Textarea
                     id="description"
                     placeholder="Ejemplo: Hamburguesa con papas"
                     {...field}
@@ -163,12 +165,12 @@ export const CreateProductsForm = ({
               >
                 {preview ? (
                   <div className="flex flex-col items-center">
-                    <div className="relative h-32 w-32">
+                    <div className="relative h-40 w-40">
                       <Image
                         src={preview}
                         alt="Vista previa de la imagen"
                         layout="fill"
-                        objectFit="cover"
+                        objectFit="contain"
                         className="rounded-md"
                       />
                     </div>
@@ -211,7 +213,7 @@ export const CreateProductsForm = ({
                     </SelectTrigger>
                     <SelectContent>
                       <SelectGroup>
-                        {dataCategoriesAll?.map((category) => (
+                        {data?.map((category) => (
                           <SelectItem
                             key={category.id}
                             value={category.id}
