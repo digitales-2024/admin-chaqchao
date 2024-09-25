@@ -177,7 +177,7 @@ export function UpdateRoleSheet({ rol, ...props }: UpdateRoleSheetProps) {
             />
             <h3 className="text-lg font-semibold">Módulos y Permisos</h3>
             <ScrollArea className="h-[35vh] py-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 {dataRolPermissions?.map(({ module, permissions }) => (
                   <Card
                     key={module.id}
@@ -194,7 +194,9 @@ export function UpdateRoleSheet({ rol, ...props }: UpdateRoleSheetProps) {
                       onClick={() => toggleModule(module.name)}
                     >
                       <div className="flex items-center space-x-2">
-                        <span className="font-medium">{module.name}</span>
+                        <span className="truncate font-medium">
+                          {module.name}
+                        </span>
                       </div>
                       {expandedModules.includes(module.name) ? (
                         <ChevronUp className="h-5 w-5" />
@@ -230,7 +232,9 @@ export function UpdateRoleSheet({ rol, ...props }: UpdateRoleSheetProps) {
                                     ),
                                 })}
                               />
-                              {permission.name}
+                              <span className="truncate">
+                                {permission.name}
+                              </span>
                             </Label>
                             <Switch
                               id={`permission-${permission.idModulePermission}`}
