@@ -49,7 +49,7 @@ export function RolesTableToolbarActions({
         onClick={() => {
           if (table) {
             exportTableToCSV(table, {
-              filename: "users",
+              filename: "roles",
               excludeColumns: ["select", "actions"],
             });
           }
