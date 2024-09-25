@@ -32,6 +32,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 import { CreateProductsForm } from "./CreateProductForm";
 
@@ -60,7 +61,6 @@ export function CreateProductDialog() {
   });
 
   const onSubmit = async (input: CreateProductsSchema) => {
-    // Agregar un array vacío de "variations" al input
     const inputWithVariations = { ...input, variations: [] };
 
     startCreateTransition(async () => {
@@ -93,29 +93,31 @@ export function CreateProductDialog() {
             <DialogTitle>{dataForm.title}</DialogTitle>
             <DialogDescription>{dataForm.description}</DialogDescription>
           </DialogHeader>
-          <CreateProductsForm form={form} onSubmit={onSubmit}>
-            <DialogFooter className="gap-2 sm:space-x-0">
-              <Button disabled={isCreatePending} className="w-full">
-                {isCreatePending && (
-                  <RefreshCcw
-                    className="mr-2 size-4 animate-spin"
-                    aria-hidden="true"
-                  />
-                )}
-                Registrar
-              </Button>
-              <DialogClose asChild>
-                <Button
-                  onClick={handleClose}
-                  type="button"
-                  variant="outline"
-                  className="w-full"
-                >
-                  Cancelar
+          <ScrollArea className="mt-4 max-h-[740px] w-full justify-center gap-4 overflow-y-auto">
+            <CreateProductsForm form={form} onSubmit={onSubmit}>
+              <DialogFooter className="gap-2 sm:space-x-0">
+                <Button disabled={isCreatePending} className="w-full">
+                  {isCreatePending && (
+                    <RefreshCcw
+                      className="mr-2 size-4 animate-spin"
+                      aria-hidden="true"
+                    />
+                  )}
+                  Registrar
                 </Button>
-              </DialogClose>
-            </DialogFooter>
-          </CreateProductsForm>
+                <DialogClose asChild>
+                  <Button
+                    onClick={handleClose}
+                    type="button"
+                    variant="outline"
+                    className="w-full"
+                  >
+                    Cancelar
+                  </Button>
+                </DialogClose>
+              </DialogFooter>
+            </CreateProductsForm>
+          </ScrollArea>
         </DialogContent>
       </Dialog>
     );
@@ -134,22 +136,24 @@ export function CreateProductDialog() {
           <DrawerTitle>{dataForm.title}</DrawerTitle>
           <DrawerDescription>{dataForm.description}</DrawerDescription>
         </DrawerHeader>
-        <CreateProductsForm form={form} onSubmit={onSubmit}>
-          <DrawerFooter className="gap-2 sm:space-x-0">
-            <Button disabled={isCreatePending}>
-              {isCreatePending && (
-                <RefreshCcw
-                  className="mr-2 size-4 animate-spin"
-                  aria-hidden="true"
-                />
-              )}
-              Registrar
-            </Button>
-            <DrawerClose asChild>
-              <Button variant="outline">Cancelar</Button>
-            </DrawerClose>
-          </DrawerFooter>
-        </CreateProductsForm>
+        <ScrollArea className="mt-4 max-h-[750px] w-full gap-4 overflow-y-auto pr-4">
+          <CreateProductsForm form={form} onSubmit={onSubmit}>
+            <DrawerFooter className="gap-2 sm:space-x-0">
+              <Button disabled={isCreatePending}>
+                {isCreatePending && (
+                  <RefreshCcw
+                    className="mr-2 size-4 animate-spin"
+                    aria-hidden="true"
+                  />
+                )}
+                Registrar
+              </Button>
+              <DrawerClose asChild>
+                <Button variant="outline">Cancelar</Button>
+              </DrawerClose>
+            </DrawerFooter>
+          </CreateProductsForm>
+        </ScrollArea>
       </DrawerContent>
     </Drawer>
   );
