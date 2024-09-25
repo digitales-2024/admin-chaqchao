@@ -171,7 +171,7 @@ export const productsColumns = (
               <DeleteProductsDialog
                 open={showDeleteDialog}
                 onOpenChange={setShowDeleteDialog}
-                users={[row?.original]}
+                products={[row?.original]}
                 showTrigger={false}
                 onSuccess={() => {
                   row.toggleSelected(false);
