@@ -40,7 +40,7 @@ export const CreateUsersForm = ({
   form,
   onSubmit,
 }: CreateUsersFormProps) => {
-  const { data } = useRol();
+  const { dataRoles } = useRol();
   const { handleGeneratePassword, password } = useUsers();
   const { setValue, clearErrors } = form;
 
@@ -148,7 +148,7 @@ export const CreateUsersForm = ({
                   </FormControl>
                   <SelectContent>
                     <SelectGroup>
-                      {data.map((rol) => (
+                      {dataRoles?.map((rol) => (
                         <SelectItem
                           key={rol.id}
                           value={rol.id}
