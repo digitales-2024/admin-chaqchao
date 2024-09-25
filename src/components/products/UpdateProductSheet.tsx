@@ -1,6 +1,6 @@
 "use client";
 
-import { useCategory } from "@/hooks/use-category";
+import { useCategories } from "@/hooks/use-categories";
 import { useUpdateProduct } from "@/hooks/use-products";
 import {
   CreateProductsSchema,
@@ -33,7 +33,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
 import {
   Sheet,
   SheetClose,
@@ -44,12 +43,14 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 
+import { Textarea } from "../ui/textarea";
+
 const infoSheet = {
   title: "Actualizar Producto",
   description: "Actualiza la información del producto y guarda los cambios",
 };
 const URL_IMAGE =
-  "https://images.unsplash.com/photo-1506619216599-9d16d0903dfd?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
+  "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=1998&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
 
 interface UpdateProductSheetProps
   extends Omit<
@@ -66,7 +67,7 @@ export function UpdateProductSheet({
   open,
   onOpenChange,
 }: UpdateProductSheetProps) {
-  const { dataCategoriesAll } = useCategory();
+  const { data } = useCategories();
   const { onUpdateProduct, isSuccessUpdateProduct, isLoadingUpdateProduct } =
     useUpdateProduct();
 
@@ -169,7 +170,7 @@ export function UpdateProductSheet({
           </SheetTitle>
           <SheetDescription>{infoSheet.description}</SheetDescription>
         </SheetHeader>
-        <ScrollArea className="mt-4 w-full gap-4 rounded-md border p-4">
+        <ScrollArea className="mt-4 w-full gap-4">
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
@@ -196,7 +197,7 @@ export function UpdateProductSheet({
                   <FormItem>
                     <FormLabel>Descripción</FormLabel>
                     <FormControl>
-                      <Input
+                      <Textarea
                         placeholder="Ejemplo: Hamburguesa con papas"
                         {...field}
                       />
@@ -245,20 +246,18 @@ export function UpdateProductSheet({
                   >
                     {preview ? (
                       <div className="flex flex-col items-center">
-                        <div className="relative h-32 w-32">
+                        <div className="relative h-40 w-40">
                           <Image
                             src={preview}
                             alt="Vista previa de la imagen"
                             layout="fill"
-                            objectFit="cover"
+                            objectFit="contain"
                             className="rounded-md"
                           />
                         </div>
-                        {selectedFile && (
-                          <p className="mt-2 text-gray-600">
-                            {selectedFile.name}
-                          </p>
-                        )}
+                        <p className="mt-2 text-gray-600">
+                          {selectedFile?.name}
+                        </p>
                       </div>
                     ) : (
                       <div className="flex flex-col items-center justify-center">
@@ -297,7 +296,7 @@ export function UpdateProductSheet({
                         </SelectTrigger>
                         <SelectContent>
                           <SelectGroup>
-                            {dataCategoriesAll?.map((category) => (
+                            {data?.map((category) => (
                               <SelectItem
                                 key={category.id}
                                 value={category.id}
@@ -333,7 +332,6 @@ export function UpdateProductSheet({
               </SheetFooter>
             </form>
           </Form>
-          <Separator className="my-6" />
         </ScrollArea>
       </SheetContent>
     </Sheet>
