@@ -56,6 +56,13 @@ const errorTranslations = {
     "El intervalo de cierre antes del inicio no puede ser mayor a 300",
   "finalRegistrationCloseInterval cannot be greater than 300":
     "El intervalo final de cierre de registro no puede ser mayor a 300",
+  "Role already exists": "El rol con este nombre ya existe",
+  "Role name cannot be SUPER_ADMIN": "Solo puede existir un rol superadmin",
+  "Role already exists with this name": "El rol ya existe con este nombre",
+  "You cannot deactivate a role in use":
+    "No puedes eliminar/desactivar un rol en uso",
+  "name should not be empty": "El nombre no puede estar en blanco",
+  "This category exists": "Esta categoría ya existe",
 };
 
 export default errorTranslations;

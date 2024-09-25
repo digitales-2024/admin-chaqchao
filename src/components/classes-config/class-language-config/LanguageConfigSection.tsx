@@ -66,7 +66,7 @@ export function LanguageConfigSection() {
                 <div className="flex items-center">
                   <BookType className="mr-4 mt-4" aria-hidden="true" />
                   <div>
-                    <p className="mt-4 text-base font-semibold">
+                    <p className="mt-4 text-base font-semibold capitalize">
                       {language.languageName}
                     </p>
                   </div>
