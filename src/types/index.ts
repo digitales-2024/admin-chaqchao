@@ -20,6 +20,7 @@ export type {
   ClassRegistrationData,
   ClassScheduleData,
 } from "./classConfigs";
+export type { Category } from "./category";
 
 export interface Option {
   label: string;

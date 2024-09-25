@@ -5,6 +5,7 @@ import { adminApi } from "./services/adminApi";
 import { authApi } from "./services/authApi";
 import { businessConfigApi } from "./services/businessConfigApi";
 import { businessHoursApi } from "./services/businessHoursApi";
+import { categoriesApi } from "./services/categoriesApi";
 import { classLanguageApi } from "./services/classLanguageConfigApi";
 import { classPriceApi } from "./services/classPriceApi";
 import { classRegistrationApi } from "./services/classRegistrationApi";
@@ -24,6 +25,7 @@ export const store = configureStore({
     [classLanguageApi.reducerPath]: classLanguageApi.reducer,
     [classScheduleApi.reducerPath]: classScheduleApi.reducer,
     [classRegistrationApi.reducerPath]: classRegistrationApi.reducer,
+    [categoriesApi.reducerPath]: categoriesApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
@@ -31,6 +33,7 @@ export const store = configureStore({
       .concat(adminApi.middleware)
       .concat(usersApi.middleware)
       .concat(rolesApi.middleware)
+      .concat(categoriesApi.middleware)
       .concat(businessConfigApi.middleware)
       .concat(businessHoursApi.middleware)
       .concat(classPriceApi.middleware)
