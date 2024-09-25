@@ -33,6 +33,7 @@ export const useLogout = () => {
               ),
             );
           }
+          resolve(result);
         } catch (error) {
           reject(error);
         }

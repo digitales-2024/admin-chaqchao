@@ -18,7 +18,11 @@ export const useLogin = () => {
       new Promise(async (resolve, reject) => {
         try {
           const result = await login(credentials);
-          if (result.error && "data" in result.error) {
+          if (
+            result.error &&
+            typeof result.error === "object" &&
+            "data" in result.error
+          ) {
             const error = (result.error.data as CustomErrorData).message;
             const message = translateError(error as string);
             reject(new Error(message));
