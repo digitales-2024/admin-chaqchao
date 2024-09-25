@@ -44,10 +44,10 @@ export function UpdateCategorySheet({
   category,
   ...props
 }: UpdateCategorySheetProps) {
-  const { onUpdateCategory, isSuccessUpdateCategory, isLoadingUpdateCategory } =
-    useCategories();
+  const { onUpdateCategory, isLoadingUpdateCategory } = useCategories();
 
   const defaultValues = {
+    id: category.id,
     name: category?.name || "",
     description: category?.description || "",
   };
@@ -58,36 +58,37 @@ export function UpdateCategorySheet({
   });
 
   useEffect(() => {
-    form.reset({
-      name: category.name ?? "",
-      description: category.description ?? "",
-    });
+    if (category) {
+      form.reset({
+        id: category.id, // Solo resetear cuando category está disponible
+        name: category.name ?? "",
+        description: category.description ?? "",
+      });
+    }
   }, [category, form]);
 
   function onSubmit(input: UpdateCategoriesSchema) {
-    // Usar el id de category y el resto de input sin incluir id
-    const { name, description } = input; // Solo extraemos las propiedades necesarias
+    const { id, name, description } = input;
 
     console.log("Enviando actualización para:", {
-      id: category.id,
+      id, // Asegúrate de enviar el ID aquí
       name,
       description,
     });
 
     onUpdateCategory({
-      id: category.id, // Usamos el id de la categoría
-      name, // Pasamos solo name y description
+      id, // Enviar el ID junto con los demás campos
+      name,
       description,
     });
   }
 
   useEffect(() => {
-    if (isSuccessUpdateCategory) {
-      console.log("Actualización exitosa");
-      form.reset();
-      props.onOpenChange?.(false);
+    const errors = form.formState.errors;
+    if (Object.keys(errors).length > 0) {
+      console.log("Errores de validación:", errors);
     }
-  }, [isSuccessUpdateCategory]);
+  }, [form.formState.errors]);
 
   return (
     <Sheet {...props}>
