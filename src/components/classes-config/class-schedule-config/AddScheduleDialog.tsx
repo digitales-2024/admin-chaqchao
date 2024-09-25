@@ -60,6 +60,11 @@ export function AddScheduleDialog({
     }
   };
 
+  const onCancel = () => {
+    setIsOpen(false);
+    reset();
+  };
+
   return (
     <>
       <div>
@@ -97,12 +102,8 @@ export function AddScheduleDialog({
                   )}
                 </div>
               </div>
-              <div className="mt-6 flex justify-end space-x-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setIsOpen(false)}
-                >
+              <div className="mt-6 flex w-full flex-row-reverse justify-start gap-x-2">
+                <Button type="button" variant="outline" onClick={onCancel}>
                   Cancelar
                 </Button>
                 <Button type="submit">Agregar Horario</Button>
