@@ -53,7 +53,7 @@ interface UpdateUserSheetProps
 }
 
 export function UpdateUserSheet({ user, ...props }: UpdateUserSheetProps) {
-  const { data } = useRol();
+  const { dataRoles } = useRol();
   const { onUpdateUser, isSuccessUpdateUser, isLoadingUpdateUser } = useUsers();
 
   const form = useForm<UpdateUsersSchema>({
@@ -159,7 +159,7 @@ export function UpdateUserSheet({ user, ...props }: UpdateUserSheetProps) {
                       </FormControl>
                       <SelectContent>
                         <SelectGroup>
-                          {data.map((rol) => (
+                          {dataRoles?.map((rol) => (
                             <SelectItem
                               key={rol.id}
                               value={rol.id}
