@@ -106,7 +106,7 @@ export function UpdateUserSheet({ user, ...props }: UpdateUserSheetProps) {
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
-              className="flex flex-col gap-4"
+              className="flex flex-col gap-4 p-2"
             >
               <FormField
                 control={form.control}
@@ -151,6 +151,7 @@ export function UpdateUserSheet({ user, ...props }: UpdateUserSheetProps) {
                     <Select
                       onValueChange={(value) => field.onChange([value])}
                       defaultValue={field.value[0] || ""}
+                      disabled={user.isSuperAdmin}
                     >
                       <FormControl>
                         <SelectTrigger className="capitalize">
