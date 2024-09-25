@@ -124,9 +124,9 @@ export function getMenuList(pathname: string): Group[] {
               active: pathname.includes("/information-general"),
             },
             {
-              href: "/bussiness/horario",
-              label: "Horario",
-              active: pathname.includes("/horario"),
+              href: "/bussiness/classes-configuration",
+              label: "Clases",
+              active: pathname.includes("/classes-configuration"),
             },
           ],
         },
