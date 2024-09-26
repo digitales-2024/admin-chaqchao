@@ -114,12 +114,12 @@ export function BusinessTabs({
 
       <TabsContent value="schedule">
         <Card>
-          <CardHeader>
+          <CardHeader className="">
             <CardTitle>Horario</CardTitle>
             <CardDescription>
               Configure el horario de atención de su empresa.
             </CardDescription>
-            <div className="flex justify-start">
+            <div className="flex justify-end">
               <UpdateBusinessHoursSheet
                 daysOfWeek={daysOfWeek}
                 businessHoursArray={businessHoursArray}
@@ -139,7 +139,7 @@ export function BusinessTabs({
                     key={day}
                     className="flex w-full items-center justify-between gap-y-4"
                   >
-                    <div className="flex w-full flex-wrap items-center justify-between gap-2">
+                    <div className="flex w-full flex-wrap items-center gap-x-12">
                       <Label className="w-32 uppercase">
                         <Badge
                           variant="outline"
