@@ -145,38 +145,38 @@ export function UpdateRoleSheet({ rol, ...props }: UpdateRoleSheetProps) {
           <SheetDescription>{infoSheet.description}</SheetDescription>
         </SheetHeader>
         <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="flex flex-col gap-4 p-2"
-          >
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nombre</FormLabel>
-                  <FormControl>
-                    <Input className="resize-none" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Descripción</FormLabel>
-                  <FormControl>
-                    <Textarea className="resize-none" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <h3 className="text-lg font-semibold">Módulos y Permisos</h3>
-            <ScrollArea className="h-[35vh] py-4">
+          <ScrollArea className="w-full gap-4 rounded-md border p-4">
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="flex flex-col gap-4 p-2"
+            >
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Nombre</FormLabel>
+                    <FormControl>
+                      <Input className="resize-none" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Descripción</FormLabel>
+                    <FormControl>
+                      <Textarea className="resize-none" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <h3 className="text-lg font-semibold">Módulos y Permisos</h3>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 {dataRolPermissions?.map(({ module, permissions }) => (
                   <Card
@@ -255,26 +255,26 @@ export function UpdateRoleSheet({ rol, ...props }: UpdateRoleSheetProps) {
                   </Card>
                 ))}
               </div>
-            </ScrollArea>
-            <SheetFooter className="flexgap-2 pt-2 sm:space-x-0">
-              <div className="flex flex-row-reverse gap-2">
-                <Button disabled={isLoadingUpdateRole}>
-                  {isLoadingUpdateRole && (
-                    <RefreshCcw
-                      className="mr-2 size-4 animate-spin"
-                      aria-hidden="true"
-                    />
-                  )}
-                  Actualizar
-                </Button>
-                <SheetClose asChild>
-                  <Button type="button" variant="outline">
-                    Cancelar
+              <SheetFooter className="flexgap-2 pt-2 sm:space-x-0">
+                <div className="flex flex-row-reverse flex-wrap gap-2">
+                  <Button disabled={isLoadingUpdateRole}>
+                    {isLoadingUpdateRole && (
+                      <RefreshCcw
+                        className="mr-2 size-4 animate-spin"
+                        aria-hidden="true"
+                      />
+                    )}
+                    Actualizar
                   </Button>
-                </SheetClose>
-              </div>
-            </SheetFooter>
-          </form>
+                  <SheetClose asChild>
+                    <Button type="button" variant="outline">
+                      Cancelar
+                    </Button>
+                  </SheetClose>
+                </div>
+              </SheetFooter>
+            </form>
+          </ScrollArea>
         </Form>{" "}
       </SheetContent>
     </Sheet>

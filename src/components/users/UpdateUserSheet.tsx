@@ -102,7 +102,7 @@ export function UpdateUserSheet({ user, ...props }: UpdateUserSheetProps) {
           </SheetTitle>
           <SheetDescription>{infoSheet.description}</SheetDescription>
         </SheetHeader>
-        <ScrollArea className="mt-4 w-full gap-4 rounded-md border p-4">
+        <ScrollArea className="w-full gap-4 rounded-md border p-4">
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
@@ -178,7 +178,7 @@ export function UpdateUserSheet({ user, ...props }: UpdateUserSheetProps) {
               />
 
               <SheetFooter className="gap-2 pt-2 sm:space-x-0">
-                <div className="flex flex-row-reverse gap-2">
+                <div className="flex flex-row-reverse flex-wrap gap-2">
                   <Button disabled={isLoadingUpdateUser}>
                     {isLoadingUpdateUser && (
                       <RefreshCcw
