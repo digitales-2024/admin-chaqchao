@@ -2,21 +2,32 @@
 
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { ProductData } from "@/types";
-import { DialogDescription, DialogTitle } from "@radix-ui/react-dialog";
-import { CheckCircle, XCircle } from "lucide-react";
+import { DialogTitle as UIDialogTitle } from "@radix-ui/react-dialog";
+import { PackageCheck, PackageX } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import {
   Drawer,
   DrawerContent,
-  DrawerDescription,
   DrawerHeader,
-  DrawerTitle,
+  DrawerTitle as UIDrawerTitle,
   DrawerTrigger,
-} from "@/components/ui/drawer"; // Asegúrate de importar correctamente el Drawer
+} from "@/components/ui/drawer";
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
+
+import { cn } from "@/lib/utils";
+
+import { Switch } from "../ui/switch";
 
 interface ProductImageDialogProps {
   imageUrl: string;
@@ -35,84 +46,116 @@ export function ProductImageDialog({
   const isDesktop = useMediaQuery("(min-width: 640px)");
 
   const content = (
-    <div className="mt-0 flex flex-col sm:mt-6 lg:mt-0 lg:flex-row">
-      {/* Sección de Imagen: Alineación a la izquierda */}
-      <div className="flex w-full sm:justify-start">
-        <Image
-          src={imageUrl}
-          alt={product.name}
-          width={400}
-          height={400}
-          className="transform rounded-md object-cover transition-transform duration-300 hover:scale-105"
-        />
+    <div className="grid gap-6 p-5 py-7 lg:grid-cols-[400px_1fr]">
+      {/* Imagen y detalles básicos */}
+      <div className="space-y-4">
+        <div className="relative aspect-square h-auto w-full">
+          <Image
+            height={400}
+            width={400}
+            src={imageUrl}
+            alt={product.name}
+            objectFit="cover"
+          />
+        </div>
       </div>
-
-      {/* Sección de Información */}
-      <div className="mt-6 sm:ml-6 sm:w-2/3">
-        {/* Nombre del Producto */}
-        <h1 className="mb-2 text-2xl font-bold">{product.name}</h1>
-
-        {/* Categoría */}
-        <Badge
-          variant="default"
-          className="mb-4 capitalize"
-          style={{ backgroundColor: color }}
-        >
-          {product.category.name}
-        </Badge>
-
-        {/* Descripción */}
-        <p className="mb-4 text-gray-700">{product.description}</p>
-
-        {/* Precio */}
-        <div className="mb-4 text-2xl font-semibold text-emerald-600">
-          {new Intl.NumberFormat("es-PE", {
-            style: "currency",
-            currency: "PEN",
-          }).format(product.price)}
-        </div>
-
-        {/* Disponibilidad */}
-        <div className="mb-4 flex items-center">
-          {product.isAvailable ? (
-            <>
-              <CheckCircle className="mr-2 text-emerald-500" />
-              <span className="text-emerald-500">Disponible</span>
-            </>
-          ) : (
-            <>
-              <XCircle className="mr-2 text-red-500" />
-              <span className="text-red-500">No Disponible</span>
-            </>
-          )}
-        </div>
+      {/* Información detallada y formulario de edición */}
+      <div className="space-y-6">
+        <Card className="border-slate-50">
+          <CardContent className="flex flex-col gap-10 p-10">
+            <div className="space-y-2">
+              <Label htmlFor="description">Descripción</Label>
+              <p className="text-balance text-sm font-light text-gray-400">
+                {product.description}
+              </p>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="category">Categoría</Label>
+              <div className="mb-2 flex items-center">
+                <Badge
+                  variant="default"
+                  className="capitalize"
+                  style={{ backgroundColor: color }}
+                >
+                  {product.category.name}
+                </Badge>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="price">Precio (PEN)</Label>
+              <p>
+                {new Intl.NumberFormat("es-PE", {
+                  style: "currency",
+                  currency: "PEN",
+                }).format(product.price)}
+              </p>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="stock">Disponibilidad</Label>
+              <div className="flex items-center gap-2">
+                <Switch checked={product.isAvailable} />
+                <span
+                  className={cn(
+                    "text-xs text-emerald-500",
+                    product.isAvailable ? "text-emerald-500" : "text-slate-500",
+                  )}
+                >
+                  {product.isAvailable ? (
+                    <span className="inline-flex gap-2">
+                      <PackageCheck size={16} className="flex-shrink-0" />{" "}
+                      Disponible
+                    </span>
+                  ) : (
+                    <span className="inline-flex gap-2">
+                      <PackageX size={16} className="flex-shrink-0" /> No
+                      Disponible
+                    </span>
+                  )}
+                </span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
+  );
+
+  const dialogContent = (
+    <DialogContent className="max-h-lvh max-w-4xl overflow-y-auto p-10">
+      <DialogHeader>
+        <UIDialogTitle className="text-2xl font-bold uppercase">
+          {product.name}
+        </UIDialogTitle>
+        <Separator className="my-4" />
+      </DialogHeader>
+      {content}
+    </DialogContent>
+  );
+
+  const drawerContent = (
+    <DrawerContent className="flex flex-col overflow-y-auto p-4">
+      <DrawerHeader>
+        <UIDrawerTitle className="text-2xl font-bold uppercase">
+          {product.name}
+        </UIDrawerTitle>
+        <Separator className="my-4" />
+      </DrawerHeader>
+      {content}
+    </DrawerContent>
   );
 
   if (isDesktop)
     return (
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>{children}</DialogTrigger>
-        <DialogTitle></DialogTitle>
-        <DialogDescription></DialogDescription>
-        <DialogContent className="max-w-md shadow-none lg:max-w-3xl">
-          {content}
-        </DialogContent>
+        {dialogContent}
       </Dialog>
     );
 
   return (
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild>{children}</DrawerTrigger>
-
-      <DrawerContent className="flex flex-col items-center justify-center">
-        <DrawerHeader>
-          <DrawerTitle></DrawerTitle>
-          <DrawerDescription></DrawerDescription>
-        </DrawerHeader>
-        <div className="p-4">{content}</div>
-      </DrawerContent>
+      {drawerContent}
     </Drawer>
   );
 }
