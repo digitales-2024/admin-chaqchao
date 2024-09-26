@@ -1,4 +1,6 @@
 import { useLogoutMutation } from "@/redux/services/authApi";
+import { CustomErrorData } from "@/types";
+import { translateError } from "@/utils/translateError";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { toast } from "sonner";
@@ -15,6 +17,22 @@ export const useLogout = () => {
       new Promise(async (resolve, reject) => {
         try {
           const result = await logout();
+          if (
+            result.error &&
+            typeof result.error === "object" &&
+            "data" in result.error
+          ) {
+            const error = (result.error.data as CustomErrorData).message;
+            const message = translateError(error as string);
+            reject(new Error(message));
+          }
+          if (result.error) {
+            reject(
+              new Error(
+                "Ocurrió un error inesperado, por favor intenta de nuevo",
+              ),
+            );
+          }
           resolve(result);
         } catch (error) {
           reject(error);
@@ -24,7 +42,9 @@ export const useLogout = () => {
     toast.promise(promise(), {
       loading: "Cerrando sesión...",
       success: "Sesión cerrada correctamente",
-      error: "Ocurrió un error al cerrar la sesión",
+      error: (error) => {
+        return error.message;
+      },
     });
   };
 

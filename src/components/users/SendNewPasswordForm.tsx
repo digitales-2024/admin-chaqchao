@@ -122,18 +122,6 @@ export const SendNewPasswordForm = ({ user }: SendNewPasswordFormProps) => {
                 </span>
               )}
             </Button>
-            {/* {message && (
-            <div
-              className={`mt-4 flex items-center ${message.type === "success" ? "text-green-600" : "text-red-600"}`}
-            >
-              {message.type === "success" ? (
-                <CheckCircle className="mr-2" />
-              ) : (
-                <AlertCircle className="mr-2" />
-              )}
-              <p>{message.text}</p>
-            </div>
-          )} */}
           </CardFooter>
         </Card>
       </form>

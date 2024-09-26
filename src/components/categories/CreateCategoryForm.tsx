@@ -1,6 +1,7 @@
 "use client";
+import { CreateCategoriesSchema } from "@/schemas";
 import { UseFormReturn } from "react-hook-form";
-import { Input } from "@/components/ui/input";
+
 import {
   Form,
   FormControl,
@@ -9,7 +10,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { CreateCategoriesSchema } from "@/schemas";
+import { Input } from "@/components/ui/input";
 
 interface CreateCategoryFormProps
   extends Omit<React.ComponentPropsWithRef<"form">, "onSubmit"> {
@@ -34,11 +35,7 @@ export const CreateCategoryForm = ({
               <FormItem>
                 <FormLabel htmlFor="name">Nombre de la categoría</FormLabel>
                 <FormControl>
-                  <Input
-                    id="name"
-                    placeholder="Por ejemplo: Bebidas"
-                    {...field}
-                  />
+                  <Input id="name" placeholder="Ejemplo: bebidas" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

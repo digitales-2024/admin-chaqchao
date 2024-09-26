@@ -1,6 +1,8 @@
-import { categoriesSchema } from "@/schemas";
+import { CreateCategoriesSchema, UpdateCategoriesSchema } from "@/schemas";
 import { Category } from "@/types";
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi } from "@reduxjs/toolkit/query/react";
+
+import baseQueryWithReauth from "./baseQuery";
 
 interface CategoryUpdate {
   data: Category;
@@ -8,13 +10,19 @@ interface CategoryUpdate {
   statusCode: number;
 }
 
+interface CategoryResponse {
+  statusCode: number;
+  message: string;
+  data: Category;
+}
+
 export const categoriesApi = createApi({
   reducerPath: "categoriesApi",
-  baseQuery: fetchBaseQuery({ baseUrl: process.env.NEXT_PUBLIC_BACKEND_URL }),
+  baseQuery: baseQueryWithReauth,
   tagTypes: ["Categories"],
   endpoints: (build) => ({
     // Crear una nueva categoría
-    createCategory: build.mutation<typeof categoriesSchema, Partial<Category>>({
+    createCategory: build.mutation<Category, Partial<CreateCategoriesSchema>>({
       query: (body) => ({
         url: "category",
         method: "POST",
@@ -24,8 +32,11 @@ export const categoriesApi = createApi({
       invalidatesTags: ["Categories"],
     }),
 
-    // Actualizar una categoría por id /category/:id
-    updateCategory: build.mutation<CategoryUpdate, Partial<Category>>({
+    // Actualizar una categoría por id
+    updateCategory: build.mutation<
+      CategoryUpdate,
+      UpdateCategoriesSchema & { id: string }
+    >({
       query: ({ id, ...body }) => ({
         url: `category/${id}`,
         method: "PATCH",
@@ -44,7 +55,7 @@ export const categoriesApi = createApi({
       providesTags: ["Categories"],
     }),
 
-    // Obtener una categoría por id /category/:id
+    // Obtener una categoría por id
     getCategoryById: build.query<Category, string>({
       query: (id) => ({
         url: `category/${id}`,
@@ -52,11 +63,34 @@ export const categoriesApi = createApi({
       }),
       providesTags: ["Categories"],
     }),
+
+    // Desactivar una categoría
+    deactivateCategory: build.mutation<CategoryResponse, string>({
+      query: (id) => ({
+        url: `category/desactivate/${id}`,
+        method: "PATCH",
+        credentials: "include",
+      }),
+      invalidatesTags: ["Categories"],
+    }),
+
+    // Reactivar una categoría
+    reactivateCategory: build.mutation<CategoryResponse, string>({
+      query: (id) => ({
+        url: `category/reactivate/${id}`,
+        method: "PATCH",
+        credentials: "include",
+      }),
+      invalidatesTags: ["Categories"],
+    }),
   }),
 });
 
 export const {
   useCreateCategoryMutation,
+  useUpdateCategoryMutation,
   useGetCategoriesQuery,
   useGetCategoryByIdQuery,
+  useDeactivateCategoryMutation,
+  useReactivateCategoryMutation,
 } = categoriesApi;

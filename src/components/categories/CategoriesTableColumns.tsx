@@ -1,3 +1,5 @@
+"use client";
+
 import { Category } from "@/types";
 import { type ColumnDef } from "@tanstack/react-table";
 import { Ellipsis, Trash } from "lucide-react";
@@ -15,12 +17,14 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import { DataTableColumnHeader } from "../data-table/DataTableColumnHeader";
+import { DesactivateCategoryDialog } from "./DesactivateCategoryDialog";
 import { UpdateCategorySheet } from "./UpdateCategorySheet";
 
 export const categoriesColumns = (): ColumnDef<Category>[] => {
   return [
     {
       id: "select",
+      size: 10,
       header: ({ table }) => (
         <div className="px-2">
           <Checkbox
@@ -72,17 +76,19 @@ export const categoriesColumns = (): ColumnDef<Category>[] => {
     },
     {
       id: "actions",
+      size: 10,
       cell: function Cell({ row }) {
         const [showEditDialog, setShowEditDialog] = useState(false);
+        const [isDialogOpen, setIsDialogOpen] = useState(false);
+        const category = row.original;
+
         return (
           <div>
-            <div>
-              <UpdateCategorySheet
-                open={showEditDialog}
-                onOpenChange={setShowEditDialog}
-                category={row?.original}
-              />
-            </div>
+            <UpdateCategorySheet
+              open={showEditDialog}
+              onOpenChange={setShowEditDialog}
+              category={category}
+            />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
@@ -98,7 +104,7 @@ export const categoriesColumns = (): ColumnDef<Category>[] => {
                   Editar
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => setIsDialogOpen(true)}>
                   Eliminar
                   <DropdownMenuShortcut>
                     <Trash className="size-4" aria-hidden="true" />
@@ -106,6 +112,12 @@ export const categoriesColumns = (): ColumnDef<Category>[] => {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
+            <DesactivateCategoryDialog
+              category={category}
+              isOpen={isDialogOpen}
+              onOpenChange={setIsDialogOpen}
+              onSuccess={() => setIsDialogOpen(false)}
+            />
           </div>
         );
       },
