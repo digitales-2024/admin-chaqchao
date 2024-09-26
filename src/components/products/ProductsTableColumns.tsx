@@ -2,7 +2,7 @@
 
 import { ProductData } from "@/types";
 import { type ColumnDef } from "@tanstack/react-table";
-import { Ellipsis, RefreshCcwDot, Trash } from "lucide-react";
+import { Ellipsis, RefreshCcwDot, ScanEye, Trash } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 
@@ -20,6 +20,7 @@ import {
 import { DataTableColumnHeader } from "../data-table/DataTableColumnHeader";
 import { Badge } from "../ui/badge";
 import { DeleteProductsDialog } from "./DeleteProductDialog";
+import { ProductImageDialog } from "./ProductImageDialog";
 import { ReactivateProductsDialog } from "./ReactivateProductsDialog";
 import { UpdateProductSheet } from "./UpdateProductSheet";
 
@@ -68,15 +69,25 @@ export const productsColumns = (
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Imagen" />
       ),
-      cell: ({ row }) => (
-        <Image
-          src={row.getValue("imagen") as string}
-          alt="imagen"
-          width={50}
-          height={50}
-          className="size-16 rounded-md object-cover"
-        />
-      ),
+      cell: ({ row }) => {
+        const imageUrl = row.getValue("imagen") as string;
+        return (
+          <ProductImageDialog imageUrl={imageUrl} product={row?.original}>
+            <div className="group relative h-20 w-20 cursor-pointer">
+              <Image
+                src={imageUrl}
+                alt="imagen"
+                width={80}
+                height={80}
+                className="h-full w-full rounded-md object-cover"
+              />
+              <div className="absolute inset-0 flex items-center justify-center rounded-md bg-black bg-opacity-50 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+                <ScanEye strokeWidth={1.5} className="h-12 w-12 text-white" />
+              </div>
+            </div>
+          </ProductImageDialog>
+        );
+      },
     },
     {
       id: "nombre",
@@ -146,6 +157,29 @@ export const productsColumns = (
           ) : (
             <Badge variant="secondary" className="bg-red-100 text-red-500">
               No disponible
+            </Badge>
+          )}
+        </div>
+      ),
+    },
+    {
+      id: "estado",
+      accessorKey: "isActive",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Estado" />
+      ),
+      cell: ({ row }) => (
+        <div>
+          {row.getValue("estado") ? (
+            <Badge
+              variant="secondary"
+              className="bg-emerald-100 text-emerald-500"
+            >
+              Activo
+            </Badge>
+          ) : (
+            <Badge variant="secondary" className="bg-red-100 text-red-500">
+              Desactivo
             </Badge>
           )}
         </div>
@@ -233,32 +267,6 @@ export const productsColumns = (
       enablePinning: true,
     },
   ];
-
-  if (isSuperAdmin) {
-    columns.splice(5, 0, {
-      id: "estado",
-      accessorKey: "isActive",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Estado" />
-      ),
-      cell: ({ row }) => (
-        <div>
-          {row.getValue("estado") ? (
-            <Badge
-              variant="secondary"
-              className="bg-emerald-100 text-emerald-500"
-            >
-              Activo
-            </Badge>
-          ) : (
-            <Badge variant="secondary" className="bg-red-100 text-red-500">
-              Desactivo
-            </Badge>
-          )}
-        </div>
-      ),
-    });
-  }
 
   return columns;
 };
