@@ -1,10 +1,10 @@
 import { useUpdateBusinessHour } from "@/hooks/use-business-hours";
 import { BusinessHoursData } from "@/types";
+import { Clock, DoorClosed, DoorOpen } from "lucide-react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   Sheet,
@@ -14,7 +14,12 @@ import {
   SheetDescription,
   SheetFooter,
   SheetTrigger,
+  SheetClose,
 } from "@/components/ui/sheet";
+
+import { InputTime } from "../common/input/InputTime";
+import { ScrollArea } from "../ui/scroll-area";
+import { Separator } from "../ui/separator";
 
 interface UpdateBusinessHoursSheetProps {
   daysOfWeek: { [key: string]: string };
@@ -74,64 +79,82 @@ export function UpdateBusinessHoursSheet({
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
-        <Button variant="secondary">Actualizar Horarios</Button>
+        <Button
+          variant="secondary"
+          className="flex justify-center gap-2 capitalize hover:text-emerald-500"
+        >
+          <Clock className="flex-shrink-0" size={16} />
+          Actualizar Horario Completo
+        </Button>
       </SheetTrigger>
-      <SheetContent>
+      <SheetContent className="flex flex-col gap-6">
         <SheetHeader>
           <SheetTitle>Actualizar Horario de Atención</SheetTitle>
           <SheetDescription>
             Seleccione los días y establezca los horarios de apertura y cierre.
           </SheetDescription>
         </SheetHeader>
-        <div className="py-4">
-          <div className="mb-4">
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="selectAll"
-                checked={selectedDays.length === Object.keys(daysOfWeek).length}
-                onCheckedChange={handleSelectAll}
-              />
-              <Label htmlFor="selectAll">Seleccionar Todos</Label>
-            </div>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            {Object.entries(daysOfWeek).map(([dayKey, dayLabel]) => (
-              <div key={dayKey} className="flex items-center space-x-2">
+        <ScrollArea className="h-fit w-full rounded-md border p-4">
+          <div className="flex flex-col gap-6">
+            <div className="space-y-4">
+              <div className="flex items-center space-x-2">
                 <Checkbox
-                  id={`day-${dayKey}`}
-                  checked={selectedDays.includes(dayKey)}
-                  onCheckedChange={() => handleDayChange(dayKey)}
+                  id="selectAll"
+                  checked={
+                    selectedDays.length === Object.keys(daysOfWeek).length
+                  }
+                  onCheckedChange={handleSelectAll}
                 />
-                <Label htmlFor={`day-${dayKey}`}>{dayLabel}</Label>
+                <Label htmlFor="selectAll">Seleccionar Todos</Label>
               </div>
-            ))}
-          </div>
-          <div className="mt-6 grid gap-4">
-            <div className="grid items-center gap-4">
-              <Label htmlFor="openingTime">Hora de Apertura</Label>
-              <Input
-                id="openingTime"
-                type="time"
-                value={openingTime}
-                onChange={(e) => setOpeningTime(e.target.value)}
-                className="h-10"
-              />
+              <div className="ml-4 grid grid-cols-2 gap-4">
+                {Object.entries(daysOfWeek).map(([dayKey, dayLabel]) => (
+                  <div key={dayKey} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={`day-${dayKey}`}
+                      checked={selectedDays.includes(dayKey)}
+                      onCheckedChange={() => handleDayChange(dayKey)}
+                    />
+                    <Label htmlFor={`day-${dayKey}`}>{dayLabel}</Label>
+                  </div>
+                ))}
+              </div>
             </div>
-            <div className="grid items-center gap-4">
-              <Label htmlFor="closingTime">Hora de Cierre</Label>
-              <Input
-                id="closingTime"
-                type="time"
-                value={closingTime}
-                onChange={(e) => setClosingTime(e.target.value)}
-                className="h-10"
-              />
+            <Separator />
+            <div className="grid gap-4">
+              <div className="grid grid-cols-1 items-center gap-4 sm:grid-cols-2">
+                <Label
+                  htmlFor="openingTime"
+                  className="flex items-center gap-2"
+                >
+                  <DoorOpen className="size-6 flex-shrink-0 text-emerald-400" />
+                  Hora de Apertura
+                </Label>
+                <InputTime date={openingTime} onChange={setOpeningTime} />
+              </div>
+              <div className="grid grid-cols-1 items-center gap-4 sm:grid-cols-2">
+                <Label
+                  htmlFor="closingTime"
+                  className="flex items-center gap-2"
+                >
+                  <DoorClosed className="size-6 flex-shrink-0 text-emerald-400" />
+                  Hora de Cierre
+                </Label>
+                <InputTime date={closingTime} onChange={setClosingTime} />
+              </div>
             </div>
+            <SheetFooter>
+              <div className="flex flex-row-reverse flex-wrap gap-2">
+                <Button onClick={handleSubmit}>Guardar Cambios</Button>
+                <SheetClose asChild>
+                  <Button type="button" variant="outline">
+                    Cancelar
+                  </Button>
+                </SheetClose>
+              </div>
+            </SheetFooter>
           </div>
-        </div>
-        <SheetFooter>
-          <Button onClick={handleSubmit}>Guardar Cambios</Button>
-        </SheetFooter>
+        </ScrollArea>
       </SheetContent>
     </Sheet>
   );
