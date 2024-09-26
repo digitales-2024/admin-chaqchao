@@ -38,31 +38,6 @@ const errorTranslations = {
   "You cannot update your own password":
     "Puedes actualizar tu propia contraseña en la sección de perfil",
   "Email not found": "Correo electrónico no encontrado",
-  "contactNumber must be a valid phone number":
-    "El número de contacto debe ser un número de teléfono válido",
-  "Opening time must be earlier than closing time.":
-    "El horario de apertura debe ser anterior al horario de cierre.",
-  "Only one price in DOLAR is allowed for CHILD":
-    "Solo se permite un precio en Dólar para Niño",
-  "Only one price in SOL is allowed for CHILD":
-    "Solo se permite un precio en Sol para Niño",
-  "Only one price in DOLAR is allowed for ADULT":
-    "Sole se permite un precio en Dólar para Adulto",
-  "Only one price in SOL is allowed for ADULT":
-    "Sole se permite un precio en Sol para Adulto",
-  "Language name already exists": "El nombre de lenguaje ya existe",
-  "Start time already exists": "La hora de inicio ya existe",
-  "closeBeforeStartInterval cannot be greater than 300":
-    "El intervalo de cierre antes del inicio no puede ser mayor a 300",
-  "finalRegistrationCloseInterval cannot be greater than 300":
-    "El intervalo final de cierre de registro no puede ser mayor a 300",
-  "Role already exists": "El rol con este nombre ya existe",
-  "Role name cannot be SUPER_ADMIN": "Solo puede existir un rol superadmin",
-  "Role already exists with this name": "El rol ya existe con este nombre",
-  "You cannot deactivate a role in use":
-    "No puedes eliminar/desactivar un rol en uso",
-  "name should not be empty": "El nombre no puede estar en blanco",
-  "This category exists": "Esta categoría ya existe",
 };
 
 export default errorTranslations;

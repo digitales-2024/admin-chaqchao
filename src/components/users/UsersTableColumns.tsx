@@ -113,11 +113,7 @@ export const usersColumns = (isSuperAdmin: boolean): ColumnDef<User>[] => [
     id: "acceso",
     accessorKey: "mustChangePassword",
     header: ({ column }) => (
-      <DataTableColumnHeader
-        column={column}
-        title="Acceso"
-        className="min-w-28"
-      />
+      <DataTableColumnHeader column={column} title="Acceso" />
     ),
     cell: ({ row }) => (
       <div className="text-xs">

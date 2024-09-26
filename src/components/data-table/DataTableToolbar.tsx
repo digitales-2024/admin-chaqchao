@@ -28,8 +28,8 @@ export function DataTableToolbar<TData>({
   const isFiltered = Boolean(table.getState().globalFilter);
 
   return (
-    <div className="flex w-full flex-wrap-reverse justify-between gap-4">
-      <div className="flex w-fit items-start space-x-2">
+    <div className="flex flex-wrap-reverse items-center justify-between gap-4">
+      <div className="flex items-center space-x-2">
         <Input
           placeholder={placeholder}
           value={(table.getState().globalFilter as string) ?? ""}
@@ -47,7 +47,7 @@ export function DataTableToolbar<TData>({
           </Button>
         )}
       </div>
-      <div className="flex min-w-fit flex-1 flex-wrap items-center justify-end gap-2">
+      <div className="flex flex-wrap items-center justify-end gap-2">
         {toolbarActions ? cloneElement(toolbarActions, { table }) : null}
         {viewOptions && <DataTableViewOptions table={table} />}
       </div>

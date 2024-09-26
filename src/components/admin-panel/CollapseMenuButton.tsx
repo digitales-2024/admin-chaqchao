@@ -86,7 +86,6 @@ export const CollapseMenuButton = ({
                   isOpen
                     ? "translate-x-0 opacity-100"
                     : "-translate-x-96 opacity-0",
-                  { "text-primary": active },
                 )}
               >
                 {label}
@@ -120,9 +119,7 @@ export const CollapseMenuButton = ({
               <span className="ml-2 mr-4">
                 <Hash
                   size={14}
-                  className={cn("group-hover/collapse-submenu:stroke-primary", {
-                    "stroke-primary": active,
-                  })}
+                  className="group-hover/collapse-submenu:stroke-primary"
                 />
               </span>
               <p
@@ -131,9 +128,6 @@ export const CollapseMenuButton = ({
                   isOpen
                     ? "translate-x-0 opacity-100"
                     : "-translate-x-96 opacity-0",
-                  {
-                    "text-primary": active,
-                  },
                 )}
               >
                 {label}
@@ -158,11 +152,7 @@ export const CollapseMenuButton = ({
               >
                 <div className="flex w-full items-center justify-between">
                   <div className="flex items-center">
-                    <span
-                      className={cn(isOpen === false ? "" : "mr-4", {
-                        "text-primary": active,
-                      })}
-                    >
+                    <span className={cn(isOpen === false ? "" : "mr-4")}>
                       <Icon size={18} />
                     </span>
                     <p
@@ -184,24 +174,14 @@ export const CollapseMenuButton = ({
         </Tooltip>
       </TooltipProvider>
       <DropdownMenuContent side="right" sideOffset={25} align="start">
-        <DropdownMenuLabel className="max-w-[250px] truncate">
+        <DropdownMenuLabel className="max-w-[190px] truncate">
           {label}
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        {submenus.map(({ href, label, active }, index) => (
+        {submenus.map(({ href, label }, index) => (
           <DropdownMenuItem key={index} asChild>
             <Link className="cursor-pointer" href={href}>
-              <Hash
-                size={14}
-                className={cn("mr-4", { "stroke-primary": active })}
-              />
-              <p
-                className={cn("max-w-[180px] truncate", {
-                  "text-primary": active,
-                })}
-              >
-                {label}
-              </p>
+              <p className="max-w-[180px] truncate">{label}</p>
             </Link>
           </DropdownMenuItem>
         ))}

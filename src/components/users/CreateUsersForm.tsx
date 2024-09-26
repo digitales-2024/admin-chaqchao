@@ -40,7 +40,7 @@ export const CreateUsersForm = ({
   form,
   onSubmit,
 }: CreateUsersFormProps) => {
-  const { dataRoles } = useRol();
+  const { data } = useRol();
   const { handleGeneratePassword, password } = useUsers();
   const { setValue, clearErrors } = form;
 
@@ -62,11 +62,7 @@ export const CreateUsersForm = ({
               <FormItem>
                 <FormLabel htmlFor="name">Nombre completo</FormLabel>
                 <FormControl>
-                  <Input
-                    id="name"
-                    placeholder="Ejemplo: john smith"
-                    {...field}
-                  />
+                  <Input id="name" placeholder="john smith" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -81,7 +77,7 @@ export const CreateUsersForm = ({
                 <FormControl>
                   <Input
                     id="email"
-                    placeholder="Ejemplo: admin@chaqchao.com"
+                    placeholder="example@chaqchao.com"
                     {...field}
                   />
                 </FormControl>
@@ -98,7 +94,7 @@ export const CreateUsersForm = ({
                 <FormControl>
                   <Input
                     id="phone"
-                    placeholder="Ejemplo: 999 999 999"
+                    placeholder="(+51) 999 999 999"
                     {...field}
                   />
                 </FormControl>
@@ -152,7 +148,7 @@ export const CreateUsersForm = ({
                   </FormControl>
                   <SelectContent>
                     <SelectGroup>
-                      {dataRoles?.map((rol) => (
+                      {data.map((rol) => (
                         <SelectItem
                           key={rol.id}
                           value={rol.id}

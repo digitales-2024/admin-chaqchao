@@ -1,11 +1,9 @@
 import { User } from "@/types";
-import { createApi } from "@reduxjs/toolkit/query/react";
-
-import baseQueryWithReauth from "./baseQuery";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const adminApi = createApi({
   reducerPath: "adminApi",
-  baseQuery: baseQueryWithReauth,
+  baseQuery: fetchBaseQuery({ baseUrl: process.env.NEXT_PUBLIC_BACKEND_URL }),
   tagTypes: ["Admin"],
   endpoints: (build) => ({
     profile: build.query<User, void>({

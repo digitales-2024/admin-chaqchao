@@ -53,7 +53,7 @@ interface UpdateUserSheetProps
 }
 
 export function UpdateUserSheet({ user, ...props }: UpdateUserSheetProps) {
-  const { dataRoles } = useRol();
+  const { data } = useRol();
   const { onUpdateUser, isSuccessUpdateUser, isLoadingUpdateUser } = useUsers();
 
   const form = useForm<UpdateUsersSchema>({
@@ -102,11 +102,11 @@ export function UpdateUserSheet({ user, ...props }: UpdateUserSheetProps) {
           </SheetTitle>
           <SheetDescription>{infoSheet.description}</SheetDescription>
         </SheetHeader>
-        <ScrollArea className="w-full gap-4 rounded-md border p-4">
+        <ScrollArea className="mt-4 w-full gap-4 rounded-md border p-4">
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
-              className="flex flex-col gap-4 p-2"
+              className="flex flex-col gap-4"
             >
               <FormField
                 control={form.control}
@@ -151,7 +151,6 @@ export function UpdateUserSheet({ user, ...props }: UpdateUserSheetProps) {
                     <Select
                       onValueChange={(value) => field.onChange([value])}
                       defaultValue={field.value[0] || ""}
-                      disabled={user.isSuperAdmin}
                     >
                       <FormControl>
                         <SelectTrigger className="capitalize">
@@ -160,7 +159,7 @@ export function UpdateUserSheet({ user, ...props }: UpdateUserSheetProps) {
                       </FormControl>
                       <SelectContent>
                         <SelectGroup>
-                          {dataRoles?.map((rol) => (
+                          {data.map((rol) => (
                             <SelectItem
                               key={rol.id}
                               value={rol.id}
@@ -178,22 +177,20 @@ export function UpdateUserSheet({ user, ...props }: UpdateUserSheetProps) {
               />
 
               <SheetFooter className="gap-2 pt-2 sm:space-x-0">
-                <div className="flex flex-row-reverse flex-wrap gap-2">
-                  <Button disabled={isLoadingUpdateUser}>
-                    {isLoadingUpdateUser && (
-                      <RefreshCcw
-                        className="mr-2 size-4 animate-spin"
-                        aria-hidden="true"
-                      />
-                    )}
-                    Actualizar
+                <SheetClose asChild>
+                  <Button type="button" variant="outline">
+                    Cancelar
                   </Button>
-                  <SheetClose asChild>
-                    <Button type="button" variant="outline">
-                      Cancelar
-                    </Button>
-                  </SheetClose>
-                </div>
+                </SheetClose>
+                <Button disabled={isLoadingUpdateUser}>
+                  {isLoadingUpdateUser && (
+                    <RefreshCcw
+                      className="mr-2 size-4 animate-spin"
+                      aria-hidden="true"
+                    />
+                  )}
+                  Actualizar
+                </Button>
               </SheetFooter>
             </form>
           </Form>

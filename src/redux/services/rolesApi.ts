@@ -1,14 +1,9 @@
-import { CreateRolesSchema } from "@/schemas";
-import { ModulePermissions, Role } from "@/types/roles";
-import { createApi } from "@reduxjs/toolkit/query/react";
-
-import { UpdateRoleSchema } from "@/components/users/roles/UpdateRoleSheet";
-
-import baseQueryWithReauth from "./baseQuery";
+import { Role } from "@/types/roles";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const rolesApi = createApi({
   reducerPath: "rolesApi",
-  baseQuery: baseQueryWithReauth,
+  baseQuery: fetchBaseQuery({ baseUrl: process.env.NEXT_PUBLIC_BACKEND_URL }),
   tagTypes: ["Roles"],
   endpoints: (build) => ({
     // Obtener todos los roles
@@ -29,18 +24,18 @@ export const rolesApi = createApi({
     }),
 
     // Crear un nuevo rol
-    createRole: build.mutation<Role, CreateRolesSchema>({
+    createRole: build.mutation<Role, Partial<Role>>({
       query: (body) => ({
-        url: `rol`,
+        url: `roles`,
         method: "POST",
         body,
       }),
       invalidatesTags: ["Roles"],
     }),
     // Actualizar un rol por id
-    updateRole: build.mutation<Role, UpdateRoleSchema>({
+    updateRole: build.mutation<Role, Partial<Role>>({
       query: ({ id, ...body }) => ({
-        url: `rol/${id}`,
+        url: `roles/${id}`,
         method: "PATCH",
         body,
       }),
@@ -49,41 +44,10 @@ export const rolesApi = createApi({
     // Eliminar un rol por id
     deleteRole: build.mutation<void, number>({
       query: (id) => ({
-        url: `rol/${id}`,
+        url: `roles/${id}`,
         method: "DELETE",
       }),
       invalidatesTags: ["Roles"],
-    }),
-
-    // Eliminar varios roles
-    deleteRoles: build.mutation<void, { ids: string[] }>({
-      query: (ids) => ({
-        url: "rol/remove/all",
-        method: "DELETE",
-        body: ids,
-        credentials: "include",
-      }),
-      invalidatesTags: ["Roles"],
-    }),
-
-    // Reactivar varios roles
-    reactivateRoles: build.mutation<void, { ids: string[] }>({
-      query: (ids) => ({
-        url: "rol/reactivate/all",
-        method: "PATCH",
-        body: ids,
-        credentials: "include",
-      }),
-      invalidatesTags: ["Roles"],
-    }),
-
-    // Mostrar todos los modulos con sus permisos
-    getRolPermissions: build.query<ModulePermissions[], void>({
-      query: () => ({
-        url: `rol/modules-permissions/all`,
-        credentials: "include",
-      }),
-      providesTags: ["Roles"],
     }),
   }),
 });
@@ -94,7 +58,4 @@ export const {
   useCreateRoleMutation,
   useUpdateRoleMutation,
   useDeleteRoleMutation,
-  useDeleteRolesMutation,
-  useGetRolPermissionsQuery,
-  useReactivateRolesMutation,
 } = rolesApi;

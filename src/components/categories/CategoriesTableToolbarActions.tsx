@@ -5,7 +5,6 @@ import { type Table } from "@tanstack/react-table";
 import { Download } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-
 import { exportTableToCSV } from "@/lib/export";
 
 import { CreateCategoryDialog } from "./CreateCategoryDialog";
@@ -19,7 +18,7 @@ export function CategoriesTableToolbarActions({
 }: CategoriesTableToolbarActionsProps) {
   return (
     <div className="flex w-fit flex-wrap items-center gap-2">
-      {}
+      {/* Eliminado el componente DeleteCategoriesDialog */}
       <CreateCategoryDialog />
       <Button
         variant="outline"

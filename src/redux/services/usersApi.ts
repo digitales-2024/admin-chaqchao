@@ -1,9 +1,7 @@
 import { CreateUsersSchema, UpdateUsersSchema } from "@/schemas";
 import { SendNewPasswordSchema } from "@/schemas/users/sendNewPasswordSchema";
 import { User } from "@/types";
-import { createApi } from "@reduxjs/toolkit/query/react";
-
-import baseQueryWithReauth from "./baseQuery";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 interface UserUpdate {
   data: User;
@@ -13,7 +11,7 @@ interface UserUpdate {
 
 export const usersApi = createApi({
   reducerPath: "usersApi",
-  baseQuery: baseQueryWithReauth,
+  baseQuery: fetchBaseQuery({ baseUrl: process.env.NEXT_PUBLIC_BACKEND_URL }),
   tagTypes: ["Users"],
   endpoints: (build) => ({
     // Crear un nuevo usuario

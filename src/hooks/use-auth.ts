@@ -1,11 +1,11 @@
-import { UserLogin } from "@/types";
+import { User } from "@/types";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 
 type UserState = {
-  user: UserLogin | null;
-  setUser: (user: UserLogin) => void;
+  user: User | null;
+  setUser: (user: User) => void;
   clearUser: () => void;
 };
 
@@ -13,7 +13,7 @@ export const useAuth = create<UserState>()(
   persist(
     immer((set) => ({
       user: null,
-      setUser: (user: UserLogin) => {
+      setUser: (user: User) => {
         set((state) => {
           state.user = user;
         });

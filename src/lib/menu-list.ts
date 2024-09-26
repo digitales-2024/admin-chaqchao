@@ -59,7 +59,7 @@ export function getMenuList(pathname: string): Group[] {
             {
               href: "/products/categories",
               label: "Categorias",
-              active: pathname.includes("/categories"),
+              active: pathname === "/categories",
             },
           ],
         },
@@ -98,7 +98,7 @@ export function getMenuList(pathname: string): Group[] {
             {
               href: "/users",
               label: "Usuarios",
-              active: pathname === "/users",
+              active: pathname.includes("/users"),
             },
             {
               href: "/users/roles",
@@ -124,9 +124,9 @@ export function getMenuList(pathname: string): Group[] {
               active: pathname.includes("/information-general"),
             },
             {
-              href: "/bussiness/classes-configuration",
-              label: "Clases",
-              active: pathname.includes("/classes-configuration"),
+              href: "/bussiness/horario",
+              label: "Horario",
+              active: pathname.includes("/horario"),
             },
           ],
         },

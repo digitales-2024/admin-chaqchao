@@ -1,6 +1,5 @@
 import * as z from "zod";
 
-// Esquema base para categorías
 export const categoriesSchema = z.object({
   name: z.string().min(2, {
     message: "El nombre de la categoría debe tener al menos 2 caracteres",
@@ -13,14 +12,4 @@ export const categoriesSchema = z.object({
     .optional(),
 });
 
-// Esquema para crear categorías
-export const createCategoriesSchema = categoriesSchema;
-
-// Esquema para actualizar categorías
-export const updateCategoriesSchema = categoriesSchema.extend({
-  id: z.string().uuid({ message: "ID inválido" }), // No se necesita .required()
-});
-
-// Tipos derivados de los esquemas
-export type CreateCategoriesSchema = z.infer<typeof createCategoriesSchema>;
-export type UpdateCategoriesSchema = z.infer<typeof updateCategoriesSchema>;
+export type CreateCategoriesSchema = z.infer<typeof categoriesSchema>;

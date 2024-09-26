@@ -2,7 +2,6 @@ export type Role = {
   id: string;
   name: string;
   description: string;
-  isActive?: boolean;
   rolPermissions: RolPermissions[];
 };
 
@@ -24,16 +23,4 @@ export interface Permission {
   cod: string;
   name: string;
   description: string;
-  idModulePermission?: string;
-}
-
-export interface ModulePermissions {
-  module: Module;
-  permissions: {
-    id: string;
-    cod: string;
-    name: string;
-    description: string;
-    idModulePermission: string;
-  }[];
 }

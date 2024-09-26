@@ -1,27 +1,26 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-import { getToken } from "./lib/jwt/getToken";
-import { redirectToLogin } from "./lib/jwt/redirectToLogin";
-
 const routesNotRequiringAuth = ["/sign-in", "/update-password"];
 
 export async function middleware(request: NextRequest) {
-  // Extraer la cookie llamada 'access_token'
-  const token = getToken(request);
-
-  // Si no hay token y la ruta requiere autenticación, redirigir a login
+  // Extraer la cookie llamada 'token'
+  const token = request.cookies.get("access_token");
+  // Si no hay cookie, redirigimos al usuario a la página de login
   if (!token && !routesNotRequiringAuth.includes(request.nextUrl.pathname)) {
-    return redirectToLogin(request);
+    return NextResponse.redirect(new URL("/sign-in", request.url));
   }
 
-  // Si hay token y el usuario intenta acceder a una ruta pública, redirigir a la página de inicio
+  //TODO Verificar el token
+
+  // Si hay cookie, redirigimos al usuario a la página de inicio
   if (token && routesNotRequiringAuth.includes(request.nextUrl.pathname)) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 
-  // Permitir la solicitud
-  return NextResponse.next();
+  const response = NextResponse.next();
+
+  return response;
 }
 
 export const config = {

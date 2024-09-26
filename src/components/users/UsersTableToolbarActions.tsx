@@ -20,7 +20,7 @@ export function UsersTableToolbarActions({
   table,
 }: UsersTableToolbarActionsProps) {
   return (
-    <div className="flex flex-wrap items-center justify-end gap-2">
+    <div className="flex w-fit flex-wrap items-center gap-2">
       {table && table.getFilteredSelectedRowModel().rows.length > 0 ? (
         <>
           <DeleteUsersDialog
