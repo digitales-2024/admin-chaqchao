@@ -46,7 +46,7 @@ export default function ClassConfigurationTabs() {
         onValueChange={(value) => setActiveTab(value)}
         className="w-full"
       >
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid h-fit w-full grid-cols-1 sm:grid-cols-4">
           {tabs.map((tab) => (
             <TabsTrigger key={tab.id} className="flex" value={tab.id}>
               <tab.icon className="mr-2 h-4 w-4 flex-shrink-0" />
