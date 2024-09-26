@@ -2,24 +2,19 @@
 import React from "react";
 
 import ClassConfigurationTabs from "@/components/classes-config/ClassConfigurationTabs";
-import { TitleSecction } from "@/components/common/text/TitleSecction";
-
-const HeaderPage = () => (
-  <div className="mb-6">
-    <TitleSecction text="Configuración de las Clases" />
-    <span className="text-sm text-slate-600">
-      Complete la configuración de las clases.
-    </span>
-  </div>
-);
+import { HeaderPage } from "@/components/common/HeaderPage";
+import { Shell } from "@/components/common/Shell";
 
 export default function ClassesConfigurationPage() {
   return (
-    <div className="container mx-auto py-10">
-      <HeaderPage />
+    <Shell>
+      <HeaderPage
+        title="Configuración de las Clases"
+        description="Complete la configuración de las clases"
+      />
       <div className="flex items-start space-x-8">
         <ClassConfigurationTabs />
       </div>
-    </div>
+    </Shell>
   );
 }
