@@ -35,7 +35,7 @@ export function ProductImageDialog({
   const isDesktop = useMediaQuery("(min-width: 640px)");
 
   const content = (
-    <div className="flex flex-col sm:flex-row sm:items-start">
+    <div className="mt-0 flex flex-col sm:mt-6 lg:mt-0 lg:flex-row">
       {/* Sección de Imagen: Alineación a la izquierda */}
       <div className="flex w-full sm:justify-start">
         <Image
@@ -96,7 +96,7 @@ export function ProductImageDialog({
         <DialogTrigger asChild>{children}</DialogTrigger>
         <DialogTitle></DialogTitle>
         <DialogDescription></DialogDescription>
-        <DialogContent className="max-w-3xl shadow-none">
+        <DialogContent className="max-w-md shadow-none lg:max-w-3xl">
           {content}
         </DialogContent>
       </Dialog>
@@ -111,7 +111,7 @@ export function ProductImageDialog({
           <DrawerTitle></DrawerTitle>
           <DrawerDescription></DrawerDescription>
         </DrawerHeader>
-        {content}
+        <div className="p-4">{content}</div>
       </DrawerContent>
     </Drawer>
   );
