@@ -173,18 +173,16 @@ export function AddLanguageDialog({
               </div>
             </div>
             <DrawerFooter>
-              <div className="mt-6 flex flex-row-reverse flex-wrap gap-2">
-                <Button type="submit">Agregar Lenguaje</Button>
-                <DrawerClose asChild>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => setIsOpen(false)}
-                  >
-                    Cancelar
-                  </Button>
-                </DrawerClose>
-              </div>
+              <Button type="submit">Agregar Lenguaje</Button>
+              <DrawerClose asChild>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Cancelar
+                </Button>
+              </DrawerClose>
             </DrawerFooter>
           </form>
         </FormProvider>
