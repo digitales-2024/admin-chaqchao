@@ -178,20 +178,22 @@ export function UpdateUserSheet({ user, ...props }: UpdateUserSheetProps) {
               />
 
               <SheetFooter className="gap-2 pt-2 sm:space-x-0">
-                <SheetClose asChild>
-                  <Button type="button" variant="outline">
-                    Cancelar
+                <div className="flex flex-row-reverse gap-2">
+                  <Button disabled={isLoadingUpdateUser}>
+                    {isLoadingUpdateUser && (
+                      <RefreshCcw
+                        className="mr-2 size-4 animate-spin"
+                        aria-hidden="true"
+                      />
+                    )}
+                    Actualizar
                   </Button>
-                </SheetClose>
-                <Button disabled={isLoadingUpdateUser}>
-                  {isLoadingUpdateUser && (
-                    <RefreshCcw
-                      className="mr-2 size-4 animate-spin"
-                      aria-hidden="true"
-                    />
-                  )}
-                  Actualizar
-                </Button>
+                  <SheetClose asChild>
+                    <Button type="button" variant="outline">
+                      Cancelar
+                    </Button>
+                  </SheetClose>
+                </div>
               </SheetFooter>
             </form>
           </Form>
