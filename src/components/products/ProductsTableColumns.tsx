@@ -1,5 +1,6 @@
 "use client";
 
+import { useToggleProductActivation } from "@/hooks/use-products";
 import { ProductData } from "@/types";
 import { type ColumnDef } from "@tanstack/react-table";
 import {
@@ -26,6 +27,7 @@ import {
 
 import { DataTableColumnHeader } from "../data-table/DataTableColumnHeader";
 import { Badge } from "../ui/badge";
+import { Switch } from "../ui/switch";
 import { DeleteProductsDialog } from "./DeleteProductDialog";
 import { ProductImageDialog } from "./ProductImageDialog";
 import { ReactivateProductsDialog } from "./ReactivateProductsDialog";
@@ -180,6 +182,35 @@ export const productsColumns = (
           )}
         </div>
       ),
+    },
+    {
+      id: "actualizar",
+      accessorKey: "isAvailable",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Actualizar Disp." />
+      ),
+      cell: function Cell({ row }) {
+        const { onToggleProductActivation } = useToggleProductActivation();
+        const [isAvailable, setIsAvailable] = useState(
+          row.original.isAvailable,
+        );
+
+        const handleToggle = async () => {
+          const productId = row.original.id;
+          await onToggleProductActivation(productId);
+          setIsAvailable((prev) => !prev);
+        };
+
+        return (
+          <div className="flex flex-col items-center">
+            <Switch
+              checked={isAvailable}
+              onCheckedChange={handleToggle}
+              className="translate-y-0.5"
+            />
+          </div>
+        );
+      },
     },
     {
       id: "estado",
