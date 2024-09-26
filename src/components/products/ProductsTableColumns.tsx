@@ -2,7 +2,14 @@
 
 import { ProductData } from "@/types";
 import { type ColumnDef } from "@tanstack/react-table";
-import { Ellipsis, RefreshCcwDot, ScanEye, Trash } from "lucide-react";
+import {
+  Ellipsis,
+  PackageCheck,
+  PackageX,
+  RefreshCcwDot,
+  ScanEye,
+  Trash,
+} from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 
@@ -71,8 +78,15 @@ export const productsColumns = (
       ),
       cell: ({ row }) => {
         const imageUrl = row.getValue("imagen") as string;
+        const categoryName = row.getValue("categoria") as string;
+        const index = uniqueCategories.indexOf(categoryName);
+        const colorCategory = colors[index];
         return (
-          <ProductImageDialog imageUrl={imageUrl} product={row?.original}>
+          <ProductImageDialog
+            imageUrl={imageUrl}
+            product={row?.original}
+            color={colorCategory}
+          >
             <div className="group relative h-20 w-20 cursor-pointer">
               <Image
                 src={imageUrl}
@@ -131,12 +145,15 @@ export const productsColumns = (
         <DataTableColumnHeader column={column} title="Precio" />
       ),
       cell: ({ row }) => (
-        <div>
+        <span
+          className="cursor-default justify-center text-base"
+          aria-hidden="true"
+        >
           {new Intl.NumberFormat("es-PE", {
             style: "currency",
             currency: "PEN",
           }).format(row.getValue("precio") as number)}
-        </div>
+        </span>
       ),
     },
     {
@@ -148,16 +165,18 @@ export const productsColumns = (
       cell: ({ row }) => (
         <div>
           {row.getValue("disponibilidad") ? (
-            <Badge
-              variant="secondary"
-              className="bg-emerald-100 text-emerald-500"
-            >
+            <span className="inline-flex items-center gap-2 text-emerald-500">
+              <PackageCheck
+                className="size-4 flex-shrink-0"
+                aria-hidden="true"
+              />
               Disponible
-            </Badge>
+            </span>
           ) : (
-            <Badge variant="secondary" className="bg-red-100 text-red-500">
+            <span className="inline-flex items-center gap-2 text-red-500">
+              <PackageX className="size-4" aria-hidden="true" />
               No disponible
-            </Badge>
+            </span>
           )}
         </div>
       ),
