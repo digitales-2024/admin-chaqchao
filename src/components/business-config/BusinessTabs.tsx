@@ -129,7 +129,7 @@ export function BusinessTabs({
           </CardHeader>
           <Separator className="mb-6" />
           <CardContent className="w-full space-y-2">
-            <div className="flex w-full flex-col gap-6">
+            <div className="flex w-full flex-col gap-10">
               {Object.entries(daysOfWeek).map(([day, dayInSpanish]) => {
                 const businessHour = businessHoursArray.find(
                   (bh: BusinessHour) => bh.dayOfWeek === day,
@@ -137,30 +137,32 @@ export function BusinessTabs({
                 return (
                   <div
                     key={day}
-                    className="flex flex-wrap items-center justify-between gap-x-10 space-x-0"
+                    className="flex w-full items-center justify-between gap-y-4"
                   >
-                    <Label className="w-16 uppercase">
-                      <Badge
-                        variant="outline"
-                        className="border border-emerald-600"
-                      >
-                        {dayInSpanish}
-                      </Badge>
-                    </Label>
-                    <div className="flex items-center gap-2">
-                      <DoorOpen
-                        className="size-4 flex-wrap text-slate-500"
-                        strokeWidth={1}
-                      />
-                      {businessHour?.openingTime}
-                      <Minus className="text-emerald-500" />
-                      {businessHour?.closingTime}
-                      <DoorClosed
-                        className="size-4 flex-wrap text-slate-500"
-                        strokeWidth={1}
-                      />
+                    <div className="flex w-full flex-wrap items-center justify-between gap-2">
+                      <Label className="w-32 uppercase">
+                        <Badge
+                          variant="outline"
+                          className="border border-emerald-600"
+                        >
+                          {dayInSpanish}
+                        </Badge>
+                      </Label>
+                      <div className="flex items-center justify-center gap-2">
+                        <DoorOpen
+                          className="size-4 flex-wrap text-slate-500"
+                          strokeWidth={1}
+                        />
+                        {businessHour?.openingTime}
+                        <Minus className="text-emerald-500" />
+                        {businessHour?.closingTime}
+                        <DoorClosed
+                          className="size-4 flex-wrap text-slate-500"
+                          strokeWidth={1}
+                        />
+                      </div>
                     </div>
-                    <div className="">
+                    <div className="w-fit">
                       <BusinessHourPopover
                         day={dayInSpanish}
                         openingTime={businessHour?.openingTime || "00:00"}
