@@ -32,19 +32,21 @@ export const useCreateProduct = () => {
       new Promise(async (resolve, reject) => {
         try {
           const result = await createProduct(input);
-          if (result.error && "data" in result.error) {
-            const error = (result.error.data as CustomErrorData).message;
-            const message = translateError(error as string);
-            reject(new Error(message));
-          }
           if (result.error) {
-            reject(
-              new Error(
-                "Ocurrió un error inesperado, por favor intenta de nuevo",
-              ),
-            );
+            if (typeof result.error === "object" && "data" in result.error) {
+              const error = (result.error.data as CustomErrorData).message;
+              const message = translateError(error as string);
+              reject(new Error(message));
+            } else {
+              reject(
+                new Error(
+                  "Ocurrió un error inesperado, por favor intenta de nuevo",
+                ),
+              );
+            }
+          } else {
+            resolve(result);
           }
-          resolve(result);
         } catch (error) {
           reject(error);
         }
@@ -73,7 +75,12 @@ export const useUpdateProduct = () => {
       new Promise(async (resolve, reject) => {
         try {
           const result = await updateProduct(input);
-          if (result.error && "data" in result.error) {
+          if (
+            result.error &&
+            typeof result.error === "object" &&
+            result.error !== null &&
+            "data" in result.error
+          ) {
             const error = (result.error.data as CustomErrorData).message;
             const message = translateError(error as string);
             reject(new Error(message));
@@ -116,19 +123,24 @@ export const useDeleteProducts = () => {
       new Promise(async (resolve, reject) => {
         try {
           const result = await deleteProducts(idsString);
-          if (result.error && "data" in result.error) {
+          if (
+            result.error &&
+            typeof result.error === "object" &&
+            result.error !== null &&
+            "data" in result.error
+          ) {
             const error = (result.error.data as CustomErrorData).message;
             const message = translateError(error as string);
             reject(new Error(message));
-          }
-          if (result.error) {
+          } else if (result.error) {
             reject(
               new Error(
                 "Ocurrió un error inesperado, por favor intenta de nuevo",
               ),
             );
+          } else {
+            resolve(result);
           }
-          resolve(result);
         } catch (error) {
           reject(error);
         }
@@ -147,23 +159,35 @@ export const useDeleteProducts = () => {
 };
 
 export const useToggleProductActivation = () => {
-  const [toggleProductActivation] = useToggleProductActivationMutation();
+  const [
+    toggleProductActivation,
+    {
+      isSuccess: isSuccessToggleProductActivation,
+      isLoading: isLoadingToggleProductActivation,
+    },
+  ] = useToggleProductActivationMutation();
 
   const onToggleProductActivation = async (id: string) => {
     const promise = () =>
       new Promise(async (resolve, reject) => {
         try {
           const result = await toggleProductActivation({ id });
-          if (result.error && "data" in result.error) {
-            const error = (result.error.data as CustomErrorData).message;
-            const message = translateError(error as string);
-            reject(new Error(message));
-          } else if (result.error) {
-            reject(
-              new Error(
-                "Ocurrió un error inesperado, por favor intenta de nuevo",
-              ),
-            );
+          if (result.error) {
+            if (
+              typeof result.error === "object" &&
+              result.error !== null &&
+              "data" in result.error
+            ) {
+              const error = (result.error.data as CustomErrorData).message;
+              const message = translateError(error as string);
+              reject(new Error(message));
+            } else {
+              reject(
+                new Error(
+                  "Ocurrió un error inesperado, por favor intenta de nuevo",
+                ),
+              );
+            }
           } else {
             resolve(result);
           }
@@ -179,7 +203,11 @@ export const useToggleProductActivation = () => {
     });
   };
 
-  return { onToggleProductActivation };
+  return {
+    onToggleProductActivation,
+    isSuccessToggleProductActivation,
+    isLoadingToggleProductActivation,
+  };
 };
 
 export const useRectivateProducts = () => {
@@ -200,19 +228,21 @@ export const useRectivateProducts = () => {
       new Promise(async (resolve, reject) => {
         try {
           const result = await reactivateProducts(idsString);
-          if (result.error && "data" in result.error) {
-            const error = (result.error.data as CustomErrorData).message;
-            const message = translateError(error as string);
-            reject(new Error(message));
-          }
           if (result.error) {
-            reject(
-              new Error(
-                "Ocurrió un error inesperado, por favor intenta de nuevo",
-              ),
-            );
+            if (typeof result.error === "object" && "data" in result.error) {
+              const error = (result.error.data as CustomErrorData).message;
+              const message = translateError(error as string);
+              reject(new Error(message));
+            } else {
+              reject(
+                new Error(
+                  "Ocurrió un error inesperado, por favor intenta de nuevo",
+                ),
+              );
+            }
+          } else {
+            resolve(result);
           }
-          resolve(result);
         } catch (error) {
           reject(error);
         }
