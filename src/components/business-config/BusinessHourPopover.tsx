@@ -1,9 +1,7 @@
 import { useUpdateBusinessHour } from "@/hooks/use-business-hours";
-import { CalendarCog } from "lucide-react";
-import { useState } from "react";
+import { CalendarCog, DoorOpen } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   Popover,
@@ -11,6 +9,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
+import { InputTime } from "../common/input/InputTime";
 import {
   Tooltip,
   TooltipContent,
@@ -32,23 +31,15 @@ export function BusinessHourPopover({
   id,
 }: SchedulePopoverProps) {
   const { onUpdateBusinessHour } = useUpdateBusinessHour();
-  const [opening, setOpening] = useState(openingTime);
-  const [closing, setClosing] = useState(closingTime);
 
-  const handleOpeningChange = async (
-    e: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    const newOpeningTime = e.target.value;
-    setOpening(newOpeningTime);
-    await onUpdateBusinessHour({ id, openingTime: newOpeningTime });
+  // Actualizar el horario de apertura
+  const handleTimeOpenChange = async (date: string) => {
+    await onUpdateBusinessHour({ id, openingTime: date });
   };
 
-  const handleClosingChange = async (
-    e: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    const newClosingTime = e.target.value;
-    setClosing(newClosingTime);
-    await onUpdateBusinessHour({ id, closingTime: newClosingTime });
+  // Actualizar el horario de cierre
+  const handleTimeCloseChange = async (date: string) => {
+    await onUpdateBusinessHour({ id, closingTime: date });
   };
 
   return (
@@ -67,7 +58,7 @@ export function BusinessHourPopover({
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
-      <PopoverContent className="w-80">
+      <PopoverContent className="w-fit">
         <div className="grid gap-4">
           <div className="space-y-2">
             <h4 className="font-medium leading-none">Configurar {day}</h4>
@@ -76,25 +67,19 @@ export function BusinessHourPopover({
             </p>
           </div>
           <div className="grid gap-2">
-            <div className="grid grid-cols-3 items-center gap-4">
-              <Label htmlFor={`openingTime-${day}`}>Hora de apertura</Label>
-              <Input
-                id={`openingTime-${day}`}
-                type="time"
-                value={opening}
-                onChange={handleOpeningChange}
-                className="col-span-2 h-8"
-              />
+            <div className="grid grid-cols-2 items-center gap-4">
+              <Label htmlFor={`openingTime-${day}`} className="flex gap-2">
+                <DoorOpen className="size-6 flex-shrink-0 text-emerald-400" />
+                Hora de apertura
+              </Label>
+              <InputTime date={openingTime} onChange={handleTimeOpenChange} />
             </div>
-            <div className="grid grid-cols-3 items-center gap-4">
-              <Label htmlFor={`closingTime-${day}`}>Hora de cierre</Label>
-              <Input
-                id={`closingTime-${day}`}
-                type="time"
-                value={closing}
-                onChange={handleClosingChange}
-                className="col-span-2 h-8"
-              />
+            <div className="grid grid-cols-2 items-center gap-4">
+              <Label htmlFor={`closingTime-${day}`} className="flex gap-2">
+                <DoorOpen className="size-6 flex-shrink-0 text-emerald-400" />
+                Hora de cierre
+              </Label>
+              <InputTime date={closingTime} onChange={handleTimeCloseChange} />
             </div>
           </div>
         </div>
