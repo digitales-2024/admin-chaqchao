@@ -17,9 +17,11 @@ import {
   Clock11,
   Clock12,
   LucideIcon,
+  Info,
 } from "lucide-react";
 import { useState } from "react";
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -141,7 +143,10 @@ export function ScheduleConfigSection() {
             </Card>
           ))
         ) : (
-          <p>No hay horarios configurados.</p>
+          <Badge className="font-medium text-slate-400" variant="outline">
+            <Info className="mr-2 size-3" aria-hidden="true" />
+            No hay horarios configurados
+          </Badge>
         )}
       </div>
 

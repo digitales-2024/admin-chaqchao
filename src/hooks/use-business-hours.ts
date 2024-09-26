@@ -27,7 +27,11 @@ export const useCreateBusinessHour = () => {
       new Promise(async (resolve, reject) => {
         try {
           const result = await createBusinessHour(input);
-          if (result.error && "data" in result.error) {
+          if (
+            result.error &&
+            typeof result.error === "object" &&
+            "data" in result.error
+          ) {
             const error = (result.error.data as CustomErrorData).message;
             const message = translateError(error as string);
             reject(new Error(message));
@@ -65,7 +69,11 @@ export const useUpdateBusinessHour = () => {
       new Promise(async (resolve, reject) => {
         try {
           const result = await updateBusinessHour(input);
-          if (result.error && "data" in result.error) {
+          if (
+            result.error &&
+            typeof result.error === "object" &&
+            "data" in result.error
+          ) {
             const error = (result.error.data as CustomErrorData).message;
             const message = translateError(error as string);
             reject(new Error(message));

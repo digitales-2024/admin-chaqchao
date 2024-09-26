@@ -1,5 +1,6 @@
 import { useBussinessConfig } from "@/hooks/use-business-config";
 import { useCreateClassLanguage } from "@/hooks/use-class-language";
+import { useMediaQuery } from "@/hooks/use-media-query";
 import {
   createClassLanguageSchema,
   CreateClassLanguageSchema,
@@ -13,15 +14,30 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 interface AddLanguageDialogProps {
   refetchClassLanguages: () => void;
 }
+
+const formData = {
+  button: "Agregar Lenguaje",
+  title: "Agregar Lenguaje de la Clase",
+};
 
 export function AddLanguageDialog({
   refetchClassLanguages,
@@ -60,42 +76,105 @@ export function AddLanguageDialog({
     }
   };
 
-  return (
-    <>
-      <Button onClick={() => setIsOpen(true)}>
-        <Plus className="h-4 w-4" />
-        Agregar Lenguaje
-      </Button>
-      <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Agregar Lenguaje de la Clase</DialogTitle>
-          </DialogHeader>
-          <FormProvider {...methods}>
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <div className="mt-4 space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="languageName">Lenguaje</Label>
-                  <Controller
-                    name="languageName"
-                    control={control}
-                    render={({ field }) => (
-                      <Input
-                        id="languageName"
-                        type="text"
-                        value={field.value}
-                        onChange={(e) => field.onChange(String(e.target.value))}
-                      />
+  const isDesktop = useMediaQuery("(min-width: 624px)");
+
+  if (isDesktop) {
+    return (
+      <>
+        <Button onClick={() => setIsOpen(true)}>
+          <Plus className="h-4 w-4" />
+          {formData.button}
+        </Button>
+        <Dialog open={isOpen} onOpenChange={setIsOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>{formData.title}</DialogTitle>
+            </DialogHeader>
+            <FormProvider {...methods}>
+              <form onSubmit={handleSubmit(onSubmit)}>
+                <div className="mt-4 space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="languageName">Lenguaje</Label>
+                    <Controller
+                      name="languageName"
+                      control={control}
+                      render={({ field }) => (
+                        <Input
+                          id="languageName"
+                          type="text"
+                          value={field.value}
+                          onChange={(e) =>
+                            field.onChange(String(e.target.value))
+                          }
+                        />
+                      )}
+                    />
+                    {errors.languageName && (
+                      <p className="text-sm text-red-500">
+                        {errors.languageName.message}
+                      </p>
                     )}
-                  />
-                  {errors.languageName && (
-                    <p className="text-sm text-red-500">
-                      {errors.languageName.message}
-                    </p>
-                  )}
+                  </div>
                 </div>
+                <DialogFooter>
+                  <div className="mt-6 flex flex-row-reverse flex-wrap gap-2">
+                    <Button type="submit">Agregar Lenguaje</Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      Cancelar
+                    </Button>
+                  </div>
+                </DialogFooter>
+              </form>
+            </FormProvider>
+          </DialogContent>
+        </Dialog>
+      </>
+    );
+  }
+  return (
+    <Drawer open={isOpen} onOpenChange={setIsOpen}>
+      <DrawerTrigger asChild>
+        <Button onClick={() => setIsOpen(true)}>
+          <Plus className="h-4 w-4" />
+          {formData.button}
+        </Button>
+      </DrawerTrigger>
+
+      <DrawerContent>
+        <DrawerHeader>
+          <DrawerTitle>{formData.title}</DrawerTitle>
+        </DrawerHeader>
+        <FormProvider {...methods}>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <div className="mt-4 space-y-4 p-4">
+              <div className="space-y-2">
+                <Label htmlFor="languageName">Lenguaje</Label>
+                <Controller
+                  name="languageName"
+                  control={control}
+                  render={({ field }) => (
+                    <Input
+                      id="languageName"
+                      type="text"
+                      value={field.value}
+                      onChange={(e) => field.onChange(String(e.target.value))}
+                    />
+                  )}
+                />
+                {errors.languageName && (
+                  <p className="text-sm text-red-500">
+                    {errors.languageName.message}
+                  </p>
+                )}
               </div>
-              <div className="mt-6 flex justify-end space-x-2">
+            </div>
+            <DrawerFooter>
+              <Button type="submit">Agregar Lenguaje</Button>
+              <DrawerClose asChild>
                 <Button
                   type="button"
                   variant="outline"
@@ -103,12 +182,11 @@ export function AddLanguageDialog({
                 >
                   Cancelar
                 </Button>
-                <Button type="submit">Agregar Lenguaje</Button>
-              </div>
-            </form>
-          </FormProvider>
-        </DialogContent>
-      </Dialog>
-    </>
+              </DrawerClose>
+            </DrawerFooter>
+          </form>
+        </FormProvider>
+      </DrawerContent>
+    </Drawer>
   );
 }

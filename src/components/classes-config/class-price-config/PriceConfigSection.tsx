@@ -1,8 +1,9 @@
 import { useClassPrices } from "@/hooks/use-class-price";
 import { ClassPriceConfigData } from "@/types";
-import { Edit, Trash, Ellipsis, DollarSign } from "lucide-react";
+import { Edit, Trash, Ellipsis, DollarSign, Info } from "lucide-react";
 import { useState } from "react";
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -62,25 +63,36 @@ export function PriceConfigSection() {
         dataClassPricesAll.length > 0 ? (
           dataClassPricesAll.map((price) => (
             <Card key={price.id}>
-              <CardContent className="mt-3 flex items-center justify-between">
+              <CardContent className="flex items-center justify-between">
                 <div className="flex items-center">
-                  {price.typeCurrency === "DOLAR" ? (
-                    <DollarSign className="mr-4 mt-2" aria-hidden="true" />
-                  ) : (
-                    <span
-                      className="mr-4 mt-2 cursor-default text-xl font-medium"
+                  <div>
+                    <p
+                      className="mt-4 text-base font-semibold"
                       aria-hidden="true"
                     >
-                      S/
-                    </span>
-                  )}
-                  <div>
-                    <p className="mt-4 text-base font-semibold">
                       {price.classTypeUser === "ADULT" ? "Adulto" : "Niño"}
                     </p>
-                    <p>
-                      Precio: {price.typeCurrency === "DOLAR" ? "$" : "S/"}{" "}
-                      {price.price}
+                    <p className="flex flex-wrap gap-2">
+                      <Badge variant="outline" className="flex gap-2">
+                        {price.typeCurrency === "DOLAR" ? (
+                          <DollarSign
+                            className="size-4 text-blue-500"
+                            aria-hidden="true"
+                          />
+                        ) : (
+                          <span
+                            className="cursor-default select-none text-xs font-medium text-cyan-500"
+                            aria-hidden="true"
+                          >
+                            S/
+                          </span>
+                        )}
+                        Precio:
+                      </Badge>
+                      <span>
+                        {price.typeCurrency === "DOLAR" ? "$" : "S/"}{" "}
+                        {price.price}
+                      </span>
                     </p>
                   </div>
                 </div>
@@ -116,7 +128,10 @@ export function PriceConfigSection() {
             </Card>
           ))
         ) : (
-          <p>No hay precios configurados.</p>
+          <Badge className="font-medium text-slate-400" variant="outline">
+            <Info className="mr-2 size-3" aria-hidden="true" />
+            No hay precios configurados
+          </Badge>
         )}
       </div>
 

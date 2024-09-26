@@ -112,10 +112,12 @@ export function EditLanguageSheet({
               </div>
             </div>
             <SheetFooter className="mt-6 flex justify-end space-x-2">
-              <Button type="button" variant="outline" onClick={onClose}>
-                Cancelar
-              </Button>
-              <Button type="submit">Actualizar Lenguaje</Button>
+              <div className="flex flex-row-reverse flex-wrap gap-2">
+                <Button type="submit">Actualizar Lenguaje</Button>
+                <Button type="button" variant="outline" onClick={onClose}>
+                  Cancelar
+                </Button>
+              </div>
             </SheetFooter>
           </form>
         </FormProvider>

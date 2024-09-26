@@ -9,5 +9,4 @@ export type UserLogin = {
   email: string;
   phone: string;
   roles: { id: string; name: string }[];
-  token: string;
 };

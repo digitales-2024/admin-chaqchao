@@ -100,7 +100,11 @@ export const useUpdateBusinessConfig = () => {
     const promise = async () => {
       try {
         const result = await updateBusinessConfig(input);
-        if (result.error && "data" in result.error) {
+        if (
+          result.error &&
+          typeof result.error === "object" &&
+          "data" in result.error
+        ) {
           const error = (result.error.data as CustomErrorData).message;
           const message = translateError(error as string);
           throw new Error(message);

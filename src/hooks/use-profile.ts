@@ -3,11 +3,11 @@ import {
   useUpdatePasswordMutation,
 } from "@/redux/services/adminApi";
 import { useUpdateUserMutation } from "@/redux/services/usersApi";
+import { UpdateUsersSchema } from "@/schemas";
 import { CustomErrorData, User } from "@/types";
 import { translateError } from "@/utils/translateError";
 import { toast } from "sonner";
 
-import { FormUpdateInfoProps } from "@/components/account/FormUpdateInfo";
 import { FormUpdateSecurityProps } from "@/components/account/FormUpdateSecurity";
 
 import { useAuth } from "./use-auth";
@@ -20,12 +20,19 @@ export const useProfile = () => {
   const { data: user, refetch } = useProfileQuery();
   const [updateUser, { isLoading }] = useUpdateUserMutation();
 
-  const onUpdate = async (dataForm: FormUpdateInfoProps) => {
+  const onUpdate = async (dataForm: UpdateUsersSchema) => {
     const promise = () =>
       new Promise(async (resolve, reject) => {
         try {
-          const result = await updateUser({ id: user?.id, ...dataForm });
-          if (result.error && "data" in result.error) {
+          if (!user) {
+            return reject(new Error("No se encontró el usuario"));
+          }
+          const result = await updateUser({ id: user.id, ...dataForm });
+          if (
+            result.error &&
+            typeof result.error === "object" &&
+            "data" in result.error
+          ) {
             const error = (result.error.data as CustomErrorData).message;
             const message = translateError(error as string);
             reject(new Error(message));
@@ -55,7 +62,11 @@ export const useProfile = () => {
       new Promise(async (resolve, reject) => {
         try {
           const result = await updatePassword(data);
-          if (result.error && "data" in result.error) {
+          if (
+            result.error &&
+            typeof result.error === "object" &&
+            "data" in result.error
+          ) {
             const error = (result.error.data as CustomErrorData).message;
 
             const message = translateError(error as string);
