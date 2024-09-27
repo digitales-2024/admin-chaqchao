@@ -132,7 +132,7 @@ export function ProductImageDialog({
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="stock">Restringido</Label>
+              <Label htmlFor="stock">Restrincción</Label>
               <div className="flex items-center gap-2">
                 <span
                   className={cn(
