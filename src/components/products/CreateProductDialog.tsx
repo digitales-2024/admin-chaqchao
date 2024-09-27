@@ -1,7 +1,7 @@
 "use client";
 
 import { useMediaQuery } from "@/hooks/use-media-query";
-import { useCreateProduct } from "@/hooks/use-products";
+import { useCreateProduct, useUploadImageProduct } from "@/hooks/use-products";
 import {
   CreateProductsSchema,
   productsSchema,
@@ -49,6 +49,8 @@ export function CreateProductDialog() {
   const isDesktop = useMediaQuery("(min-width: 640px)");
 
   const { onCreateProduct, isSuccessCreateProduct } = useCreateProduct();
+  const { onUploadImageProduct, isLoadingUploadImageProduct } =
+    useUploadImageProduct();
 
   const form = useForm<CreateProductsSchema>({
     resolver: zodResolver(productsSchema),
@@ -56,16 +58,34 @@ export function CreateProductDialog() {
       name: "",
       categoryId: "",
       description: "",
-      image: "",
+      image: undefined,
+      isRestricted: false,
     },
   });
 
   const onSubmit = async (input: CreateProductsSchema) => {
-    const inputWithVariations = { ...input, variations: [] };
+    try {
+      let imageUrl = "";
+      // Subir la imagen antes de crear el producto
+      if (input.image) {
+        const uploadResult = await onUploadImageProduct(input.image);
+        console.log("uploadResult", uploadResult);
+        imageUrl = uploadResult.data;
+      }
 
-    startCreateTransition(async () => {
-      await onCreateProduct(inputWithVariations);
-    });
+      // Asignar la URL de la imagen al campo correspondiente
+      const inputWithImage = {
+        ...input,
+        image: imageUrl || "",
+        variations: [],
+      };
+
+      startCreateTransition(async () => {
+        await onCreateProduct(inputWithImage);
+      });
+    } catch (error) {
+      console.error("Error al subir la imagen o crear el producto", error);
+    }
   };
 
   useEffect(() => {
@@ -96,7 +116,10 @@ export function CreateProductDialog() {
           <ScrollArea className="mt-4 max-h-[740px] w-full justify-center gap-4 overflow-y-auto">
             <CreateProductsForm form={form} onSubmit={onSubmit}>
               <DialogFooter className="gap-2 sm:space-x-0">
-                <Button disabled={isCreatePending} className="w-full">
+                <Button
+                  disabled={isCreatePending || isLoadingUploadImageProduct}
+                  className="w-full"
+                >
                   {isCreatePending && (
                     <RefreshCcw
                       className="mr-2 size-4 animate-spin"
@@ -139,7 +162,7 @@ export function CreateProductDialog() {
         <ScrollArea className="mt-4 max-h-[750px] w-full gap-4 overflow-y-auto pr-4">
           <CreateProductsForm form={form} onSubmit={onSubmit}>
             <DrawerFooter className="gap-2 sm:space-x-0">
-              <Button disabled={isCreatePending}>
+              <Button disabled={isCreatePending || isLoadingUploadImageProduct}>
                 {isCreatePending && (
                   <RefreshCcw
                     className="mr-2 size-4 animate-spin"
