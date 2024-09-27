@@ -1,7 +1,7 @@
 "use client";
 
 import { useCategories } from "@/hooks/use-categories";
-import { useUpdateProduct } from "@/hooks/use-products";
+import { useUpdateProduct, useUploadImageProduct } from "@/hooks/use-products";
 import {
   CreateProductsSchema,
   productsSchema,
@@ -43,14 +43,13 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 
+import { Progress } from "../ui/progress";
 import { Textarea } from "../ui/textarea";
 
 const infoSheet = {
   title: "Actualizar Producto",
   description: "Actualiza la información del producto y guarda los cambios",
 };
-const URL_IMAGE =
-  "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=1998&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
 
 interface UpdateProductSheetProps
   extends Omit<
@@ -70,6 +69,8 @@ export function UpdateProductSheet({
   const { data } = useCategories();
   const { onUpdateProduct, isSuccessUpdateProduct, isLoadingUpdateProduct } =
     useUpdateProduct();
+  const { onUploadImageProduct, isLoadingUploadImageProduct } =
+    useUploadImageProduct(); // Hook para subir la imagen
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
@@ -81,7 +82,7 @@ export function UpdateProductSheet({
       description: product.description ?? "",
       categoryId: product.category.id ?? "",
       price: product.price ?? 0,
-      image: product.image ?? "",
+      image: undefined,
     },
   });
 
@@ -92,28 +93,25 @@ export function UpdateProductSheet({
         description: product.description ?? "",
         categoryId: product.category.id ?? "",
         price: product.price ?? 0,
-        image: product.image ?? "",
+        image: undefined,
       });
       setSelectedFile(null);
       setPreview(product.image ?? null);
     }
-    // No incluyas 'product' ni 'form' en las dependencias
-  }, [open]);
+  }, [open, product, form]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       setSelectedFile(file);
 
-      // Actualiza el valor del formulario para la imagen
-      form.setValue("image", URL.createObjectURL(file));
-
-      // Crea una vista previa de la imagen seleccionada
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreview(reader.result as string);
       };
       reader.readAsDataURL(file);
+
+      form.setValue("image", file);
     }
   };
 
@@ -129,31 +127,59 @@ export function UpdateProductSheet({
     const file = e.dataTransfer.files?.[0];
     if (file && file.type.startsWith("image/")) {
       setSelectedFile(file);
-      form.setValue("image", URL.createObjectURL(file));
 
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreview(reader.result as string);
       };
       reader.readAsDataURL(file);
+
+      form.setValue("image", file);
     }
   };
 
-  async function onSubmit(input: CreateProductsSchema) {
-    const inputWithVariations = { ...input, variationsUpdate: [] };
+  const onSubmit = async (input: CreateProductsSchema) => {
+    let imageUrl = product.image; // Usamos la imagen existente por defecto
+
+    if (selectedFile) {
+      try {
+        const uploadResult = await onUploadImageProduct(selectedFile); // Subimos la nueva imagen
+        imageUrl = uploadResult.data; // Obtenemos la nueva URL de la imagen
+      } catch (error) {
+        console.error("Error al subir la imagen", error);
+        return;
+      }
+    }
+
+    const inputWithImage = {
+      ...input,
+      image: imageUrl, // Actualizamos con la nueva URL o mantenemos la anterior
+      variationsUpdate: [],
+    };
+
     onUpdateProduct({
       id: product.id,
-      ...inputWithVariations,
-      image: URL_IMAGE,
+      ...inputWithImage,
     });
-  }
+  };
 
   useEffect(() => {
     if (isSuccessUpdateProduct) {
       form.reset();
       onOpenChange(false);
     }
-  }, [isSuccessUpdateProduct, onOpenChange]);
+  }, [isSuccessUpdateProduct, form, onOpenChange]);
+
+  const [processLoadingImage, setProcessLoadingImage] = useState(0);
+
+  useEffect(() => {
+    if (isLoadingUploadImageProduct) {
+      const interval = setInterval(() => {
+        setProcessLoadingImage((prev) => (prev + 10) % 100);
+      }, 500);
+      return () => clearInterval(interval);
+    }
+  }, [isLoadingUploadImageProduct]);
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -174,8 +200,9 @@ export function UpdateProductSheet({
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
-              className="flex flex-col gap-4"
+              className="flex flex-col gap-4 p-4"
             >
+              {/* Nombre */}
               <FormField
                 control={form.control}
                 name="name"
@@ -190,6 +217,7 @@ export function UpdateProductSheet({
                 )}
               />
 
+              {/* Descripción */}
               <FormField
                 control={form.control}
                 name="description"
@@ -207,7 +235,7 @@ export function UpdateProductSheet({
                 )}
               />
 
-              {/* Campo de Precio */}
+              {/* Precio */}
               <FormField
                 control={form.control}
                 name="price"
@@ -234,52 +262,57 @@ export function UpdateProductSheet({
                 )}
               />
 
-              {/* Área de Subida de Imagen */}
+              {/* Subida de Imagen */}
               <FormItem>
                 <FormLabel>Imagen del Producto</FormLabel>
                 <FormControl>
-                  <div
-                    className="cursor-pointer rounded-md border-2 border-dashed border-gray-300 p-6 text-center"
-                    onClick={() => document.getElementById("image")?.click()}
-                    onDragOver={handleDragOver}
-                    onDrop={handleDrop}
-                  >
-                    {preview ? (
-                      <div className="flex flex-col items-center">
-                        <div className="relative h-40 w-40">
-                          <Image
-                            src={preview}
-                            alt="Vista previa de la imagen"
-                            layout="fill"
-                            objectFit="contain"
-                            className="rounded-md"
-                          />
+                  <div className="space-y-4">
+                    <div
+                      className="cursor-pointer rounded-md border-2 border-dashed border-gray-300 p-6 text-center"
+                      onClick={() => document.getElementById("image")?.click()}
+                      onDragOver={handleDragOver}
+                      onDrop={handleDrop}
+                    >
+                      {preview ? (
+                        <div className="flex flex-col items-center">
+                          <div className="relative h-40 w-40">
+                            <Image
+                              src={preview}
+                              alt="Vista previa de la imagen"
+                              layout="fill"
+                              objectFit="contain"
+                              className="rounded-md"
+                            />
+                          </div>
+                          <p className="mt-2 text-gray-600">
+                            {selectedFile?.name}
+                          </p>
                         </div>
-                        <p className="mt-2 text-gray-600">
-                          {selectedFile?.name}
-                        </p>
-                      </div>
-                    ) : (
-                      <div className="flex flex-col items-center justify-center">
-                        <ImagePlus className="h-10 w-10 text-gray-400" />
-                        <p className="mt-2 text-gray-600">
-                          Haga clic o arrastre una imagen aquí
-                        </p>
-                      </div>
+                      ) : (
+                        <div className="flex flex-col items-center justify-center">
+                          <ImagePlus className="h-10 w-10 text-gray-400" />
+                          <p className="mt-2 text-gray-600">
+                            Haga clic o arrastre una imagen aquí
+                          </p>
+                        </div>
+                      )}
+                      <Input
+                        id="image"
+                        type="file"
+                        accept="image/*"
+                        onChange={handleFileChange}
+                        className="hidden"
+                      />
+                    </div>
+                    {isLoadingUploadImageProduct && (
+                      <Progress value={processLoadingImage} className="h-2" />
                     )}
-                    <Input
-                      id="image"
-                      type="file"
-                      accept="image/*"
-                      onChange={handleFileChange}
-                      className="hidden"
-                    />
                   </div>
                 </FormControl>
                 <FormMessage />
               </FormItem>
 
-              {/* Campo de Categoría */}
+              {/* Categoría */}
               <FormField
                 control={form.control}
                 name="categoryId"
@@ -320,8 +353,13 @@ export function UpdateProductSheet({
                     Cancelar
                   </Button>
                 </SheetClose>
-                <Button type="submit" disabled={isLoadingUpdateProduct}>
-                  {isLoadingUpdateProduct && (
+                <Button
+                  type="submit"
+                  disabled={
+                    isLoadingUpdateProduct || isLoadingUploadImageProduct
+                  }
+                >
+                  {(isLoadingUpdateProduct || isLoadingUploadImageProduct) && (
                     <RefreshCcw
                       className="mr-2 h-4 w-4 animate-spin"
                       aria-hidden="true"
