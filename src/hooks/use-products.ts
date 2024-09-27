@@ -5,8 +5,8 @@ import {
   useDeleteProductsMutation,
   useToggleProductActivationMutation,
   useReactivateProductsMutation,
+  useUploadProductImageMutation,
 } from "@/redux/services/productsApi";
-import { CreateProductsSchema } from "@/schemas/products/createProductsSchema";
 import { ProductData, CustomErrorData } from "@/types";
 import { translateError } from "@/utils/translateError";
 import { toast } from "sonner";
@@ -69,7 +69,7 @@ export const useUpdateProduct = () => {
   ] = useUpdateProductMutation();
 
   const onUpdateProduct = async (
-    input: CreateProductsSchema & { id: string },
+    input: Partial<ProductData> & { id: string },
   ) => {
     const promise = () =>
       new Promise(async (resolve, reject) => {
@@ -261,5 +261,33 @@ export const useRectivateProducts = () => {
     onReactivateProducts,
     isSuccessReactivateProducts,
     isLoadingReactivateProducts,
+  };
+};
+
+export const useUploadImageProduct = () => {
+  const [
+    uploadImageProduct,
+    {
+      isSuccess: isSuccessUploadImageProduct,
+      isLoading: isLoadingUploadImageProduct,
+    },
+  ] = useUploadProductImageMutation();
+
+  const onUploadImageProduct = async (file: File) => {
+    const formData = new FormData();
+    formData.append("image", file);
+
+    try {
+      const result = await uploadImageProduct(formData).unwrap();
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  return {
+    onUploadImageProduct,
+    isSuccessUploadImageProduct,
+    isLoadingUploadImageProduct,
   };
 };
