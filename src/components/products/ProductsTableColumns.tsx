@@ -82,12 +82,12 @@ export const productsColumns = (
         const imageUrl = row.getValue("imagen") as string;
         const categoryName = row.getValue("categoria") as string;
         const index = uniqueCategories.indexOf(categoryName);
-        const colorCategory = colors[index];
+        const borderColor = colors[index];
         return (
           <ProductImageDialog
             imageUrl={imageUrl}
             product={row?.original}
-            color={colorCategory}
+            borderColor={borderColor}
           >
             <div className="group relative h-20 w-20 cursor-pointer">
               <Image
