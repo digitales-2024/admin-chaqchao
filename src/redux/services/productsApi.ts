@@ -3,6 +3,12 @@ import { createApi } from "@reduxjs/toolkit/query/react";
 
 import baseQueryWithReauth from "./baseQuery";
 
+interface UploadImageResponse {
+  statusCode: number;
+  message: string;
+  data: string;
+}
+
 export const productsApi = createApi({
   reducerPath: "productsApi",
   baseQuery: baseQueryWithReauth,
@@ -87,6 +93,17 @@ export const productsApi = createApi({
       }),
       invalidatesTags: ["Product"],
     }),
+
+    // Subir Imagenes de un Producto a CloudFlare
+    uploadProductImage: build.mutation<UploadImageResponse, FormData>({
+      query: (formData) => ({
+        url: "products/upload/image",
+        method: "POST",
+        body: formData,
+        credentials: "include",
+      }),
+      invalidatesTags: ["Product"],
+    }),
   }),
 });
 
@@ -99,4 +116,5 @@ export const {
   useToggleProductActivationMutation,
   useReactivateProductsMutation,
   useDeleteProductsMutation,
+  useUploadProductImageMutation,
 } = productsApi;
