@@ -7,6 +7,9 @@ export type ProductData = {
   isAvailable: boolean;
   isActive: boolean;
   category: CategoryData;
+  createdAt: string;
+  updatedAt: string;
+  isRestricted: boolean;
   variations: ProductVariationData[];
 };
 
