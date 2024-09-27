@@ -24,8 +24,13 @@ export const useCategories = () => {
   const [deactivateCategory, { isSuccess: isSuccessDeactivateCategory }] =
     useDeactivateCategoryMutation();
 
-  const [reactivateCategory, { isSuccess: isSuccessReactivateCategory }] =
-    useReactivateCategoryMutation();
+  const [
+    reactivateCategory,
+    {
+      isSuccess: isSuccessReactivateCategory,
+      isLoading: isLoadingReactivateCategory,
+    },
+  ] = useReactivateCategoryMutation();
 
   const onCreateCategory = async (input: CreateCategoriesSchema) => {
     const promise = () =>
@@ -123,8 +128,8 @@ export const useCategories = () => {
       });
 
     toast.promise(promise(), {
-      loading: "Desactivando categoría...",
-      success: "Categoría desactivada exitosamente",
+      loading: "Eliminando categoría...",
+      success: "Categoría eliminada exitosamente",
       error: (error) => error.message,
     });
   };
@@ -176,5 +181,6 @@ export const useCategories = () => {
     isSuccessDeactivateCategory,
     onReactivateCategory,
     isSuccessReactivateCategory,
+    isLoadingReactivateCategory,
   };
 };
