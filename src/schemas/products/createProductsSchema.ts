@@ -12,7 +12,8 @@ export const productsSchema = z.object({
     .min(1, {
       message: "El precio debe ser mayor que 0",
     }),
-  image: z.string().optional(),
+  isRestricted: z.boolean().optional(),
+  image: z.instanceof(File).optional(),
   categoryId: z.string().min(1, { message: "Debes seleccionar una categoría" }),
 });
 
