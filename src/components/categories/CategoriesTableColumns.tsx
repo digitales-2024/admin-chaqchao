@@ -58,23 +58,23 @@ export const categoriesColumns = (): ColumnDef<Category>[] => {
       enablePinning: true,
     },
     {
-      id: "name",
+      id: "nombre",
       accessorKey: "name",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Nombre" />
       ),
       cell: ({ row }) => (
-        <div className="truncate capitalize">{row.getValue("name")}</div>
+        <div className="truncate capitalize">{row.getValue("nombre")}</div>
       ),
     },
     {
-      id: "description",
+      id: "descripción",
       accessorKey: "description",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Descripción" />
       ),
       cell: ({ row }) => (
-        <div className="truncate capitalize">{row.getValue("description")}</div>
+        <div className="truncate capitalize">{row.getValue("descripción")}</div>
       ),
     },
     {
