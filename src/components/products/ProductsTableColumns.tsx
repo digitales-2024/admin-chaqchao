@@ -83,6 +83,7 @@ export const productsColumns = (
         const categoryName = row.getValue("categoria") as string;
         const index = uniqueCategories.indexOf(categoryName);
         const borderColor = colors[index];
+
         return (
           <ProductImageDialog
             imageUrl={imageUrl}
@@ -91,8 +92,9 @@ export const productsColumns = (
           >
             <div className="group relative h-20 w-20 cursor-pointer">
               <Image
-                src={imageUrl}
-                alt="imagen"
+                src={row.original.image}
+                alt={row.original.name}
+                key={row.original.id}
                 width={80}
                 height={80}
                 className="h-full w-full rounded-md object-cover"
