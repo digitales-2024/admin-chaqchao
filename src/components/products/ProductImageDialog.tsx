@@ -39,7 +39,6 @@ interface ProductImageDialogProps {
 }
 
 export function ProductImageDialog({
-  imageUrl,
   children,
   product,
   borderColor,
@@ -64,8 +63,9 @@ export function ProductImageDialog({
           <Image
             height={400}
             width={400}
-            src={imageUrl}
+            src={product.image}
             alt={product.name}
+            key={product.id}
             objectFit="cover"
             className="flex-1"
           />
