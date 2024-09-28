@@ -104,6 +104,20 @@ export const productsApi = createApi({
       }),
       invalidatesTags: ["Product"],
     }),
+
+    // Actualizar Imagenes de un Producto en CloudFlare
+    updateProductImage: build.mutation<
+      UploadImageResponse,
+      { formData: FormData; existingFileName: string }
+    >({
+      query: ({ formData, existingFileName }) => ({
+        url: `products/update/image/${existingFileName}`,
+        method: "PATCH",
+        body: formData,
+        credentials: "include",
+      }),
+      invalidatesTags: ["Product"],
+    }),
   }),
 });
 
@@ -117,4 +131,5 @@ export const {
   useReactivateProductsMutation,
   useDeleteProductsMutation,
   useUploadProductImageMutation,
+  useUpdateProductImageMutation,
 } = productsApi;
