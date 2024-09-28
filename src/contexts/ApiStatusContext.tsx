@@ -1,6 +1,5 @@
 "use client";
 import { createContext, ReactNode, useEffect, useState } from "react";
-import { toast } from "sonner";
 
 type ApiStatusContextType = {
   isApiOnline: boolean;
@@ -15,14 +14,11 @@ export const ApiStatusProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const checkApiStatus = async () => {
       try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/ping`,
-          {
-            method: "POST",
-          },
-        );
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}`, {
+          method: "POST",
+        });
         if (!response.ok) {
-          toast.error("Error al verificar el estado de la API");
+          setIsApiOnline(false);
         }
         setIsApiOnline(true);
       } catch (error) {
