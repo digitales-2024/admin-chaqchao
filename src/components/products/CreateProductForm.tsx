@@ -180,28 +180,31 @@ export const CreateProductsForm = ({
                 <FormLabel htmlFor="image">Imagen del Producto</FormLabel>
                 <FormControl>
                   <div
-                    className="cursor-pointer rounded-md border-2 border-dashed border-gray-300 p-6 text-center"
+                    className="cursor-pointer rounded-md border border-dashed border-gray-300 text-center transition-colors duration-300 hover:bg-gray-50"
                     onClick={() => document.getElementById("image")?.click()}
                   >
                     {preview ? (
-                      <div className="flex flex-col items-center">
+                      <div className="flex flex-col items-center gap-2">
                         <div className="relative h-40 w-40">
                           <Image
                             src={preview}
-                            alt="Vista previa de la imagen"
+                            alt="Imagen del producto"
                             layout="fill"
                             objectFit="contain"
                             className="rounded-md"
                           />
                         </div>
-                        <p className="mt-2 text-gray-600">
+                        <p className="py-4 text-xs text-gray-400">
                           {(field.value as File)?.name}
                         </p>
                       </div>
                     ) : (
-                      <div className="flex flex-col items-center justify-center">
-                        <ImagePlus className="h-10 w-10 text-gray-400" />
-                        <p className="mt-2 text-gray-600">
+                      <div className="flex size-60 w-full flex-col items-center justify-center">
+                        <ImagePlus
+                          className="h-10 w-10 text-gray-300"
+                          strokeWidth={1}
+                        />
+                        <p className="text-xs text-gray-600">
                           Haga clic o arrastre una imagen aquí
                         </p>
                       </div>
