@@ -16,16 +16,20 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 
 import { BusinessTabs } from "@/components/business-config/BusinessTabs";
-import { TitleSecction } from "@/components/common/text/TitleSecction";
+import { ErrorPage } from "@/components/common/ErrorPage";
+import { HeaderPage } from "@/components/common/HeaderPage";
+import { Shell } from "@/components/common/Shell";
+import { Skeleton } from "@/components/ui/skeleton";
 
-const HeaderPage = () => (
-  <div className="mb-6">
-    <TitleSecction text="Configuración de la Empresa" />
-    <span className="text-sm text-slate-600">
-      Complete la información de su empresa y configure su horario de atención.
-    </span>
-  </div>
-);
+const daysOfWeek = {
+  MONDAY: "Lunes",
+  TUESDAY: "Martes",
+  WEDNESDAY: "Miércoles",
+  THURSDAY: "Jueves",
+  FRIDAY: "Viernes",
+  SATURDAY: "Sábado",
+  SUNDAY: "Domingo",
+};
 
 export default function BusinessInformationPage() {
   const { dataBusinessConfigAll, error, isLoading } = useBussinessConfig();
@@ -73,29 +77,49 @@ export default function BusinessInformationPage() {
     }
   };
 
+  const businessHoursArray = dataBusinessHoursAll?.businessHours || [];
+
   if (isLoading || isLoadingBusinessHours) {
-    return <div>Cargando...</div>;
+    return (
+      <Shell className="gap-4">
+        <HeaderPage
+          title="Configuración de la Empresa"
+          description="Complete la información de su empresa y configure su horario de atención."
+        />
+        <div className="flex w-full gap-4">
+          <Skeleton className="hidden size-72 flex-shrink-0 justify-end rounded-full sm:block" />
+          <div className="flex w-full flex-col gap-2">
+            <div className="flex flex-col justify-between gap-2 gap-y-2 sm:flex-row">
+              <Skeleton className="h-10 w-full" />
+              <Skeleton className="h-10 w-full" />
+              <Skeleton className="h-10 w-full" />
+              <Skeleton className="h-10 w-full" />
+            </div>
+            <Skeleton className="h-auto min-h-52 w-full flex-1 justify-end" />
+          </div>
+        </div>
+      </Shell>
+    );
   }
 
   if (error || errorBusinessHours) {
-    return <div>Error al cargar la configuración de negocio</div>;
+    return (
+      <Shell>
+        <HeaderPage
+          title="Configuración de la Empresa"
+          description="Complete la información de su empresa y configure su horario de atención."
+        />
+        <ErrorPage />
+      </Shell>
+    );
   }
-
-  const daysOfWeek = {
-    MONDAY: "Lunes",
-    TUESDAY: "Martes",
-    WEDNESDAY: "Miércoles",
-    THURSDAY: "Jueves",
-    FRIDAY: "Viernes",
-    SATURDAY: "Sábado",
-    SUNDAY: "Domingo",
-  };
-
-  const businessHoursArray = dataBusinessHoursAll?.businessHours || [];
 
   return (
     <>
-      <HeaderPage />
+      <HeaderPage
+        title="Configuración de la Empresa"
+        description="Complete la información de su empresa y configure su horario de atención."
+      />
       <div className="flex items-start gap-x-6">
         <LogoChaqchao className="mt-12 hidden size-72 flex-shrink-0 md:block" />
         <div className="flex-grow">
