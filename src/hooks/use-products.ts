@@ -6,6 +6,7 @@ import {
   useToggleProductActivationMutation,
   useReactivateProductsMutation,
   useUploadProductImageMutation,
+  useUpdateProductImageMutation,
 } from "@/redux/services/productsApi";
 import { ProductData, CustomErrorData } from "@/types";
 import { translateError } from "@/utils/translateError";
@@ -289,5 +290,36 @@ export const useUploadImageProduct = () => {
     onUploadImageProduct,
     isSuccessUploadImageProduct,
     isLoadingUploadImageProduct,
+  };
+};
+
+export const useUpdateImageProduct = () => {
+  const [
+    updateImageProduct,
+    {
+      isSuccess: isSuccessUpdateImageProduct,
+      isLoading: isLoadingUpdateImageProduct,
+    },
+  ] = useUpdateProductImageMutation();
+
+  const onUpdateImageProduct = async (file: File, existingFileName: string) => {
+    const formData = new FormData();
+    formData.append("image", file);
+
+    try {
+      const result = await updateImageProduct({
+        formData,
+        existingFileName,
+      }).unwrap();
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  return {
+    onUpdateImageProduct,
+    isSuccessUpdateImageProduct,
+    isLoadingUpdateImageProduct,
   };
 };
