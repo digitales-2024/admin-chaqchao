@@ -1,7 +1,7 @@
 "use client";
 
 import { useCategories } from "@/hooks/use-categories";
-import { useUpdateProduct, useUploadImageProduct } from "@/hooks/use-products";
+import { useUpdateImageProduct, useUpdateProduct } from "@/hooks/use-products";
 import {
   CreateProductsSchema,
   productsSchema,
@@ -69,8 +69,8 @@ export function UpdateProductSheet({
   const { data } = useCategories();
   const { onUpdateProduct, isSuccessUpdateProduct, isLoadingUpdateProduct } =
     useUpdateProduct();
-  const { onUploadImageProduct, isLoadingUploadImageProduct } =
-    useUploadImageProduct(); // Hook para subir la imagen
+  const { onUpdateImageProduct, isLoadingUpdateImageProduct } =
+    useUpdateImageProduct();
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
@@ -142,8 +142,16 @@ export function UpdateProductSheet({
     let imageUrl = product.image; // Usamos la imagen existente por defecto
 
     if (selectedFile) {
+      const existingFileName = product.image?.split("/").pop(); // Extraemos el nombre del archivo existente
+      if (!existingFileName) {
+        console.error("No se pudo extraer el nombre del archivo existente");
+        return;
+      }
       try {
-        const uploadResult = await onUploadImageProduct(selectedFile); // Subimos la nueva imagen
+        const uploadResult = await onUpdateImageProduct(
+          selectedFile,
+          existingFileName,
+        ); // Actualizamos la imagen
         imageUrl = uploadResult.data; // Obtenemos la nueva URL de la imagen
       } catch (error) {
         console.error("Error al subir la imagen", error);
@@ -173,13 +181,13 @@ export function UpdateProductSheet({
   const [processLoadingImage, setProcessLoadingImage] = useState(0);
 
   useEffect(() => {
-    if (isLoadingUploadImageProduct) {
+    if (isLoadingUpdateImageProduct) {
       const interval = setInterval(() => {
         setProcessLoadingImage((prev) => (prev + 10) % 100);
       }, 500);
       return () => clearInterval(interval);
     }
-  }, [isLoadingUploadImageProduct]);
+  }, [isLoadingUpdateImageProduct]);
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -268,7 +276,7 @@ export function UpdateProductSheet({
                 <FormControl>
                   <div className="space-y-4">
                     <div
-                      className="cursor-pointer rounded-md border-2 border-dashed border-gray-300 p-6 text-center"
+                      className="cursor-pointer rounded-md border border-dashed border-gray-300 text-center transition-colors duration-300 hover:bg-gray-50"
                       onClick={() => document.getElementById("image")?.click()}
                       onDragOver={handleDragOver}
                       onDrop={handleDrop}
@@ -278,19 +286,20 @@ export function UpdateProductSheet({
                           <div className="relative h-40 w-40">
                             <Image
                               src={preview}
-                              alt="Vista previa de la imagen"
+                              alt={product.name}
+                              key={product.id}
                               layout="fill"
                               objectFit="contain"
                               className="rounded-md"
                             />
                           </div>
-                          <p className="mt-2 text-gray-600">
-                            {selectedFile?.name}
-                          </p>
                         </div>
                       ) : (
                         <div className="flex flex-col items-center justify-center">
-                          <ImagePlus className="h-10 w-10 text-gray-400" />
+                          <ImagePlus
+                            className="h-10 w-10 text-gray-400"
+                            strokeWidth={1}
+                          />
                           <p className="mt-2 text-gray-600">
                             Haga clic o arrastre una imagen aquí
                           </p>
@@ -304,7 +313,7 @@ export function UpdateProductSheet({
                         className="hidden"
                       />
                     </div>
-                    {isLoadingUploadImageProduct && (
+                    {isLoadingUpdateImageProduct && (
                       <Progress value={processLoadingImage} className="h-2" />
                     )}
                   </div>
@@ -356,10 +365,10 @@ export function UpdateProductSheet({
                 <Button
                   type="submit"
                   disabled={
-                    isLoadingUpdateProduct || isLoadingUploadImageProduct
+                    isLoadingUpdateProduct || isLoadingUpdateImageProduct
                   }
                 >
-                  {(isLoadingUpdateProduct || isLoadingUploadImageProduct) && (
+                  {(isLoadingUpdateProduct || isLoadingUpdateImageProduct) && (
                     <RefreshCcw
                       className="mr-2 h-4 w-4 animate-spin"
                       aria-hidden="true"
