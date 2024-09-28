@@ -2,7 +2,9 @@ import { Providers } from "@/redux/providers";
 import type { Metadata } from "next";
 import { Lexend_Deca } from "next/font/google";
 import { Toaster } from "sonner";
+
 import "./globals.css";
+import { ApiStatus } from "@/components/common/ApiStatus";
 
 const lexend = Lexend_Deca({
   subsets: ["latin"],
@@ -34,7 +36,10 @@ export default function RootLayout({
           }}
           closeButton
         />
-        <Providers>{children}</Providers>
+        <Providers>
+          <ApiStatus />
+          {children}
+        </Providers>
       </body>
     </html>
   );
