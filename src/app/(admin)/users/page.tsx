@@ -3,6 +3,7 @@
 
 import { useUsers } from "@/hooks/use-users";
 
+import { ErrorPage } from "@/components/common/ErrorPage";
 import { HeaderPage } from "@/components/common/HeaderPage";
 import { Shell } from "@/components/common/Shell";
 import { DataTableSkeleton } from "@/components/data-table/DataTableSkeleton";
@@ -35,7 +36,15 @@ export default function PageUsers() {
     );
   }
   if (!data) {
-    return null;
+    return (
+      <Shell>
+        <HeaderPage
+          title="Roles"
+          description="Aquí puedes ver la lista de roles registrados en la aplicación."
+        />
+        <ErrorPage />
+      </Shell>
+    );
   }
   return (
     <Shell className="gap-6">
