@@ -16,7 +16,7 @@ export const ErrorPage = () => {
 
   return (
     <div className="flex items-center justify-center">
-      <Card className="w-[350px] border-none text-center">
+      <Card className="w-full max-w-[350px] border-none text-center">
         <CardHeader>
           <CardTitle className="flex items-center justify-center space-x-2 text-slate-600">
             <AlertOctagon
