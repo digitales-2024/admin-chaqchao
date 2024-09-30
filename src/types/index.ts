@@ -21,6 +21,7 @@ export type {
   ClassScheduleData,
 } from "./classConfigs";
 export type { Category } from "./category";
+export type { Client } from "./client";
 
 export interface Option {
   label: string;
