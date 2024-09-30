@@ -1,5 +1,4 @@
 "use client";
-"use memo";
 
 import { useClients } from "@/hooks/use-clients"; // Usar el hook de clientes
 
