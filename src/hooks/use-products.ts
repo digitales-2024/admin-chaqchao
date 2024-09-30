@@ -20,13 +20,48 @@ export const useProducts = () => {
     isSuccess,
     refetch,
   } = useGetAllProductsQuery();
-
-  return { dataProductsAll, error, isLoading, isSuccess, refetch };
-};
-
-export const useCreateProduct = () => {
   const [createProduct, { isSuccess: isSuccessCreateProduct }] =
     useCreateProductMutation();
+
+  const [
+    updateProduct,
+    { isSuccess: isSuccessUpdateProduct, isLoading: isLoadingUpdateProduct },
+  ] = useUpdateProductMutation();
+
+  const [deleteProducts, { isSuccess: isSuccessDeleteProducts }] =
+    useDeleteProductsMutation();
+
+  const [
+    toggleProductActivation,
+    {
+      isSuccess: isSuccessToggleProductActivation,
+      isLoading: isLoadingToggleProductActivation,
+    },
+  ] = useToggleProductActivationMutation();
+
+  const [
+    reactivateProducts,
+    {
+      isSuccess: isSuccessReactivateProducts,
+      isLoading: isLoadingReactivateProducts,
+    },
+  ] = useReactivateProductsMutation();
+
+  const [
+    uploadImageProduct,
+    {
+      isSuccess: isSuccessUploadImageProduct,
+      isLoading: isLoadingUploadImageProduct,
+    },
+  ] = useUploadProductImageMutation();
+
+  const [
+    updateImageProduct,
+    {
+      isSuccess: isSuccessUpdateImageProduct,
+      isLoading: isLoadingUpdateImageProduct,
+    },
+  ] = useUpdateProductImageMutation();
 
   const onCreateProduct = async (input: Partial<ProductData>) => {
     const promise = () =>
@@ -59,15 +94,6 @@ export const useCreateProduct = () => {
       error: (err) => err.message,
     });
   };
-
-  return { onCreateProduct, isSuccessCreateProduct };
-};
-
-export const useUpdateProduct = () => {
-  const [
-    updateProduct,
-    { isSuccess: isSuccessUpdateProduct, isLoading: isLoadingUpdateProduct },
-  ] = useUpdateProductMutation();
 
   const onUpdateProduct = async (
     input: Partial<ProductData> & { id: string },
@@ -107,14 +133,6 @@ export const useUpdateProduct = () => {
       },
     });
   };
-
-  return { onUpdateProduct, isSuccessUpdateProduct, isLoadingUpdateProduct };
-};
-
-export const useDeleteProducts = () => {
-  const [deleteProducts, { isSuccess: isSuccessDeleteProducts }] =
-    useDeleteProductsMutation();
-
   const onDeleteProducts = async (ids: ProductData[]) => {
     const onlyIds = ids.map((product) => product.id);
     const idsString = {
@@ -156,18 +174,6 @@ export const useDeleteProducts = () => {
     });
   };
 
-  return { onDeleteProducts, isSuccessDeleteProducts };
-};
-
-export const useToggleProductActivation = () => {
-  const [
-    toggleProductActivation,
-    {
-      isSuccess: isSuccessToggleProductActivation,
-      isLoading: isLoadingToggleProductActivation,
-    },
-  ] = useToggleProductActivationMutation();
-
   const onToggleProductActivation = async (id: string) => {
     const promise = () =>
       new Promise(async (resolve, reject) => {
@@ -203,22 +209,6 @@ export const useToggleProductActivation = () => {
       error: (err) => err.message,
     });
   };
-
-  return {
-    onToggleProductActivation,
-    isSuccessToggleProductActivation,
-    isLoadingToggleProductActivation,
-  };
-};
-
-export const useRectivateProducts = () => {
-  const [
-    reactivateProducts,
-    {
-      isSuccess: isSuccessReactivateProducts,
-      isLoading: isLoadingReactivateProducts,
-    },
-  ] = useReactivateProductsMutation();
 
   const onReactivateProducts = async (ids: ProductData[]) => {
     const onlyIds = ids.map((user) => user.id);
@@ -258,22 +248,6 @@ export const useRectivateProducts = () => {
     });
   };
 
-  return {
-    onReactivateProducts,
-    isSuccessReactivateProducts,
-    isLoadingReactivateProducts,
-  };
-};
-
-export const useUploadImageProduct = () => {
-  const [
-    uploadImageProduct,
-    {
-      isSuccess: isSuccessUploadImageProduct,
-      isLoading: isLoadingUploadImageProduct,
-    },
-  ] = useUploadProductImageMutation();
-
   const onUploadImageProduct = async (file: File) => {
     const formData = new FormData();
     formData.append("image", file);
@@ -285,22 +259,6 @@ export const useUploadImageProduct = () => {
       throw error;
     }
   };
-
-  return {
-    onUploadImageProduct,
-    isSuccessUploadImageProduct,
-    isLoadingUploadImageProduct,
-  };
-};
-
-export const useUpdateImageProduct = () => {
-  const [
-    updateImageProduct,
-    {
-      isSuccess: isSuccessUpdateImageProduct,
-      isLoading: isLoadingUpdateImageProduct,
-    },
-  ] = useUpdateProductImageMutation();
 
   const onUpdateImageProduct = async (file: File, existingFileName: string) => {
     const formData = new FormData();
@@ -318,6 +276,27 @@ export const useUpdateImageProduct = () => {
   };
 
   return {
+    dataProductsAll,
+    error,
+    isLoading,
+    isSuccess,
+    refetch,
+    onCreateProduct,
+    isSuccessCreateProduct,
+    onUpdateProduct,
+    isSuccessUpdateProduct,
+    isLoadingUpdateProduct,
+    onDeleteProducts,
+    isSuccessDeleteProducts,
+    onToggleProductActivation,
+    isSuccessToggleProductActivation,
+    isLoadingToggleProductActivation,
+    onReactivateProducts,
+    isSuccessReactivateProducts,
+    isLoadingReactivateProducts,
+    onUploadImageProduct,
+    isSuccessUploadImageProduct,
+    isLoadingUploadImageProduct,
     onUpdateImageProduct,
     isSuccessUpdateImageProduct,
     isLoadingUpdateImageProduct,

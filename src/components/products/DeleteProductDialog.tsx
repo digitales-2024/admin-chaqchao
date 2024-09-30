@@ -1,7 +1,7 @@
 "use client";
 
 import { useMediaQuery } from "@/hooks/use-media-query";
-import { useDeleteProducts } from "@/hooks/use-products";
+import { useProducts } from "@/hooks/use-products";
 import { ProductData } from "@/types";
 import { type Row } from "@tanstack/react-table";
 import { RefreshCcw, Trash } from "lucide-react";
@@ -47,7 +47,7 @@ export function DeleteProductsDialog({
   const [isDeletePending] = useTransition();
   const isDesktop = useMediaQuery("(min-width: 640px)");
 
-  const { onDeleteProducts } = useDeleteProducts();
+  const { onDeleteProducts } = useProducts();
 
   const onDeleteProductsHandler = () => {
     onDeleteProducts(products);

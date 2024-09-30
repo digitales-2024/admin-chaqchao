@@ -1,7 +1,7 @@
 "use client";
 
 import { useCategories } from "@/hooks/use-categories";
-import { useUpdateImageProduct, useUpdateProduct } from "@/hooks/use-products";
+import { useProducts } from "@/hooks/use-products";
 import {
   CreateProductsSchema,
   productsSchema,
@@ -68,9 +68,8 @@ export function UpdateProductSheet({
 }: UpdateProductSheetProps) {
   const { data } = useCategories();
   const { onUpdateProduct, isSuccessUpdateProduct, isLoadingUpdateProduct } =
-    useUpdateProduct();
-  const { onUpdateImageProduct, isLoadingUpdateImageProduct } =
-    useUpdateImageProduct();
+    useProducts();
+  const { onUpdateImageProduct, isLoadingUpdateImageProduct } = useProducts();
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
@@ -144,7 +143,6 @@ export function UpdateProductSheet({
     if (selectedFile) {
       const existingFileName = product.image?.split("/").pop(); // Extraemos el nombre del archivo existente
       if (!existingFileName) {
-        console.error("No se pudo extraer el nombre del archivo existente");
         return;
       }
       try {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useToggleProductActivation } from "@/hooks/use-products";
+import { useProducts } from "@/hooks/use-products";
 import { ProductData } from "@/types";
 import { type ColumnDef } from "@tanstack/react-table";
 import {
@@ -192,7 +192,7 @@ export const productsColumns = (
         <DataTableColumnHeader column={column} title="Actualizar Disp." />
       ),
       cell: function Cell({ row }) {
-        const { onToggleProductActivation } = useToggleProductActivation();
+        const { onToggleProductActivation } = useProducts();
         const [isAvailable, setIsAvailable] = useState(
           row.original.isAvailable,
         );

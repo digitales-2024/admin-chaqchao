@@ -1,7 +1,7 @@
 "use client";
 
 import { useMediaQuery } from "@/hooks/use-media-query";
-import { useToggleProductActivation } from "@/hooks/use-products";
+import { useProducts } from "@/hooks/use-products";
 import { ProductData } from "@/types";
 import { DialogTitle as UIDialogTitle } from "@radix-ui/react-dialog";
 import { PackageCheck, PackageX, ShieldAlert, ShieldMinus } from "lucide-react";
@@ -46,7 +46,7 @@ export function ProductImageDialog({
   const [open, setOpen] = useState(false);
   const isDesktop = useMediaQuery("(min-width: 640px)");
 
-  const { onToggleProductActivation } = useToggleProductActivation();
+  const { onToggleProductActivation } = useProducts();
   const [isAvailable, setIsAvailable] = useState(product.isAvailable);
 
   const handleToggle = async (checked: boolean) => {
