@@ -16,11 +16,9 @@ export const useBusinessHours = () => {
     refetch,
   } = useGetBusinessHoursAllQuery();
 
-  return { dataBusinessHoursAll, error, isLoading, isSuccess, refetch };
-};
-
-export const useCreateBusinessHour = () => {
   const [createBusinessHour] = useCreateBusinessHourMutation();
+
+  const [updateBusinessHour] = useUpdateBusinessHourMutation();
 
   const onCreateBusinessHour = async (input: Partial<BusinessHoursData>) => {
     const promise = () =>
@@ -55,12 +53,6 @@ export const useCreateBusinessHour = () => {
       error: (err) => err.message,
     });
   };
-
-  return { onCreateBusinessHour };
-};
-
-export const useUpdateBusinessHour = () => {
-  const [updateBusinessHour] = useUpdateBusinessHourMutation();
 
   const onUpdateBusinessHour = async (
     input: Partial<BusinessHoursData> & { id: string },
@@ -98,5 +90,13 @@ export const useUpdateBusinessHour = () => {
     });
   };
 
-  return { onUpdateBusinessHour };
+  return {
+    dataBusinessHoursAll,
+    error,
+    isLoading,
+    isSuccess,
+    refetch,
+    onCreateBusinessHour,
+    onUpdateBusinessHour,
+  };
 };
