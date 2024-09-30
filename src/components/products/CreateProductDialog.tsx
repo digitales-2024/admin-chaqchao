@@ -69,7 +69,6 @@ export function CreateProductDialog() {
       // Subir la imagen antes de crear el producto
       if (input.image) {
         const uploadResult = await onUploadImageProduct(input.image);
-        console.log("uploadResult", uploadResult);
         imageUrl = uploadResult.data;
       }
 
