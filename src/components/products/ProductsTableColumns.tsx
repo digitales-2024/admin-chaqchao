@@ -233,7 +233,7 @@ export const productsColumns = (
             </Badge>
           ) : (
             <Badge variant="secondary" className="bg-red-100 text-red-500">
-              Desactivo
+              Inactivo
             </Badge>
           )}
         </div>
