@@ -2,17 +2,17 @@
 
 import { Category } from "@/types";
 import { type ColumnDef } from "@tanstack/react-table";
-import { Ellipsis } from "lucide-react";
+import { Trash, Ellipsis } from "lucide-react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuShortcut,
 } from "@/components/ui/dropdown-menu";
 
 import { DataTableColumnHeader } from "../data-table/DataTableColumnHeader";
@@ -24,31 +24,7 @@ export const categoriesColumns = (): ColumnDef<Category>[] => {
     {
       id: "select",
       size: 10,
-      header: ({ table }) => (
-        <div className="px-2">
-          <Checkbox
-            checked={
-              table.getIsAllPageRowsSelected() ||
-              (table.getIsSomePageRowsSelected() && "indeterminate")
-            }
-            onCheckedChange={(value) =>
-              table.toggleAllPageRowsSelected(!!value)
-            }
-            aria-label="Select all"
-            className="translate-y-0.5"
-          />
-        </div>
-      ),
-      cell: ({ row }) => (
-        <div className="px-2">
-          <Checkbox
-            checked={row.getIsSelected()}
-            onCheckedChange={(value) => row.toggleSelected(!!value)}
-            aria-label="Select row"
-            className="translate-y-0.5"
-          />
-        </div>
-      ),
+      header: () => null,
       enableSorting: false,
       enableHiding: false,
       enablePinning: true,
@@ -104,7 +80,10 @@ export const categoriesColumns = (): ColumnDef<Category>[] => {
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onSelect={() => setIsDialogOpen(true)}>
-                  Desactivar
+                  Eliminar
+                  <DropdownMenuShortcut>
+                    <Trash className="size-4" aria-hidden="true" />
+                  </DropdownMenuShortcut>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
