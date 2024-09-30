@@ -1,7 +1,7 @@
 "use client";
 
 import { useMediaQuery } from "@/hooks/use-media-query";
-import { useCreateProduct, useUploadImageProduct } from "@/hooks/use-products";
+import { useProducts } from "@/hooks/use-products";
 import {
   CreateProductsSchema,
   productsSchema,
@@ -48,9 +48,8 @@ export function CreateProductDialog() {
   const [isCreatePending, startCreateTransition] = useTransition();
   const isDesktop = useMediaQuery("(min-width: 640px)");
 
-  const { onCreateProduct, isSuccessCreateProduct } = useCreateProduct();
-  const { onUploadImageProduct, isLoadingUploadImageProduct } =
-    useUploadImageProduct();
+  const { onCreateProduct, isSuccessCreateProduct } = useProducts();
+  const { onUploadImageProduct, isLoadingUploadImageProduct } = useProducts();
 
   const form = useForm<CreateProductsSchema>({
     resolver: zodResolver(productsSchema),
