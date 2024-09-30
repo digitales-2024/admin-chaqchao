@@ -1,9 +1,11 @@
 import { BusinessConfigData } from "@/types";
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi } from "@reduxjs/toolkit/query/react";
+
+import baseQueryWithReauth from "./baseQuery";
 
 export const businessConfigApi = createApi({
   reducerPath: "businessConfigApi",
-  baseQuery: fetchBaseQuery({ baseUrl: process.env.NEXT_PUBLIC_BACKEND_URL }),
+  baseQuery: baseQueryWithReauth,
   tagTypes: ["BusinessConfig"],
   endpoints: (build) => ({
     createBusinessConfig: build.mutation<

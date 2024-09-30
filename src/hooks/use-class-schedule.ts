@@ -28,7 +28,11 @@ export const useCreateClassSchedule = () => {
       new Promise(async (resolve, reject) => {
         try {
           const result = await createClassSchedule(input);
-          if (result.error && "data" in result.error) {
+          if (
+            result.error &&
+            typeof result.error === "object" &&
+            "data" in result.error
+          ) {
             const error = (result.error.data as CustomErrorData).message;
             const message = translateError(error as string);
             reject(new Error(message));
@@ -66,7 +70,11 @@ export const useUpdateClassSchedule = () => {
       new Promise(async (resolve, reject) => {
         try {
           const result = await updateClassSchedule(input);
-          if (result.error && "data" in result.error) {
+          if (
+            result.error &&
+            typeof result.error === "object" &&
+            "data" in result.error
+          ) {
             const error = (result.error.data as CustomErrorData).message;
             const message = translateError(error as string);
             reject(new Error(message));
@@ -102,7 +110,11 @@ export const useDeleteClassSchedule = () => {
       new Promise(async (resolve, reject) => {
         try {
           const result = await deleteClassSchedule({ id });
-          if (result.error && "data" in result.error) {
+          if (
+            result.error &&
+            typeof result.error === "object" &&
+            "data" in result.error
+          ) {
             const error = (result.error.data as CustomErrorData).message;
             const message = translateError(error as string);
             reject(new Error(message));
