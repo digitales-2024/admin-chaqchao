@@ -144,7 +144,6 @@ export function UpdateProductSheet({
     if (selectedFile) {
       const existingFileName = product.image?.split("/").pop(); // Extraemos el nombre del archivo existente
       if (!existingFileName) {
-        console.error("No se pudo extraer el nombre del archivo existente");
         return;
       }
       try {
