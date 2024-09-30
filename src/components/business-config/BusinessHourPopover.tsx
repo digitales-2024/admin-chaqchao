@@ -1,4 +1,4 @@
-import { useUpdateBusinessHour } from "@/hooks/use-business-hours";
+import { useBusinessHours } from "@/hooks/use-business-hours";
 import { CalendarCog, DoorOpen } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -30,7 +30,7 @@ export function BusinessHourPopover({
   closingTime,
   id,
 }: SchedulePopoverProps) {
-  const { onUpdateBusinessHour } = useUpdateBusinessHour();
+  const { onUpdateBusinessHour } = useBusinessHours();
 
   // Actualizar el horario de apertura
   const handleTimeOpenChange = async (date: string) => {
