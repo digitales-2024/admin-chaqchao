@@ -31,26 +31,19 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 
+import { DateInput } from "../ui/date-input";
 import { PhoneInput } from "../ui/phone-input";
 
-const infoSheet = {
-  title: "Actualizar Cliente",
-  description: "Actualiza la información del cliente y guarda los cambios",
-};
+// Convierte la fecha en formato YYYY-MM-DD para inputs de tipo date
+function formatDateToInput(value: string | undefined) {
+  if (!value) return undefined;
+  const date = new Date(value);
+  return date.toISOString().split("T")[0]; // Devuelve una cadena en formato YYYY-MM-DD
+}
 
 interface UpdateClientSheetProps
   extends React.ComponentPropsWithRef<typeof Sheet> {
   client: Client;
-}
-
-// Función para convertir la fecha al formato YYYY-MM-DD compatible con el input de tipo date
-function formatDateToInput(value: string | undefined) {
-  if (!value) return "";
-  const date = new Date(value);
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
 }
 
 export function UpdateClientSheet({
@@ -59,12 +52,11 @@ export function UpdateClientSheet({
 }: UpdateClientSheetProps) {
   const { onUpdateClient, isLoadingUpdateClient } = useClients();
 
-  // Verificación de que el ID sea válido antes de pasar al formulario
   const defaultValues = {
-    id: client.id ?? "", // Usa una cadena vacía si el id es indefinido o nulo.
+    id: client.id ?? "",
     name: client?.name || "",
     phone: client?.phone || "",
-    birthDate: formatDateToInput(client?.birthDate),
+    birthDate: formatDateToInput(client?.birthDate), // Cadena en lugar de Date
   };
 
   const form = useForm<UpdateClientsSchema>({
@@ -75,16 +67,17 @@ export function UpdateClientSheet({
   useEffect(() => {
     if (client) {
       form.reset({
-        id: client.id ?? "", // Resetea con una cadena vacía si el id es nulo o indefinido
+        id: client.id ?? "",
         name: client.name ?? "",
         phone: client.phone ?? "",
-        birthDate: formatDateToInput(client.birthDate),
+        birthDate: formatDateToInput(client.birthDate), // Cadena
       });
     }
   }, [client, form]);
 
   function onSubmit(input: UpdateClientsSchema) {
     const { name, phone, birthDate } = input;
+    // Solo aquí se hace la llamada a la API
     onUpdateClient({
       id: client.id,
       name,
@@ -98,15 +91,14 @@ export function UpdateClientSheet({
       <SheetContent className="flex flex-col gap-6 sm:max-w-md">
         <SheetHeader className="text-left">
           <SheetTitle className="flex flex-col items-start">
-            {infoSheet.title}
-            <Badge
-              className="bg-emerald-100 capitalize text-emerald-700"
-              variant="secondary"
-            >
+            Actualizar Cliente
+            <Badge className="bg-emerald-100 capitalize text-emerald-700">
               {client.name}
             </Badge>
           </SheetTitle>
-          <SheetDescription>{infoSheet.description}</SheetDescription>
+          <SheetDescription>
+            Actualiza la información del cliente y guarda los cambios
+          </SheetDescription>
         </SheetHeader>
         <ScrollArea className="mt-4 w-full gap-4 rounded-md border p-4">
           <Form {...form}>
@@ -149,7 +141,6 @@ export function UpdateClientSheet({
                   </FormItem>
                 )}
               />
-
               <FormField
                 control={form.control}
                 name="birthDate"
@@ -159,12 +150,20 @@ export function UpdateClientSheet({
                       Fecha de Nacimiento
                     </FormLabel>
                     <FormControl>
-                      <Input type="date" id="client-birthDate" {...field} />
+                      <DateInput
+                        value={field.value ? new Date(field.value) : undefined}
+                        onChange={(date: Date | undefined) => {
+                          field.onChange(
+                            date ? date.toISOString().split("T")[0] : "",
+                          );
+                        }}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+
               <SheetFooter className="gap-2 pt-2 sm:space-x-0">
                 <SheetClose asChild>
                   <Button type="button" variant="outline">
