@@ -1,5 +1,5 @@
 import { useBussinessConfig } from "@/hooks/use-business-config";
-import { useCreateClassSchedule } from "@/hooks/use-class-schedule";
+import { useClassSchedules } from "@/hooks/use-class-schedule";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import {
   createClassScheduleSchema,
@@ -43,7 +43,7 @@ export function AddScheduleDialog({
 }: AddScheduleDialogProps) {
   const [isOpen, setIsOpen] = useState(false);
 
-  const { onCreateClassSchedule } = useCreateClassSchedule();
+  const { onCreateClassSchedule } = useClassSchedules();
   const { dataBusinessConfigAll, isSuccess: isSuccessBusinessConfig } =
     useBussinessConfig();
 
