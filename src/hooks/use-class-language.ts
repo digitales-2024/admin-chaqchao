@@ -16,11 +16,11 @@ export const useClassLanguages = () => {
     refetch,
   } = useGetClassLanguagesAllQuery();
 
-  return { dataClassLanguagesAll, error, isLoading, isSuccess, refetch };
-};
-
-export const useCreateClassLanguage = () => {
   const [createClassLanguage] = useCreateClassLanguageMutation();
+
+  const [updateClassLanguage] = useUpdateClassLanguageMutation();
+
+  const [deleteClassLanguage] = useDeleteClassLanguageMutation();
 
   const onCreateClassLanguage = async (input: Partial<ClassLanguageData>) => {
     const promise = () =>
@@ -55,12 +55,6 @@ export const useCreateClassLanguage = () => {
       error: (err) => err.message,
     });
   };
-
-  return { onCreateClassLanguage };
-};
-
-export const useUpdateClassLanguage = () => {
-  const [updateClassLanguage] = useUpdateClassLanguageMutation();
 
   const onUpdateClassLanguage = async (
     input: Partial<ClassLanguageData> & { id: string },
@@ -98,12 +92,6 @@ export const useUpdateClassLanguage = () => {
     });
   };
 
-  return { onUpdateClassLanguage };
-};
-
-export const useDeleteClassLanguage = () => {
-  const [deleteClassLanguage] = useDeleteClassLanguageMutation();
-
   const onDeleteClassLanguage = async (id: string) => {
     const promise = () =>
       new Promise(async (resolve, reject) => {
@@ -138,5 +126,14 @@ export const useDeleteClassLanguage = () => {
     });
   };
 
-  return { onDeleteClassLanguage };
+  return {
+    dataClassLanguagesAll,
+    error,
+    isLoading,
+    isSuccess,
+    refetch,
+    onCreateClassLanguage,
+    onUpdateClassLanguage,
+    onDeleteClassLanguage,
+  };
 };

@@ -1,5 +1,5 @@
 import { useBussinessConfig } from "@/hooks/use-business-config";
-import { useCreateClassLanguage } from "@/hooks/use-class-language";
+import { useClassLanguages } from "@/hooks/use-class-language";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import {
   createClassLanguageSchema,
@@ -44,7 +44,7 @@ export function AddLanguageDialog({
 }: AddLanguageDialogProps) {
   const [isOpen, setIsOpen] = useState(false);
 
-  const { onCreateClassLanguage } = useCreateClassLanguage();
+  const { onCreateClassLanguage } = useClassLanguages();
   const { dataBusinessConfigAll, isSuccess: isSuccessBusinessConfig } =
     useBussinessConfig();
 

@@ -1,5 +1,5 @@
 import { useBussinessConfig } from "@/hooks/use-business-config";
-import { useUpdateClassLanguage } from "@/hooks/use-class-language";
+import { useClassLanguages } from "@/hooks/use-class-language";
 import {
   CreateClassLanguageSchema,
   createClassLanguageSchema,
@@ -34,7 +34,7 @@ export function EditLanguageSheet({
   languageData,
   refetchClassLanguages,
 }: EditLanguageSheetProps) {
-  const { onUpdateClassLanguage } = useUpdateClassLanguage();
+  const { onUpdateClassLanguage } = useClassLanguages();
   const { dataBusinessConfigAll, isSuccess: isSuccessBusinessConfig } =
     useBussinessConfig();
 
