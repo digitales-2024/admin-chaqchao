@@ -31,7 +31,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 
-import PhoneNumberInput from "../ui/phonenumber-input";
+import { PhoneInput } from "../ui/phone-input";
 
 const infoSheet = {
   title: "Actualizar Cliente",
@@ -84,15 +84,7 @@ export function UpdateClientSheet({
   }, [client, form]);
 
   function onSubmit(input: UpdateClientsSchema) {
-    const { id, name, phone, birthDate } = input;
-
-    console.log("Enviando actualización para:", {
-      id,
-      name,
-      phone,
-      birthDate,
-    });
-
+    const { name, phone, birthDate } = input;
     onUpdateClient({
       id: client.id,
       name,
@@ -101,13 +93,6 @@ export function UpdateClientSheet({
     });
   }
 
-  useEffect(() => {
-    const errors = form.formState.errors;
-    if (Object.keys(errors).length > 0) {
-      console.log("Errores de validación:", errors);
-    }
-  }, [form.formState.errors]);
-
   return (
     <Sheet {...props}>
       <SheetContent className="flex flex-col gap-6 sm:max-w-md">
@@ -115,7 +100,7 @@ export function UpdateClientSheet({
           <SheetTitle className="flex flex-col items-start">
             {infoSheet.title}
             <Badge
-              className="bg-emerald-100 text-emerald-700"
+              className="bg-emerald-100 capitalize text-emerald-700"
               variant="secondary"
             >
               {client.name}
@@ -127,7 +112,7 @@ export function UpdateClientSheet({
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
-              className="flex flex-col gap-4"
+              className="flex flex-col gap-4 p-4"
             >
               <FormField
                 control={form.control}
@@ -153,11 +138,11 @@ export function UpdateClientSheet({
                   <FormItem>
                     <FormLabel htmlFor="client-phone">Teléfono</FormLabel>
                     <FormControl>
-                      {/* Sustituyes el Input por el componente PhoneNumberInput */}
-                      <PhoneNumberInput
-                        value={field.value || ""} // Asegura que siempre sea una cadena
-                        onChange={field.onChange} // Maneja los cambios y actualiza el formulario
-                        placeholder="Teléfono del cliente"
+                      <PhoneInput
+                        international
+                        defaultCountry="PE"
+                        placeholder="Ingrese un número de teléfono"
+                        {...field}
                       />
                     </FormControl>
                     <FormMessage />
