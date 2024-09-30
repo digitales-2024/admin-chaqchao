@@ -1,5 +1,5 @@
 import { useBussinessConfig } from "@/hooks/use-business-config";
-import { useUpdateClassSchedule } from "@/hooks/use-class-schedule";
+import { useClassSchedules } from "@/hooks/use-class-schedule";
 import {
   createClassScheduleSchema,
   CreateClassScheduleSchema,
@@ -35,7 +35,7 @@ export function EditScheduleSheet({
   scheduleData,
   refetchClassSchedules,
 }: EditScheduleSheetProps) {
-  const { onUpdateClassSchedule } = useUpdateClassSchedule();
+  const { onUpdateClassSchedule } = useClassSchedules();
   const { dataBusinessConfigAll, isSuccess: isSuccessBusinessConfig } =
     useBussinessConfig();
 
