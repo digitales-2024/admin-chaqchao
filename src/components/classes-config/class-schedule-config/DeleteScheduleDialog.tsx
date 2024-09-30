@@ -1,4 +1,4 @@
-import { useDeleteClassSchedule } from "@/hooks/use-class-schedule";
+import { useClassSchedules } from "@/hooks/use-class-schedule";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { ClassScheduleData } from "@/types";
 import { RefreshCcw } from "lucide-react";
@@ -41,7 +41,7 @@ export function DeleteScheduleDialog({
   const [isDeletePending, startTransition] = useTransition();
   const isDesktop = useMediaQuery("(min-width: 640px)");
 
-  const { onDeleteClassSchedule } = useDeleteClassSchedule();
+  const { onDeleteClassSchedule } = useClassSchedules();
 
   const onDeleteScheduleHandler = () => {
     startTransition(async () => {
