@@ -5,11 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { toast } from "sonner";
 
-import { useAuth } from "./use-auth";
-
 export const useLogout = () => {
-  const { clearUser } = useAuth();
-
   const [logout, { isLoading, error, isSuccess }] = useLogoutMutation();
 
   const signOut = async () => {
@@ -33,6 +29,7 @@ export const useLogout = () => {
               ),
             );
           }
+          resolve(result);
         } catch (error) {
           reject(error);
         }
@@ -51,10 +48,9 @@ export const useLogout = () => {
 
   useEffect(() => {
     if (isSuccess) {
-      clearUser();
       router.push("/sign-in");
     }
-  }, [isSuccess, clearUser, router]);
+  }, [isSuccess]);
 
   return { signOut, isLoading, error };
 };

@@ -21,6 +21,11 @@ export type {
   ClassScheduleData,
 } from "./classConfigs";
 export type { Category } from "./category";
+export type {
+  ProductData,
+  ProductVariationData,
+  CategoryData,
+} from "./product";
 export type { Client } from "./client";
 
 export interface Option {

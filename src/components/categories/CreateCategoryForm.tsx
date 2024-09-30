@@ -35,11 +35,7 @@ export const CreateCategoryForm = ({
               <FormItem>
                 <FormLabel htmlFor="name">Nombre de la categoría</FormLabel>
                 <FormControl>
-                  <Input
-                    id="name"
-                    placeholder="Por ejemplo: Bebidas"
-                    {...field}
-                  />
+                  <Input id="name" placeholder="Ejemplo: bebidas" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

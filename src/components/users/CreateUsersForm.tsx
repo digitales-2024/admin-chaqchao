@@ -62,7 +62,11 @@ export const CreateUsersForm = ({
               <FormItem>
                 <FormLabel htmlFor="name">Nombre completo</FormLabel>
                 <FormControl>
-                  <Input id="name" placeholder="john smith" {...field} />
+                  <Input
+                    id="name"
+                    placeholder="Ejemplo: john smith"
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -77,7 +81,7 @@ export const CreateUsersForm = ({
                 <FormControl>
                   <Input
                     id="email"
-                    placeholder="example@chaqchao.com"
+                    placeholder="Ejemplo: admin@chaqchao.com"
                     {...field}
                   />
                 </FormControl>
@@ -94,7 +98,7 @@ export const CreateUsersForm = ({
                 <FormControl>
                   <Input
                     id="phone"
-                    placeholder="(+51) 999 999 999"
+                    placeholder="Ejemplo: 999 999 999"
                     {...field}
                   />
                 </FormControl>

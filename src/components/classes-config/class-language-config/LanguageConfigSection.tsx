@@ -1,8 +1,9 @@
 import { useClassLanguages } from "@/hooks/use-class-language";
 import { ClassLanguageData } from "@/types";
-import { Edit, Trash, Ellipsis, BookType } from "lucide-react";
+import { Edit, Trash, Ellipsis, BookType, Info } from "lucide-react";
 import { useState } from "react";
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -103,7 +104,10 @@ export function LanguageConfigSection() {
             </Card>
           ))
         ) : (
-          <p>No hay lenguajes configurados.</p>
+          <Badge className="font-medium text-slate-400" variant="outline">
+            <Info className="mr-2 size-3" aria-hidden="true" />
+            No hay lenguajes configurados
+          </Badge>
         )}
       </div>
 

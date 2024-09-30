@@ -69,13 +69,6 @@ export function UpdateCategorySheet({
 
   function onSubmit(input: UpdateCategoriesSchema) {
     const { id, name, description } = input;
-
-    console.log("Enviando actualización para:", {
-      id, // Asegúrate de enviar el ID aquí
-      name,
-      description,
-    });
-
     onUpdateCategory({
       id, // Enviar el ID junto con los demás campos
       name,
@@ -109,7 +102,7 @@ export function UpdateCategorySheet({
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
-              className="flex flex-col gap-4"
+              className="flex flex-col gap-4 p-4"
             >
               <FormField
                 control={form.control}

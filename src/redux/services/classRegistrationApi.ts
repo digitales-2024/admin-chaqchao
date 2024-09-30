@@ -1,7 +1,9 @@
 import { ClassRegistrationData } from "@/types";
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi } from "@reduxjs/toolkit/query/react";
+
+import baseQueryWithReauth from "./baseQuery";
 export const classRegistrationApi = createApi({
-  baseQuery: fetchBaseQuery({ baseUrl: process.env.NEXT_PUBLIC_BACKEND_URL }),
+  baseQuery: baseQueryWithReauth,
   tagTypes: ["ClassRegistration"],
   endpoints: (build) => ({
     createClassRegistration: build.mutation<

@@ -7,11 +7,22 @@ import { Lock, Settings, User } from "lucide-react";
 import { FormConfigAdmin } from "@/components/account/FormConfigAdmin";
 import { FormUpdateInfo } from "@/components/account/FormUpdateInfo";
 import { FormUpdateSecurity } from "@/components/account/FormUpdateSecurity";
+import { ErrorPage } from "@/components/common/ErrorPage";
+import { HeaderPage } from "@/components/common/HeaderPage";
+import { Shell } from "@/components/common/Shell";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function PageAccount() {
   const { user } = useProfile();
+  if (!user) {
+    return (
+      <Shell>
+        <HeaderPage title="Administración de la cuenta" />
+        <ErrorPage />
+      </Shell>
+    );
+  }
 
   return (
     <div className="container mx-auto py-10">

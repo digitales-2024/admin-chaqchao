@@ -1,6 +1,8 @@
 import { CreateCategoriesSchema, UpdateCategoriesSchema } from "@/schemas";
 import { Category } from "@/types";
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi } from "@reduxjs/toolkit/query/react";
+
+import baseQueryWithReauth from "./baseQuery";
 
 interface CategoryUpdate {
   data: Category;
@@ -16,7 +18,7 @@ interface CategoryResponse {
 
 export const categoriesApi = createApi({
   reducerPath: "categoriesApi",
-  baseQuery: fetchBaseQuery({ baseUrl: process.env.NEXT_PUBLIC_BACKEND_URL }),
+  baseQuery: baseQueryWithReauth,
   tagTypes: ["Categories"],
   endpoints: (build) => ({
     // Crear una nueva categoría

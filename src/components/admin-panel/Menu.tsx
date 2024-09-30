@@ -63,8 +63,10 @@ export const Menu = ({ isOpen }: MenuProps) => {
                             <Button
                               variant={active ? "secondary" : "ghost"}
                               className={cn(
-                                "mb-1 h-10 w-full justify-start border-l-4 border-transparent text-slate-600 transition-colors duration-300 hover:border-primary",
-                                active ? "border-primary" : "",
+                                "group/btn-link mb-1 h-10 w-full justify-start border-l-4 border-transparent text-slate-600 transition-colors duration-300 hover:border-primary",
+                                {
+                                  "border-primary text-primary": active,
+                                },
                               )}
                               asChild
                             >
@@ -74,7 +76,12 @@ export const Menu = ({ isOpen }: MenuProps) => {
                                 >
                                   <Icon
                                     size={18}
-                                    className={active ? "stroke-primary" : ""}
+                                    className={cn(
+                                      "transition-colors duration-200 group-hover/btn-link:text-primary",
+                                      {
+                                        "text-primary": active,
+                                      },
+                                    )}
                                   />
                                 </span>
                                 <p

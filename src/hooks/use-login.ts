@@ -6,11 +6,8 @@ import { useEffect } from "react";
 import { SubmitHandler } from "react-hook-form";
 import { toast } from "sonner";
 
-import { useAuth } from "./use-auth";
-
 export const useLogin = () => {
   const [login, { data, isSuccess, isLoading, error }] = useLoginMutation();
-  const { setUser } = useAuth();
   const router = useRouter();
 
   const onLogin: SubmitHandler<Credentials> = async (credentials) => {
@@ -18,7 +15,11 @@ export const useLogin = () => {
       new Promise(async (resolve, reject) => {
         try {
           const result = await login(credentials);
-          if (result.error && "data" in result.error) {
+          if (
+            result.error &&
+            typeof result.error === "object" &&
+            "data" in result.error
+          ) {
             const error = (result.error.data as CustomErrorData).message;
             const message = translateError(error as string);
             reject(new Error(message));
@@ -47,10 +48,9 @@ export const useLogin = () => {
 
   useEffect(() => {
     if (isSuccess && data) {
-      setUser(data);
       router.replace("/");
     }
-  }, [data, isSuccess, setUser, router]);
+  }, [data, isSuccess]);
 
   return { onLogin, isLoading, error };
 };
