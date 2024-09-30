@@ -11,16 +11,12 @@ export const clientsSchema = z.object({
     .refine(isValidPhoneNumber, { message: "Número de teléfono no válido" }),
   birthDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, {
     message: "Fecha de nacimiento no válida. Use el formato YYYY-MM-DD",
-  }),
+  }), // Validación para fecha en formato string
 });
 
 // Esquema para actualizar clientes (con campos opcionales)
 export const updateClientsSchema = clientsSchema.partial().extend({
-  // Opción 1: Hacer el ID opcional si no siempre lo necesitas
   id: z.string().optional(),
-
-  // Opción 2: Aceptar tanto UUID como cualquier cadena no vacía
-  // id: z.union([z.string().uuid({ message: "ID inválido" }), z.string().min(1, { message: "ID inválido" })]),
 });
 
 // Tipos derivados de los esquemas
