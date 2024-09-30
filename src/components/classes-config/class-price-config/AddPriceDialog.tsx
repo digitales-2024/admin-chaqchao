@@ -1,5 +1,5 @@
 import { useBussinessConfig } from "@/hooks/use-business-config";
-import { useCreateClassPrice } from "@/hooks/use-class-price";
+import { useClassPrices } from "@/hooks/use-class-price";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import {
   createClassPriceSchema,
@@ -51,7 +51,7 @@ const formData = {
 export function AddPriceDialog({ refetchClassPrices }: AddPriceDialogProps) {
   const [isOpen, setIsOpen] = useState(false);
 
-  const { onCreateClassPrice } = useCreateClassPrice();
+  const { onCreateClassPrice } = useClassPrices();
   const { dataBusinessConfigAll, isSuccess: isSuccessBusinessConfig } =
     useBussinessConfig();
 
