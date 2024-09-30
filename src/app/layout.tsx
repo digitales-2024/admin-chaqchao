@@ -1,15 +1,14 @@
 import { Providers } from "@/redux/providers";
 import type { Metadata } from "next";
-import { Lexend_Deca } from "next/font/google";
+import localFont from "next/font/local";
 import { Toaster } from "sonner";
 
 import "./globals.css";
 import { ApiStatus } from "@/components/common/ApiStatus";
 
-const lexend = Lexend_Deca({
-  subsets: ["latin"],
-  fallback: ["system-ui", "arial"],
-  preload: true,
+const lexend = localFont({
+  src: "./fonts/lexend-deca-latin-400-normal.woff",
+  variable: "--font-lexend-deca",
 });
 
 export const metadata: Metadata = {
