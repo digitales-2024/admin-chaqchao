@@ -1,5 +1,5 @@
 import { useMediaQuery } from "@/hooks/use-media-query";
-import { useRectivateProducts } from "@/hooks/use-products";
+import { useProducts } from "@/hooks/use-products";
 import { ProductData } from "@/types";
 import { Row } from "@tanstack/react-table";
 import { RefreshCcw, RefreshCcwDot } from "lucide-react";
@@ -43,8 +43,7 @@ export const ReactivateProductsDialog = ({
 }: ReactivateProductsDialogProps) => {
   const isDesktop = useMediaQuery("(min-width: 640px)");
 
-  const { onReactivateProducts, isLoadingReactivateProducts } =
-    useRectivateProducts();
+  const { onReactivateProducts, isLoadingReactivateProducts } = useProducts();
 
   const onReactivateProductsHandler = () => {
     onReactivateProducts(products);
