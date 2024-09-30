@@ -63,6 +63,8 @@ const errorTranslations = {
     "No puedes eliminar/desactivar un rol en uso",
   "name should not be empty": "El nombre no puede estar en blanco",
   "This category exists": "Esta categoría ya existe",
+  "phone must be a valid phone number":
+    "El teléfono debe ser un número de teléfono válido",
 };
 
 export default errorTranslations;
