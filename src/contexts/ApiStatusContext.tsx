@@ -14,9 +14,12 @@ export const ApiStatusProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const checkApiStatus = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}`, {
-          method: "POST",
-        });
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/ping`,
+          {
+            method: "GET",
+          },
+        );
         if (!response.ok) {
           setIsApiOnline(false);
         }
@@ -25,12 +28,7 @@ export const ApiStatusProvider = ({ children }: { children: ReactNode }) => {
         setIsApiOnline(false);
       }
     };
-
-    const intervalId = setInterval(checkApiStatus, 3000); // 30 seconds
-
     checkApiStatus();
-
-    return () => clearInterval(intervalId);
   }, []);
 
   return (
