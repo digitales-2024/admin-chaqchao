@@ -8,7 +8,7 @@ import {
 } from "@/schemas/products/createProductsSchema";
 import { ProductData } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ImagePlus, RefreshCcw } from "lucide-react";
+import { ImageOff, ImagePlus, RefreshCcw } from "lucide-react";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
@@ -187,6 +187,13 @@ export function UpdateProductSheet({
     }
   }, [isLoadingUpdateImageProduct]);
 
+  const [imageError, setImageError] = useState(false);
+
+  useEffect(() => {
+    // Restablecer el estado de error de la imagen
+    setImageError(false);
+  }, [preview]);
+
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="flex flex-col gap-6 sm:max-w-md">
@@ -279,7 +286,7 @@ export function UpdateProductSheet({
                       onDragOver={handleDragOver}
                       onDrop={handleDrop}
                     >
-                      {preview ? (
+                      {preview && !imageError ? (
                         <div className="flex flex-col items-center">
                           <div className="relative h-40 w-40">
                             <Image
@@ -289,18 +296,30 @@ export function UpdateProductSheet({
                               layout="fill"
                               objectFit="contain"
                               className="rounded-md"
+                              onError={() => setImageError(true)}
                             />
                           </div>
                         </div>
                       ) : (
-                        <div className="flex flex-col items-center justify-center">
-                          <ImagePlus
-                            className="h-10 w-10 text-gray-400"
-                            strokeWidth={1}
-                          />
-                          <p className="mt-2 text-gray-600">
-                            Haga clic o arrastre una imagen aquí
-                          </p>
+                        <div className="flex size-40 w-full flex-col items-center justify-center text-center">
+                          {imageError ? (
+                            <>
+                              <ImageOff
+                                className="size-14 text-slate-400"
+                                strokeWidth={1}
+                              />
+                            </>
+                          ) : (
+                            <>
+                              <ImagePlus
+                                className="h-10 w-10 text-gray-400"
+                                strokeWidth={1}
+                              />
+                              <p className="mt-2 text-gray-600">
+                                Haga clic o arrastre una imagen aquí
+                              </p>
+                            </>
+                          )}
                         </div>
                       )}
                       <Input
