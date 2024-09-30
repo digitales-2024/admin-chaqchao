@@ -212,7 +212,7 @@ export const CreateProductsForm = ({
                     <Input
                       id="image"
                       type="file"
-                      accept="image/*"
+                      accept="['image/jpeg', 'image/png', 'image/gif', 'image/webp']"
                       onChange={(e) => {
                         handleFileChange(e);
                         field.onChange(e.target.files?.[0] || null);
