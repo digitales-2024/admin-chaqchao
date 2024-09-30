@@ -374,25 +374,28 @@ export function UpdateProductSheet({
               />
 
               <SheetFooter className="gap-2 pt-2 sm:space-x-0">
-                <SheetClose asChild>
-                  <Button type="button" variant="outline">
-                    Cancelar
+                <div className="flex flex-row-reverse gap-2">
+                  <Button
+                    type="submit"
+                    disabled={
+                      isLoadingUpdateProduct || isLoadingUpdateImageProduct
+                    }
+                  >
+                    {(isLoadingUpdateProduct ||
+                      isLoadingUpdateImageProduct) && (
+                      <RefreshCcw
+                        className="mr-2 h-4 w-4 animate-spin"
+                        aria-hidden="true"
+                      />
+                    )}
+                    Actualizar
                   </Button>
-                </SheetClose>
-                <Button
-                  type="submit"
-                  disabled={
-                    isLoadingUpdateProduct || isLoadingUpdateImageProduct
-                  }
-                >
-                  {(isLoadingUpdateProduct || isLoadingUpdateImageProduct) && (
-                    <RefreshCcw
-                      className="mr-2 h-4 w-4 animate-spin"
-                      aria-hidden="true"
-                    />
-                  )}
-                  Actualizar
-                </Button>
+                  <SheetClose asChild>
+                    <Button type="button" variant="outline">
+                      Cancelar
+                    </Button>
+                  </SheetClose>
+                </div>
               </SheetFooter>
             </form>
           </Form>
