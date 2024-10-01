@@ -17,7 +17,7 @@ export const useProfile = () => {
   const { setUser } = useAuth();
   const { signOut } = useLogout();
 
-  const { data: user, refetch } = useProfileQuery();
+  const { data: user } = useProfileQuery();
   const [updateUser, { isLoading }] = useUpdateUserMutation();
 
   const onUpdate = async (dataForm: UpdateUsersSchema) => {
@@ -39,7 +39,6 @@ export const useProfile = () => {
           }
           resolve(result);
           setUser(result?.data?.data as User);
-          refetch();
         } catch (error) {
           reject(error);
         }

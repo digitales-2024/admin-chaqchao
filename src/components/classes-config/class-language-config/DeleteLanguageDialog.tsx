@@ -1,4 +1,4 @@
-import { useDeleteClassLanguage } from "@/hooks/use-class-language";
+import { useClassLanguages } from "@/hooks/use-class-language";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { ClassLanguageData } from "@/types";
 import { RefreshCcw } from "lucide-react";
@@ -41,7 +41,7 @@ export function DeleteLanguageDialog({
   const [isDeletePending, startTransition] = useTransition();
   const isDesktop = useMediaQuery("(min-width: 640px)");
 
-  const { onDeleteClassLanguage } = useDeleteClassLanguage();
+  const { onDeleteClassLanguage } = useClassLanguages();
 
   const onDeleteLanguageHandler = () => {
     startTransition(async () => {

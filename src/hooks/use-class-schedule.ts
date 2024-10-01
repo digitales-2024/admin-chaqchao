@@ -17,11 +17,11 @@ export const useClassSchedules = () => {
     refetch,
   } = useGetClassSchedulesAllQuery();
 
-  return { dataClassSchedulesAll, error, isLoading, isSuccess, refetch };
-};
-
-export const useCreateClassSchedule = () => {
   const [createClassSchedule] = useCreateClassScheduleMutation();
+
+  const [updateClassSchedule] = useUpdateClassScheduleMutation();
+
+  const [deleteClassSchedule] = useDeleteClassScheduleMutation();
 
   const onCreateClassSchedule = async (input: Partial<ClassScheduleData>) => {
     const promise = () =>
@@ -56,12 +56,6 @@ export const useCreateClassSchedule = () => {
       error: (err) => err.message,
     });
   };
-
-  return { onCreateClassSchedule };
-};
-
-export const useUpdateClassSchedule = () => {
-  const [updateClassSchedule] = useUpdateClassScheduleMutation();
 
   const onUpdateClassSchedule = async (
     input: Partial<ClassScheduleData> & { id: string },
@@ -99,12 +93,6 @@ export const useUpdateClassSchedule = () => {
     });
   };
 
-  return { onUpdateClassSchedule };
-};
-
-export const useDeleteClassSchedule = () => {
-  const [deleteClassSchedule] = useDeleteClassScheduleMutation();
-
   const onDeleteClassSchedule = async (id: string) => {
     const promise = () =>
       new Promise(async (resolve, reject) => {
@@ -139,5 +127,14 @@ export const useDeleteClassSchedule = () => {
     });
   };
 
-  return { onDeleteClassSchedule };
+  return {
+    dataClassSchedulesAll,
+    error,
+    isLoading,
+    isSuccess,
+    refetch,
+    onCreateClassSchedule,
+    onUpdateClassSchedule,
+    onDeleteClassSchedule,
+  };
 };

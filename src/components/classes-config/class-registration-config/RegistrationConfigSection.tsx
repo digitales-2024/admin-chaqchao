@@ -1,13 +1,10 @@
 import { useBussinessConfig } from "@/hooks/use-business-config";
-import {
-  useClassRegistrations,
-  useCreateClassRegistration,
-  useUpdateClassRegistration,
-} from "@/hooks/use-class-registration";
+import { useClassRegistrations } from "@/hooks/use-class-registration";
 import {
   createClassRegistrationSchema,
   CreateClassRegistrationSchema,
 } from "@/schemas/classConfig/createClassRegistrationSchema";
+import { ClassRegistrationData } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
@@ -22,9 +19,14 @@ export function RegistrationConfigSection() {
     errorClassRegistrations,
     isSuccess,
     refetch,
-  } = useClassRegistrations();
-  const { onCreateClassRegistration } = useCreateClassRegistration();
-  const { onUpdateClassRegistration } = useUpdateClassRegistration();
+  } = useClassRegistrations() as {
+    dataClassRegistrationsAll: ClassRegistrationData[];
+    errorClassRegistrations: Error | null;
+    isSuccess: boolean;
+    refetch: () => void;
+  };
+  const { onCreateClassRegistration } = useClassRegistrations();
+  const { onUpdateClassRegistration } = useClassRegistrations();
 
   const { dataBusinessConfigAll, isSuccess: isSuccessBusinessConfig } =
     useBussinessConfig();

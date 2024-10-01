@@ -17,11 +17,11 @@ export const useClassPrices = () => {
     refetch,
   } = useGetClassPricesAllQuery();
 
-  return { dataClassPricesAll, error, isLoading, isSuccess, refetch };
-};
-
-export const useCreateClassPrice = () => {
   const [createClassPrice] = useCreateClassPriceMutation();
+
+  const [updateClassPrice] = useUpdateClassPriceMutation();
+
+  const [deleteClassPrice] = useDeleteClassPriceMutation();
 
   const onCreateClassPrice = async (input: Partial<ClassPriceConfigData>) => {
     const promise = () =>
@@ -56,12 +56,6 @@ export const useCreateClassPrice = () => {
       error: (err) => err.message,
     });
   };
-
-  return { onCreateClassPrice };
-};
-
-export const useUpdateClassPrice = () => {
-  const [updateClassPrice] = useUpdateClassPriceMutation();
 
   const onUpdateClassPrice = async (
     input: Partial<ClassPriceConfigData> & { id: string },
@@ -99,12 +93,6 @@ export const useUpdateClassPrice = () => {
     });
   };
 
-  return { onUpdateClassPrice };
-};
-
-export const useDeleteClassPrice = () => {
-  const [deleteClassPrice] = useDeleteClassPriceMutation();
-
   const onDeleteClassPrice = async (id: string) => {
     const promise = () =>
       new Promise(async (resolve, reject) => {
@@ -139,5 +127,14 @@ export const useDeleteClassPrice = () => {
     });
   };
 
-  return { onDeleteClassPrice };
+  return {
+    dataClassPricesAll,
+    error,
+    isLoading,
+    isSuccess,
+    refetch,
+    onCreateClassPrice,
+    onUpdateClassPrice,
+    onDeleteClassPrice,
+  };
 };

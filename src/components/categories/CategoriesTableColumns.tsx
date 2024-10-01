@@ -1,8 +1,9 @@
 "use client";
 
+import { useProfile } from "@/hooks/use-profile";
 import { Category } from "@/types";
 import { type ColumnDef } from "@tanstack/react-table";
-import { Ellipsis, Trash } from "lucide-react";
+import { Ellipsis, RefreshCcwDot, Trash } from "lucide-react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -17,7 +18,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import { DataTableColumnHeader } from "../data-table/DataTableColumnHeader";
+import { Badge } from "../ui/badge";
 import { DesactivateCategoryDialog } from "./DesactivateCategoryDialog";
+import { ReactivateCategoryDialog } from "./ReactivateCategoryDialog";
 import { UpdateCategorySheet } from "./UpdateCategorySheet";
 
 export const categoriesColumns = (): ColumnDef<Category>[] => {
@@ -55,23 +58,46 @@ export const categoriesColumns = (): ColumnDef<Category>[] => {
       enablePinning: true,
     },
     {
-      id: "name",
+      id: "nombre",
       accessorKey: "name",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Nombre" />
       ),
       cell: ({ row }) => (
-        <div className="truncate capitalize">{row.getValue("name")}</div>
+        <div className="truncate capitalize">{row.getValue("nombre")}</div>
       ),
     },
     {
-      id: "description",
+      id: "descripción",
       accessorKey: "description",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Descripción" />
       ),
       cell: ({ row }) => (
-        <div className="truncate capitalize">{row.getValue("description")}</div>
+        <div className="truncate capitalize">{row.getValue("descripción")}</div>
+      ),
+    },
+    {
+      id: "estado",
+      accessorKey: "isActive",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Estado" />
+      ),
+      cell: ({ row }) => (
+        <div>
+          {row.getValue("estado") ? (
+            <Badge
+              variant="secondary"
+              className="bg-emerald-100 text-emerald-500"
+            >
+              Activo
+            </Badge>
+          ) : (
+            <Badge variant="secondary" className="bg-red-100 text-red-500">
+              Inactivo
+            </Badge>
+          )}
+        </div>
       ),
     },
     {
@@ -79,8 +105,11 @@ export const categoriesColumns = (): ColumnDef<Category>[] => {
       size: 10,
       cell: function Cell({ row }) {
         const [showEditDialog, setShowEditDialog] = useState(false);
+        const [showReactivateDialog, setShowReactivateDialog] = useState(false);
         const [isDialogOpen, setIsDialogOpen] = useState(false);
         const category = row.original;
+
+        const { user } = useProfile();
 
         return (
           <div>
@@ -88,6 +117,14 @@ export const categoriesColumns = (): ColumnDef<Category>[] => {
               open={showEditDialog}
               onOpenChange={setShowEditDialog}
               category={category}
+            />
+            <ReactivateCategoryDialog
+              category={category}
+              open={showReactivateDialog}
+              onOpenChange={setShowReactivateDialog}
+              onSuccess={() => {
+                row.toggleSelected(false);
+              }}
             />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -104,6 +141,17 @@ export const categoriesColumns = (): ColumnDef<Category>[] => {
                   Editar
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
+                {user?.isSuperAdmin && (
+                  <DropdownMenuItem
+                    onSelect={() => setShowReactivateDialog(true)}
+                    disabled={row.original.isActive}
+                  >
+                    Reactivar
+                    <DropdownMenuShortcut>
+                      <RefreshCcwDot className="size-4" aria-hidden="true" />
+                    </DropdownMenuShortcut>
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuItem onSelect={() => setIsDialogOpen(true)}>
                   Eliminar
                   <DropdownMenuShortcut>

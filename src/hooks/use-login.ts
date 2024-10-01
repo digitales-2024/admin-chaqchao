@@ -6,11 +6,8 @@ import { useEffect } from "react";
 import { SubmitHandler } from "react-hook-form";
 import { toast } from "sonner";
 
-import { useAuth } from "./use-auth";
-
 export const useLogin = () => {
   const [login, { data, isSuccess, isLoading, error }] = useLoginMutation();
-  const { setUser } = useAuth();
   const router = useRouter();
 
   const onLogin: SubmitHandler<Credentials> = async (credentials) => {
@@ -51,10 +48,9 @@ export const useLogin = () => {
 
   useEffect(() => {
     if (isSuccess && data) {
-      setUser(data);
       router.replace("/");
     }
-  }, [data, isSuccess, setUser, router]);
+  }, [data, isSuccess]);
 
   return { onLogin, isLoading, error };
 };

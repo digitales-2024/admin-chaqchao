@@ -2,7 +2,7 @@ import { TitleSecction } from "./text/TitleSecction";
 
 interface HeaderPageProps {
   title: string;
-  description: string;
+  description?: string;
 }
 
 export const HeaderPage = ({ title, description }: HeaderPageProps) => {

@@ -27,12 +27,9 @@ export const useBussinessConfig = () => {
     refetch,
   } = useGetBusinessConfigAllQuery();
 
-  return { dataBusinessConfigAll, error, isLoading, isSuccess, refetch };
-};
-
-export const useCreateBusinessConfig = () => {
   const [createBusinessConfig] = useCreateBusinessConfigMutation();
   const [createBusinessHour] = useCreateBusinessHourMutation();
+  const [updateBusinessConfig] = useUpdateBusinessConfigMutation();
 
   const onCreateBusinessConfig = async (input: Partial<BusinessConfigData>) => {
     const promise = async () => {
@@ -88,12 +85,6 @@ export const useCreateBusinessConfig = () => {
     });
   };
 
-  return { onCreateBusinessConfig };
-};
-
-export const useUpdateBusinessConfig = () => {
-  const [updateBusinessConfig] = useUpdateBusinessConfigMutation();
-
   const onUpdateBusinessConfig = async (
     input: Partial<BusinessConfigData> & { id: string },
   ) => {
@@ -130,5 +121,13 @@ export const useUpdateBusinessConfig = () => {
     });
   };
 
-  return { onUpdateBusinessConfig };
+  return {
+    dataBusinessConfigAll,
+    error,
+    isLoading,
+    isSuccess,
+    refetch,
+    onCreateBusinessConfig,
+    onUpdateBusinessConfig,
+  };
 };

@@ -1,13 +1,14 @@
 import { Providers } from "@/redux/providers";
 import type { Metadata } from "next";
-import { Lexend_Deca } from "next/font/google";
+import localFont from "next/font/local";
 import { Toaster } from "sonner";
-import "./globals.css";
 
-const lexend = Lexend_Deca({
-  subsets: ["latin"],
-  fallback: ["system-ui", "arial"],
-  preload: true,
+import "./globals.css";
+import { ApiStatus } from "@/components/common/ApiStatus";
+
+const lexend = localFont({
+  src: "./fonts/lexend-deca-latin-400-normal.woff",
+  variable: "--font-lexend-deca",
 });
 
 export const metadata: Metadata = {
@@ -21,7 +22,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="es">
       <body className={lexend.className}>
         <Toaster
           richColors
@@ -34,7 +35,10 @@ export default function RootLayout({
           }}
           closeButton
         />
-        <Providers>{children}</Providers>
+        <Providers>
+          <ApiStatus />
+          {children}
+        </Providers>
       </body>
     </html>
   );

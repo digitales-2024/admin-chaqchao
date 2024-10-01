@@ -63,6 +63,11 @@ const errorTranslations = {
     "No puedes eliminar/desactivar un rol en uso",
   "name should not be empty": "El nombre no puede estar en blanco",
   "This category exists": "Esta categoría ya existe",
+  "Failed to send email": "Error al enviar el correo electrónico",
+  "This category is inactive, contact the superadmin to reactivate it":
+    "Esta categoría está inactiva, contacta al superadmin para reactivarla",
+  "Category assigned to active products":
+    "No se puede eliminar la categoría porque está asignada a productos activos",
 };
 
 export default errorTranslations;
