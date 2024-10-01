@@ -5,7 +5,9 @@ import {
 } from "@/schemas/clients/updateClientsSchema";
 import { Client } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { RefreshCcw } from "lucide-react";
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
+import { CalendarCheck, RefreshCcw } from "lucide-react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 
@@ -31,15 +33,11 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 
-import { DateInput } from "../ui/date-input";
-import { PhoneInput } from "../ui/phone-input";
+import { cn } from "@/lib/utils";
 
-// Convierte la fecha en formato YYYY-MM-DD para inputs de tipo date
-function formatDateToInput(value: string | undefined) {
-  if (!value) return undefined;
-  const date = new Date(value);
-  return date.toISOString().split("T")[0]; // Devuelve una cadena en formato YYYY-MM-DD
-}
+import { Calendar } from "../ui/calendar";
+import { PhoneInput } from "../ui/phone-input";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 
 interface UpdateClientSheetProps
   extends React.ComponentPropsWithRef<typeof Sheet> {
@@ -56,7 +54,7 @@ export function UpdateClientSheet({
     id: client.id ?? "",
     name: client?.name || "",
     phone: client?.phone || "",
-    birthDate: formatDateToInput(client?.birthDate), // Cadena en lugar de Date
+    birthDate: new Date(client?.birthDate) || new Date(), // Cadena en lugar de Date
   };
 
   const form = useForm<UpdateClientsSchema>({
@@ -70,7 +68,7 @@ export function UpdateClientSheet({
         id: client.id ?? "",
         name: client.name ?? "",
         phone: client.phone ?? "",
-        birthDate: formatDateToInput(client.birthDate), // Cadena
+        birthDate: new Date(client?.birthDate) ?? new Date(), // Cadena
       });
     }
   }, [client, form]);
@@ -100,71 +98,100 @@ export function UpdateClientSheet({
             Actualiza la información del cliente y guarda los cambios
           </SheetDescription>
         </SheetHeader>
+
         <ScrollArea className="mt-4 w-full gap-4 rounded-md border p-4">
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
               className="flex flex-col gap-4 p-4"
             >
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel htmlFor="client-name">Nombre</FormLabel>
-                    <FormControl>
-                      <Input
-                        id="client-name"
-                        placeholder="Nombre del cliente"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="phone"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel htmlFor="client-phone">Teléfono</FormLabel>
-                    <FormControl>
-                      <PhoneInput
-                        international
-                        defaultCountry="PE"
-                        placeholder="Ingrese un número de teléfono"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="birthDate"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel htmlFor="client-birthDate">
-                      Fecha de Nacimiento
-                    </FormLabel>
-                    <FormControl>
-                      <DateInput
-                        value={field.value ? new Date(field.value) : undefined}
-                        onChange={(date: Date | undefined) => {
-                          field.onChange(
-                            date ? date.toISOString().split("T")[0] : "",
-                          );
-                        }}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <div className="flex flex-col gap-4 sm:flex-row">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem className="flex-1">
+                      <FormLabel htmlFor="client-name">Nombre</FormLabel>
+                      <FormControl>
+                        <Input
+                          id="client-name"
+                          placeholder="Nombre del cliente"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
 
-              <SheetFooter className="gap-2 pt-2 sm:space-x-0">
+              <div className="flex flex-col gap-4 sm:flex-row">
+                <FormField
+                  control={form.control}
+                  name="phone"
+                  render={({ field }) => (
+                    <FormItem className="flex-1">
+                      <FormLabel htmlFor="client-phone">Teléfono</FormLabel>
+                      <FormControl>
+                        <PhoneInput
+                          international
+                          defaultCountry="PE"
+                          placeholder="Ingrese un número de teléfono"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="flex flex-col gap-4">
+                <FormField
+                  control={form.control}
+                  name="birthDate"
+                  render={({ field }) => (
+                    <FormItem className="flex w-full flex-col">
+                      <FormLabel>Date of birth</FormLabel>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant={"outline"}
+                              className={cn(
+                                "w-full pl-3 text-left font-normal",
+                                !field.value && "text-muted-foreground",
+                              )}
+                            >
+                              {field.value ? (
+                                format(field.value, "PPP", { locale: es })
+                              ) : (
+                                <span>Pick a date</span>
+                              )}
+                              <CalendarCheck className="ml-auto h-4 w-4 opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={field.value}
+                            onSelect={field.onChange}
+                            disabled={(date) =>
+                              date > new Date() || date < new Date("1900-01-01")
+                            }
+                            initialFocus
+                            locale={es}
+                          />
+                        </PopoverContent>
+                      </Popover>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <SheetFooter className="flex justify-end gap-2 pt-2 sm:space-x-0">
                 <SheetClose asChild>
                   <Button type="button" variant="outline">
                     Cancelar
