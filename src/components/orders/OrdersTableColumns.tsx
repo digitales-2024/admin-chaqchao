@@ -33,6 +33,19 @@ export const getColumnsOrders = (): ColumnDef<OrderData>[] => [
         />
       </div>
     ),
+    cell: ({ row }) => (
+      <div className="px-2">
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+          className="translate-y-0.5"
+        />
+      </div>
+    ),
+    enableSorting: false,
+    enableHiding: false,
+    enablePinning: true,
   },
   {
     id: "código",
@@ -60,7 +73,7 @@ export const getColumnsOrders = (): ColumnDef<OrderData>[] => [
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
-        <Badge variant="outline">
+        <Badge variant="outline" className="font-light text-slate-500">
           {formatDistanceToNow(new Date(row.getValue("fecha")), {
             addSuffix: true,
             locale: es,
