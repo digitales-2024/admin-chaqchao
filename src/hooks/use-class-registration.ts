@@ -16,17 +16,11 @@ export const useClassRegistrations = () => {
     refetch,
   } = useGetClassRegistrationsAllQuery();
 
-  return {
-    dataClassRegistrationsAll,
-    errorClassRegistrations,
-    isLoading,
-    isSuccess,
-    refetch,
-  };
-};
-
-export const useCreateClassRegistration = () => {
   const [createClassRegistration] = useCreateClassRegistrationMutation();
+
+  const [updateClassRegistration] = useUpdateClassRegistrationMutation();
+
+  const [deleteClassRegistration] = useDeleteClassRegistrationMutation();
 
   const onCreateClassRegistration = async (
     input: Partial<ClassRegistrationData>,
@@ -64,12 +58,6 @@ export const useCreateClassRegistration = () => {
     });
   };
 
-  return { onCreateClassRegistration };
-};
-
-export const useUpdateClassRegistration = () => {
-  const [updateClassRegistration] = useUpdateClassRegistrationMutation();
-
   const onUpdateClassRegistration = async (
     input: Partial<ClassRegistrationData> & { id: string },
   ) => {
@@ -106,11 +94,6 @@ export const useUpdateClassRegistration = () => {
     });
   };
 
-  return { onUpdateClassRegistration };
-};
-export const useDeleteClassRegistration = () => {
-  const [deleteClassRegistration] = useDeleteClassRegistrationMutation();
-
   const onDeleteClassRegistration = async (id: string) => {
     const promise = () =>
       new Promise(async (resolve, reject) => {
@@ -145,5 +128,14 @@ export const useDeleteClassRegistration = () => {
     });
   };
 
-  return { onDeleteClassRegistration };
+  return {
+    dataClassRegistrationsAll,
+    errorClassRegistrations,
+    isLoading,
+    isSuccess,
+    refetch,
+    onCreateClassRegistration,
+    onUpdateClassRegistration,
+    onDeleteClassRegistration,
+  };
 };

@@ -1,11 +1,7 @@
 "use client";
 
 import { LogoChaqchao } from "@/assets/icons";
-import {
-  useCreateBusinessConfig,
-  useUpdateBusinessConfig,
-  useBussinessConfig,
-} from "@/hooks/use-business-config";
+import { useBussinessConfig } from "@/hooks/use-business-config";
 import { useBusinessHours } from "@/hooks/use-business-hours";
 import {
   CreateBusinessConfigSchema,
@@ -33,8 +29,8 @@ const daysOfWeek = {
 
 export default function BusinessInformationPage() {
   const { dataBusinessConfigAll, error, isLoading } = useBussinessConfig();
-  const { onCreateBusinessConfig } = useCreateBusinessConfig();
-  const { onUpdateBusinessConfig } = useUpdateBusinessConfig();
+  const { onCreateBusinessConfig } = useBussinessConfig();
+  const { onUpdateBusinessConfig } = useBussinessConfig();
   const {
     dataBusinessHoursAll,
     error: errorBusinessHours,

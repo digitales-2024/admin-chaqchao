@@ -4,7 +4,13 @@ import { useMediaQuery } from "@/hooks/use-media-query";
 import { useProducts } from "@/hooks/use-products";
 import { ProductData } from "@/types";
 import { DialogTitle as UIDialogTitle } from "@radix-ui/react-dialog";
-import { PackageCheck, PackageX, ShieldAlert, ShieldMinus } from "lucide-react";
+import {
+  ImageOff,
+  PackageCheck,
+  PackageX,
+  ShieldAlert,
+  ShieldMinus,
+} from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 
@@ -31,7 +37,8 @@ import { cn } from "@/lib/utils";
 import { ScrollArea } from "../ui/scroll-area";
 import { Switch } from "../ui/switch";
 
-interface ProductImageDialogProps {
+interface ProductImageDialogProps
+  extends React.ComponentPropsWithRef<typeof Dialog> {
   imageUrl: string;
   children: React.ReactNode;
   product: ProductData;
@@ -42,37 +49,48 @@ export function ProductImageDialog({
   children,
   product,
   borderColor,
+  ...props
 }: ProductImageDialogProps) {
-  const [open, setOpen] = useState(false);
   const isDesktop = useMediaQuery("(min-width: 640px)");
 
   const { onToggleProductActivation } = useProducts();
-  const [isAvailable, setIsAvailable] = useState(product.isAvailable);
 
-  const handleToggle = async (checked: boolean) => {
+  const handleToggle = async () => {
     const productId = product.id;
     await onToggleProductActivation(productId);
-    setIsAvailable(checked);
+    props?.onOpenChange?.(false);
   };
 
+  const [imageError, setImageError] = useState(false);
+
   const content = (
-    <div className="flex snap-center flex-col place-items-center gap-6 py-7 sm:flex-row sm:place-items-start">
+    <div className="grid w-full snap-center grid-cols-1 place-items-center gap-6 py-7 sm:grid-cols-2 sm:place-items-start">
       {/* Imagen y detalles básicos */}
       <div className="space-y-4">
-        <div className="relative flex h-auto w-full">
-          <Image
-            height={400}
-            width={400}
-            src={product.image}
-            alt={product.name}
-            key={product.id}
-            objectFit="cover"
-            className="flex-1"
-          />
+        <div className="relative flex h-auto w-full items-center justify-center">
+          {imageError ? (
+            <div className="flex size-[400px] flex-col items-center justify-center gap-10 text-center">
+              <ImageOff className="size-14 text-slate-400" strokeWidth={1} />
+              <span className="text-xs text-gray-500">
+                Error al cargar la imagen
+              </span>
+            </div>
+          ) : (
+            <Image
+              height={400}
+              width={400}
+              src={product.image}
+              alt={product.name}
+              key={product.id}
+              objectFit="cover"
+              className="flex-1"
+              onError={() => setImageError(true)}
+            />
+          )}
         </div>
       </div>
       {/* Información detallada */}
-      <div className="space-y-6">
+      <div className="w-full space-y-6">
         <Card className="border-slate-50">
           <CardContent className="flex flex-col gap-6 p-10">
             <div className="space-y-2">
@@ -106,7 +124,7 @@ export function ProductImageDialog({
               <Label htmlFor="stock">Disponibilidad</Label>
               <div className="flex items-center gap-2">
                 <Switch
-                  checked={isAvailable}
+                  checked={product.isAvailable}
                   onCheckedChange={handleToggle}
                   onClick={(e) => e.stopPropagation()}
                   className="translate-y-0.5"
@@ -114,10 +132,10 @@ export function ProductImageDialog({
                 <span
                   className={cn(
                     "text-xs",
-                    isAvailable ? "text-emerald-500" : "text-slate-500",
+                    product.isAvailable ? "text-emerald-500" : "text-slate-500",
                   )}
                 >
-                  {isAvailable ? (
+                  {product.isAvailable ? (
                     <span className="inline-flex gap-2 align-bottom">
                       <PackageCheck size={16} className="flex-shrink-0" />{" "}
                       Disponible
@@ -174,11 +192,11 @@ export function ProductImageDialog({
 
   if (isDesktop)
     return (
-      <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog>
         <DialogTrigger asChild>{children}</DialogTrigger>
         <DialogContent className="max-w-2xl justify-start p-10 lg:max-w-4xl">
           <DialogHeader>
-            <UIDialogTitle className="text-2xl font-bold uppercase">
+            <UIDialogTitle className="w-full text-2xl font-bold uppercase">
               {product.name}
             </UIDialogTitle>
             <Separator className="my-4" />
@@ -189,7 +207,7 @@ export function ProductImageDialog({
     );
 
   return (
-    <Drawer open={open} onOpenChange={setOpen}>
+    <Drawer>
       <DrawerTrigger asChild>{children}</DrawerTrigger>
       <DrawerContent className="h-4/5">
         <DrawerHeader>

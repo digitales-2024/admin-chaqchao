@@ -1,4 +1,4 @@
-import { useDeleteClassPrice } from "@/hooks/use-class-price";
+import { useClassPrices } from "@/hooks/use-class-price";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { ClassPriceConfigData } from "@/types";
 import { RefreshCcw } from "lucide-react";
@@ -41,7 +41,7 @@ export function DeletePriceDialog({
   const [isDeletePending, startTransition] = useTransition();
   const isDesktop = useMediaQuery("(min-width: 640px)");
 
-  const { onDeleteClassPrice } = useDeleteClassPrice();
+  const { onDeleteClassPrice } = useClassPrices();
 
   const onDeletePriceHandler = () => {
     startTransition(async () => {

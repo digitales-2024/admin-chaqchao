@@ -67,8 +67,8 @@ export const categoriesApi = createApi({
     // Desactivar una categoría
     deactivateCategory: build.mutation<CategoryResponse, string>({
       query: (id) => ({
-        url: `category/desactivate/${id}`,
-        method: "PATCH",
+        url: `category/${id}`,
+        method: "DELETE",
         credentials: "include",
       }),
       invalidatesTags: ["Categories"],

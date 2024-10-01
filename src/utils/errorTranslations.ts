@@ -66,6 +66,8 @@ const errorTranslations = {
   "Failed to send email": "Error al enviar el correo electrónico",
   "This category is inactive, contact the superadmin to reactivate it":
     "Esta categoría está inactiva, contacta al superadmin para reactivarla",
+  "Category assigned to active products":
+    "No se puede eliminar la categoría porque está asignada a productos activos",
   "phone must be a valid phone number":
     "El teléfono debe ser un número de teléfono válido",
 };
