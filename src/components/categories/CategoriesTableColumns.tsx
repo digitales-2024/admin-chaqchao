@@ -3,7 +3,7 @@
 import { useProfile } from "@/hooks/use-profile";
 import { Category } from "@/types";
 import { type ColumnDef } from "@tanstack/react-table";
-import { Trash, Ellipsis, RefreshCcwDot, Trash } from "lucide-react";
+import { Trash, Ellipsis, RefreshCcwDot } from "lucide-react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -14,7 +14,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuShortcut,
   DropdownMenuTrigger,
-  DropdownMenuShortcut,
 } from "@/components/ui/dropdown-menu";
 
 import { DataTableColumnHeader } from "../data-table/DataTableColumnHeader";
@@ -129,10 +128,6 @@ export const categoriesColumns = (): ColumnDef<Category>[] => {
                   </DropdownMenuItem>
                 )}
                 <DropdownMenuItem onSelect={() => setIsDialogOpen(true)}>
-                  Eliminar
-                  <DropdownMenuShortcut>
-                    <Trash className="size-4" aria-hidden="true" />
-                  </DropdownMenuShortcut>
                   Eliminar
                   <DropdownMenuShortcut>
                     <Trash className="size-4" aria-hidden="true" />
