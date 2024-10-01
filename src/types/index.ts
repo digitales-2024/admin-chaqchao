@@ -27,6 +27,9 @@ export type {
   CategoryData,
 } from "./product";
 
+export type { Order, OrderData } from "./orders";
+export { OrderStatus } from "./orders";
+
 export interface Option {
   label: string;
   value: string;
