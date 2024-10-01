@@ -55,7 +55,7 @@ export const clientsApi = createApi({
     // Desactivar un cliente por id
     deactivateClient: build.mutation<ClientResponse, string>({
       query: (id) => ({
-        url: `admin/client/desactivate/${id}`, // Cambiar a la ruta correspondiente si es diferente
+        url: `admin/client/desactivate/${id}`,
         method: "PATCH",
         credentials: "include",
       }),
@@ -65,7 +65,7 @@ export const clientsApi = createApi({
     // Reactivar un cliente por id
     reactivateClient: build.mutation<ClientResponse, string>({
       query: (id) => ({
-        url: `admin/client/reactivate/${id}`, // Cambiar a la ruta correspondiente si es diferente
+        url: `admin/client/desactivate/${id}`, // Por ahora se trabaja así la resactivación
         method: "PATCH",
         credentials: "include",
       }),
