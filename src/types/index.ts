@@ -26,6 +26,7 @@ export type {
   ProductVariationData,
   CategoryData,
 } from "./product";
+export type { Client } from "./client";
 
 export interface Option {
   label: string;

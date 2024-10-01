@@ -1,5 +1,5 @@
-import { useCategories } from "@/hooks/use-categories";
-import { Category } from "@/types";
+import { useClients } from "@/hooks/use-clients";
+import { Client } from "@/types";
 
 import {
   AlertDialog,
@@ -13,25 +13,25 @@ import {
 } from "../ui/alert-dialog";
 import { Button } from "../ui/button";
 
-interface DesactivateCategoryDialogProps {
-  category: Category;
+interface DesactivateClientDialogProps {
+  client: Client;
   onSuccess?: () => void;
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-export const DesactivateCategoryDialog = ({
-  category,
+export const DesactivateClientDialog = ({
+  client,
   onSuccess,
   isOpen,
   onOpenChange,
-}: DesactivateCategoryDialogProps) => {
-  const { onDeactivateCategory } = useCategories();
+}: DesactivateClientDialogProps) => {
+  const { onDeactivateClient } = useClients();
 
   const handleDesactivate = async () => {
-    onDeactivateCategory(category.id);
+    await onDeactivateClient(client.id);
     onSuccess?.();
-    onOpenChange(false); // Cierra el diálogo después de la acción
+    onOpenChange(false);
   };
 
   return (
@@ -40,7 +40,7 @@ export const DesactivateCategoryDialog = ({
         <AlertDialogHeader>
           <AlertDialogTitle>¿Estás absolutamente seguro?</AlertDialogTitle>
           <AlertDialogDescription>
-            {`Esta acción eliminará la categoría "${category.name}".`}
+            {`Esta acción eliminará el cliente "${client.name}".`}{" "}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

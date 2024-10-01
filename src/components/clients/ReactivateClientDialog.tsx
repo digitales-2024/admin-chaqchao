@@ -1,8 +1,8 @@
-import { useCategories } from "@/hooks/use-categories";
-import { useMediaQuery } from "@/hooks/use-media-query";
-import { Category } from "@/types";
-import { Row } from "@tanstack/react-table";
-import { RefreshCcw } from "lucide-react";
+import { useClients } from "@/hooks/use-clients"; // Hook para clientes
+import { useMediaQuery } from "@/hooks/use-media-query"; // Hook para detectar pantallas grandes
+import { Client } from "@/types"; // Define la interfaz o tipo para Client
+import { Row } from "@tanstack/react-table"; // Para manipular las filas de la tabla
+import { RefreshCcw } from "lucide-react"; // Icono de carga
 import { ComponentPropsWithoutRef } from "react";
 
 import {
@@ -14,8 +14,8 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "../ui/alert-dialog";
-import { Button } from "../ui/button";
+} from "../ui/alert-dialog"; // Importación de componentes UI de diálogos de alerta
+import { Button } from "../ui/button"; // Botón personalizado
 import {
   Drawer,
   DrawerClose,
@@ -24,28 +24,28 @@ import {
   DrawerFooter,
   DrawerHeader,
   DrawerTitle,
-} from "../ui/drawer";
+} from "../ui/drawer"; // Importación de componentes UI de cajón (drawer)
 
-interface ReactivateCategoryDialogProps
+interface ReactivateClientDialogProps
   extends ComponentPropsWithoutRef<typeof AlertDialog> {
-  category: Row<Category>["original"];
+  client: Row<Client>["original"]; // Información del cliente seleccionada
   showTrigger?: boolean;
   onSuccess?: () => void;
 }
 
-export const ReactivateCategoryDialog = ({
-  category,
+export const ReactivateClientDialog = ({
+  client,
   onSuccess,
   ...props
-}: ReactivateCategoryDialogProps) => {
-  const isDesktop = useMediaQuery("(min-width: 640px)");
+}: ReactivateClientDialogProps) => {
+  const isDesktop = useMediaQuery("(min-width: 640px)"); // Verifica si es escritorio
 
-  const { onReactivateCategory, isLoadingReactivateCategory } = useCategories();
+  const { onReactivateClient, isLoadingReactivateClient } = useClients(); // Hook para reactivar cliente
 
-  const onReactivateCategoryHandler = () => {
-    onReactivateCategory(category.id);
-    props.onOpenChange?.(false);
-    onSuccess?.();
+  const onReactivateClientHandler = () => {
+    onReactivateClient(client.id); // Llama a la función para reactivar cliente
+    props.onOpenChange?.(false); // Cierra el diálogo o cajón
+    onSuccess?.(); // Ejecuta la función de éxito si está definida
   };
 
   if (isDesktop) {
@@ -55,7 +55,7 @@ export const ReactivateCategoryDialog = ({
           <AlertDialogHeader>
             <AlertDialogTitle>¿Estás absolutamente seguro?</AlertDialogTitle>
             <AlertDialogDescription>
-              {`Esta acción reactivará la categoría "${category.name}".`}
+              {`Esta acción reactivará al cliente "${client.name}".`}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="gap-2 sm:space-x-0">
@@ -64,10 +64,10 @@ export const ReactivateCategoryDialog = ({
             </AlertDialogCancel>
             <AlertDialogAction
               aria-label="Reactivate selected rows"
-              onClick={onReactivateCategoryHandler}
-              disabled={isLoadingReactivateCategory}
+              onClick={onReactivateClientHandler}
+              disabled={isLoadingReactivateClient}
             >
-              {isLoadingReactivateCategory && (
+              {isLoadingReactivateClient && (
                 <RefreshCcw
                   className="mr-2 size-4 animate-spin"
                   aria-hidden="true"
@@ -80,22 +80,23 @@ export const ReactivateCategoryDialog = ({
       </AlertDialog>
     );
   }
+
   return (
     <Drawer {...props}>
       <DrawerContent>
         <DrawerHeader>
           <DrawerTitle>¿Estás absolutamente seguro?</DrawerTitle>
           <DrawerDescription>
-            {`Esta acción desactivará la categoría "${category.name}".`}
+            {`Esta acción desactivará al cliente "${client.name}".`}
           </DrawerDescription>
         </DrawerHeader>
         <DrawerFooter className="gap-2 sm:space-x-0">
           <Button
             aria-label="Reactivate selected rows"
-            onClick={onReactivateCategoryHandler}
-            disabled={isLoadingReactivateCategory}
+            onClick={onReactivateClientHandler}
+            disabled={isLoadingReactivateClient}
           >
-            {isLoadingReactivateCategory && (
+            {isLoadingReactivateClient && (
               <RefreshCcw
                 className="mr-2 size-4 animate-spin"
                 aria-hidden="true"
