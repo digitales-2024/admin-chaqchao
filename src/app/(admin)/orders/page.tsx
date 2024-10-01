@@ -2,6 +2,7 @@ import { HeaderPage } from "@/components/common/HeaderPage";
 import { Shell } from "@/components/common/Shell";
 import { FilterDate } from "@/components/orders/FilterDate";
 import { FilterStatus } from "@/components/orders/FilterStatus";
+import { TableOrders } from "@/components/orders/TableOrders";
 
 export default function PagerOrders() {
   return (
@@ -14,6 +15,7 @@ export default function PagerOrders() {
           <FilterDate />
         </div>
       </div>
+      <TableOrders />
     </Shell>
   );
 }
