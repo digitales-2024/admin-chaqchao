@@ -3,6 +3,7 @@ import {
   useUpdateClientMutation,
   useToggleClientActivationMutation,
   useDeactivateClientMutation,
+  useReactivateClientMutation, // Importa el hook para reactivar cliente
 } from "@/redux/services/clientsApi";
 import { Client } from "@/types";
 import { toast } from "sonner";
@@ -25,6 +26,15 @@ export const useClients = () => {
   // Desactivar cliente
   const [deactivateClient, { isSuccess: isSuccessDeactivateClient }] =
     useDeactivateClientMutation();
+
+  // Reactivar cliente
+  const [
+    reactivateClient,
+    {
+      isSuccess: isSuccessReactivateClient,
+      isLoading: isLoadingReactivateClient,
+    },
+  ] = useReactivateClientMutation(); // Asegúrate de que este hook esté definido en tu servicio de API
 
   // Manejar la actualización de un cliente
   const onUpdateClient = async (input: Partial<Client> & { id: string }) => {
@@ -120,16 +130,49 @@ export const useClients = () => {
     });
   };
 
+  // Manejar la reactivación de un cliente
+  const onReactivateClient = async (id: string) => {
+    const promise = () =>
+      new Promise(async (resolve, reject) => {
+        try {
+          const result = await reactivateClient(id);
+          if (result.error && "data" in result.error) {
+            const error = (result.error.data as any).message;
+            reject(new Error(error));
+          }
+          if (result.error) {
+            reject(
+              new Error(
+                "Ocurrió un error inesperado, por favor intenta de nuevo",
+              ),
+            );
+          }
+          resolve(result);
+        } catch (error) {
+          reject(error);
+        }
+      });
+
+    toast.promise(promise(), {
+      loading: "Reactivando cliente...",
+      success: "Cliente reactivado exitosamente",
+      error: (error) => error.message,
+    });
+  };
+
   return {
-    data, // Datos de los clientes obtenidos
-    error, // Error en la obtención de clientes
-    isLoading, // Indicador de carga
-    onUpdateClient, // Función para actualizar cliente
-    isSuccessUpdateClient, // Indicador de éxito en la actualización
-    isLoadingUpdateClient, // Indicador de carga en la actualización
-    onToggleClientActivation, // Función para activar/desactivar cliente
-    isSuccessToggleClient, // Indicador de éxito en activación/desactivación
-    onDeactivateClient, // Función para desactivar cliente
-    isSuccessDeactivateClient, // Indicador de éxito en desactivación
+    data,
+    error,
+    isLoading,
+    onUpdateClient,
+    isSuccessUpdateClient,
+    isLoadingUpdateClient,
+    onToggleClientActivation,
+    isSuccessToggleClient,
+    onDeactivateClient,
+    isSuccessDeactivateClient,
+    onReactivateClient, // Agregar la función para reactivar clientes
+    isSuccessReactivateClient, // Agregar el indicador de éxito de reactivación
+    isLoadingReactivateClient, // Agregar el indicador de carga de reactivación
   };
 };
