@@ -9,9 +9,9 @@ export const clientsSchema = z.object({
   phone: z
     .string()
     .refine(isValidPhoneNumber, { message: "Número de teléfono no válido" }),
-  birthDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, {
-    message: "Fecha de nacimiento no válida. Use el formato YYYY-MM-DD",
-  }), // Validación para fecha en formato string
+  birthDate: z.date({
+    required_error: "Ingrese la fecha de nacimiento",
+  }),
 });
 
 // Esquema para actualizar clientes (con campos opcionales)
