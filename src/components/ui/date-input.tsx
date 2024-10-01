@@ -1,5 +1,3 @@
-"use client";
-
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { Calendar as CalendarIcon } from "lucide-react";
@@ -17,8 +15,10 @@ import { cn } from "@/lib/utils";
 
 interface DateInputProps {
   value: Date | undefined;
-  onChange: (date: Date | undefined) => void;
+  onChange: () => void;
 }
+//trabajar con un hook
+//funcion para hacer cambios con el hook
 
 export function DateInput({ value, onChange }: DateInputProps) {
   return (
@@ -39,13 +39,17 @@ export function DateInput({ value, onChange }: DateInputProps) {
           )}
         </Button>
       </PopoverTrigger>
+
       <PopoverContent className="w-auto p-0">
         <Calendar
           mode="single"
           selected={value}
           onSelect={onChange}
           initialFocus
-          locale={es} // Establecer el idioma del calendario
+          locale={es}
+          disabled={(date) =>
+            date > new Date() || date < new Date("1900-01-01")
+          }
         />
       </PopoverContent>
     </Popover>
