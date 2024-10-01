@@ -17,9 +17,6 @@ interface DateInputProps {
   value: Date | undefined;
   onChange: () => void;
 }
-//trabajar con un hook
-//funcion para hacer cambios con el hook
-
 export function DateInput({ value, onChange }: DateInputProps) {
   return (
     <Popover>
