@@ -11,7 +11,7 @@ import { toast } from "sonner";
 // Hook personalizado para manejar operaciones con clientes
 export const useClients = () => {
   // Obtener clientes
-  const { data, error, isLoading } = useGetClientsQuery();
+  const { data: dataClientsAll, error, isLoading } = useGetClientsQuery();
 
   // Actualizar cliente
   const [
@@ -161,7 +161,7 @@ export const useClients = () => {
   };
 
   return {
-    data,
+    dataClientsAll,
     error,
     isLoading,
     onUpdateClient,
