@@ -1,5 +1,5 @@
-import { useClients } from "@/hooks/use-clients"; // Adaptar a tu hook para clientes
-import { Client } from "@/types"; // Asegúrate de tener el tipo Client definido
+import { useClients } from "@/hooks/use-clients";
+import { Client } from "@/types";
 
 import {
   AlertDialog,
@@ -14,7 +14,7 @@ import {
 import { Button } from "../ui/button";
 
 interface DesactivateClientDialogProps {
-  client: Client; // Asegúrate de que el tipo Client tenga la estructura necesaria
+  client: Client;
   onSuccess?: () => void;
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
@@ -26,12 +26,12 @@ export const DesactivateClientDialog = ({
   isOpen,
   onOpenChange,
 }: DesactivateClientDialogProps) => {
-  const { onDeactivateClient } = useClients(); // Hook para desactivar clientes
+  const { onDeactivateClient } = useClients();
 
   const handleDesactivate = async () => {
-    await onDeactivateClient(client.id); // Desactivar cliente
-    onSuccess?.(); // Llamar a onSuccess si está definido
-    onOpenChange(false); // Cierra el diálogo después de la acción
+    await onDeactivateClient(client.id);
+    onSuccess?.();
+    onOpenChange(false);
   };
 
   return (
@@ -41,7 +41,6 @@ export const DesactivateClientDialog = ({
           <AlertDialogTitle>¿Estás absolutamente seguro?</AlertDialogTitle>
           <AlertDialogDescription>
             {`Esta acción eliminará el cliente "${client.name}".`}{" "}
-            {/* Asegúrate de que 'name' sea una propiedad válida en el tipo Client */}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
