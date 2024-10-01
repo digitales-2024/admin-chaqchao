@@ -1,4 +1,4 @@
-import { useUpdateBusinessHour } from "@/hooks/use-business-hours";
+import { useBusinessHours } from "@/hooks/use-business-hours";
 import { BusinessHoursData } from "@/types";
 import { Clock, DoorClosed, DoorOpen } from "lucide-react";
 import { useState } from "react";
@@ -32,7 +32,7 @@ export function UpdateBusinessHoursSheet({
   businessHoursArray,
   refetchBusinessHours,
 }: UpdateBusinessHoursSheetProps) {
-  const { onUpdateBusinessHour } = useUpdateBusinessHour();
+  const { onUpdateBusinessHour } = useBusinessHours();
   const [isOpen, setIsOpen] = useState(false);
   const [selectedDays, setSelectedDays] = useState<string[]>([]);
   const [openingTime, setOpeningTime] = useState("");

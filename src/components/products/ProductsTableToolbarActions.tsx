@@ -1,5 +1,6 @@
 "use client";
 
+import { useProfile } from "@/hooks/use-profile";
 import { ProductData } from "@/types";
 import { type Table } from "@tanstack/react-table";
 import { Download } from "lucide-react";
@@ -19,6 +20,7 @@ export interface ProductsTableToolbarActionsProps {
 export function ProductsTableToolbarActions({
   table,
 }: ProductsTableToolbarActionsProps) {
+  const { user } = useProfile();
   return (
     <div className="flex w-fit flex-wrap items-center gap-2">
       {table && table.getFilteredSelectedRowModel().rows.length > 0 ? (
@@ -29,12 +31,14 @@ export function ProductsTableToolbarActions({
               .rows.map((row) => row.original)}
             onSuccess={() => table.toggleAllRowsSelected(false)}
           />
-          <ReactivateProductsDialog
-            products={table
-              .getFilteredSelectedRowModel()
-              .rows.map((row) => row.original)}
-            onSuccess={() => table.toggleAllRowsSelected(false)}
-          />
+          {user?.isSuperAdmin && (
+            <ReactivateProductsDialog
+              products={table
+                .getFilteredSelectedRowModel()
+                .rows.map((row) => row.original)}
+              onSuccess={() => table.toggleAllRowsSelected(false)}
+            />
+          )}
         </>
       ) : null}
       <CreateProductDialog />

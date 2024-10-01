@@ -5,6 +5,7 @@ import { ProductData } from "@/types";
 import { type ColumnDef } from "@tanstack/react-table";
 import {
   Ellipsis,
+  ImageOff,
   PackageCheck,
   PackageX,
   RefreshCcwDot,
@@ -78,27 +79,35 @@ export const productsColumns = (
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Imagen" />
       ),
-      cell: ({ row }) => {
+      cell: function ImageCell({ row }) {
         const imageUrl = row.getValue("imagen") as string;
         const categoryName = row.getValue("categoria") as string;
         const index = uniqueCategories.indexOf(categoryName);
         const borderColor = colors[index];
 
+        const [imageError, setImageError] = useState(false);
         return (
           <ProductImageDialog
             imageUrl={imageUrl}
             product={row?.original}
             borderColor={borderColor}
           >
-            <div className="group relative h-20 w-20 cursor-pointer">
-              <Image
-                src={row.original.image}
-                alt={row.original.name}
-                key={row.original.id}
-                width={80}
-                height={80}
-                className="h-full w-full rounded-md object-cover"
-              />
+            <div className="group relative flex h-20 w-20 cursor-pointer flex-col items-center justify-center text-center">
+              {imageError ? (
+                <>
+                  <ImageOff className="size-8 text-slate-400" strokeWidth={1} />
+                </>
+              ) : (
+                <Image
+                  src={imageUrl}
+                  alt={row.original.name}
+                  key={row.original.id}
+                  width={80}
+                  height={80}
+                  className="h-full w-full rounded-md object-cover"
+                  onError={() => setImageError(true)}
+                />
+              )}
               <div className="absolute inset-0 flex items-center justify-center rounded-md bg-black bg-opacity-50 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
                 <ScanEye strokeWidth={1.5} className="h-12 w-12 text-white" />
               </div>
@@ -166,31 +175,6 @@ export const productsColumns = (
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Disponibilidad" />
       ),
-      cell: ({ row }) => (
-        <div>
-          {row.getValue("disponibilidad") ? (
-            <span className="inline-flex items-center gap-2 text-emerald-500">
-              <PackageCheck
-                className="size-4 flex-shrink-0"
-                aria-hidden="true"
-              />
-              Disponible
-            </span>
-          ) : (
-            <span className="inline-flex items-center gap-2 text-red-500">
-              <PackageX className="size-4" aria-hidden="true" />
-              No disponible
-            </span>
-          )}
-        </div>
-      ),
-    },
-    {
-      id: "actualizar",
-      accessorKey: "isAvailable",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Actualizar Disp." />
-      ),
       cell: function Cell({ row }) {
         const { onToggleProductActivation } = useProducts();
         const [isAvailable, setIsAvailable] = useState(
@@ -202,18 +186,36 @@ export const productsColumns = (
           await onToggleProductActivation(productId);
           setIsAvailable((prev) => !prev);
         };
-
         return (
-          <div className="flex flex-col items-center">
-            <Switch
-              checked={isAvailable}
-              onCheckedChange={handleToggle}
-              className="translate-y-0.5"
-            />
+          <div className="flex w-56 justify-center gap-4">
+            <>
+              <div className="flex flex-col items-center">
+                <Switch
+                  checked={isAvailable}
+                  onCheckedChange={handleToggle}
+                  className="translate-y-0.5"
+                />
+              </div>
+              {row.getValue("disponibilidad") ? (
+                <span className="inline-flex items-center gap-2 text-emerald-500">
+                  <PackageCheck
+                    className="size-4 flex-shrink-0"
+                    aria-hidden="true"
+                  />
+                  Disponible
+                </span>
+              ) : (
+                <span className="inline-flex items-center gap-2 truncate text-red-500">
+                  <PackageX className="size-4" aria-hidden="true" />
+                  No disponible
+                </span>
+              )}
+            </>
           </div>
         );
       },
     },
+
     {
       id: "estado",
       accessorKey: "isActive",
@@ -231,7 +233,7 @@ export const productsColumns = (
             </Badge>
           ) : (
             <Badge variant="secondary" className="bg-red-100 text-red-500">
-              Desactivo
+              Inactivo
             </Badge>
           )}
         </div>

@@ -1,7 +1,5 @@
-// components/EditPriceSheet.tsx
-
 import { useBussinessConfig } from "@/hooks/use-business-config";
-import { useUpdateClassPrice } from "@/hooks/use-class-price";
+import { useClassPrices } from "@/hooks/use-class-price";
 import {
   createClassPriceSchema,
   CreateClassPriceSchema,
@@ -45,7 +43,7 @@ export function EditPriceSheet({
   priceData,
   refetchClassPrices,
 }: EditPriceSheetProps) {
-  const { onUpdateClassPrice } = useUpdateClassPrice();
+  const { onUpdateClassPrice } = useClassPrices();
   const { dataBusinessConfigAll, isSuccess: isSuccessBusinessConfig } =
     useBussinessConfig();
 
