@@ -1,5 +1,6 @@
 "use client";
 import { useOrders } from "@/hooks/use-orders";
+import { OrderStatus } from "@/types";
 import { format } from "date-fns";
 import { useState } from "react";
 
@@ -13,7 +14,13 @@ import { TableOrders } from "@/components/orders/TableOrders";
 
 export default function PagerOrders() {
   const [date, setDate] = useState<Date>(new Date());
-  const { dataOrders, isLoadingOrders } = useOrders(format(date, "yyyy-MM-dd"));
+  const [filterStatus, setFilterStatus] = useState<OrderStatus>(
+    OrderStatus.ALL,
+  );
+  const { dataOrders, isLoadingOrders } = useOrders(
+    format(date, "yyyy-MM-dd"),
+    filterStatus,
+  );
 
   if (isLoadingOrders) {
     return (
@@ -39,7 +46,10 @@ export default function PagerOrders() {
         <HeaderPage title="Pedidos" />
         {/* filter */}
         <div className="inline-flex flex-wrap justify-end gap-2">
-          <FilterStatus />
+          <FilterStatus
+            filterStatus={filterStatus}
+            setFilterStatus={setFilterStatus}
+          />
           <FilterDate date={date} setDate={setDate} />
         </div>
       </div>
