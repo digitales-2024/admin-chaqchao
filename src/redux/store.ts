@@ -10,6 +10,7 @@ import { classLanguageApi } from "./services/classLanguageConfigApi";
 import { classPriceApi } from "./services/classPriceApi";
 import { classRegistrationApi } from "./services/classRegistrationApi";
 import { classScheduleApi } from "./services/classScheduleApi";
+import { ordersApi } from "./services/ordersApi";
 import { productsApi } from "./services/productsApi";
 import { rolesApi } from "./services/rolesApi";
 import { usersApi } from "./services/usersApi";
@@ -28,6 +29,7 @@ export const store = configureStore({
     [classRegistrationApi.reducerPath]: classRegistrationApi.reducer,
     [categoriesApi.reducerPath]: categoriesApi.reducer,
     [productsApi.reducerPath]: productsApi.reducer,
+    [ordersApi.reducerPath]: ordersApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
@@ -42,7 +44,8 @@ export const store = configureStore({
       .concat(classLanguageApi.middleware)
       .concat(classScheduleApi.middleware)
       .concat(classRegistrationApi.middleware)
-      .concat(productsApi.middleware),
+      .concat(productsApi.middleware)
+      .concat(ordersApi.middleware),
 });
 setupListeners(store.dispatch);
 
