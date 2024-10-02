@@ -2,7 +2,9 @@ import { Order } from "@/types";
 import { ColumnDef } from "@tanstack/react-table";
 import { format, formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
-import { Calendar, ChevronDown, ChevronUp } from "lucide-react";
+import { Calendar, ChevronDown, ChevronUp, ShoppingBasket } from "lucide-react";
+
+import { cn } from "@/lib/utils";
 
 import { DataTableColumnHeader } from "../data-table/DataTableColumnHeader";
 import { Badge } from "../ui/badge";
@@ -94,14 +96,14 @@ export const getColumnsOrders = (): ColumnDef<Order>[] => [
   },
   {
     id: "total",
-    accessorKey: "total",
+    accessorKey: "totalAmount",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Total" />
     ),
     cell: ({ row }) => (
       <div className="inline-flex gap-2">
         <span className="text-xs text-slate-400">S/.</span>
-        {row.getValue("total")}
+        {row.getValue("total") || 0}
       </div>
     ),
   },
@@ -127,7 +129,15 @@ export const getColumnsOrders = (): ColumnDef<Order>[] => [
           {...{
             onClick: row.getToggleExpandedHandler(),
           }}
+          className="flex items-center gap-2"
         >
+          <ShoppingBasket
+            strokeWidth={1.5}
+            className={cn({
+              "text-slate-300": !row.getIsExpanded(),
+              "text-emerald-400": row.getIsExpanded(),
+            })}
+          />
           {row.getIsExpanded() ? <ChevronUp /> : <ChevronDown />}
         </Button>
       ) : null;
