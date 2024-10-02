@@ -52,9 +52,12 @@ export type BillingDocument = {
 };
 
 export enum OrderStatus {
-  ACTIVE = "ACTIVE",
-  COMPLETED = "COMPLETED",
   PENDING = "PENDING",
+  CONFIRMED = "CONFIRMED",
+  READY = "READY",
+  COMPLETED = "COMPLETED",
+  CANCELLED = "CANCELLED",
+  ALL = "ALL",
 }
 
 enum CartStatus {
