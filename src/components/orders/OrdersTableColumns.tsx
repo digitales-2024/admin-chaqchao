@@ -1,4 +1,4 @@
-import { OrderData } from "@/types";
+import { Order } from "@/types";
 import { ColumnDef } from "@tanstack/react-table";
 import { format, formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
@@ -16,7 +16,7 @@ import {
 } from "../ui/tooltip";
 import SelectStatus from "./SelectStatus";
 
-export const getColumnsOrders = (): ColumnDef<OrderData>[] => [
+export const getColumnsOrders = (): ColumnDef<Order>[] => [
   {
     id: "select",
     size: 10,
@@ -49,7 +49,7 @@ export const getColumnsOrders = (): ColumnDef<OrderData>[] => [
   },
   {
     id: "código",
-    accessorKey: "code",
+    accessorKey: "pickupCode",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Código" />
     ),
@@ -84,7 +84,7 @@ export const getColumnsOrders = (): ColumnDef<OrderData>[] => [
   },
   {
     id: "cliente",
-    accessorKey: "name",
+    accessorKey: "clientName",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Cliente" />
     ),
