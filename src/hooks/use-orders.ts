@@ -1,7 +1,6 @@
 "use client";
 import { useGetOrdersAllQuery } from "@/redux/services/ordersApi";
-
-import { useSocket } from "./use-socket";
+import { socket } from "@/socket/socket";
 
 export const useOrders = (dateFilter: Date | string, status?: string) => {
   const date =
@@ -13,8 +12,6 @@ export const useOrders = (dateFilter: Date | string, status?: string) => {
     error: errorOrders,
     refetch: refetchOrders,
   } = useGetOrdersAllQuery({ date, status });
-
-  const { socket } = useSocket();
 
   socket.on("new-order", () => {
     refetchOrders();
