@@ -21,9 +21,6 @@ export const TableOrders = ({ data }: { data: Order[] }) => {
 };
 
 const ProductsExpanded = ({ data }: { data: Order }) => {
-  const { cartId } = data;
-  console.log("🚀 ~ ProductsExpanded ~ cartId:", cartId);
-
   return (
     <div>
       <p>{data.comments}</p>
