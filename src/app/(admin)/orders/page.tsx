@@ -1,5 +1,7 @@
 "use client";
 import { useOrders } from "@/hooks/use-orders";
+import { format } from "date-fns";
+import { useState } from "react";
 
 import { ErrorPage } from "@/components/common/ErrorPage";
 import { HeaderPage } from "@/components/common/HeaderPage";
@@ -10,15 +12,13 @@ import { FilterStatus } from "@/components/orders/FilterStatus";
 import { TableOrders } from "@/components/orders/TableOrders";
 
 export default function PagerOrders() {
-  const { dataOrders, isLoadingOrders } = useOrders();
+  const [date, setDate] = useState<Date>(new Date());
+  const { dataOrders, isLoadingOrders } = useOrders(format(date, "yyyy-MM-dd"));
 
   if (isLoadingOrders) {
     return (
       <Shell>
-        <HeaderPage
-          title="Roles"
-          description="Aquí puedes ver la lista de roles registrados en la aplicación."
-        />
+        <HeaderPage title="Pedidos" />
         <DataTableSkeleton columnCount={5} searchableColumnCount={1} />
       </Shell>
     );
@@ -27,10 +27,7 @@ export default function PagerOrders() {
   if (!dataOrders) {
     return (
       <Shell>
-        <HeaderPage
-          title="Roles"
-          description="Aquí puedes ver la lista de roles registrados en la aplicación."
-        />
+        <HeaderPage title="Pedidos" />
         <ErrorPage />
       </Shell>
     );
@@ -43,7 +40,7 @@ export default function PagerOrders() {
         {/* filter */}
         <div className="inline-flex flex-wrap justify-end gap-2">
           <FilterStatus />
-          <FilterDate />
+          <FilterDate date={date} setDate={setDate} />
         </div>
       </div>
       <TableOrders data={dataOrders} />
