@@ -1,146 +1,32 @@
 "use client";
+import { Order } from "@/types";
 import { useMemo } from "react";
 
 import { DataTableExpanded } from "../data-table/DataTableExpanded";
 import { getColumnsOrders } from "./OrdersTableColumns";
 
-const orders = [
-  {
-    id: "E44B0C90-2B1A-5B76-ABBC-AD61EE0D3172",
-    code: 100,
-    orderStatus: "COMPLETED",
-    pickupAddress: "874-6812 Ligula. St.",
-    pickupTime: "2024-10-02 07:35:58",
-    comments:
-      "ipsum. Suspendisse sagittis. Nullam vitae diam. Proin dolor. Nulla",
-    isActive: false,
-    name: "Galvin Leach",
-    email: "duis.elementum.dui@yahoo.edu",
-    phone: "(234) 163-7011",
-    total: 64,
-  },
-  {
-    id: "94AE36E1-A58F-598F-B2AA-D8635C3A97D9",
-    code: 101,
-    orderStatus: "PENDING",
-    pickupAddress: "415-1844 Nisi Road",
-    pickupTime: "2024-09-27 03:19:36",
-    comments: "ligula tortor, dictum eu, placerat eget, venenatis a, magna.",
-    isActive: false,
-    name: "Heather Berry",
-    email: "ut.sagittis@google.com",
-    phone: "1-833-720-3247",
-    total: 101,
-  },
-  {
-    id: "B7FAF569-944E-39AA-CB7C-C7D2569D181E",
-    code: 102,
-    orderStatus: "ACTIVE",
-    pickupAddress: "Ap #483-606 Sed Street",
-    pickupTime: "2024-10-03 05:43:31",
-    comments:
-      "fringilla, porttitor vulputate, posuere vulputate, lacus. Cras interdum.",
-    isActive: true,
-    name: "Oscar Hines",
-    email: "consectetuer.mauris@hotmail.com",
-    phone: "(152) 528-8536",
-    total: 128,
-  },
-  {
-    id: "27D38296-0EE6-6863-9C86-7A90AEFAFDA2",
-    code: 103,
-    orderStatus: "ACTIVE",
-    pickupAddress: "P.O. Box 207, 2445 Cursus Ave",
-    pickupTime: "2024-10-20 08:42:54",
-    comments: "auctor ullamcorper, nisl arcu iaculis enim,",
-    isActive: true,
-    name: "Gil Medina",
-    email: "eget.ipsum@outlook.edu",
-    phone: "(658) 785-6151",
-    total: 120,
-  },
-  {
-    id: "931B179C-BA7B-16E8-6247-DBABA64E34E1",
-    code: 104,
-    orderStatus: "COMPLETED",
-    pickupAddress: "814-6098 Et Road",
-    pickupTime: "2024-10-08 20:01:56",
-    comments: "id magna et ipsum cursus vestibulum.",
-    isActive: false,
-    name: "Oren Cote",
-    email: "et.magna@google.com",
-    phone: "(425) 628-3307",
-    total: 77,
-  },
-  {
-    id: "774A0B27-5236-3621-B386-44AF8AD8472D",
-    code: 105,
-    orderStatus: "COMPLETED",
-    pickupAddress: "P.O. Box 423, 9907 Ornare Avenue",
-    pickupTime: "2024-10-07 05:55:00",
-    comments: "urna. Nullam lobortis quam",
-    isActive: false,
-    name: "Jessica Branch",
-    email: "rutrum@google.org",
-    phone: "1-436-733-9091",
-    total: 91,
-  },
-  {
-    id: "FB5E5D51-E848-ADAC-8357-3A7019D16E1F",
-    code: 106,
-    orderStatus: "ACTIVE",
-    pickupAddress: "143-9313 Ac Avenue",
-    pickupTime: "2024-10-09 14:56:46",
-    comments: "ut, pharetra sed, hendrerit a, arcu. Sed et",
-    isActive: true,
-    name: "Wallace Washington",
-    email: "ipsum.curabitur@hotmail.ca",
-    phone: "(656) 250-3746",
-    total: 151,
-  },
-  {
-    id: "44E8B43B-307E-1BE5-9CCB-8316631F4C5C",
-    code: 107,
-    orderStatus: "COMPLETED",
-    pickupAddress: "235-7562 Et Rd.",
-    pickupTime: "2024-10-08 15:23:07",
-    comments: "Ut semper pretium neque. Morbi quis",
-    isActive: true,
-    name: "Wyatt Santana",
-    email: "magna@hotmail.com",
-    phone: "(347) 627-4773",
-    total: 152,
-  },
-  {
-    id: "434CC2CB-BED9-2332-5CEA-A2B3826B5C6A",
-    code: 108,
-    orderStatus: "PENDING",
-    pickupAddress: "Ap #752-5024 Vel, Rd.",
-    pickupTime: "2024-10-06 20:19:16",
-    comments: "leo. Vivamus nibh dolor, nonummy ac, feugiat non,",
-    isActive: true,
-    name: "Constance Jefferson",
-    email: "mi.lacinia@hotmail.net",
-    phone: "(370) 836-6257",
-    total: 169,
-  },
-  {
-    id: "6C3159C7-51A0-6442-F956-198790DBB384",
-    code: 109,
-    orderStatus: "PENDING",
-    pickupAddress: "Ap #738-8819 Eget Avenue",
-    pickupTime: "2024-10-19 08:54:09",
-    comments: "molestie sodales. Mauris blandit enim consequat",
-    isActive: false,
-    name: "Roary Gaines",
-    email: "dui@google.couk",
-    phone: "(877) 856-7402",
-    total: 61,
-  },
-];
-
-export const TableOrders = () => {
+export const TableOrders = ({ data }: { data: Order[] }) => {
   const columns = useMemo(() => getColumnsOrders(), []);
 
-  return <DataTableExpanded columns={columns} data={orders} />;
+  return (
+    <DataTableExpanded
+      columns={columns}
+      data={data}
+      placeholder="Buscar pedidos..."
+      getSubRows={(row) => row.comments as unknown as []}
+      // toolbarActions={<RolesTableToolbarActions />}
+      renderExpandedRow={(row) => <ProductsExpanded data={row} />}
+    />
+  );
+};
+
+const ProductsExpanded = ({ data }: { data: Order }) => {
+  const { cartId } = data;
+  console.log("🚀 ~ ProductsExpanded ~ cartId:", cartId);
+
+  return (
+    <div>
+      <p>{data.comments}</p>
+    </div>
+  );
 };
