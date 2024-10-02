@@ -19,11 +19,7 @@ export type Order = {
   isActive: boolean;
   cartId: string;
   someonePickup: boolean;
-  cart: {
-    id: string;
-    clientId: string;
-    cartStatus: CartStatus;
-  };
+  cart: CartItem[];
   clientName: string;
 };
 
@@ -35,6 +31,8 @@ export type Cart = {
 
 type CartItem = {
   id: string;
+  name: string;
+  image: string;
   productId: string;
   quantity: number;
   price: number;
@@ -60,11 +58,11 @@ export enum OrderStatus {
   ALL = "ALL",
 }
 
-enum CartStatus {
-  ACTIVE = "ACTIVE",
-  PENDING = "PENDING",
-  COMPLETED = "COMPLETED",
-}
+// enum CartStatus {
+//   ACTIVE = "ACTIVE",
+//   PENDING = "PENDING",
+//   COMPLETED = "COMPLETED",
+// }
 
 enum BillingDocumentType {
   INVOICE,
