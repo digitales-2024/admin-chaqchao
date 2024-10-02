@@ -34,3 +34,5 @@ export interface Option {
   icon?: React.ComponentType<{ className?: string }>;
   withCount?: boolean;
 }
+
+export type { ClassData } from "./class";
