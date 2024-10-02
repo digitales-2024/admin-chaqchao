@@ -1,6 +1,6 @@
 "use client";
+import { OrderStatus } from "@/types";
 import { ListFilter } from "lucide-react";
-import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -13,16 +13,42 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-enum Status {
-  all = "todos",
-  wait = "espera",
-  preparation = "preparación",
-  ready = "listo",
+const options = [
+  {
+    label: "Pendiente",
+    value: OrderStatus.PENDING,
+  },
+  {
+    label: "Confirmado",
+    value: OrderStatus.CONFIRMED,
+  },
+  {
+    label: "Listo",
+    value: OrderStatus.READY,
+  },
+  {
+    label: "Completado",
+    value: OrderStatus.COMPLETED,
+  },
+  {
+    label: "Cancelado",
+    value: OrderStatus.CANCELLED,
+  },
+  {
+    label: "Todos",
+    value: OrderStatus.ALL,
+  },
+];
+
+interface FilterStatusProps {
+  filterStatus: OrderStatus;
+  setFilterStatus: (value: OrderStatus) => void;
 }
 
-export const FilterStatus = () => {
-  const [filterStatus, setFilterStatus] = useState<Status>(Status.all);
-
+export const FilterStatus = ({
+  filterStatus,
+  setFilterStatus,
+}: FilterStatusProps) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -33,7 +59,11 @@ export const FilterStatus = () => {
         >
           <ListFilter className="h-3.5 w-3.5 flex-shrink-0" />
           <span className="sr-only not-sr-only inline-flex gap-2 whitespace-nowrap">
-            Estado: <span className="font-bold capitalize">{filterStatus}</span>
+            Estado:{" "}
+            <span className="font-bold capitalize">
+              {options.find((op) => op.value === filterStatus)?.label ||
+                "Todos"}
+            </span>
           </span>
         </Button>
       </DropdownMenuTrigger>
@@ -42,20 +72,13 @@ export const FilterStatus = () => {
         <DropdownMenuSeparator />
         <DropdownMenuRadioGroup
           value={filterStatus}
-          onValueChange={(value) => setFilterStatus(value as Status)}
+          onValueChange={(value) => setFilterStatus(value as OrderStatus)}
         >
-          <DropdownMenuRadioItem value={Status.all}>
-            Todos
-          </DropdownMenuRadioItem>
-          <DropdownMenuRadioItem value={Status.wait}>
-            Espera
-          </DropdownMenuRadioItem>
-          <DropdownMenuRadioItem value={Status.preparation}>
-            Preparación
-          </DropdownMenuRadioItem>
-          <DropdownMenuRadioItem value={Status.ready}>
-            Listo
-          </DropdownMenuRadioItem>
+          {options.map((option) => (
+            <DropdownMenuRadioItem key={option.value} value={option.value}>
+              {option.label}
+            </DropdownMenuRadioItem>
+          ))}
         </DropdownMenuRadioGroup>
       </DropdownMenuContent>
     </DropdownMenu>
