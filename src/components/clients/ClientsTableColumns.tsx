@@ -57,6 +57,7 @@ export const clientsColumns = (): ColumnDef<Client>[] => {
       ),
     },
     {
+      /* TODO: Añadir el caso cuando la fecha llega en null */
       id: "fechaNacimiento",
       accessorKey: "birthDate",
       header: ({ column }) => (
