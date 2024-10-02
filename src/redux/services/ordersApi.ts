@@ -8,23 +8,7 @@ export const ordersApi = createApi({
   baseQuery: baseQueryWithReauth,
   tagTypes: ["Orders"],
   endpoints: (build) => ({
-    updateOrder: build.mutation<Order, Partial<Order> & { id: string }>({
-      query: ({ id, ...body }) => ({
-        url: `/orders/${id}`,
-        method: "PATCH",
-        body,
-        credentials: "include",
-      }),
-      invalidatesTags: ["Orders"],
-    }),
-    getOrderById: build.query<Order, string>({
-      query: (id) => ({
-        url: `/orders/${id}`,
-        method: "GET",
-        credentials: "include",
-      }),
-      providesTags: (result, error, id) => [{ type: "Orders", id }],
-    }),
+    // Obtener todos los pedidos
     getOrdersAll: build.query<
       Order[],
       { date: Date | string; status?: string | "" }
@@ -37,20 +21,17 @@ export const ordersApi = createApi({
       }),
       providesTags: ["Orders"],
     }),
-    deleteOrder: build.mutation<{ success: boolean }, { id: string }>({
-      query: ({ id }) => ({
+
+    // Obtener un pedido por id
+    getOrderById: build.query<Order, string>({
+      query: (id) => ({
         url: `/orders/${id}`,
-        method: "DELETE",
+        method: "GET",
         credentials: "include",
       }),
-      invalidatesTags: ["Orders"],
+      providesTags: (result, error, id) => [{ type: "Orders", id }],
     }),
   }),
 });
 
-export const {
-  useUpdateOrderMutation,
-  useGetOrderByIdQuery,
-  useGetOrdersAllQuery,
-  useDeleteOrderMutation,
-} = ordersApi;
+export const { useGetOrderByIdQuery, useGetOrdersAllQuery } = ordersApi;
