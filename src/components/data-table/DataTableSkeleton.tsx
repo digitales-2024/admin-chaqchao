@@ -68,6 +68,13 @@ interface DataTableSkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
    * @type boolean | undefined
    */
   shrinkZero?: boolean;
+
+  /**
+   * Buttons to show in the toolbar.
+   * @default true
+   * @type boolean | undefined
+   */
+  toolbarActions?: boolean;
 }
 
 export const DataTableSkeleton = (props: DataTableSkeletonProps) => {
@@ -80,6 +87,7 @@ export const DataTableSkeleton = (props: DataTableSkeletonProps) => {
     cellWidths = ["auto"],
     withPagination = true,
     shrinkZero = false,
+    toolbarActions = true,
     className,
     ...skeletonProps
   } = props;
@@ -103,8 +111,12 @@ export const DataTableSkeleton = (props: DataTableSkeletonProps) => {
               ))
             : null}
         </div>
-        <Skeleton className="ml-auto hidden h-7 w-[8rem] lg:flex" />
-        <Skeleton className="ml-auto hidden h-7 w-[7rem] lg:flex" />
+        {toolbarActions ? (
+          <>
+            <Skeleton className="ml-auto hidden h-7 w-[8rem] lg:flex" />
+            <Skeleton className="ml-auto hidden h-7 w-[7rem] lg:flex" />
+          </>
+        ) : null}
         {showViewOptions ? (
           <Skeleton className="ml-auto hidden h-7 w-[4.5rem] lg:flex" />
         ) : null}
