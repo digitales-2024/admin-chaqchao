@@ -2,7 +2,6 @@
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { CalendarIcon } from "lucide-react";
-import { useState } from "react";
 
 import { cn } from "@/lib/utils";
 
@@ -10,9 +9,12 @@ import { Button } from "../ui/button";
 import { Calendar } from "../ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 
-export const FilterDate = () => {
-  const [date, setDate] = useState<Date>(new Date());
+interface FilterDateProps {
+  date: Date;
+  setDate: (date: Date) => void;
+}
 
+export const FilterDate = ({ date, setDate }: FilterDateProps) => {
   const isNow = date && format(date, "PPP") === format(new Date(), "PPP");
 
   return (
