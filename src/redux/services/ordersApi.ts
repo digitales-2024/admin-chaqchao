@@ -25,10 +25,13 @@ export const ordersApi = createApi({
       }),
       providesTags: (result, error, id) => [{ type: "Orders", id }],
     }),
-    getOrdersAll: build.query<Order[], Date | string>({
-      query: (date) => ({
+    getOrdersAll: build.query<
+      Order[],
+      { date: Date | string; status?: string | "" }
+    >({
+      query: ({ date, status }) => ({
         url: "/orders",
-        params: { date },
+        params: { date, status },
         method: "GET",
         credentials: "include",
       }),
