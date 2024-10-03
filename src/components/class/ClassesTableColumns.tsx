@@ -1,6 +1,6 @@
 import { ClassesDataAdmin } from "@/types";
 import { ColumnDef } from "@tanstack/react-table";
-import { ChevronDown, ChevronUp, Users } from "lucide-react";
+import { Calendar, ChevronDown, ChevronUp, Clock, Users } from "lucide-react";
 
 import { DataTableColumnHeader } from "@/components/data-table/DataTableColumnHeader";
 import { Button } from "@/components/ui/button";
@@ -46,8 +46,11 @@ export const classesTableColumns = (): ColumnDef<ClassesDataAdmin>[] => [
       <DataTableColumnHeader column={column} title="Fecha" />
     ),
     cell: ({ row }) => (
-      <div className="min-w-40 truncate capitalize">
-        {row.getValue("fecha")}
+      <div className="flex items-center">
+        <Calendar className="mr-2 h-4 w-4" />
+        <div className="min-w-40 truncate capitalize">
+          {row.getValue("fecha")}
+        </div>
       </div>
     ),
   },
@@ -58,8 +61,11 @@ export const classesTableColumns = (): ColumnDef<ClassesDataAdmin>[] => [
       <DataTableColumnHeader column={column} title="Horario" />
     ),
     cell: ({ row }) => (
-      <div className="min-w-40 truncate lowercase">
-        {row.getValue("horario")}
+      <div className="flex items-center">
+        <Clock className="mr-1 h-4 w-4" />
+        <div className="min-w-40 truncate lowercase">
+          {row.getValue("horario")}
+        </div>
       </div>
     ),
   },
