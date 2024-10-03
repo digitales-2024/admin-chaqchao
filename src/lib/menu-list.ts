@@ -88,7 +88,7 @@ export function getMenuList(pathname: string): Group[] {
         {
           href: "/class",
           label: "Clases",
-          active: pathname.includes("/class"),
+          active: pathname === "/class",
           icon: BookOpenCheck,
           submenus: [],
         },
