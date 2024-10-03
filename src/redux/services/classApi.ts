@@ -9,10 +9,14 @@ export const classApi = createApi({
   tagTypes: ["Class Admin"],
   endpoints: (build) => ({
     // Obtener todas las clases
-    getAllClasses: build.query<ClassesDataAdmin[], void>({
-      query: () => ({
+    getAllClasses: build.query<
+      ClassesDataAdmin[],
+      { date?: string | undefined }
+    >({
+      query: ({ date }) => ({
         url: "/admin/class",
         method: "GET",
+        params: { date },
         credentials: "include",
       }),
       providesTags: ["Class Admin"],
