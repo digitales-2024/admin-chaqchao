@@ -31,7 +31,22 @@ export const ordersApi = createApi({
       }),
       providesTags: (result, error, id) => [{ type: "Orders", id }],
     }),
+
+    // Update status de un pedido
+    updateOrderStatus: build.mutation<Order, { id: string; status: string }>({
+      query: ({ id, status }) => ({
+        url: `/orders/${id}`,
+        method: "PATCH",
+        credentials: "include",
+        body: { status },
+      }),
+      invalidatesTags: ["Orders"],
+    }),
   }),
 });
 
-export const { useGetOrderByIdQuery, useGetOrdersAllQuery } = ordersApi;
+export const {
+  useGetOrderByIdQuery,
+  useGetOrdersAllQuery,
+  useUpdateOrderStatusMutation,
+} = ordersApi;
