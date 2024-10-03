@@ -8,7 +8,10 @@ import { Checkbox } from "@/components/ui/checkbox";
 
 import { Badge } from "../ui/badge";
 
-export const classesTableColumns = (): ColumnDef<ClassesDataAdmin>[] => [
+export const classesTableColumns = (
+  colors: string[],
+  uniqueLanguage: string[],
+): ColumnDef<ClassesDataAdmin>[] => [
   {
     id: "select",
     header: ({ table }) => (
@@ -75,11 +78,20 @@ export const classesTableColumns = (): ColumnDef<ClassesDataAdmin>[] => [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Lenguaje" />
     ),
-    cell: ({ row }) => (
-      <div className="min-w-40 truncate capitalize">
-        {row.getValue("lenguaje")}
-      </div>
-    ),
+    cell: ({ row }) => {
+      const languageName = row.getValue("lenguaje") as string;
+      const index = uniqueLanguage.indexOf(languageName);
+      const borderColor = colors[index];
+      return (
+        <Badge
+          variant="outline"
+          className="truncate capitalize"
+          style={{ borderColor }}
+        >
+          {row.getValue("lenguaje")}
+        </Badge>
+      );
+    },
   },
   {
     id: "participantes",
