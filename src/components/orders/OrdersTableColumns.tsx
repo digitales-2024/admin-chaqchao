@@ -2,14 +2,10 @@ import { Order } from "@/types";
 import { ColumnDef } from "@tanstack/react-table";
 import { format, formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
-import { Calendar, ChevronDown, ChevronUp, ShoppingBasket } from "lucide-react";
-
-import { cn } from "@/lib/utils";
+import { Calendar } from "lucide-react";
 
 import { DataTableColumnHeader } from "../data-table/DataTableColumnHeader";
 import { Badge } from "../ui/badge";
-import { Button } from "../ui/button";
-import { Checkbox } from "../ui/checkbox";
 import {
   Tooltip,
   TooltipContent,
@@ -19,36 +15,6 @@ import {
 import SelectStatus from "./SelectStatus";
 
 export const getColumnsOrders = (): ColumnDef<Order>[] => [
-  {
-    id: "select",
-    size: 10,
-    header: ({ table }) => (
-      <div className="px-2">
-        <Checkbox
-          checked={
-            table.getIsAllPageRowsSelected() ||
-            (table.getIsSomePageRowsSelected() && "indeterminate")
-          }
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label="Select all"
-          className="translate-y-0.5"
-        />
-      </div>
-    ),
-    cell: ({ row }) => (
-      <div className="px-2">
-        <Checkbox
-          checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
-          aria-label="Select row"
-          className="translate-y-0.5"
-        />
-      </div>
-    ),
-    enableSorting: false,
-    enableHiding: false,
-    enablePinning: true,
-  },
   {
     id: "código",
     accessorKey: "pickupCode",
@@ -114,36 +80,5 @@ export const getColumnsOrders = (): ColumnDef<Order>[] => [
       <DataTableColumnHeader column={column} title="Estado" />
     ),
     cell: ({ row }) => <SelectStatus data={row.original.orderStatus} />,
-  },
-  {
-    id: "productos",
-    size: 10,
-    accessorKey: "products",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Productos" />
-    ),
-    cell: ({ row }) => {
-      return row.getCanExpand() ? (
-        <Button
-          variant="ghost"
-          {...{
-            onClick: row.getToggleExpandedHandler(),
-          }}
-          className="flex items-center gap-2"
-        >
-          <ShoppingBasket
-            strokeWidth={1.5}
-            className={cn({
-              "text-slate-300": !row.getIsExpanded(),
-              "text-emerald-400": row.getIsExpanded(),
-            })}
-          />
-          {row.getIsExpanded() ? <ChevronUp /> : <ChevronDown />}
-        </Button>
-      ) : null;
-    },
-    enableSorting: false,
-    enableHiding: false,
-    enablePinning: true,
   },
 ];
