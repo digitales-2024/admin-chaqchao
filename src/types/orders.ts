@@ -21,6 +21,10 @@ export type Order = {
   someonePickup: boolean;
   cart: CartItem[];
   clientName: string;
+  clientPhone: string;
+  clientEmail: string;
+  pickupCode: string;
+  totalAmount: number;
 };
 
 export type Cart = {
