@@ -35,4 +35,4 @@ export interface Option {
   withCount?: boolean;
 }
 
-export type { ClassData } from "./class";
+export type { ClassData, ClassesDataAdmin } from "./class";

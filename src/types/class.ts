@@ -14,3 +14,11 @@ export type ClassData = {
   dateClass: Date;
   scheduleClass: string;
 };
+
+export type ClassesDataAdmin = {
+  dateClass: string;
+  scheduleClass: string;
+  totalParticipants: number;
+  classLanguage: string;
+  classes: ClassData[];
+};
