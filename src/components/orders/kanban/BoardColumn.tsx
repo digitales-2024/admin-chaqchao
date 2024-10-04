@@ -1,6 +1,7 @@
 import { Order } from "@/types";
 import { useDndContext, type UniqueIdentifier } from "@dnd-kit/core";
 import { SortableContext, useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import { cva } from "class-variance-authority";
 import { useMemo } from "react";
 
@@ -28,12 +29,19 @@ interface BoardColumnProps {
   isOverlay?: boolean;
 }
 
-export function BoardColumn({ column, orders }: BoardColumnProps) {
+export function BoardColumn({ column, orders, isOverlay }: BoardColumnProps) {
   const ordersIds = useMemo(() => {
     return orders.map((order) => order.id);
   }, [orders]);
 
-  const { setNodeRef, attributes, listeners } = useSortable({
+  const {
+    setNodeRef,
+    attributes,
+    listeners,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
     id: column.id,
     data: {
       type: "Column",
@@ -44,10 +52,31 @@ export function BoardColumn({ column, orders }: BoardColumnProps) {
     },
   });
 
+  const style = {
+    transition,
+    transform: CSS.Translate.toString(transform),
+  };
+
+  const variants = cva(
+    "h-full min-h-[500px] flex-1 bg-slate-50 border-none flex flex-col",
+    {
+      variants: {
+        dragging: {
+          default: "border border-transparent",
+          over: "ring-2 opacity-30",
+          overlay: "ring-2 ring-primary",
+        },
+      },
+    },
+  );
+
   return (
     <Card
       ref={setNodeRef}
-      className="flex min-h-[500px] w-[350px] max-w-full flex-1 snap-center flex-col border-none bg-slate-50/50"
+      style={style}
+      className={variants({
+        dragging: isOverlay ? "overlay" : isDragging ? "over" : undefined,
+      })}
     >
       <CardHeader className="space-between flex flex-row items-center p-4 text-left font-semibold">
         <Button
@@ -58,7 +87,10 @@ export function BoardColumn({ column, orders }: BoardColumnProps) {
         >
           <span className="sr-only">{`Move column: ${column.title}`}</span>
         </Button>
-        <span className="ml-auto"> {column.title}</span>
+        <span className="ml-auto text-xs font-thin text-slate-400">
+          {" "}
+          {column.title}
+        </span>
       </CardHeader>
       <CardContent className="flex flex-grow flex-col gap-2 p-2">
         <SortableContext items={ordersIds}>
