@@ -15,6 +15,7 @@ import { FilterStatus } from "@/components/orders/FilterStatus";
 import { KanbanBoard } from "@/components/orders/kanban/KanbanBoard";
 import { SwitchModeView } from "@/components/orders/SwitchModeView";
 import { TableOrders } from "@/components/orders/TableOrders";
+import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 
 export default function PagerOrders() {
@@ -49,9 +50,10 @@ export default function PagerOrders() {
 
   return (
     <Shell>
-      <div className="flex flex-wrap justify-between gap-4">
-        <HeaderPage title="Pedidos" />
-        <div className="flex flex-col items-center justify-center sm:flex-row sm:gap-2">
+      <HeaderPage title="Pedidos" />
+      <div className="flex flex-col gap-2 md:flex-row md:items-center md:gap-0">
+        <Label className="w-32">Filtros</Label>
+        <div className="flex flex-col gap-2 sm:flex-row">
           <FilterStatus
             filterStatus={filterStatus}
             setFilterStatus={setFilterStatus}
@@ -59,7 +61,10 @@ export default function PagerOrders() {
           <FilterDate date={date} setDate={setDate} />
         </div>
       </div>
-      <SwitchModeView />
+      <div className="flex items-center">
+        <Label className="w-32">Modo de vista</Label>
+        <SwitchModeView />
+      </div>
       <Separator />
       {mode?.modeViewOrder === "table" && <TableOrders data={dataOrders} />}
       {mode?.modeViewOrder === "kanban" && <KanbanBoard data={dataOrders} />}
