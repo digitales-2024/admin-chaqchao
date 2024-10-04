@@ -27,7 +27,7 @@ export const SwitchModeView = () => {
           variant="outline"
           className={`${
             activeView === "table" ? "bg-white hover:bg-white" : "bg-accent"
-          } relative z-10 flex items-center justify-center text-sm font-medium transition focus-visible:outline-2`}
+          } relative flex items-center justify-center text-sm font-medium transition focus-visible:outline-2`}
           onClick={() => setActiveView && setActiveView("table")}
         >
           <Tooltip>
@@ -42,7 +42,7 @@ export const SwitchModeView = () => {
           variant="outline"
           className={`${
             activeView === "kanban" ? "bg-white hover:bg-white" : "bg-accent"
-          } relative z-10 flex items-center justify-center text-sm font-medium transition focus-visible:outline-2`}
+          } relative flex items-center justify-center text-sm font-medium transition focus-visible:outline-2`}
           onClick={() => setActiveView && setActiveView("kanban")}
         >
           <Tooltip>
@@ -52,8 +52,6 @@ export const SwitchModeView = () => {
             <TooltipContent>Modo tabla</TooltipContent>
           </Tooltip>
         </Button>
-        {/* {viewData.map(({ id, icon: Icon, tooltip }) => (
-        ))} */}
       </div>
     </div>
   );
