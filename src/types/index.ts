@@ -26,6 +26,7 @@ export type {
   ProductVariationData,
   CategoryData,
 } from "./product";
+export type { Client } from "./client";
 
 export type { Order, OrderData } from "./orders";
 export { OrderStatus } from "./orders";

@@ -68,6 +68,8 @@ const errorTranslations = {
     "Esta categoría está inactiva, contacta al superadmin para reactivarla",
   "Category assigned to active products":
     "No se puede eliminar la categoría porque está asignada a productos activos",
+  "phone must be a valid phone number":
+    "El teléfono debe ser un número de teléfono válido",
 };
 
 export default errorTranslations;

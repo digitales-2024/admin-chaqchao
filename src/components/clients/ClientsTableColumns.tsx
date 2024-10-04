@@ -1,9 +1,11 @@
 "use client";
 
 import { useProfile } from "@/hooks/use-profile";
-import { Category } from "@/types";
+import { Client } from "@/types";
 import { type ColumnDef } from "@tanstack/react-table";
-import { Trash, Ellipsis, RefreshCcwDot } from "lucide-react";
+import { parseISO, format } from "date-fns";
+import { es } from "date-fns/locale";
+import { Ellipsis, Trash, RefreshCcwDot } from "lucide-react"; // Agrega RefreshCcwDot para la reactivación
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -12,26 +14,18 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
   DropdownMenuTrigger,
+  DropdownMenuShortcut,
 } from "@/components/ui/dropdown-menu";
 
 import { DataTableColumnHeader } from "../data-table/DataTableColumnHeader";
 import { Badge } from "../ui/badge";
-import { DesactivateCategoryDialog } from "./DesactivateCategoryDialog";
-import { ReactivateCategoryDialog } from "./ReactivateCategoryDialog";
-import { UpdateCategorySheet } from "./UpdateCategorySheet";
+import { DesactivateClientDialog } from "./DesactivateClientDialog";
+import { ReactivateClientDialog } from "./ReactivateClientDialog"; // Asegúrate de importar el diálogo para reactivar
+import { UpdateClientSheet } from "./UpdateClientSheet";
 
-export const categoriesColumns = (): ColumnDef<Category>[] => {
+export const clientsColumns = (): ColumnDef<Client>[] => {
   return [
-    {
-      id: "select",
-      size: 10,
-      header: () => null,
-      enableSorting: false,
-      enableHiding: false,
-      enablePinning: true,
-    },
     {
       id: "nombre",
       accessorKey: "name",
@@ -43,14 +37,59 @@ export const categoriesColumns = (): ColumnDef<Category>[] => {
       ),
     },
     {
-      id: "descripción",
-      accessorKey: "description",
+      id: "correo",
+      accessorKey: "email",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Descripción" />
+        <DataTableColumnHeader column={column} title="Correo" />
       ),
       cell: ({ row }) => (
-        <div className="truncate capitalize">{row.getValue("descripción")}</div>
+        <div className="truncate">{row.getValue("correo")}</div>
       ),
+    },
+    {
+      id: "teléfono",
+      accessorKey: "phone",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Teléfono" />
+      ),
+      cell: ({ row }) => (
+        <div className="truncate">{row.getValue("teléfono")}</div>
+      ),
+    },
+    {
+      id: "fechaNacimiento",
+      accessorKey: "birthDate",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Fecha de nacimiento" />
+      ),
+      cell: ({ row }) => {
+        console.log(row.original.birthDate);
+        return (
+          <div>{format(row.original.birthDate, "PPP", { locale: es })}</div>
+        );
+      },
+    },
+    {
+      id: "últimoAcceso",
+      accessorKey: "lastLogin",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Último acceso" />
+      ),
+      cell: ({ row }) => {
+        // Verificar si el valor es undefined
+        if (row.getValue("últimoAcceso") === undefined) {
+          return <div>Sin datos</div>;
+        }
+
+        const parsedDate = parseISO(row.getValue("últimoAcceso"));
+
+        // Asegúrate de que parsedDate es un objeto Date válido
+        if (isNaN(parsedDate.getTime())) {
+          return <div>Sin datos</div>;
+        }
+
+        return <div>{format(parsedDate, "yyyy-MM-dd HH:mm:ss")}</div>;
+      },
     },
     {
       id: "estado",
@@ -80,21 +119,20 @@ export const categoriesColumns = (): ColumnDef<Category>[] => {
       size: 10,
       cell: function Cell({ row }) {
         const [showEditDialog, setShowEditDialog] = useState(false);
-        const [showReactivateDialog, setShowReactivateDialog] = useState(false);
+        const [showReactivateDialog, setShowReactivateDialog] = useState(false); // Añadido para manejar la reactivación
         const [isDialogOpen, setIsDialogOpen] = useState(false);
-        const category = row.original;
-
+        const client = row.original;
         const { user } = useProfile();
 
         return (
           <div>
-            <UpdateCategorySheet
+            <UpdateClientSheet
               open={showEditDialog}
               onOpenChange={setShowEditDialog}
-              category={category}
+              client={client}
             />
-            <ReactivateCategoryDialog
-              category={category}
+            <ReactivateClientDialog // Diálogo para reactivar al cliente
+              client={client}
               open={showReactivateDialog}
               onOpenChange={setShowReactivateDialog}
               onSuccess={() => {
@@ -135,8 +173,8 @@ export const categoriesColumns = (): ColumnDef<Category>[] => {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-            <DesactivateCategoryDialog
-              category={category}
+            <DesactivateClientDialog
+              client={client}
               isOpen={isDialogOpen}
               onOpenChange={setIsDialogOpen}
               onSuccess={() => setIsDialogOpen(false)}
