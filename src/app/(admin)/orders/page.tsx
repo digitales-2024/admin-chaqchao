@@ -50,20 +50,23 @@ export default function PagerOrders() {
 
   return (
     <Shell>
-      <HeaderPage title="Pedidos" />
-      <div className="flex flex-col gap-2 md:flex-row md:items-center md:gap-0">
-        <Label className="w-32">Filtros</Label>
-        <div className="flex flex-col gap-2 sm:flex-row">
+      <div className="flex items-center justify-between">
+        <HeaderPage title="Pedidos" />
+        <SwitchModeView />
+      </div>
+      <div className="flex items-center justify-between">
+        <p className="flex gap-2 text-sm font-extralight text-slate-400">
+          <span>Total</span>
+          {dataOrders.length || 0}
+        </p>
+        <div className="flex w-full flex-col justify-end gap-2 md:flex-row md:items-center md:gap-2">
+          <Label>Filtros</Label>
           <FilterStatus
             filterStatus={filterStatus}
             setFilterStatus={setFilterStatus}
           />
           <FilterDate date={date} setDate={setDate} />
         </div>
-      </div>
-      <div className="flex items-center">
-        <Label className="w-32">Modo de vista</Label>
-        <SwitchModeView />
       </div>
       <Separator />
       {mode?.modeViewOrder === "table" && <TableOrders data={dataOrders} />}
