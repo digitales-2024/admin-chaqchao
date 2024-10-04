@@ -55,7 +55,7 @@ export const FilterStatus = ({
         <Button
           variant="outline"
           size="sm"
-          className="flex w-48 justify-start gap-1"
+          className="flex w-full justify-start gap-1 truncate sm:w-48"
         >
           <ListFilter className="h-3.5 w-3.5 flex-shrink-0" />
           <span className="sr-only not-sr-only inline-flex gap-2 whitespace-nowrap">
