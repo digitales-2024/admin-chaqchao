@@ -26,7 +26,7 @@ export const OrderSheetDetails = ({
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <ScrollArea className="h-screen">
-        <SheetContent className="flex flex-col gap-5">
+        <SheetContent className="flex flex-col gap-5 lg:max-w-[36rem]">
           <SheetTitle className="flex flex-row items-start bg-muted/50 py-4">
             <div className="grid gap-0.5">
               <CardTitle className="group flex items-center gap-2 text-lg">
@@ -158,22 +158,6 @@ export const OrderSheetDetails = ({
             <div className="text-xs text-muted-foreground">
               Updated <time dateTime="2023-11-23">November 23, 2023</time>
             </div>
-            {/* <Pagination className="ml-auto mr-0 w-auto">
-          <PaginationContent>
-            <PaginationItem>
-            <Button size="icon" variant="outline" className="h-6 w-6">
-            <ChevronLeft className="h-3.5 w-3.5" />
-            <span className="sr-only">Previous Order</span>
-            </Button>
-            </PaginationItem>
-            <PaginationItem>
-            <Button size="icon" variant="outline" className="h-6 w-6">
-            <ChevronRight className="h-3.5 w-3.5" />
-            <span className="sr-only">Next Order</span>
-            </Button>
-            </PaginationItem>
-            </PaginationContent>
-            </Pagination> */}
           </SheetFooter>
         </SheetContent>
       </ScrollArea>
