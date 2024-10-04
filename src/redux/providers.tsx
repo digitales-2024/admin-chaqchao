@@ -2,12 +2,16 @@
 import { ApiStatusProvider } from "@/contexts/ApiStatusContext";
 import { Provider } from "react-redux";
 
+import { TooltipProvider } from "@/components/ui/tooltip";
+
 import { store } from "./store";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <Provider store={store}>
-      <ApiStatusProvider>{children}</ApiStatusProvider>
+      <TooltipProvider>
+        <ApiStatusProvider>{children}</ApiStatusProvider>
+      </TooltipProvider>
     </Provider>
   );
 }

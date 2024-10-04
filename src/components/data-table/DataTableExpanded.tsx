@@ -38,6 +38,7 @@ interface DataTableExpandedProps<TData, TValue> {
   viewOptions?: boolean;
   getSubRows?: (row: TData) => TData[] | undefined;
   renderExpandedRow?: (row: TData) => ReactElement;
+  onClickRow?: (row: TData) => void;
 }
 
 export function DataTableExpanded<TData, TValue>({
@@ -48,6 +49,7 @@ export function DataTableExpanded<TData, TValue>({
   viewOptions,
   getSubRows,
   renderExpandedRow,
+  onClickRow,
 }: DataTableExpandedProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
@@ -138,7 +140,12 @@ export function DataTableExpanded<TData, TValue>({
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <Fragment key={row.id}>
-                  <TableRow data-state={row.getIsSelected() && "selected"}>
+                  <TableRow
+                    data-state={row.getIsSelected() && "selected"}
+                    onClick={
+                      onClickRow ? () => onClickRow(row.original) : undefined
+                    }
+                  >
                     {row.getVisibleCells().map((cell) => {
                       const { column } = cell;
 

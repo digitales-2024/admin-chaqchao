@@ -2,7 +2,6 @@
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { CalendarIcon } from "lucide-react";
-import { useState } from "react";
 
 import { cn } from "@/lib/utils";
 
@@ -10,9 +9,12 @@ import { Button } from "../ui/button";
 import { Calendar } from "../ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 
-export const FilterDate = () => {
-  const [date, setDate] = useState<Date>(new Date());
+interface FilterDateProps {
+  date: Date;
+  setDate: (date: Date) => void;
+}
 
+export const FilterDate = ({ date, setDate }: FilterDateProps) => {
   const isNow = date && format(date, "PPP") === format(new Date(), "PPP");
 
   return (
@@ -22,7 +24,7 @@ export const FilterDate = () => {
           variant={"outline"}
           size="sm"
           className={cn(
-            "inline-flex w-72 justify-start gap-1 text-left font-normal",
+            "inline-flex w-full justify-start gap-1 truncate text-left font-normal sm:w-72",
             !date && "text-muted-foreground",
           )}
         >
@@ -42,9 +44,6 @@ export const FilterDate = () => {
           onSelect={(day) => setDate(day ?? new Date())}
           initialFocus
           locale={es}
-          // disabled={(date) =>
-          //   date > new Date() || date < new Date("1900-01-01")
-          // }
         />
       </PopoverContent>
     </Popover>
