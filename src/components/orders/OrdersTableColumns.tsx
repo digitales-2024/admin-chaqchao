@@ -35,6 +35,7 @@ export const getColumnsOrders = (): ColumnDef<Order>[] => [
           <Tooltip>
             <TooltipTrigger>
               <Calendar className="size-4 flex-shrink-0 text-slate-300" />
+              <span className="sr-only">fecha del pedido</span>
             </TooltipTrigger>
             <TooltipContent>
               {format(row.getValue("fecha"), "PPPpp", { locale: es })}
