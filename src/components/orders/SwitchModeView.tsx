@@ -26,13 +26,15 @@ export const SwitchModeView = () => {
           size="icon"
           variant="outline"
           className={`${
-            activeView === "table" ? "bg-white hover:bg-white" : "bg-accent"
+            activeView === "table"
+              ? "bg-white hover:bg-white"
+              : "border-none bg-accent"
           } relative flex items-center justify-center text-sm font-medium transition focus-visible:outline-2`}
           onClick={() => setActiveView && setActiveView("table")}
         >
           <Tooltip>
             <TooltipTrigger asChild>
-              <TableProperties size={20} />
+              <TableProperties size={20} strokeWidth={1.6} />
             </TooltipTrigger>
             <TooltipContent>Modo tabla</TooltipContent>
           </Tooltip>
@@ -41,7 +43,9 @@ export const SwitchModeView = () => {
           size="icon"
           variant="outline"
           className={`${
-            activeView === "kanban" ? "bg-white hover:bg-white" : "bg-accent"
+            activeView === "kanban"
+              ? "bg-white hover:bg-white"
+              : "border-none bg-accent"
           } relative flex items-center justify-center text-sm font-medium transition focus-visible:outline-2`}
           onClick={() => setActiveView && setActiveView("kanban")}
         >
