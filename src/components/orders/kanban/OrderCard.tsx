@@ -54,7 +54,7 @@ export function OrderCard({ order, isOverlay }: OrderCardProps) {
     transform: CSS.Translate.toString(transform),
   };
 
-  const variants = cva("mx-auto w-full max-w-md", {
+  const variants = cva("mx-auto w-full max-w-[374px]", {
     variants: {
       dragging: {
         over: "ring-2 opacity-30",
@@ -65,7 +65,7 @@ export function OrderCard({ order, isOverlay }: OrderCardProps) {
 
   const statusColors: Record<Order["orderStatus"], string> = {
     CONFIRMED: "bg-slate-300",
-    READY: "bg-sky-500",
+    READY: "bg-cyan-500",
     COMPLETED: "bg-green-500",
   };
 
@@ -80,7 +80,7 @@ export function OrderCard({ order, isOverlay }: OrderCardProps) {
       variant={"ghost"}
       {...attributes}
       {...listeners}
-      className="m-0 h-fit cursor-grab p-0"
+      className="m-0 h-full min-w-[370px] cursor-grab p-0"
     >
       <span className="sr-only">Move order</span>
       <Card
@@ -150,7 +150,7 @@ export function OrderCard({ order, isOverlay }: OrderCardProps) {
           <Separator className="my-4" />
           <div className="flex items-center justify-between font-bold">
             <span>Total</span>
-            <span>${order.totalAmount}</span>
+            <span>S/. {order.totalAmount}</span>
           </div>
         </CardContent>
       </Card>
