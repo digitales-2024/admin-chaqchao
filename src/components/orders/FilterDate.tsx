@@ -24,7 +24,7 @@ export const FilterDate = ({ date, setDate }: FilterDateProps) => {
           variant={"outline"}
           size="sm"
           className={cn(
-            "inline-flex w-72 justify-start gap-1 text-left font-normal",
+            "inline-flex w-full justify-start gap-1 truncate text-left font-normal sm:w-72",
             !date && "text-muted-foreground",
           )}
         >
@@ -44,9 +44,6 @@ export const FilterDate = ({ date, setDate }: FilterDateProps) => {
           onSelect={(day) => setDate(day ?? new Date())}
           initialFocus
           locale={es}
-          // disabled={(date) =>
-          //   date > new Date() || date < new Date("1900-01-01")
-          // }
         />
       </PopoverContent>
     </Popover>
