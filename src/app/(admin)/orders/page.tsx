@@ -2,6 +2,7 @@
 import { useOrders } from "@/hooks/use-orders";
 import { OrderStatus } from "@/types";
 import { format } from "date-fns";
+import { motion } from "framer-motion";
 import { BetweenVerticalStart, TableProperties } from "lucide-react";
 import { useState } from "react";
 
@@ -13,8 +14,8 @@ import { FilterDate } from "@/components/orders/FilterDate";
 import { FilterStatus } from "@/components/orders/FilterStatus";
 import { KanbanBoard } from "@/components/orders/kanban/KanbanBoard";
 import { TableOrders } from "@/components/orders/TableOrders";
+import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Tooltip,
   TooltipContent,
@@ -36,7 +37,7 @@ export default function PagerOrders() {
     format(date, "yyyy-MM-dd"),
     filterStatus,
   );
-  const [activeTab, setActiveTab] = useState(tabs.table);
+  const [activeView, setActiveView] = useState(tabs.table);
 
   if (isLoadingOrders) {
     return (
@@ -56,7 +57,7 @@ export default function PagerOrders() {
     );
   }
 
-  const tabsData = [
+  const viewData = [
     {
       id: tabs.table,
       icon: TableProperties,
@@ -73,8 +74,7 @@ export default function PagerOrders() {
     <Shell>
       <div className="flex flex-wrap justify-between gap-4">
         <HeaderPage title="Pedidos" />
-        {/* filters */}
-        <div className="inline-flex flex-wrap justify-end gap-2">
+        <div className="flex flex-col items-center justify-center sm:flex-row sm:gap-2">
           <FilterStatus
             filterStatus={filterStatus}
             setFilterStatus={setFilterStatus}
@@ -82,33 +82,43 @@ export default function PagerOrders() {
           <FilterDate date={date} setDate={setDate} />
         </div>
       </div>
-      <Tabs
-        defaultValue={tabs.table}
-        value={activeTab}
-        onValueChange={setActiveTab}
-      >
-        <TabsList>
-          {tabsData.map((tab) => (
-            <TabsTrigger key={tab.id} value={tab.id}>
+      <div className="flex justify-end">
+        <div className="flex w-fit space-x-1 rounded-xl bg-secondary p-1">
+          {viewData.map(({ id, icon: Icon, tooltip }) => (
+            <Button
+              key={id}
+              variant="ghost"
+              className={`${
+                activeView === id
+                  ? "text-slate-500"
+                  : "text-muted-foreground hover:text-primary"
+              } relative z-10 flex items-center justify-center rounded-lg px-[10px] text-sm font-medium transition focus-visible:outline-2`}
+              onClick={() => setActiveView(id)}
+            >
+              <span className="sr-only">view</span>
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger>
-                    <tab.icon className="size-5" strokeWidth={1.5} />
+                    <Icon className="size-5" strokeWidth={1.5} />
                   </TooltipTrigger>
-                  <TooltipContent>{tab.tooltip}</TooltipContent>
+                  <TooltipContent>{tooltip}</TooltipContent>
                 </Tooltip>
               </TooltipProvider>
-            </TabsTrigger>
+              {activeView === id && (
+                <motion.span
+                  layoutId="bubble"
+                  className="absolute inset-0 -z-10 bg-white"
+                  style={{ borderRadius: 8 }}
+                  transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                />
+              )}
+            </Button>
           ))}
-        </TabsList>
-        <Separator className="my-4" />
-        <TabsContent value={tabs.table}>
-          <TableOrders data={dataOrders} />
-        </TabsContent>
-        <TabsContent value={tabs.kanban}>
-          <KanbanBoard data={dataOrders} />
-        </TabsContent>
-      </Tabs>
+        </div>
+      </div>
+      <Separator />
+      {activeView === tabs.table && <TableOrders data={dataOrders} />}
+      {activeView === tabs.kanban && <KanbanBoard data={dataOrders} />}
     </Shell>
   );
 }
