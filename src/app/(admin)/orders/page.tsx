@@ -65,7 +65,7 @@ export default function PagerOrders() {
             filterStatus={filterStatus}
             setFilterStatus={setFilterStatus}
           />
-          <FilterDate date={date} setDate={setDate} />
+          <FilterDate date={date ?? new Date()} setDate={setDate} />
         </div>
       </div>
       <Separator />
