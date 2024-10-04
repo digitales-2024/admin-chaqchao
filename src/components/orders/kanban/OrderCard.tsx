@@ -76,8 +76,7 @@ export function OrderCard({ order, isOverlay }: OrderCardProps) {
   };
 
   return (
-    <Button
-      variant={"ghost"}
+    <div
       {...attributes}
       {...listeners}
       className="m-0 h-full min-w-[370px] cursor-grab p-0"
@@ -154,6 +153,6 @@ export function OrderCard({ order, isOverlay }: OrderCardProps) {
           </div>
         </CardContent>
       </Card>
-    </Button>
+    </div>
   );
 }
