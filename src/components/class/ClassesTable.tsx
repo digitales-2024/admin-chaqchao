@@ -11,7 +11,15 @@ import { ClassesDescription } from "./ClassesDescription";
 import { classesTableColumns } from "./ClassesTableColumns";
 import { ClassesTableToolbarActions } from "./ClassesTableToolbarActions";
 
-export const ClassesTable = ({ data }: { data: ClassesDataAdmin[] }) => {
+interface ClassesTableProps {
+  data: ClassesDataAdmin[];
+  exportClassesToExcel?: (selectedRows: ClassesDataAdmin[]) => void;
+}
+
+export const ClassesTable = ({
+  data,
+  exportClassesToExcel,
+}: ClassesTableProps) => {
   // Obtener lenguajes únicos
   const uniqueLanguage = useMemo(() => {
     return Array.from(
@@ -40,6 +48,7 @@ export const ClassesTable = ({ data }: { data: ClassesDataAdmin[] }) => {
       toolbarActions={<ClassesTableToolbarActions />}
       placeholder="Buscar clases..."
       renderExpandedRow={(row) => <ClassesDescription row={row} />}
+      customExcelExport={exportClassesToExcel}
     />
   );
 };
