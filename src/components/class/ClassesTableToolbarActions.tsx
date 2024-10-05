@@ -1,7 +1,7 @@
 "use client";
 
 import { useClasses } from "@/hooks/use-class";
-import { ClassData, ClassesDataAdmin } from "@/types";
+import { ClassesDataAdmin } from "@/types";
 import { type Table } from "@tanstack/react-table";
 import { Download, FileText } from "lucide-react";
 
@@ -21,80 +21,32 @@ export function ClassesTableToolbarActions({
       // Obtener las filas seleccionadas de la página actual
       const selectedRows = table
         .getRowModel()
-        .rows.filter((row) => row.getIsSelected());
-
-      // Mapear los datos de las filas seleccionadas
-      const classesData = selectedRows.map((row) => {
-        return {
-          dateClass: row.getValue("fecha") as string,
-          scheduleClass: row.getValue("horario") as string,
-          totalParticipants: row.getValue("participantes") as number,
-          classLanguage: row.getValue("lenguaje") as string,
-          classes: (row.getValue("detalles") as ClassData[]).map(
-            (classDetail: ClassData) => ({
-              id: classDetail.id,
-              userName: classDetail.userName,
-              userEmail: classDetail.userEmail,
-              userPhone: classDetail.userPhone,
-              totalParticipants: classDetail.totalParticipants,
-              totalAdults: classDetail.totalAdults,
-              totalChildren: classDetail.totalChildren,
-              totalPrice: classDetail.totalPrice,
-              totalPriceAdults: classDetail.totalPriceAdults,
-              totalPriceChildren: classDetail.totalPriceChildren,
-              languageClass: classDetail.languageClass,
-              typeCurrency: classDetail.typeCurrency,
-              dateClass: classDetail.dateClass,
-              scheduleClass: classDetail.scheduleClass,
-            }),
-          ),
-        };
-      });
+        .rows.filter((row) => row.getIsSelected())
+        .map((row) => row.original); // Obtener solo la propiedad original
 
       // Llamar a la función de exportación con los datos seleccionados
-      exportClassesToPdf(classesData);
+      exportClassesToPdf(selectedRows);
+    }
+  };
+
+  const handleExportToExcel = () => {
+    if (table) {
+      // Obtener las filas seleccionadas de la página actual
+      const selectedRows = table
+        .getRowModel()
+        .rows.filter((row) => row.getIsSelected())
+        .map((row) => row.original);
+
+      console.log(selectedRows);
+
+      // Llamar a la función de exportación con los datos seleccionados
+      exportClassesToExcel(selectedRows);
     }
   };
 
   return (
     <div className="flex flex-wrap items-center justify-end gap-2">
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={() => {
-          if (table) {
-            // Obtener los datos de las clases
-            const classesData = table.getRowModel().rows.map((row) => {
-              return {
-                dateClass: row.getValue("fecha") as string,
-                scheduleClass: row.getValue("horario") as string,
-                totalParticipants: row.getValue("participantes") as number,
-                classLanguage: row.getValue("lenguaje") as string,
-                classes: (row.getValue("detalles") as ClassData[]).map(
-                  (classDetail: ClassData) => ({
-                    id: classDetail.id,
-                    userName: classDetail.userName,
-                    userEmail: classDetail.userEmail,
-                    userPhone: classDetail.userPhone,
-                    totalParticipants: classDetail.totalParticipants,
-                    totalAdults: classDetail.totalAdults,
-                    totalChildren: classDetail.totalChildren,
-                    totalPrice: classDetail.totalPrice,
-                    totalPriceAdults: classDetail.totalPriceAdults,
-                    totalPriceChildren: classDetail.totalPriceChildren,
-                    languageClass: classDetail.languageClass,
-                    typeCurrency: classDetail.typeCurrency,
-                    dateClass: classDetail.dateClass,
-                    scheduleClass: classDetail.scheduleClass,
-                  }),
-                ),
-              };
-            });
-
-            exportClassesToExcel(classesData);
-          }
-        }}
-      >
+      <Button variant="outline" size="sm" onClick={handleExportToExcel}>
         <Download className="mr-2 size-4" aria-hidden="true" />
         Exportar
       </Button>
