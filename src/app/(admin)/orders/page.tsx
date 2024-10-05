@@ -25,10 +25,10 @@ export default function PagerOrders() {
   const [filterStatus, setFilterStatus] = useState<OrderStatus>(
     OrderStatus.ALL,
   );
-  const { dataOrders, isLoadingOrders } = useOrders(
-    format(date, "yyyy-MM-dd"),
-    filterStatus,
-  );
+  const { dataOrders, isLoadingOrders } = useOrders({
+    dateFilter: format(date, "yyyy-MM-dd"),
+    status: filterStatus,
+  });
 
   if (isLoadingOrders) {
     return (
