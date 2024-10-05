@@ -10,17 +10,20 @@ export const TableOrders = ({ data }: { data: Order[] }) => {
   const columns = useMemo(() => getColumnsOrders(), []);
 
   const [openDetailsOrder, setOpenDetailsOrder] = useState(false);
-
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   return (
     <>
       <DataTableExpanded
         columns={columns}
         data={data}
         placeholder="Buscar pedidos..."
-        getSubRows={(row) => row.comments as unknown as []}
-        onClickRow={() => setOpenDetailsOrder(true)}
+        onClickRow={(row) => {
+          setOpenDetailsOrder(true);
+          setSelectedOrder(row);
+        }}
       />
       <OrderSheetDetails
+        order={selectedOrder}
         open={openDetailsOrder}
         onOpenChange={() => setOpenDetailsOrder(false)}
       />
