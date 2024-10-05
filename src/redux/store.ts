@@ -34,7 +34,15 @@ export const store = configureStore({
     [classApi.reducerPath]: classApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware()
+    getDefaultMiddleware({
+      // Configuración para evitar errores de "non-serializable value"
+      serializableCheck: {
+        // Ignorar las acciones que no son serializables, específicamente de classApi
+        ignoredActions: ["classApi/executeMutation/fulfilled"],
+        // Ignorar las rutas en el estado que contienen valores no serializables
+        ignoredPaths: ["classApi.mutations"],
+      },
+    })
       .concat(authApi.middleware)
       .concat(adminApi.middleware)
       .concat(usersApi.middleware)
@@ -50,6 +58,7 @@ export const store = configureStore({
       .concat(productsApi.middleware)
       .concat(classApi.middleware),
 });
+
 setupListeners(store.dispatch);
 
 export type RootState = ReturnType<typeof store.getState>;
