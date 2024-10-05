@@ -54,7 +54,7 @@ export default function PagerOrders() {
         <HeaderPage title="Pedidos" />
         <SwitchModeView />
       </div>
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col items-end justify-between gap-2 md:flex-row md:items-center">
         <p className="flex gap-2 text-sm font-extralight text-slate-400">
           <span>Total</span>
           {dataOrders.length || 0}
