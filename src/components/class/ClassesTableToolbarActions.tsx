@@ -15,6 +15,47 @@ export function ClassesTableToolbarActions({
   table,
 }: ClassesTableToolbarActionsProps) {
   const { exportClassesToPdf, exportClassesToExcel } = useClasses();
+
+  const handleExportToPdf = () => {
+    if (table) {
+      // Obtener las filas seleccionadas de la página actual
+      const selectedRows = table
+        .getRowModel()
+        .rows.filter((row) => row.getIsSelected());
+
+      // Mapear los datos de las filas seleccionadas
+      const classesData = selectedRows.map((row) => {
+        return {
+          dateClass: row.getValue("fecha") as string,
+          scheduleClass: row.getValue("horario") as string,
+          totalParticipants: row.getValue("participantes") as number,
+          classLanguage: row.getValue("lenguaje") as string,
+          classes: (row.getValue("detalles") as ClassData[]).map(
+            (classDetail: ClassData) => ({
+              id: classDetail.id,
+              userName: classDetail.userName,
+              userEmail: classDetail.userEmail,
+              userPhone: classDetail.userPhone,
+              totalParticipants: classDetail.totalParticipants,
+              totalAdults: classDetail.totalAdults,
+              totalChildren: classDetail.totalChildren,
+              totalPrice: classDetail.totalPrice,
+              totalPriceAdults: classDetail.totalPriceAdults,
+              totalPriceChildren: classDetail.totalPriceChildren,
+              languageClass: classDetail.languageClass,
+              typeCurrency: classDetail.typeCurrency,
+              dateClass: classDetail.dateClass,
+              scheduleClass: classDetail.scheduleClass,
+            }),
+          ),
+        };
+      });
+
+      // Llamar a la función de exportación con los datos seleccionados
+      exportClassesToPdf(classesData);
+    }
+  };
+
   return (
     <div className="flex flex-wrap items-center justify-end gap-2">
       <Button
@@ -28,8 +69,7 @@ export function ClassesTableToolbarActions({
                 dateClass: row.getValue("fecha") as string,
                 scheduleClass: row.getValue("horario") as string,
                 totalParticipants: row.getValue("participantes") as number,
-                classLanguage: row.getValue("lenguaje") as string, // Cambié de languageClass a classLanguage
-                // Tipar correctamente los detalles
+                classLanguage: row.getValue("lenguaje") as string,
                 classes: (row.getValue("detalles") as ClassData[]).map(
                   (classDetail: ClassData) => ({
                     id: classDetail.id,
@@ -42,7 +82,7 @@ export function ClassesTableToolbarActions({
                     totalPrice: classDetail.totalPrice,
                     totalPriceAdults: classDetail.totalPriceAdults,
                     totalPriceChildren: classDetail.totalPriceChildren,
-                    languageClass: classDetail.languageClass, // Aquí también cambias de languageClass a classLanguage
+                    languageClass: classDetail.languageClass,
                     typeCurrency: classDetail.typeCurrency,
                     dateClass: classDetail.dateClass,
                     scheduleClass: classDetail.scheduleClass,
@@ -58,44 +98,7 @@ export function ClassesTableToolbarActions({
         <Download className="mr-2 size-4" aria-hidden="true" />
         Exportar
       </Button>
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={() => {
-          if (table) {
-            // Obtener los datos de las clases
-            const classesData = table.getRowModel().rows.map((row) => {
-              return {
-                dateClass: row.getValue("fecha") as string,
-                scheduleClass: row.getValue("horario") as string,
-                totalParticipants: row.getValue("participantes") as number,
-                classLanguage: row.getValue("lenguaje") as string, // Cambié de languageClass a classLanguage
-                // Tipar correctamente los detalles
-                classes: (row.getValue("detalles") as ClassData[]).map(
-                  (classDetail: ClassData) => ({
-                    id: classDetail.id,
-                    userName: classDetail.userName,
-                    userEmail: classDetail.userEmail,
-                    userPhone: classDetail.userPhone,
-                    totalParticipants: classDetail.totalParticipants,
-                    totalAdults: classDetail.totalAdults,
-                    totalChildren: classDetail.totalChildren,
-                    totalPrice: classDetail.totalPrice,
-                    totalPriceAdults: classDetail.totalPriceAdults,
-                    totalPriceChildren: classDetail.totalPriceChildren,
-                    languageClass: classDetail.languageClass, // Aquí también cambias de languageClass a classLanguage
-                    typeCurrency: classDetail.typeCurrency,
-                    dateClass: classDetail.dateClass,
-                    scheduleClass: classDetail.scheduleClass,
-                  }),
-                ),
-              };
-            });
-
-            exportClassesToPdf(classesData);
-          }
-        }}
-      >
+      <Button variant="outline" size="sm" onClick={handleExportToPdf}>
         <FileText className="mr-2 size-4" aria-hidden="true" />
         Descargar PDF
       </Button>
