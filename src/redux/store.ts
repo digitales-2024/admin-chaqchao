@@ -6,6 +6,7 @@ import { authApi } from "./services/authApi";
 import { businessConfigApi } from "./services/businessConfigApi";
 import { businessHoursApi } from "./services/businessHoursApi";
 import { categoriesApi } from "./services/categoriesApi";
+import { classApi } from "./services/classApi";
 import { classLanguageApi } from "./services/classLanguageConfigApi";
 import { classPriceApi } from "./services/classPriceApi";
 import { classRegistrationApi } from "./services/classRegistrationApi";
@@ -32,9 +33,18 @@ export const store = configureStore({
     [productsApi.reducerPath]: productsApi.reducer,
     [clientsApi.reducerPath]: clientsApi.reducer,
     [ordersApi.reducerPath]: ordersApi.reducer,
+    [classApi.reducerPath]: classApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware()
+    getDefaultMiddleware({
+      // Configuración para evitar errores de "non-serializable value"
+      serializableCheck: {
+        // Ignorar las acciones que no son serializables, específicamente de classApi
+        ignoredActions: ["classApi/executeMutation/fulfilled"],
+        // Ignorar las rutas en el estado que contienen valores no serializables
+        ignoredPaths: ["classApi.mutations"],
+      },
+    })
       .concat(authApi.middleware)
       .concat(adminApi.middleware)
       .concat(usersApi.middleware)
@@ -48,8 +58,10 @@ export const store = configureStore({
       .concat(classScheduleApi.middleware)
       .concat(classRegistrationApi.middleware)
       .concat(productsApi.middleware)
-      .concat(ordersApi.middleware),
+      .concat(ordersApi.middleware)
+      .concat(classApi.middleware),
 });
+
 setupListeners(store.dispatch);
 
 export type RootState = ReturnType<typeof store.getState>;

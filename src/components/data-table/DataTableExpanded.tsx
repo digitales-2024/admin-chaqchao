@@ -39,6 +39,7 @@ interface DataTableExpandedProps<TData, TValue> {
   getSubRows?: (row: TData) => TData[] | undefined;
   renderExpandedRow?: (row: TData) => ReactElement;
   onClickRow?: (row: TData) => void;
+  customExcelExport?: (data: TData[]) => void;
 }
 
 export function DataTableExpanded<TData, TValue>({
@@ -50,6 +51,7 @@ export function DataTableExpanded<TData, TValue>({
   getSubRows,
   renderExpandedRow,
   onClickRow,
+  customExcelExport,
 }: DataTableExpandedProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
@@ -189,7 +191,10 @@ export function DataTableExpanded<TData, TValue>({
       </div>
       <DataTablePagination table={table} />
       {table.getFilteredSelectedRowModel().rows.length > 0 && (
-        <DataTableFloatingBar table={table} />
+        <DataTableFloatingBar
+          table={table}
+          customExcelExport={customExcelExport}
+        />
       )}
     </div>
   );
