@@ -12,9 +12,8 @@ import { DataTableSkeleton } from "@/components/data-table/DataTableSkeleton";
 
 export default function ClassPage() {
   const [date, setDate] = useState<Date>(new Date());
-  const { allDataClasses, isLoadingDataClasses } = useClasses(
-    format(date, "yyyy-MM-dd"),
-  );
+  const { allDataClasses, isLoadingDataClasses, exportClassesToExcel } =
+    useClasses(format(date, "yyyy-MM-dd"));
 
   if (isLoadingDataClasses) {
     return (
@@ -51,7 +50,10 @@ export default function ClassPage() {
           <FilterDateClasses date={date} setDate={setDate} />
         </div>
       </div>
-      <ClassesTable data={allDataClasses} />
+      <ClassesTable
+        data={allDataClasses}
+        exportClassesToExcel={exportClassesToExcel}
+      />
     </Shell>
   );
 }
