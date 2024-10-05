@@ -15,7 +15,7 @@ interface FilterDateProps {
 }
 
 export const FilterDate = ({ date, setDate }: FilterDateProps) => {
-  const isNow = date ?? format(date, "PPP") === format(new Date(), "PPP");
+  const isNow = date && format(date, "PPP") === format(new Date(), "PPP");
 
   return (
     <Popover>
