@@ -37,11 +37,14 @@ const mapSelectedRowsToClassesData = (
 
 // Hook para obtener todas las clases
 export const useClasses = (date?: string) => {
+  // Validacion de la fecha de consulta o fecha actual
+  const queryDate = date || new Date().toISOString().split("T")[0];
+
   const {
     data: allDataClasses,
     error,
     isLoading: isLoadingDataClasses,
-  } = useGetAllClassesQuery({ date });
+  } = useGetAllClassesQuery({ date: queryDate });
 
   const [
     exportToExcel,
