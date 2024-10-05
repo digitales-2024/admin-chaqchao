@@ -9,18 +9,40 @@ export const classApi = createApi({
   tagTypes: ["Class Admin"],
   endpoints: (build) => ({
     // Obtener todas las clases
-    getAllClasses: build.query<
-      ClassesDataAdmin[],
-      { date?: string | undefined }
-    >({
+    getAllClasses: build.query<ClassesDataAdmin[], { date?: string }>({
       query: ({ date }) => ({
-        url: "/admin/class",
+        url: "/class/admin",
         method: "GET",
         params: { date },
         credentials: "include",
       }),
       providesTags: ["Class Admin"],
     }),
+    // Exportar clases a Excel
+    exportClassesToExcel: build.mutation<Blob, ClassesDataAdmin[]>({
+      query: (data) => ({
+        url: "/class/admin/export/classes/excel",
+        method: "POST",
+        body: data,
+        responseHandler: (response: Response) => response.blob(),
+        credentials: "include",
+      }),
+    }),
+    // Exportar clases a PDF
+    exportClassesToPdf: build.mutation<Blob, ClassesDataAdmin[]>({
+      query: (data) => ({
+        url: "/class/admin/export/classes/pdf",
+        method: "POST",
+        body: data,
+        responseHandler: (response: Response) => response.blob(),
+        credentials: "include",
+      }),
+    }),
   }),
 });
-export const { useGetAllClassesQuery } = classApi;
+
+export const {
+  useGetAllClassesQuery,
+  useExportClassesToExcelMutation,
+  useExportClassesToPdfMutation,
+} = classApi;
