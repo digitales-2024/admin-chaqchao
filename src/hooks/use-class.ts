@@ -5,6 +5,36 @@ import {
 } from "@/redux/services/classApi";
 import { ClassesDataAdmin } from "@/types";
 
+// Función auxiliar para mapear los datos de las filas seleccionadas
+const mapSelectedRowsToClassesData = (
+  selectedRows: ClassesDataAdmin[],
+): ClassesDataAdmin[] => {
+  return selectedRows.map((original) => {
+    return {
+      dateClass: original.dateClass,
+      scheduleClass: original.scheduleClass,
+      totalParticipants: original.totalParticipants,
+      classLanguage: original.classLanguage,
+      classes: original.classes.map((classDetail) => ({
+        id: classDetail.id,
+        userName: classDetail.userName,
+        userEmail: classDetail.userEmail,
+        userPhone: classDetail.userPhone,
+        totalParticipants: classDetail.totalParticipants,
+        totalAdults: classDetail.totalAdults,
+        totalChildren: classDetail.totalChildren,
+        totalPrice: classDetail.totalPrice,
+        totalPriceAdults: classDetail.totalPriceAdults,
+        totalPriceChildren: classDetail.totalPriceChildren,
+        languageClass: classDetail.languageClass,
+        typeCurrency: classDetail.typeCurrency,
+        dateClass: classDetail.dateClass,
+        scheduleClass: classDetail.scheduleClass,
+      })),
+    };
+  });
+};
+
 // Hook para obtener todas las clases
 export const useClasses = (date?: string) => {
   const {
@@ -23,8 +53,11 @@ export const useClasses = (date?: string) => {
     { isLoading: isLoadingExportPdf, error: errorExportPdf },
   ] = useExportClassesToPdfMutation();
 
-  const exportClassesToExcel = async (data: ClassesDataAdmin[]) => {
+  const exportClassesToExcel = async (selectedRows: ClassesDataAdmin[]) => {
     try {
+      // Mapear los datos de las filas seleccionadas
+      const data = mapSelectedRowsToClassesData(selectedRows);
+
       const response = await exportToExcel(data).unwrap();
 
       // Crear un enlace para descargar el archivo
@@ -43,8 +76,11 @@ export const useClasses = (date?: string) => {
     }
   };
 
-  const exportClassesToPdf = async (data: ClassesDataAdmin[]) => {
+  const exportClassesToPdf = async (selectedRows: ClassesDataAdmin[]) => {
     try {
+      // Mapear los datos de las filas seleccionadas
+      const data = mapSelectedRowsToClassesData(selectedRows);
+
       // Llama a la mutación para exportar a PDF
       const response = await exportToPdf(data).unwrap();
 
