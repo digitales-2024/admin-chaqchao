@@ -1,7 +1,16 @@
-import { Order } from "@/types";
+import { Order, OrderDetails } from "@/types";
 import { createApi } from "@reduxjs/toolkit/query/react";
 
 import baseQueryWithReauth from "./baseQuery";
+
+interface GetOrdersAllProps {
+  date: Date | string;
+  status?: string | "";
+}
+
+interface GetOrderByIdProps {
+  id: string;
+}
 
 export const ordersApi = createApi({
   reducerPath: "ordersApi",
@@ -9,10 +18,7 @@ export const ordersApi = createApi({
   tagTypes: ["Orders"],
   endpoints: (build) => ({
     // Obtener todos los pedidos
-    getOrdersAll: build.query<
-      Order[],
-      { date: Date | string; status?: string | "" }
-    >({
+    getOrdersAll: build.query<Order[], GetOrdersAllProps>({
       query: ({ date, status }) => ({
         url: "/orders",
         params: { date, status },
@@ -23,13 +29,13 @@ export const ordersApi = createApi({
     }),
 
     // Obtener un pedido por id
-    getOrderById: build.query<Order, string>({
-      query: (id) => ({
+    getOrderById: build.query<OrderDetails, GetOrderByIdProps>({
+      query: ({ id }) => ({
         url: `/orders/${id}`,
         method: "GET",
         credentials: "include",
       }),
-      providesTags: (result, error, id) => [{ type: "Orders", id }],
+      providesTags: ["Orders"],
     }),
 
     // Update status de un pedido
