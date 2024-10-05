@@ -56,6 +56,11 @@ export const useClasses = (date?: string) => {
     { isLoading: isLoadingExportPdf, error: errorExportPdf },
   ] = useExportClassesToPdfMutation();
 
+  /**
+   * Descargar las clases seleccionadas en un archivo Excel
+   * @param selectedRows Filas seleccionadas
+   * @returns Excel Blob
+   */
   const exportClassesToExcel = async (selectedRows: ClassesDataAdmin[]) => {
     try {
       // Mapear los datos de las filas seleccionadas
@@ -79,6 +84,10 @@ export const useClasses = (date?: string) => {
     }
   };
 
+  /**
+   * Descargar las clases seleccionadas en un archivo PDF
+   * @param selectedRows Filas seleccionadas
+   */
   const exportClassesToPdf = async (selectedRows: ClassesDataAdmin[]) => {
     try {
       // Mapear los datos de las filas seleccionadas
