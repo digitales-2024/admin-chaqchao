@@ -21,7 +21,7 @@ interface UsersTableFloatingBarProps<TData> {
 
 export const DataTableFloatingBar = <TData,>({
   table,
-  customExcelExport, // Recibir la función opcional
+  customExcelExport, // Recibir la función
 }: UsersTableFloatingBarProps<TData>) => {
   const rows = table.getFilteredSelectedRowModel().rows;
 
