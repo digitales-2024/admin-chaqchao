@@ -5,7 +5,11 @@ import {
 } from "@/redux/services/classApi";
 import { ClassesDataAdmin } from "@/types";
 
-// Función auxiliar para mapear los datos de las filas seleccionadas
+/**
+ * Mapear las filas seleccionadas a un objeto de datos de clases
+ * @param selectedRows Filas seleccionadas
+ * @returns Filas seleccionadas mapeadas a un objeto de datos de clases
+ */
 const mapSelectedRowsToClassesData = (
   selectedRows: ClassesDataAdmin[],
 ): ClassesDataAdmin[] => {
