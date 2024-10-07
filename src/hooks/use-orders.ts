@@ -28,20 +28,18 @@ interface UseOrdersProps {
 }
 
 export const useOrders = (options: UseOrdersProps = {}) => {
-  const { dateFilter, status, id } = options;
-
-  const date = dateFilter
-    ? typeof dateFilter === "string"
-      ? dateFilter
-      : dateFilter.toISOString()
-    : new Date().toISOString();
-
+  const { dateFilter: date, status, id } = options;
   const {
     data: dataOrders,
     isLoading: isLoadingOrders,
     error: errorOrders,
     refetch: refetchOrders,
-  } = useGetOrdersAllQuery({ date, status });
+  } = useGetOrdersAllQuery(
+    { date: date as string, status },
+    {
+      skip: !date || !status, // Evita hacer la query si no hay date o status
+    },
+  );
 
   const { data: orderById } = useGetOrderByIdQuery(
     { id: id as string },
