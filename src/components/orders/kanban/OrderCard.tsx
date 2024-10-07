@@ -54,7 +54,6 @@ export function OrderCard({
   setSelectedOrder,
   setOpenDetailsOrder,
 }: OrderCardProps) {
-  console.log("🚀 ~ setSelectedOrder:", setSelectedOrder);
   const {
     setNodeRef,
     attributes,
