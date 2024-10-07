@@ -16,10 +16,12 @@ import { exportTableToCSV } from "@/lib/export";
 
 interface UsersTableFloatingBarProps<TData> {
   table: Table<TData>;
+  customExcelExport?: (data: TData[]) => void;
 }
 
 export const DataTableFloatingBar = <TData,>({
   table,
+  customExcelExport, // Recibir la función
 }: UsersTableFloatingBarProps<TData>) => {
   const rows = table.getFilteredSelectedRowModel().rows;
 
@@ -81,10 +83,16 @@ export const DataTableFloatingBar = <TData,>({
                       setMethod("export");
 
                       startTransition(() => {
-                        exportTableToCSV(table, {
-                          excludeColumns: ["select", "actions"],
-                          onlySelected: true,
-                        });
+                        if (customExcelExport) {
+                          // Mapear los datos de las filas seleccionadas
+                          const selectedData = rows.map((row) => row.original);
+                          customExcelExport(selectedData);
+                        } else {
+                          exportTableToCSV(table, {
+                            excludeColumns: ["select", "actions"],
+                            onlySelected: true,
+                          });
+                        }
                       });
                     }}
                     disabled={isPending}
