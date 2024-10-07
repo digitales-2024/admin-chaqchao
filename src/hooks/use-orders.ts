@@ -7,6 +7,7 @@ import {
 import { socket } from "@/socket/socket";
 import { CustomErrorData } from "@/types";
 import { translateError } from "@/utils/translateError";
+import { useEffect } from "react";
 import { toast } from "sonner";
 
 type StatusTranslations = {
@@ -41,24 +42,46 @@ export const useOrders = (options: UseOrdersProps = {}) => {
     },
   );
 
-  const { data: orderById } = useGetOrderByIdQuery(
+  const { data: orderById, refetch: refetchOrderById } = useGetOrderByIdQuery(
     { id: id as string },
     {
       skip: !id, // Evita hacer la query si no hay id
     },
   );
 
-  socket.on("new-order", () => {
-    refetchOrders();
-  });
-  socket.on("order-status-updated", () => {
-    refetchOrders();
-  });
-
   const [
     updateOrderStatus,
     { isLoading: isLoadingUpdateOrderStatus, error: errorUpdateOrderStatus },
   ] = useUpdateOrderStatusMutation();
+
+  // Manejo de eventos del socket
+  useEffect(() => {
+    const handleNewOrder = () => {
+      // Si ya tenemos data cargada, permitimos el refetch
+      if (dataOrders) {
+        refetchOrders();
+      }
+    };
+
+    const handleOrderStatusUpdated = () => {
+      // Si ya tenemos data cargada, permitimos el refetch
+      if (dataOrders) {
+        refetchOrders();
+        if (id) {
+          refetchOrderById();
+        }
+      }
+    };
+
+    socket.on("new-order", handleNewOrder);
+    socket.on("order-status-updated", handleOrderStatusUpdated);
+
+    // Limpieza de los listeners del socket
+    return () => {
+      socket.off("new-order", handleNewOrder);
+      socket.off("order-status-updated", handleOrderStatusUpdated);
+    };
+  }, [dataOrders, refetchOrders, refetchOrderById, id]);
 
   const onOrderStatusUpdate = (id: string, status: string) => {
     const promise = () =>
