@@ -23,19 +23,19 @@ export type OrderDetails = {
   cart: Cart;
 };
 
-export type Cart = {
-  id: string;
-  clientId: string;
-  cartItems: CartItem[];
-};
+export type Cart = { quantity: number; products: ProductData[] };
 
-type CartItem = {
+type ProductData = {
   id: string;
   name: string;
-  image: string;
-  productId: string;
-  quantity: number;
   price: number;
+  image: string;
+  quantity: number;
+  category: CategoryData;
+};
+type CategoryData = {
+  id: string;
+  name: string;
 };
 
 export type BillingDocument = {
