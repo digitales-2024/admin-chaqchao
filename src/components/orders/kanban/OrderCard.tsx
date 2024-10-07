@@ -5,6 +5,7 @@ import { cva } from "class-variance-authority";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { Clock, PackageCheck, Truck } from "lucide-react";
+import { useCallback } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -78,15 +79,17 @@ export function OrderCard({
     },
   });
 
+  const setSelectedOrderHandler = useCallback(() => {
+    setSelectedOrder?.(order);
+    setOpenDetailsOrder?.(true);
+  }, [order, setSelectedOrder, setOpenDetailsOrder]);
+
   return (
     <div
       {...attributes}
       {...listeners}
-      className="m-0 h-full min-w-[370px] cursor-grab p-0"
-      onClick={() => {
-        setSelectedOrder?.(order);
-        setOpenDetailsOrder?.(true);
-      }}
+      className="m-0 h-fit min-w-[370px] cursor-grab p-0"
+      onClick={setSelectedOrderHandler}
     >
       <span className="sr-only">Move order</span>
       <Card
