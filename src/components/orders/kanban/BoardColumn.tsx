@@ -5,7 +5,6 @@ import { CSS } from "@dnd-kit/utilities";
 import { cva } from "class-variance-authority";
 import { useMemo, useState } from "react";
 
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
@@ -38,14 +37,7 @@ export function BoardColumn({ column, orders, isOverlay }: BoardColumnProps) {
     return orders.map((order) => order.id);
   }, [orders]);
 
-  const {
-    setNodeRef,
-    attributes,
-    listeners,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({
+  const { setNodeRef, transform, transition, isDragging } = useSortable({
     id: column.id,
     data: {
       type: "Column",
@@ -62,7 +54,7 @@ export function BoardColumn({ column, orders, isOverlay }: BoardColumnProps) {
   };
 
   const variants = cva(
-    "h-full min-h-[500px] flex-1 bg-slate-50 border-none flex flex-col",
+    "min-h-[500px] flex-1 bg-slate-50 border-none flex flex-col",
     {
       variants: {
         dragging: {
@@ -83,20 +75,12 @@ export function BoardColumn({ column, orders, isOverlay }: BoardColumnProps) {
       })}
     >
       <CardHeader className="space-between flex flex-row items-center p-4 text-left font-semibold">
-        <Button
-          variant={"ghost"}
-          {...attributes}
-          {...listeners}
-          className="relative -ml-2 h-auto cursor-grab p-1 text-primary/50"
-        >
-          <span className="sr-only">{`Move column: ${column.title}`}</span>
-        </Button>
         <span className="ml-auto text-xs font-thin text-slate-400">
           {" "}
           {column.title}
         </span>
       </CardHeader>
-      <CardContent className="flex flex-grow flex-col gap-2 p-2">
+      <CardContent className="flex flex-1 flex-col gap-2 p-2">
         <SortableContext items={ordersIds}>
           {orders.map((order) => (
             <OrderCard
