@@ -12,12 +12,21 @@ import {
   Calendar,
   Clock,
   DollarSign,
+  MessageSquare,
 } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "../ui/accordion";
+import { Avatar, AvatarFallback } from "../ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { Separator } from "../ui/separator";
 
 // Función para formatear la moneda
 const formatCurrency = (amount: number, currency: string) => {
@@ -37,7 +46,6 @@ const formatCurrency = (amount: number, currency: string) => {
 
 export const ClassesDescription = ({ row }: { row: ClassesDataAdmin }) => {
   const { dateClass, scheduleClass, classes, totalParticipants } = row;
-
   return (
     <div className="p-4">
       <div className="flex items-center justify-between">
@@ -73,18 +81,19 @@ export const ClassesDescription = ({ row }: { row: ClassesDataAdmin }) => {
               value={(totalParticipants / 8) * 100}
               className="mb-4 h-1"
             />{" "}
-            {/* Usamos totalParticipants */}
             <div className="space-y-4">
               {classes.map((classData) => (
                 <Card key={classData.id} className="p-3">
                   <CardContent className="p-5">
-                    <div className="grid w-full grid-cols-3 items-center justify-items-center gap-4">
+                    <div className="grid w-full grid-cols-3 items-center gap-4">
                       {/* Columna del perfil del usuario */}
                       <div className="flex flex-shrink-0 flex-col items-start gap-2">
                         <div className="flex items-center gap-2 truncate">
-                          <div className="flex size-8 items-center justify-center rounded-full bg-slate-100 font-semibold capitalize text-slate-500">
-                            {classData.userName.charAt(0)}
-                          </div>
+                          <Avatar className="h-12 w-12 border-2 border-white capitalize shadow-sm">
+                            <AvatarFallback className="bg-slate-100 text-slate-500">
+                              {classData.userName.charAt(0)}
+                            </AvatarFallback>
+                          </Avatar>
                           <h3 className="font-semibold capitalize">
                             {classData.userName}
                           </h3>
@@ -104,7 +113,7 @@ export const ClassesDescription = ({ row }: { row: ClassesDataAdmin }) => {
                       </div>
 
                       {/* Columna de detalles de la clase */}
-                      <div>
+                      <div className="grid justify-items-center">
                         <p className="flex items-center capitalize">
                           <Globe className="mr-2 h-4 w-4" />
                           Idioma: {classData.languageClass}
@@ -172,6 +181,32 @@ export const ClassesDescription = ({ row }: { row: ClassesDataAdmin }) => {
                       </div>
                     </div>
                   </CardContent>
+
+                  <Separator className="my-4" />
+
+                  <div className="flex w-full justify-between">
+                    <div className="w-full">
+                      <Accordion type="single" collapsible>
+                        <AccordionItem value={`comments-${classData.id}`}>
+                          <AccordionTrigger className="flex items-center justify-between p-4 text-justify">
+                            <h4 className="mb-2 flex items-center font-semibold text-gray-700">
+                              <MessageSquare className="mr-2 h-5 w-5" />
+                              Comentarios
+                            </h4>
+                          </AccordionTrigger>
+                          <AccordionContent>
+                            <div className="p-4">
+                              <p className="text-sm italic text-gray-600">
+                                {classData.comments
+                                  ? classData.comments
+                                  : "No hay comentarios"}
+                              </p>
+                            </div>
+                          </AccordionContent>
+                        </AccordionItem>
+                      </Accordion>
+                    </div>
+                  </div>
                 </Card>
               ))}
             </div>

@@ -1,16 +1,18 @@
 import { ClassesDataAdmin } from "@/types";
 import { ColumnDef } from "@tanstack/react-table";
-import { Calendar, ChevronDown, ChevronUp, Clock, Users } from "lucide-react";
+import { Calendar, ChevronDown, ChevronUp, Clock } from "lucide-react";
 
 import { DataTableColumnHeader } from "@/components/data-table/DataTableColumnHeader";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 
 import { Badge } from "../ui/badge";
+import ParticipantsCell from "./ParticipantsClassCell";
 
 export const classesTableColumns = (
   colors: string[],
   uniqueLanguage: string[],
+  newParticipants: { [key: string]: number }, // Cambiar el tipo de newParticipants
 ): ColumnDef<ClassesDataAdmin>[] => [
   {
     id: "select",
@@ -101,13 +103,14 @@ export const classesTableColumns = (
     ),
     cell: ({ row }) => {
       const totalParticipants = row.getValue("participantes") as number;
+      const key = row.original.dateClass + row.original.scheduleClass;
+      const newParticipantsCount = newParticipants[key] || 0;
+
       return (
-        <div className="min-w-40 truncate">
-          <Badge variant="secondary">
-            <Users className="mr-1 h-4 w-4" />
-            <span className="text-sm font-light">{totalParticipants}/8 </span>
-          </Badge>
-        </div>
+        <ParticipantsCell
+          totalParticipants={totalParticipants}
+          newParticipantsCount={newParticipantsCount}
+        />
       );
     },
   },

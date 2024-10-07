@@ -14,11 +14,13 @@ import { ClassesTableToolbarActions } from "./ClassesTableToolbarActions";
 interface ClassesTableProps {
   data: ClassesDataAdmin[];
   exportClassesToExcel?: (selectedRows: ClassesDataAdmin[]) => void;
+  newParticipants: { [key: string]: number }; // Cambiar el tipo de newParticipants
 }
 
 export const ClassesTable = ({
   data,
   exportClassesToExcel,
+  newParticipants,
 }: ClassesTableProps) => {
   // Obtener lenguajes únicos
   const uniqueLanguage = useMemo(() => {
@@ -36,8 +38,8 @@ export const ClassesTable = ({
   );
 
   const columns = useMemo(
-    () => classesTableColumns(colors, uniqueLanguage),
-    [colors, uniqueLanguage],
+    () => classesTableColumns(colors, uniqueLanguage, newParticipants), // Pasar newParticipants
+    [colors, uniqueLanguage, newParticipants],
   );
 
   return (
