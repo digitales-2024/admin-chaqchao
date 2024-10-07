@@ -1,46 +1,26 @@
-export type OrderData = {
-  id: string;
-  code: number;
-  orderStatus: string;
-  pickupAddress: string;
-  pickupTime: string;
-  comments: string;
-  isActive: boolean;
-  name: string;
-  email: string;
-  phone: string;
-};
 export type Order = {
   id: string;
   orderStatus: string;
   pickupAddress: string;
-  pickupTime: string;
-  comments: string;
+  pickupTime: Date;
   isActive: boolean;
-  cartId: string;
   someonePickup: boolean;
-  cart: CartItem[];
-  clientName: string;
-  clientPhone: string;
-  clientEmail: string;
   pickupCode: string;
-  totalAmount: number;
+  totalAmount: null;
+  client: Client;
 };
 
 export type OrderDetails = {
   id: string;
-  orderStatus: OrderStatus;
+  orderStatus: string;
   pickupAddress: string;
-  pickupTime: string;
-  comments: string;
+  pickupTime: Date;
   isActive: boolean;
-  cartId: string;
   someonePickup: boolean;
-  cart: CartItem[];
   pickupCode: string;
-  totalAmount: number;
+  totalAmount: null;
   client: Client;
-  updatedAt: string;
+  cart: Cart;
 };
 
 export type Cart = {
