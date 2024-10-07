@@ -80,6 +80,8 @@ export const getColumnsOrders = (): ColumnDef<Order>[] => [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Estado" />
     ),
-    cell: ({ row }) => <SelectStatus data={row.original.orderStatus} />,
+    cell: ({ row }) => (
+      <SelectStatus id={row.original.id} data={row.original.orderStatus} />
+    ),
   },
 ];
