@@ -70,6 +70,7 @@ const errorTranslations = {
     "No se puede eliminar la categoría porque está asignada a productos activos",
   "phone must be a valid phone number":
     "El teléfono debe ser un número de teléfono válido",
+  "Error update order status": "Error actualizando el estado del pedido",
 };
 
 export default errorTranslations;

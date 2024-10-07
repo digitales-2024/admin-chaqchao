@@ -14,6 +14,9 @@ export const SwitchModeView = () => {
   const [activeView, setActiveView] = useState<ViewType>(
     mode?.modeViewOrder || "table",
   );
+  useEffect(() => {
+    setActiveView(mode?.modeViewOrder || "table");
+  }, [mode?.modeViewOrder]);
 
   useEffect(() => {
     mode?.setModeViewOrder(activeView);
