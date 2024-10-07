@@ -192,44 +192,46 @@ export function KanbanBoard({ data }: { data: Order[] }) {
   };
 
   return (
-    <DndContext
-      accessibility={{
-        announcements,
-      }}
-      sensors={sensors}
-      onDragStart={onDragStart}
-      onDragEnd={onDragEnd}
-      onDragOver={onDragOver}
-    >
-      <BoardContainer>
-        <SortableContext items={columnsId}>
-          {columns.map((col) => (
-            <BoardColumn
-              key={col.id}
-              column={col}
-              orders={orders.filter((order) => order.orderStatus === col.id)}
-            />
-          ))}
-        </SortableContext>
-      </BoardContainer>
-
-      {"document" in window &&
-        createPortal(
-          <DragOverlay>
-            {activeColumn && (
+    <>
+      <DndContext
+        accessibility={{
+          announcements,
+        }}
+        sensors={sensors}
+        onDragStart={onDragStart}
+        onDragEnd={onDragEnd}
+        onDragOver={onDragOver}
+      >
+        <BoardContainer>
+          <SortableContext items={columnsId}>
+            {columns.map((col) => (
               <BoardColumn
-                isOverlay
-                column={activeColumn}
-                orders={orders.filter(
-                  (order) => order.orderStatus === activeColumn.id,
-                )}
+                key={col.id}
+                column={col}
+                orders={orders.filter((order) => order.orderStatus === col.id)}
               />
-            )}
-            {activeOrder && <OrderCard order={activeOrder} isOverlay />}
-          </DragOverlay>,
-          document.body,
-        )}
-    </DndContext>
+            ))}
+          </SortableContext>
+        </BoardContainer>
+
+        {"document" in window &&
+          createPortal(
+            <DragOverlay>
+              {activeColumn && (
+                <BoardColumn
+                  isOverlay
+                  column={activeColumn}
+                  orders={orders.filter(
+                    (order) => order.orderStatus === activeColumn.id,
+                  )}
+                />
+              )}
+              {activeOrder && <OrderCard order={activeOrder} isOverlay />}
+            </DragOverlay>,
+            document.body,
+          )}
+      </DndContext>
+    </>
   );
 
   function onDragStart(event: DragStartEvent) {

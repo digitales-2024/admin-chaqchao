@@ -7,7 +7,7 @@ import { es } from "date-fns/locale";
 import {
   Clock,
   Mail,
-  MessageCircle,
+  MessageCircleMore,
   PackageCheck,
   Phone,
   Truck,
@@ -21,6 +21,8 @@ import { Separator } from "@/components/ui/separator";
 interface OrderCardProps {
   order: Order;
   isOverlay?: boolean;
+  setSelectedOrder?: (order: Order) => void;
+  setOpenDetailsOrder?: (open: boolean) => void;
 }
 
 export type OrderType = "Order";
@@ -29,8 +31,29 @@ export interface OrderDragData {
   type: OrderType;
   order: Order;
 }
+export const statusColors: Record<Order["orderStatus"], string> = {
+  CONFIRMED: "border-slate-300 text-slate-300",
+  READY: "border-cyan-500 text-cyan-500",
+  COMPLETED: "border-green-500 text-green-500",
+};
 
-export function OrderCard({ order, isOverlay }: OrderCardProps) {
+export const iconsStatus: Record<Order["orderStatus"], React.ReactElement> = {
+  CONFIRMED: <Clock size={15} />,
+  READY: <PackageCheck size={15} />,
+  COMPLETED: <Truck size={15} />,
+};
+export const translateStatus: Record<Order["orderStatus"], string> = {
+  CONFIRMED: "Pendiente",
+  READY: "Listo",
+  COMPLETED: "Completado",
+};
+
+export function OrderCard({
+  order,
+  isOverlay,
+  setSelectedOrder,
+  setOpenDetailsOrder,
+}: OrderCardProps) {
   const {
     setNodeRef,
     attributes,
@@ -63,23 +86,15 @@ export function OrderCard({ order, isOverlay }: OrderCardProps) {
     },
   });
 
-  const statusColors: Record<Order["orderStatus"], string> = {
-    CONFIRMED: "bg-slate-300",
-    READY: "bg-cyan-500",
-    COMPLETED: "bg-green-500",
-  };
-
-  const iconsStatus: Record<Order["orderStatus"], React.ReactElement> = {
-    CONFIRMED: <Clock />,
-    READY: <PackageCheck />,
-    COMPLETED: <Truck />,
-  };
-
   return (
     <div
       {...attributes}
       {...listeners}
       className="m-0 h-full min-w-[370px] cursor-grab p-0"
+      onClick={() => {
+        setSelectedOrder?.(order);
+        setOpenDetailsOrder?.(true);
+      }}
     >
       <span className="sr-only">Move order</span>
       <Card
@@ -91,11 +106,11 @@ export function OrderCard({ order, isOverlay }: OrderCardProps) {
       >
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">
-            Pedido #{order.pickupCode}
+            PEDIDO #{order.pickupCode}
           </CardTitle>
           <Badge
             variant="outline"
-            className={`${statusColors[order.orderStatus as keyof typeof statusColors]} border-none p-2 text-white`}
+            className={`${statusColors[order.orderStatus as keyof typeof statusColors]} p-2`}
           >
             {iconsStatus[order.orderStatus]}
           </Badge>
@@ -142,7 +157,7 @@ export function OrderCard({ order, isOverlay }: OrderCardProps) {
                 )
               }
             >
-              <MessageCircle className="h-4 w-4" />
+              <MessageCircleMore className="h-4 w-4" />
               <span className="sr-only">Enviar WhatsApp</span>
             </Button>
           </div>

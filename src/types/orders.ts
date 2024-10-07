@@ -27,6 +27,22 @@ export type Order = {
   totalAmount: number;
 };
 
+export type OrderDetails = {
+  id: string;
+  orderStatus: OrderStatus;
+  pickupAddress: string;
+  pickupTime: string;
+  comments: string;
+  isActive: boolean;
+  cartId: string;
+  someonePickup: boolean;
+  cart: CartItem[];
+  pickupCode: string;
+  totalAmount: number;
+  client: Client;
+  updatedAt: string;
+};
+
 export type Cart = {
   id: string;
   clientId: string;
@@ -51,6 +67,13 @@ export type BillingDocument = {
   totalAmount: number;
   paymentStatus: PaymentStatus;
   isActive: boolean;
+};
+
+type Client = {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
 };
 
 export enum OrderStatus {

@@ -1,5 +1,6 @@
 "use client";
 import {
+  useGetOrderByIdQuery,
   useGetOrdersAllQuery,
   useUpdateOrderStatusMutation,
 } from "@/redux/services/ordersApi";
@@ -20,7 +21,15 @@ const OrderStatusEs = {
   CANCELLED: "Cancelado",
 };
 
-export const useOrders = (dateFilter?: Date | string, status?: string) => {
+interface UseOrdersProps {
+  id?: string;
+  status?: string;
+  dateFilter?: Date | string;
+}
+
+export const useOrders = (options: UseOrdersProps = {}) => {
+  const { dateFilter, status, id } = options;
+
   const date = dateFilter
     ? typeof dateFilter === "string"
       ? dateFilter
@@ -34,7 +43,17 @@ export const useOrders = (dateFilter?: Date | string, status?: string) => {
     refetch: refetchOrders,
   } = useGetOrdersAllQuery({ date, status });
 
+  const { data: orderById } = useGetOrderByIdQuery(
+    { id: id as string },
+    {
+      skip: !id, // Evita hacer la query si no hay id
+    },
+  );
+
   socket.on("new-order", () => {
+    refetchOrders();
+  });
+  socket.on("order-status-updated", () => {
     refetchOrders();
   });
 
@@ -89,5 +108,6 @@ export const useOrders = (dateFilter?: Date | string, status?: string) => {
     onOrderStatusUpdate,
     isLoadingUpdateOrderStatus,
     errorUpdateOrderStatus,
+    orderById,
   };
 };
