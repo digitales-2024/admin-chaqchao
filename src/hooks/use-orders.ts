@@ -53,6 +53,9 @@ export const useOrders = (options: UseOrdersProps = {}) => {
   socket.on("new-order", () => {
     refetchOrders();
   });
+  socket.on("order-status-updated", () => {
+    refetchOrders();
+  });
 
   const [
     updateOrderStatus,
