@@ -4,17 +4,9 @@ import { CSS } from "@dnd-kit/utilities";
 import { cva } from "class-variance-authority";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import {
-  Clock,
-  Mail,
-  MessageCircleMore,
-  PackageCheck,
-  Phone,
-  Truck,
-} from "lucide-react";
+import { Clock, PackageCheck, Truck } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 
@@ -116,54 +108,21 @@ export function OrderCard({
           </Badge>
         </CardHeader>
         <CardContent>
-          <div className="mb-4 text-sm text-muted-foreground">
-            Fecha: {format(order.pickupTime, "PPPp", { locale: es })}
-          </div>
-          <Separator className="my-4" />
-          <div className="space-y-2">
-            <h3 className="font-semibold">Datos del cliente</h3>
-            <p className="text-balance capitalize">{order.client.name}</p>
-            <p className="text-sm text-muted-foreground">
-              {order.client.phone}
+          <div className="flex flex-col gap-2 text-sm text-muted-foreground">
+            <p>
+              <Badge variant="outline" className="mr-2">
+                Cliente:{" "}
+              </Badge>
+              <span className="font-light capitalize">{order.client.name}</span>
             </p>
-            <p className="text-sm text-muted-foreground">
-              {order.client.email}
+            <p>
+              <Badge variant="outline" className="mr-2">
+                Fecha:{" "}
+              </Badge>
+              <span className="font-light">
+                {format(order.pickupTime, "PPPp", { locale: es })}
+              </span>
             </p>
-          </div>
-          <div className="mt-4 flex justify-between space-x-2">
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() =>
-                (window.location.href = `tel:${order.client.phone}`)
-              }
-            >
-              <Phone className="h-4 w-4" />
-              <span className="sr-only">Llamar</span>
-            </Button>
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() =>
-                (window.location.href = `mailto:${order.client.email}`)
-              }
-            >
-              <Mail className="h-4 w-4" />
-              <span className="sr-only">Enviar correo</span>
-            </Button>
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() =>
-                window.open(
-                  `https://wa.me/${order.client.phone.replace(/\s+/g, "")}`,
-                  "_blank",
-                )
-              }
-            >
-              <MessageCircleMore className="h-4 w-4" />
-              <span className="sr-only">Enviar WhatsApp</span>
-            </Button>
           </div>
           <Separator className="my-4" />
           <div className="flex items-center justify-between font-bold">
