@@ -1,5 +1,6 @@
 "use client";
 
+import { useOrders } from "@/hooks/use-orders";
 import { OrderStatus } from "@/types";
 import { Circle } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -15,6 +16,7 @@ import {
 import { cn } from "@/lib/utils";
 
 interface SelectStatusProps {
+  id: string;
   data: string;
 }
 
@@ -51,16 +53,24 @@ export const optionsStatus = [
   },
 ];
 
-export default function SelectStatus({ data }: SelectStatusProps) {
+export default function SelectStatus({ id, data }: SelectStatusProps) {
+  const { onOrderStatusUpdate, errorUpdateOrderStatus } = useOrders();
   const [selected, setSelected] = useState<string>(data);
 
   const handleStatusChange = (value: string) => {
     setSelected(value);
+    onOrderStatusUpdate(id, value);
   };
 
   const selectedOption = optionsStatus.find(
     (option) => option.value === selected,
   );
+
+  useEffect(() => {
+    if (errorUpdateOrderStatus) {
+      setSelected(data);
+    }
+  }, [errorUpdateOrderStatus]);
 
   useEffect(() => {
     setSelected(data);
