@@ -3,12 +3,13 @@ import { useDndContext, type UniqueIdentifier } from "@dnd-kit/core";
 import { SortableContext, useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { cva } from "class-variance-authority";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
+import { OrderSheetDetails } from "../OrderSheetDetails";
 import { OrderCard } from "./OrderCard";
 
 export interface Column {
@@ -30,6 +31,9 @@ interface BoardColumnProps {
 }
 
 export function BoardColumn({ column, orders, isOverlay }: BoardColumnProps) {
+  const [openDetailsOrder, setOpenDetailsOrder] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+
   const ordersIds = useMemo(() => {
     return orders.map((order) => order.id);
   }, [orders]);
@@ -95,10 +99,20 @@ export function BoardColumn({ column, orders, isOverlay }: BoardColumnProps) {
       <CardContent className="flex flex-grow flex-col gap-2 p-2">
         <SortableContext items={ordersIds}>
           {orders.map((order) => (
-            <OrderCard key={order.id} order={order} />
+            <OrderCard
+              setSelectedOrder={setSelectedOrder}
+              setOpenDetailsOrder={setOpenDetailsOrder}
+              key={order.id}
+              order={order}
+            />
           ))}
         </SortableContext>
       </CardContent>
+      <OrderSheetDetails
+        order={selectedOrder}
+        open={openDetailsOrder}
+        onOpenChange={() => setOpenDetailsOrder(false)}
+      />
     </Card>
   );
 }
