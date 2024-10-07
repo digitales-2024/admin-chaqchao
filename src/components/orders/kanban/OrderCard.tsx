@@ -21,6 +21,8 @@ import { Separator } from "@/components/ui/separator";
 interface OrderCardProps {
   order: Order;
   isOverlay?: boolean;
+  setSelectedOrder?: (order: Order) => void;
+  setOpenDetailsOrder?: (open: boolean) => void;
 }
 
 export type OrderType = "Order";
@@ -36,9 +38,9 @@ export const statusColors: Record<Order["orderStatus"], string> = {
 };
 
 export const iconsStatus: Record<Order["orderStatus"], React.ReactElement> = {
-  CONFIRMED: <Clock />,
-  READY: <PackageCheck />,
-  COMPLETED: <Truck />,
+  CONFIRMED: <Clock size={15} />,
+  READY: <PackageCheck size={15} />,
+  COMPLETED: <Truck size={15} />,
 };
 export const translateStatus: Record<Order["orderStatus"], string> = {
   CONFIRMED: "Pendiente",
@@ -46,7 +48,13 @@ export const translateStatus: Record<Order["orderStatus"], string> = {
   COMPLETED: "Completado",
 };
 
-export function OrderCard({ order, isOverlay }: OrderCardProps) {
+export function OrderCard({
+  order,
+  isOverlay,
+  setSelectedOrder,
+  setOpenDetailsOrder,
+}: OrderCardProps) {
+  console.log("🚀 ~ setSelectedOrder:", setSelectedOrder);
   const {
     setNodeRef,
     attributes,
@@ -84,6 +92,10 @@ export function OrderCard({ order, isOverlay }: OrderCardProps) {
       {...attributes}
       {...listeners}
       className="m-0 h-full min-w-[370px] cursor-grab p-0"
+      onClick={() => {
+        setSelectedOrder?.(order);
+        setOpenDetailsOrder?.(true);
+      }}
     >
       <span className="sr-only">Move order</span>
       <Card
