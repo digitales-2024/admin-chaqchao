@@ -28,7 +28,7 @@ import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Badge } from "../ui/badge";
 import { ScrollArea, ScrollBar } from "../ui/scroll-area";
-import { Sheet, SheetContent, SheetFooter, SheetTitle } from "../ui/sheet";
+import { Sheet, SheetContent, SheetTitle } from "../ui/sheet";
 import { iconsStatus, statusColors, translateStatus } from "./kanban/OrderCard";
 
 interface OrderSheetDetailsProps {
@@ -45,7 +45,6 @@ export const OrderSheetDetails = ({
   const { orderById } = useOrders({
     id: order?.id,
   });
-
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="flex h-full min-h-screen flex-col gap-5 sm:max-w-[36rem]">
@@ -82,12 +81,16 @@ export const OrderSheetDetails = ({
             <div className="ml-auto flex items-center gap-1">
               <Badge
                 variant="outline"
-                className={`${statusColors[order?.orderStatus as keyof typeof statusColors]} flex gap-2 font-light`}
+                className={`${statusColors[orderById?.orderStatus as keyof typeof statusColors]} flex gap-2 font-light`}
               >
-                {iconsStatus[order?.orderStatus as keyof typeof iconsStatus]}
+                {
+                  iconsStatus[
+                    orderById?.orderStatus as keyof typeof iconsStatus
+                  ]
+                }
                 {
                   translateStatus[
-                    order?.orderStatus as keyof typeof translateStatus
+                    orderById?.orderStatus as keyof typeof translateStatus
                   ]
                 }
               </Badge>
@@ -115,24 +118,24 @@ export const OrderSheetDetails = ({
             <div className="grid gap-4">
               <div className="font-semibold">Detalles del pedido</div>
               <ul className="grid gap-3">
-                {orderById?.cart.map((item) => (
+                {orderById?.cart.products.map((product) => (
                   <li
                     className="flex items-center justify-between"
-                    key={item.id}
+                    key={product.id}
                   >
                     <div className="flex items-center gap-2 truncate">
                       <Avatar className="bg-slate-100">
-                        <AvatarImage src={item.image} alt={item.name} />
+                        <AvatarImage src={product.image} alt={product.name} />
                         <AvatarFallback>
                           <Apple />
                         </AvatarFallback>
                       </Avatar>
                       <span className="text-muted-foreground">
-                        {item.name} x{" "}
-                        <span className="text-xs">{item.quantity}</span>
+                        {product.name} x{" "}
+                        <span className="text-xs">{product.quantity}</span>
                       </span>
                     </div>
-                    <span>S/.{item.price}</span>
+                    <span>S/.{product.price}</span>
                   </li>
                 ))}
               </ul>
@@ -142,13 +145,7 @@ export const OrderSheetDetails = ({
                   <span className="text-xs font-extralight text-slate-400">
                     Subtotal
                   </span>
-                  <span>
-                    S/.
-                    {orderById?.cart.reduce(
-                      (acc, item) => acc + item.price * item.quantity,
-                      0,
-                    )}
-                  </span>
+                  <span>S/. 00</span>
                 </li>
                 <li className="flex items-center justify-between">
                   <span className="text-xs font-extralight text-slate-400">
@@ -181,7 +178,7 @@ export const OrderSheetDetails = ({
                       className="h-6 w-6 opacity-0 transition-opacity group-hover/email:opacity-100"
                     >
                       <span className="sr-only">Email client</span>
-                      <a href="mailto:">
+                      <a href={`mailto: ${orderById?.client.email}`}>
                         <Mail className="h-3 w-3" />
                       </a>
                     </Button>
@@ -197,7 +194,7 @@ export const OrderSheetDetails = ({
                       className="h-6 w-6 opacity-0 transition-opacity group-hover/phone:opacity-100"
                     >
                       <span className="sr-only">Phone client</span>
-                      <a href="tel:">
+                      <a href={`tel:${orderById?.client.phone}`}>
                         <Phone className="h-3 w-3" />
                       </a>
                     </Button>
@@ -232,14 +229,6 @@ export const OrderSheetDetails = ({
                 </div>
               </dl>
             </div>
-
-            <SheetFooter className="flex flex-row items-center border-t bg-muted/50 px-6 py-3">
-              <div className="text-xs text-muted-foreground">
-                {orderById?.updatedAt
-                  ? format(orderById.updatedAt, "PPPp", { locale: es })
-                  : "Fecha no disponible"}
-              </div>
-            </SheetFooter>
             <ScrollBar orientation="horizontal" />
           </div>
         </ScrollArea>
