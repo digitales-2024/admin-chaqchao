@@ -39,7 +39,7 @@ export default function ClassPage() {
       setNewParticipants(newParticipantsCount);
       setPreviousData(allDataClasses);
     }
-  }, [allDataClasses]);
+  }, [allDataClasses, previousData]);
 
   if (isLoadingDataClasses) {
     return (
