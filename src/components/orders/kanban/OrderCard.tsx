@@ -122,16 +122,20 @@ export function OrderCard({
           <Separator className="my-4" />
           <div className="space-y-2">
             <h3 className="font-semibold">Datos del cliente</h3>
-            <p className="text-balance capitalize">{order.clientName}</p>
-            <p className="text-sm text-muted-foreground">{order.clientPhone}</p>
-            <p className="text-sm text-muted-foreground">{order.clientEmail}</p>
+            <p className="text-balance capitalize">{order.client.name}</p>
+            <p className="text-sm text-muted-foreground">
+              {order.client.phone}
+            </p>
+            <p className="text-sm text-muted-foreground">
+              {order.client.email}
+            </p>
           </div>
           <div className="mt-4 flex justify-between space-x-2">
             <Button
               variant="outline"
               size="icon"
               onClick={() =>
-                (window.location.href = `tel:${order.clientPhone}`)
+                (window.location.href = `tel:${order.client.phone}`)
               }
             >
               <Phone className="h-4 w-4" />
@@ -141,7 +145,7 @@ export function OrderCard({
               variant="outline"
               size="icon"
               onClick={() =>
-                (window.location.href = `mailto:${order.clientEmail}`)
+                (window.location.href = `mailto:${order.client.email}`)
               }
             >
               <Mail className="h-4 w-4" />
@@ -152,7 +156,7 @@ export function OrderCard({
               size="icon"
               onClick={() =>
                 window.open(
-                  `https://wa.me/${order.clientPhone.replace(/\s+/g, "")}`,
+                  `https://wa.me/${order.client.phone.replace(/\s+/g, "")}`,
                   "_blank",
                 )
               }
