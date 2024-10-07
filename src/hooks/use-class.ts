@@ -3,6 +3,7 @@ import {
   useExportClassesToExcelMutation,
   useExportClassesToPdfMutation,
 } from "@/redux/services/classApi";
+import { socket } from "@/socket/socket";
 import { ClassesDataAdmin } from "@/types";
 
 /**
@@ -48,7 +49,12 @@ export const useClasses = (date?: string) => {
     data: allDataClasses,
     error,
     isLoading: isLoadingDataClasses,
+    refetch: refetchClasses,
   } = useGetAllClassesQuery({ date: queryDate });
+
+  socket.on("new-class-register", () => {
+    refetchClasses();
+  });
 
   const [
     exportToExcel,
