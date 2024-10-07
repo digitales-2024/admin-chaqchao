@@ -25,10 +25,10 @@ export default function PagerOrders() {
   const [filterStatus, setFilterStatus] = useState<OrderStatus>(
     OrderStatus.ALL,
   );
-  const { dataOrders, isLoadingOrders } = useOrders(
-    format(date, "yyyy-MM-dd"),
-    filterStatus,
-  );
+  const { dataOrders, isLoadingOrders } = useOrders({
+    dateFilter: format(date, "yyyy-MM-dd"),
+    status: filterStatus,
+  });
 
   if (isLoadingOrders) {
     return (
@@ -54,7 +54,7 @@ export default function PagerOrders() {
         <HeaderPage title="Pedidos" />
         <SwitchModeView />
       </div>
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col items-end justify-between gap-2 md:flex-row md:items-center">
         <p className="flex gap-2 text-sm font-extralight text-slate-400">
           <span>Total</span>
           {dataOrders.length || 0}
@@ -65,7 +65,7 @@ export default function PagerOrders() {
             filterStatus={filterStatus}
             setFilterStatus={setFilterStatus}
           />
-          <FilterDate date={date} setDate={setDate} />
+          <FilterDate date={date ?? new Date()} setDate={setDate} />
         </div>
       </div>
       <Separator />
