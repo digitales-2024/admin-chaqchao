@@ -8,14 +8,12 @@ import {
   useSensor,
   useSensors,
   KeyboardSensor,
-  Announcements,
-  UniqueIdentifier,
   TouchSensor,
   MouseSensor,
   PointerSensor,
 } from "@dnd-kit/core";
 import { SortableContext, arrayMove } from "@dnd-kit/sortable";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 
 import { BoardColumn, BoardContainer } from "./BoardColumn";
@@ -43,7 +41,6 @@ export type OrderorderStatus = (typeof defaultCols)[number]["id"];
 
 export function KanbanBoard({ data }: { data: Order[] }) {
   const [columns, setColumns] = useState<Column[]>(defaultCols);
-  const pickedUpOrderColumn = useRef<OrderorderStatus | null>(null);
   const columnsId = useMemo(() => columns.map((col) => col.id), [columns]);
 
   const [orders, setOrders] = useState<Order[]>(data);
@@ -51,8 +48,6 @@ export function KanbanBoard({ data }: { data: Order[] }) {
   useEffect(() => {
     setOrders(data);
   }, [data]);
-
-  const [activeColumn, setActiveColumn] = useState<Column | null>(null);
 
   const [activeOrder, setActiveOrder] = useState<Order | null>(null);
 
@@ -69,134 +64,9 @@ export function KanbanBoard({ data }: { data: Order[] }) {
     }),
   );
 
-  function getDraggingOrderData(
-    orderId: UniqueIdentifier,
-    orderStatus: OrderorderStatus,
-  ) {
-    const ordersInColumn = orders.filter(
-      (order) => order.orderStatus === orderStatus,
-    );
-    const orderPosition = ordersInColumn.findIndex(
-      (order) => order.id === orderId,
-    );
-    const column = columns.find((col) => col.id === orderStatus);
-    return {
-      ordersInColumn,
-      orderPosition,
-      column,
-    };
-  }
-
-  const announcements: Announcements = {
-    onDragStart({ active }) {
-      if (!hasDraggableData(active)) return;
-      if (active.data.current?.type === "Column") {
-        const startOrderorderStatusx = columnsId.findIndex(
-          (id) => id === active.id,
-        );
-        const startColumn = columns[startOrderorderStatusx];
-        return `Picked up Column ${startColumn?.title} at position: ${
-          startOrderorderStatusx + 1
-        } of ${columnsId.length}`;
-      } else if (active.data.current?.type === "Order") {
-        pickedUpOrderColumn.current = active.data.current.order
-          .orderStatus as OrderorderStatus;
-        const { ordersInColumn, orderPosition, column } = getDraggingOrderData(
-          active.id,
-          pickedUpOrderColumn.current,
-        );
-        return `Picked up Order ${
-          active.data.current.order.id
-        } at position: ${orderPosition + 1} of ${
-          ordersInColumn.length
-        } in column ${column?.title}`;
-      }
-    },
-    onDragOver({ active, over }) {
-      if (!hasDraggableData(active) || !hasDraggableData(over)) return;
-
-      if (
-        active.data.current?.type === "Column" &&
-        over.data.current?.type === "Column"
-      ) {
-        const overOrderorderStatusx = columnsId.findIndex(
-          (id) => id === over.id,
-        );
-        return `Column ${active.data.current.column.title} was moved over ${
-          over.data.current.column.title
-        } at position ${overOrderorderStatusx + 1} of ${columnsId.length}`;
-      } else if (
-        active.data.current?.type === "Order" &&
-        over.data.current?.type === "Order"
-      ) {
-        const { ordersInColumn, orderPosition, column } = getDraggingOrderData(
-          over.id,
-          over.data.current.order.orderStatus as OrderorderStatus,
-        );
-        if (
-          over.data.current.order.orderStatus !== pickedUpOrderColumn.current
-        ) {
-          return `Order ${
-            active.data.current.order.id
-          } was moved over column ${column?.title} in position ${
-            orderPosition + 1
-          } of ${ordersInColumn.length}`;
-        }
-        return `Order was moved over position ${orderPosition + 1} of ${
-          ordersInColumn.length
-        } in column ${column?.title}`;
-      }
-    },
-    onDragEnd({ active, over }) {
-      if (!hasDraggableData(active) || !hasDraggableData(over)) {
-        pickedUpOrderColumn.current = null;
-        return;
-      }
-      if (
-        active.data.current?.type === "Column" &&
-        over.data.current?.type === "Column"
-      ) {
-        const overColumnPosition = columnsId.findIndex((id) => id === over.id);
-
-        return `Column ${
-          active.data.current.column.title
-        } was dropped into position ${overColumnPosition + 1} of ${
-          columnsId.length
-        }`;
-      } else if (
-        active.data.current?.type === "Order" &&
-        over.data.current?.type === "Order"
-      ) {
-        const { ordersInColumn, orderPosition, column } = getDraggingOrderData(
-          over.id,
-          over.data.current.order.orderStatus as OrderorderStatus,
-        );
-        if (
-          over.data.current.order.orderStatus !== pickedUpOrderColumn.current
-        ) {
-          return `Order was dropped into column ${column?.title} in position ${
-            orderPosition + 1
-          } of ${ordersInColumn.length}`;
-        }
-        return `Order was dropped into position ${orderPosition + 1} of ${
-          ordersInColumn.length
-        } in column ${column?.title}`;
-      }
-      pickedUpOrderColumn.current = null;
-    },
-    onDragCancel({ active }) {
-      pickedUpOrderColumn.current = null;
-      if (!hasDraggableData(active)) return;
-      return `Dragging ${active.data.current?.type} cancelled.`;
-    },
-  };
-
   return (
     <>
       <DndContext
-        accessibility={{
-          announcements,
-        }}
         sensors={sensors}
         onDragStart={onDragStart}
         onDragEnd={onDragEnd}
@@ -217,15 +87,6 @@ export function KanbanBoard({ data }: { data: Order[] }) {
         {"document" in window &&
           createPortal(
             <DragOverlay>
-              {activeColumn && (
-                <BoardColumn
-                  isOverlay
-                  column={activeColumn}
-                  orders={orders.filter(
-                    (order) => order.orderStatus === activeColumn.id,
-                  )}
-                />
-              )}
               {activeOrder && <OrderCard order={activeOrder} isOverlay />}
             </DragOverlay>,
             document.body,
@@ -237,11 +98,6 @@ export function KanbanBoard({ data }: { data: Order[] }) {
   function onDragStart(event: DragStartEvent) {
     if (!hasDraggableData(event.active)) return;
     const data = event.active.data.current;
-    if (data?.type === "Column") {
-      setActiveColumn(data.column);
-      return;
-    }
-
     if (data?.type === "Order") {
       setActiveOrder(data.order);
       return;
@@ -249,7 +105,6 @@ export function KanbanBoard({ data }: { data: Order[] }) {
   }
 
   function onDragEnd(event: DragEndEvent) {
-    setActiveColumn(null);
     setActiveOrder(null);
 
     const { active, over } = event;
