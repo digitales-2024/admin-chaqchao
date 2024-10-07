@@ -13,6 +13,7 @@ export type ClassData = {
   typeCurrency: string;
   dateClass: Date;
   scheduleClass: string;
+  comments: string;
 };
 
 export type ClassesDataAdmin = {
