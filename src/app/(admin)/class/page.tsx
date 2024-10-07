@@ -22,7 +22,7 @@ export default function ClassPage() {
   );
 
   useEffect(() => {
-    if (allDataClasses) {
+    if (allDataClasses && allDataClasses !== previousData) {
       const newParticipantsCount: { [key: string]: number } = {};
       allDataClasses.forEach((classData, index) => {
         const previousClassData = previousData[index];
@@ -39,7 +39,7 @@ export default function ClassPage() {
       setNewParticipants(newParticipantsCount);
       setPreviousData(allDataClasses);
     }
-  }, [allDataClasses]);
+  }, [allDataClasses, previousData]);
 
   if (isLoadingDataClasses) {
     return (
