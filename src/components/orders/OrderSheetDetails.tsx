@@ -4,13 +4,16 @@ import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import {
   Apple,
+  Clock,
   Copy,
   CreditCard,
   Mail,
   MessageCircleMore,
   MoreVertical,
+  PackageCheck,
   PackageX,
   Phone,
+  Truck,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -29,8 +32,23 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Badge } from "../ui/badge";
 import { ScrollArea, ScrollBar } from "../ui/scroll-area";
 import { Sheet, SheetContent, SheetTitle } from "../ui/sheet";
-import { iconsStatus, statusColors, translateStatus } from "./kanban/OrderCard";
 
+export const statusColors: Record<Order["orderStatus"], string> = {
+  CONFIRMED: "border-slate-300 text-slate-300",
+  READY: "border-cyan-500 text-cyan-500",
+  COMPLETED: "border-green-500 text-green-500",
+};
+
+export const iconsStatus: Record<Order["orderStatus"], React.ReactElement> = {
+  CONFIRMED: <Clock size={15} />,
+  READY: <PackageCheck size={15} />,
+  COMPLETED: <Truck size={15} />,
+};
+export const translateStatus: Record<Order["orderStatus"], string> = {
+  CONFIRMED: "Pendiente",
+  READY: "Listo",
+  COMPLETED: "Completado",
+};
 interface OrderSheetDetailsProps {
   order: Order | null;
   open: boolean;
