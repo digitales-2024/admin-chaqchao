@@ -116,7 +116,7 @@ export const useOrders = (options: UseOrdersProps = {}) => {
     }
     return toast.promise(promise(), {
       loading: "Actualizando estado del pedido...",
-      success: `Estado de pedido a ${translateStatus(status)} actualizado`,
+      success: `Estado de pedido a ${translateStatus(status).toUpperCase()} actualizado`,
       error: (err) => err.message,
     });
   };
