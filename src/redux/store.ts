@@ -40,9 +40,12 @@ export const store = configureStore({
       // Configuración para evitar errores de "non-serializable value"
       serializableCheck: {
         // Ignorar las acciones que no son serializables, específicamente de classApi
-        ignoredActions: ["classApi/executeMutation/fulfilled"],
+        ignoredActions: [
+          "classApi/executeMutation/fulfilled",
+          "ordersApi/executeMutation/fulfilled",
+        ],
         // Ignorar las rutas en el estado que contienen valores no serializables
-        ignoredPaths: ["classApi.mutations"],
+        ignoredPaths: ["classApi.mutations", "ordersApi.mutations"],
       },
     })
       .concat(authApi.middleware)
