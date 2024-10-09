@@ -111,7 +111,7 @@ export function CreateProductDialog() {
             <DialogTitle>{dataForm.title}</DialogTitle>
             <DialogDescription>{dataForm.description}</DialogDescription>
           </DialogHeader>
-          <ScrollArea className="mt-4 max-h-[740px] w-full justify-center gap-4">
+          <ScrollArea className="h-full max-h-[80vh] w-full justify-center gap-4">
             <CreateProductsForm form={form} onSubmit={onSubmit}>
               <DialogFooter className="gap-2 sm:space-x-0">
                 <Button
