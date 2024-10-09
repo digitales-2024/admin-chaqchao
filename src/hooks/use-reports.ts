@@ -70,7 +70,7 @@ export const useReports = () => {
           link.remove();
           window.URL.revokeObjectURL(url);
 
-          resolve("Ordenes exportadas a PDF con éxito");
+          resolve("Pedidos exportadas a PDF con éxito");
         } catch (error) {
           console.error("Error exporting orders to PDF:", error);
           reject(new Error("Error al exportar órdenes a PDF"));
@@ -78,8 +78,8 @@ export const useReports = () => {
       });
 
     return toast.promise(promise(), {
-      loading: "Exportando órdenes a PDF...",
-      success: "Órdenes exportadas a PDF con éxito",
+      loading: "Exportando pedidos a PDF...",
+      success: "Pedidos exportadas a PDF con éxito",
       error: (err) => err.message,
     });
   };
@@ -103,7 +103,7 @@ export const useReports = () => {
           link.click();
           link.remove();
 
-          resolve("Ordenes exportadas a Excel con éxito");
+          resolve("Pedidos exportadas a Excel con éxito");
         } catch (error) {
           console.error("Error exporting orders to Excel:", error);
           reject(new Error("Error al exportar órdenes a Excel"));
@@ -111,8 +111,8 @@ export const useReports = () => {
       });
 
     return toast.promise(promise(), {
-      loading: "Exportando órdenes a Excel...",
-      success: "Órdenes exportadas a Excel con éxito",
+      loading: "Exportando pedidos a Excel...",
+      success: "Pedidos exportadas a Excel con éxito",
       error: (err) => err.message,
     });
   };
