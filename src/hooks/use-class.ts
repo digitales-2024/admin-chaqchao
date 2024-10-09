@@ -5,41 +5,7 @@ import {
 } from "@/redux/services/classApi";
 import { socket } from "@/socket/socket";
 import { ClassesDataAdmin } from "@/types";
-
-/**
- * Mapear las filas seleccionadas a un objeto de datos de clases
- * @param selectedRows Filas seleccionadas
- * @returns Filas seleccionadas mapeadas a un objeto de datos de clases
- */
-const mapSelectedRowsToClassesData = (
-  selectedRows: ClassesDataAdmin[],
-): ClassesDataAdmin[] => {
-  return selectedRows.map((original) => {
-    return {
-      dateClass: original.dateClass,
-      scheduleClass: original.scheduleClass,
-      totalParticipants: original.totalParticipants,
-      classLanguage: original.classLanguage,
-      classes: original.classes.map((classDetail) => ({
-        id: classDetail.id,
-        userName: classDetail.userName,
-        userEmail: classDetail.userEmail,
-        userPhone: classDetail.userPhone,
-        totalParticipants: classDetail.totalParticipants,
-        totalAdults: classDetail.totalAdults,
-        totalChildren: classDetail.totalChildren,
-        totalPrice: classDetail.totalPrice,
-        totalPriceAdults: classDetail.totalPriceAdults,
-        totalPriceChildren: classDetail.totalPriceChildren,
-        languageClass: classDetail.languageClass,
-        typeCurrency: classDetail.typeCurrency,
-        dateClass: classDetail.dateClass,
-        scheduleClass: classDetail.scheduleClass,
-        comments: classDetail.comments,
-      })),
-    };
-  });
-};
+import { toast } from "sonner";
 
 // Hook para obtener todas las clases
 export const useClasses = (date?: string) => {
@@ -73,26 +39,32 @@ export const useClasses = (date?: string) => {
    * @returns Excel Blob
    */
   const exportClassesToExcel = async (selectedRows: ClassesDataAdmin[]) => {
-    try {
-      // Mapear los datos de las filas seleccionadas
-      const data = mapSelectedRowsToClassesData(selectedRows);
+    const promise = () =>
+      new Promise(async (resolve, reject) => {
+        try {
+          const response = await exportToExcel(selectedRows).unwrap();
 
-      const response = await exportToExcel(data).unwrap();
+          // Crear un enlace para descargar el archivo
+          const url = window.URL.createObjectURL(new Blob([response]));
+          const link = document.createElement("a");
+          link.href = url;
+          link.setAttribute("download", "classes.xlsx");
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
 
-      // Crear un enlace para descargar el archivo
-      const url = window.URL.createObjectURL(new Blob([response]));
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", "classes.xlsx");
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
+          resolve("Clases exportadas a Excel con éxito");
+        } catch (error) {
+          console.error("Error exporting to Excel:", error);
+          reject(new Error("Error al exportar clases a Excel"));
+        }
+      });
 
-      return response;
-    } catch (error) {
-      console.error("Error exporting to Excel:", error);
-      throw error;
-    }
+    return toast.promise(promise(), {
+      loading: "Exportando clases a Excel...",
+      success: "Clases exportadas a Excel con éxito",
+      error: (err) => err.message,
+    });
   };
 
   /**
@@ -100,30 +72,37 @@ export const useClasses = (date?: string) => {
    * @param selectedRows Filas seleccionadas
    */
   const exportClassesToPdf = async (selectedRows: ClassesDataAdmin[]) => {
-    try {
-      // Mapear los datos de las filas seleccionadas
-      const data = mapSelectedRowsToClassesData(selectedRows);
+    const promise = () =>
+      new Promise(async (resolve, reject) => {
+        try {
+          const response = await exportToPdf(selectedRows).unwrap();
 
-      // Llama a la mutación para exportar a PDF
-      const response = await exportToPdf(data).unwrap();
+          // Crear el enlace de descarga
+          const url = window.URL.createObjectURL(response);
+          const link = document.createElement("a");
+          link.href = url;
+          link.setAttribute("download", "class_report.pdf");
 
-      // Crear el enlace de descarga
-      const url = window.URL.createObjectURL(response);
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", "class_report.pdf");
+          // Añadir el enlace al DOM y disparar la descarga
+          document.body.appendChild(link);
+          link.click();
 
-      // Añadir el enlace al DOM y disparar la descarga
-      document.body.appendChild(link);
-      link.click();
+          // Eliminar el enlace temporal del DOM
+          document.body.removeChild(link);
+          window.URL.revokeObjectURL(url); // Limpiar el objeto URL
 
-      // Eliminar el enlace temporal del DOM
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url); // Limpiar el objeto URL
-    } catch (error) {
-      console.error("Error exporting to PDF:", error);
-      throw error;
-    }
+          resolve("Clases exportadas a PDF con éxito");
+        } catch (error) {
+          console.error("Error exporting to PDF:", error);
+          reject(new Error("Error al exportar clases a PDF"));
+        }
+      });
+
+    return toast.promise(promise(), {
+      loading: "Exportando clases a PDF...",
+      success: "Clases exportadas a PDF con éxito",
+      error: (err) => err.message,
+    });
   };
 
   return {
