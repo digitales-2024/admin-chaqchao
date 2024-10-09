@@ -58,7 +58,7 @@ export const getColumnsOrders = (): ColumnDef<Order>[] => [
       <DataTableColumnHeader column={column} title="Cliente" />
     ),
     cell: ({ row }) => (
-      <div className="truncate capitalize">{row.getValue("cliente")}</div>
+      <div className="truncate capitalize">{row.original.client.name}</div>
     ),
   },
   {

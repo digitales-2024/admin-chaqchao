@@ -48,6 +48,17 @@ export const ordersApi = createApi({
       }),
       invalidatesTags: ["Orders"],
     }),
+
+    // Descargar pedido en PDF
+    downloadOrderPdf: build.mutation<Blob, { id: string }>({
+      query: ({ id }) => ({
+        url: `/orders/export/pdf/${id}`,
+        method: "POST",
+        responseHandler: (response: Response) => response.blob(),
+        credentials: "include",
+      }),
+      invalidatesTags: ["Orders"],
+    }),
   }),
 });
 
@@ -55,4 +66,5 @@ export const {
   useGetOrderByIdQuery,
   useGetOrdersAllQuery,
   useUpdateOrderStatusMutation,
+  useDownloadOrderPdfMutation,
 } = ordersApi;
