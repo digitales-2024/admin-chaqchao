@@ -1,10 +1,10 @@
 import { useOrders } from "@/hooks/use-orders";
-import { Order } from "@/types";
+import { Order, OrderStatus } from "@/types";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import {
-  Apple,
   Clock,
+  Coffee,
   Copy,
   CreditCard,
   Mail,
@@ -15,6 +15,7 @@ import {
   Phone,
   Truck,
 } from "lucide-react";
+import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { CardDescription, CardTitle } from "@/components/ui/card";
@@ -28,6 +29,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Separator } from "@/components/ui/separator";
 
+import { cn } from "@/lib/utils";
+
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Badge } from "../ui/badge";
 import { ScrollArea, ScrollBar } from "../ui/scroll-area";
@@ -37,17 +40,20 @@ export const statusColors: Record<Order["orderStatus"], string> = {
   CONFIRMED: "border-slate-300 text-slate-300",
   READY: "border-cyan-500 text-cyan-500",
   COMPLETED: "border-green-500 text-green-500",
+  CANCELLED: "border-rose-500 text-rose-500",
 };
 
 export const iconsStatus: Record<Order["orderStatus"], React.ReactElement> = {
   CONFIRMED: <Clock size={15} />,
   READY: <PackageCheck size={15} />,
   COMPLETED: <Truck size={15} />,
+  CANCELLED: <PackageX size={15} />,
 };
 export const translateStatus: Record<Order["orderStatus"], string> = {
   CONFIRMED: "Pendiente",
   READY: "Listo",
   COMPLETED: "Completado",
+  CANCELLED: "Cancelado",
 };
 interface OrderSheetDetailsProps {
   order: Order | null;
@@ -63,21 +69,45 @@ export const OrderSheetDetails = ({
   const { orderById } = useOrders({
     id: order?.id,
   });
+
+  const [isCopy, setIsCopy] = useState<boolean>(false);
+  const handleCopyOrderID = () => {
+    setIsCopy(true);
+    navigator.clipboard.writeText(orderById?.pickupCode as string);
+    setTimeout(() => {
+      setIsCopy(false);
+    }, 2000);
+  };
+
+  const { onOrderStatusUpdate } = useOrders();
+
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="flex h-full min-h-screen flex-col gap-5 sm:max-w-[36rem]">
         <ScrollArea className="h-fit">
           <SheetTitle className="flex flex-row flex-wrap-reverse items-start gap-2 bg-muted/50 py-4">
             <div className="grid gap-0.5">
-              <CardTitle className="group flex items-center gap-2 text-lg">
+              <CardTitle className="group relative flex w-fit items-center gap-2 text-lg">
                 <span className="font-thin uppercase text-slate-500">
                   Pedido#{" "}
                 </span>
                 <span className="truncate">{orderById?.pickupCode}</span>
+                <span
+                  className={cn(
+                    "absolute -top-3 right-0 rotate-12 truncate text-xs font-thin text-slate-400 transition-all duration-300",
+                    {
+                      "scale-0 opacity-0": !isCopy,
+                      "scale-105 opacity-100": isCopy,
+                    },
+                  )}
+                >
+                  copiado
+                </span>
                 <Button
                   size="icon"
                   variant="outline"
                   className="h-6 w-6 opacity-0 transition-opacity group-hover:opacity-100"
+                  onClick={handleCopyOrderID}
                 >
                   <Copy className="h-3 w-3" />
                   <span className="sr-only">Copy Order ID</span>
@@ -122,7 +152,15 @@ export const OrderSheetDetails = ({
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem>Exportar</DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem>
+                  <DropdownMenuItem
+                    className="hover:cursor-pointer hover:text-rose-500"
+                    onSelect={() =>
+                      onOrderStatusUpdate(
+                        orderById?.id as string,
+                        OrderStatus.CANCELLED,
+                      )
+                    }
+                  >
                     Cancelar
                     <DropdownMenuShortcut>
                       <PackageX className="size-4" aria-hidden="true" />
@@ -145,7 +183,7 @@ export const OrderSheetDetails = ({
                       <Avatar className="bg-slate-100">
                         <AvatarImage src={product.image} alt={product.name} />
                         <AvatarFallback>
-                          <Apple />
+                          <Coffee />
                         </AvatarFallback>
                       </Avatar>
                       <span className="text-muted-foreground">
