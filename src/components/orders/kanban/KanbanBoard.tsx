@@ -3,7 +3,7 @@ import { useMediaQuery } from "@/hooks/use-media-query";
 import { useOrders } from "@/hooks/use-orders";
 import { Order } from "@/types";
 import { DragDropContext, Droppable, DropResult } from "@hello-pangea/dnd";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import Column from "./Column";
 
@@ -24,6 +24,10 @@ export default function KanbanBoard({
 
   // Estado local para mantener una copia optimista de los pedidos
   const [tempOrders, setTempOrders] = useState<Order[]>(data);
+
+  useEffect(() => {
+    setTempOrders(data);
+  }, [data]);
 
   // Usamos una referencia para controlar si estamos actualizando en la base de datos
   const isUpdatingRef = useRef(false);
