@@ -14,6 +14,7 @@ import { classScheduleApi } from "./services/classScheduleApi";
 import { clientsApi } from "./services/clientsApi";
 import { ordersApi } from "./services/ordersApi";
 import { productsApi } from "./services/productsApi";
+import { reportsApi } from "./services/reportsApi";
 import { rolesApi } from "./services/rolesApi";
 import { usersApi } from "./services/usersApi";
 
@@ -34,15 +35,19 @@ export const store = configureStore({
     [clientsApi.reducerPath]: clientsApi.reducer,
     [ordersApi.reducerPath]: ordersApi.reducer,
     [classApi.reducerPath]: classApi.reducer,
+    [reportsApi.reducerPath]: reportsApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       // Configuración para evitar errores de "non-serializable value"
       serializableCheck: {
         // Ignorar las acciones que no son serializables, específicamente de classApi
-        ignoredActions: ["classApi/executeMutation/fulfilled"],
+        ignoredActions: [
+          "classApi/executeMutation/fulfilled",
+          "reportsApi/executeMutation/fulfilled",
+        ],
         // Ignorar las rutas en el estado que contienen valores no serializables
-        ignoredPaths: ["classApi.mutations"],
+        ignoredPaths: ["classApi.mutations", "reportsApi.mutations"],
       },
     })
       .concat(authApi.middleware)
@@ -59,7 +64,8 @@ export const store = configureStore({
       .concat(classRegistrationApi.middleware)
       .concat(productsApi.middleware)
       .concat(ordersApi.middleware)
-      .concat(classApi.middleware),
+      .concat(classApi.middleware)
+      .concat(reportsApi.middleware),
 });
 
 setupListeners(store.dispatch);
