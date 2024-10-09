@@ -1,7 +1,7 @@
 "use client";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { useOrders } from "@/hooks/use-orders";
-import { Order } from "@/types";
+import { Order, OrderStatus } from "@/types";
 import { DragDropContext, Droppable, DropResult } from "@hello-pangea/dnd";
 import { useCallback, useEffect, useRef, useState } from "react";
 
@@ -18,7 +18,11 @@ export default function KanbanBoard({
   setOpenDetailsOrder,
   setSelectedOrder,
 }: KanbanBoardProps) {
-  const boardStatus = ["CONFIRMED", "READY", "COMPLETED"];
+  const boardStatus = [
+    OrderStatus.CONFIRMED,
+    OrderStatus.READY,
+    OrderStatus.COMPLETED,
+  ];
   const { onOrderStatusUpdate, isLoadingUpdateOrderStatus } = useOrders();
   const isMobile = useMediaQuery("(max-width: 640px)");
 
