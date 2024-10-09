@@ -8,6 +8,7 @@ import {
 } from "@/redux/services/reportsApi";
 import { FilterOrdersSchema } from "@/schemas/reports/filterOrdersSchema";
 import { FilterProductSchema } from "@/schemas/reports/filterProductSchema";
+import { toast } from "sonner";
 
 // Hook para exportar reportes
 export const useReports = () => {
@@ -55,21 +56,32 @@ export const useReports = () => {
    * @param filter Filtros de órdenes
    */
   const exportOrdersReportToPdf = async (filter: FilterOrdersSchema) => {
-    try {
-      const response = await exportOrdersToPdf({ filter }).unwrap();
+    const promise = () =>
+      new Promise(async (resolve, reject) => {
+        try {
+          const response = await exportOrdersToPdf({ filter }).unwrap();
 
-      const url = window.URL.createObjectURL(response);
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", "orders_report.pdf");
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      window.URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error("Error exporting orders to PDF:", error);
-      throw error;
-    }
+          const url = window.URL.createObjectURL(response);
+          const link = document.createElement("a");
+          link.href = url;
+          link.setAttribute("download", "orders_report.pdf");
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+          window.URL.revokeObjectURL(url);
+
+          resolve("Ordenes exportadas a PDF con éxito");
+        } catch (error) {
+          console.error("Error exporting orders to PDF:", error);
+          reject(new Error("Error al exportar órdenes a PDF"));
+        }
+      });
+
+    return toast.promise(promise(), {
+      loading: "Exportando órdenes a PDF...",
+      success: "Órdenes exportadas a PDF con éxito",
+      error: (err) => err.message,
+    });
   };
 
   /**
@@ -78,22 +90,31 @@ export const useReports = () => {
    * @returns Excel Blob
    */
   const exportOrdersReportToExcel = async (filter: FilterOrdersSchema) => {
-    try {
-      const response = await exportOrdersToExcel({ filter }).unwrap();
+    const promise = () =>
+      new Promise(async (resolve, reject) => {
+        try {
+          const response = await exportOrdersToExcel({ filter }).unwrap();
 
-      const url = window.URL.createObjectURL(new Blob([response]));
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", "orders_report.xlsx");
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
+          const url = window.URL.createObjectURL(new Blob([response]));
+          const link = document.createElement("a");
+          link.href = url;
+          link.setAttribute("download", "orders_report.xlsx");
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
 
-      return response;
-    } catch (error) {
-      console.error("Error exporting orders to Excel:", error);
-      throw error;
-    }
+          resolve("Ordenes exportadas a Excel con éxito");
+        } catch (error) {
+          console.error("Error exporting orders to Excel:", error);
+          reject(new Error("Error al exportar órdenes a Excel"));
+        }
+      });
+
+    return toast.promise(promise(), {
+      loading: "Exportando órdenes a Excel...",
+      success: "Órdenes exportadas a Excel con éxito",
+      error: (err) => err.message,
+    });
   };
 
   /**
@@ -101,21 +122,32 @@ export const useReports = () => {
    * @param filter Filtros de productos
    */
   const exportProductsReportToPdf = async (filter: FilterProductSchema) => {
-    try {
-      const response = await exportProductsToPdf({ filter }).unwrap();
+    const promise = () =>
+      new Promise(async (resolve, reject) => {
+        try {
+          const response = await exportProductsToPdf({ filter }).unwrap();
 
-      const url = window.URL.createObjectURL(response);
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", "products_report.pdf");
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      window.URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error("Error exporting products to PDF:", error);
-      throw error;
-    }
+          const url = window.URL.createObjectURL(response);
+          const link = document.createElement("a");
+          link.href = url;
+          link.setAttribute("download", "products_report.pdf");
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+          window.URL.revokeObjectURL(url);
+
+          resolve("Productos exportados a PDF con éxito");
+        } catch (error) {
+          console.error("Error exporting products to PDF:", error);
+          reject(new Error("Error al exportar productos a PDF"));
+        }
+      });
+
+    return toast.promise(promise(), {
+      loading: "Exportando productos a PDF...",
+      success: "Productos exportados a PDF con éxito",
+      error: (err) => err.message,
+    });
   };
 
   /**
@@ -124,22 +156,31 @@ export const useReports = () => {
    * @returns Excel Blob
    */
   const exportProductsReportToExcel = async (filter: FilterProductSchema) => {
-    try {
-      const response = await exportProductsToExcel({ filter }).unwrap();
+    const promise = () =>
+      new Promise(async (resolve, reject) => {
+        try {
+          const response = await exportProductsToExcel({ filter }).unwrap();
 
-      const url = window.URL.createObjectURL(new Blob([response]));
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", "products_report.xlsx");
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
+          const url = window.URL.createObjectURL(new Blob([response]));
+          const link = document.createElement("a");
+          link.href = url;
+          link.setAttribute("download", "products_report.xlsx");
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
 
-      return response;
-    } catch (error) {
-      console.error("Error exporting products to Excel:", error);
-      throw error;
-    }
+          resolve("Productos exportados a Excel con éxito");
+        } catch (error) {
+          console.error("Error exporting products to Excel:", error);
+          reject(new Error("Error al exportar productos a Excel"));
+        }
+      });
+
+    return toast.promise(promise(), {
+      loading: "Exportando productos a Excel...",
+      success: "Productos exportados a Excel con éxito",
+      error: (err) => err.message,
+    });
   };
 
   /**
@@ -147,21 +188,32 @@ export const useReports = () => {
    * @param filter Filtros de productos top
    */
   const exportTopProductsReportToPdf = async (filter: FilterProductSchema) => {
-    try {
-      const response = await exportTopProductsToPdf({ filter }).unwrap();
+    const promise = () =>
+      new Promise(async (resolve, reject) => {
+        try {
+          const response = await exportTopProductsToPdf({ filter }).unwrap();
 
-      const url = window.URL.createObjectURL(response);
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", "top_products_report.pdf");
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      window.URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error("Error exporting top products to PDF:", error);
-      throw error;
-    }
+          const url = window.URL.createObjectURL(response);
+          const link = document.createElement("a");
+          link.href = url;
+          link.setAttribute("download", "top_products_report.pdf");
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+          window.URL.revokeObjectURL(url);
+
+          resolve("Productos top exportados a PDF con éxito");
+        } catch (error) {
+          console.error("Error exporting top products to PDF:", error);
+          reject(new Error("Error al exportar productos top a PDF"));
+        }
+      });
+
+    return toast.promise(promise(), {
+      loading: "Exportando productos top a PDF...",
+      success: "Productos top exportados a PDF con éxito",
+      error: (err) => err.message,
+    });
   };
 
   /**
@@ -172,22 +224,31 @@ export const useReports = () => {
   const exportTopProductsReportToExcel = async (
     filter: FilterProductSchema,
   ) => {
-    try {
-      const response = await exportTopProductsToExcel({ filter }).unwrap();
+    const promise = () =>
+      new Promise(async (resolve, reject) => {
+        try {
+          const response = await exportTopProductsToExcel({ filter }).unwrap();
 
-      const url = window.URL.createObjectURL(new Blob([response]));
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", "top_products_report.xlsx");
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
+          const url = window.URL.createObjectURL(new Blob([response]));
+          const link = document.createElement("a");
+          link.href = url;
+          link.setAttribute("download", "top_products_report.xlsx");
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
 
-      return response;
-    } catch (error) {
-      console.error("Error exporting top products to Excel:", error);
-      throw error;
-    }
+          resolve("Productos top exportados a Excel con éxito");
+        } catch (error) {
+          console.error("Error exporting top products to Excel:", error);
+          reject(new Error("Error al exportar productos top a Excel"));
+        }
+      });
+
+    return toast.promise(promise(), {
+      loading: "Exportando productos top a Excel...",
+      success: "Productos top exportados a Excel con éxito",
+      error: (err) => err.message,
+    });
   };
 
   return {
