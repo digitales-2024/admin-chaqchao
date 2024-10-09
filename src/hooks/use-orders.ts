@@ -1,5 +1,6 @@
 "use client";
 import {
+  useDownloadOrderPdfMutation,
   useGetOrderByIdQuery,
   useGetOrdersAllQuery,
   useUpdateOrderStatusMutation,
@@ -53,6 +54,9 @@ export const useOrders = (options: UseOrdersProps = {}) => {
     updateOrderStatus,
     { isLoading: isLoadingUpdateOrderStatus, error: errorUpdateOrderStatus },
   ] = useUpdateOrderStatusMutation();
+
+  const [onDownload, { isLoading: isLoadingPdf, error: errorPdf }] =
+    useDownloadOrderPdfMutation();
 
   // Manejo de eventos del socket
   useEffect(() => {
@@ -121,6 +125,27 @@ export const useOrders = (options: UseOrdersProps = {}) => {
     });
   };
 
+  const onDownloadPdf = async (id: string, code: string) => {
+    try {
+      const response = await onDownload({ id }).unwrap();
+      // Crear el enlace de descarga
+      const url = window.URL.createObjectURL(response);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `pedido-${code}.pdf`);
+
+      // Añadir el enlace al DOM y disparar la descarga
+      document.body.appendChild(link);
+      link.click();
+
+      // Eliminar el enlace temporal del DOM
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url); // Limpiar el objeto URL
+    } catch (error) {
+      toast.error("Error al descargar el PDF del pedido");
+    }
+  };
+
   return {
     dataOrders,
     isLoadingOrders,
@@ -130,5 +155,8 @@ export const useOrders = (options: UseOrdersProps = {}) => {
     isLoadingUpdateOrderStatus,
     errorUpdateOrderStatus,
     orderById,
+    onDownloadPdf,
+    isLoadingPdf,
+    errorPdf,
   };
 };
