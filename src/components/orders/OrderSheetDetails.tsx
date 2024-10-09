@@ -79,7 +79,7 @@ export const OrderSheetDetails = ({
     }, 2000);
   };
 
-  const { onOrderStatusUpdate } = useOrders();
+  const { onOrderStatusUpdate, onDownloadPdf } = useOrders();
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -150,7 +150,13 @@ export const OrderSheetDetails = ({
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <DropdownMenuItem>Exportar</DropdownMenuItem>
+                  <DropdownMenuItem
+                    onSelect={() =>
+                      order?.id && onDownloadPdf(order.id, order.pickupCode)
+                    }
+                  >
+                    Exportar
+                  </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
                     className="hover:cursor-pointer hover:text-rose-500"
