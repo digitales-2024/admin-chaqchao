@@ -1,8 +1,7 @@
 "use client";
-import { useModeViewOrder } from "@/hooks/use-mode-view-order";
+import { useViewModeStore } from "@/hooks/use-mode-view-order";
 import { useOrders } from "@/hooks/use-orders";
-import { useStore } from "@/hooks/use-store";
-import { OrderStatus } from "@/types";
+import { Order, OrderStatus } from "@/types";
 import { format } from "date-fns";
 import { useState } from "react";
 
@@ -12,15 +11,18 @@ import { Shell } from "@/components/common/Shell";
 import { DataTableSkeleton } from "@/components/data-table/DataTableSkeleton";
 import { FilterDate } from "@/components/orders/FilterDate";
 import { FilterStatus } from "@/components/orders/FilterStatus";
-import { KanbanBoard } from "@/components/orders/kanban/KanbanBoard";
-import { SwitchModeView } from "@/components/orders/SwitchModeView";
+import KanbanBoard from "@/components/orders/kanban/KanbanBoard";
+import { OrderSheetDetails } from "@/components/orders/OrderSheetDetails";
+import SwitchModeView from "@/components/orders/SwitchModeView";
 import { TableOrders } from "@/components/orders/TableOrders";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 
 export default function PagerOrders() {
-  const mode = useStore(useModeViewOrder, (state) => state);
+  const [openDetailsOrder, setOpenDetailsOrder] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
 
+  const { viewMode } = useViewModeStore();
   const [date, setDate] = useState<Date>(new Date());
   const [filterStatus, setFilterStatus] = useState<OrderStatus>(
     OrderStatus.ALL,
@@ -69,8 +71,25 @@ export default function PagerOrders() {
         </div>
       </div>
       <Separator />
-      {mode?.modeViewOrder === "table" && <TableOrders data={dataOrders} />}
-      {mode?.modeViewOrder === "kanban" && <KanbanBoard data={dataOrders} />}
+      {viewMode === "table" && (
+        <TableOrders
+          setOpenDetailsOrder={setOpenDetailsOrder}
+          setSelectedOrder={setSelectedOrder}
+          data={dataOrders}
+        />
+      )}
+      {viewMode === "kanban" && (
+        <KanbanBoard
+          setOpenDetailsOrder={setOpenDetailsOrder}
+          setSelectedOrder={setSelectedOrder}
+          data={dataOrders}
+        />
+      )}
+      <OrderSheetDetails
+        order={selectedOrder}
+        open={openDetailsOrder}
+        onOpenChange={() => setOpenDetailsOrder(false)}
+      />
     </Shell>
   );
 }

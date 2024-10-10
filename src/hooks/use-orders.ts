@@ -1,5 +1,6 @@
 "use client";
 import {
+  useDownloadOrderPdfMutation,
   useGetOrderByIdQuery,
   useGetOrdersAllQuery,
   useUpdateOrderStatusMutation,
@@ -7,6 +8,7 @@ import {
 import { socket } from "@/socket/socket";
 import { CustomErrorData } from "@/types";
 import { translateError } from "@/utils/translateError";
+import { useEffect } from "react";
 import { toast } from "sonner";
 
 type StatusTranslations = {
@@ -28,39 +30,62 @@ interface UseOrdersProps {
 }
 
 export const useOrders = (options: UseOrdersProps = {}) => {
-  const { dateFilter, status, id } = options;
-
-  const date = dateFilter
-    ? typeof dateFilter === "string"
-      ? dateFilter
-      : dateFilter.toISOString()
-    : new Date().toISOString();
-
+  const { dateFilter: date, status, id } = options;
   const {
     data: dataOrders,
     isLoading: isLoadingOrders,
     error: errorOrders,
     refetch: refetchOrders,
-  } = useGetOrdersAllQuery({ date, status });
+  } = useGetOrdersAllQuery(
+    { date: date as string, status },
+    {
+      skip: !date || !status, // Evita hacer la query si no hay date o status
+    },
+  );
 
-  const { data: orderById } = useGetOrderByIdQuery(
+  const { data: orderById, refetch: refetchOrderById } = useGetOrderByIdQuery(
     { id: id as string },
     {
       skip: !id, // Evita hacer la query si no hay id
     },
   );
 
-  socket.on("new-order", () => {
-    refetchOrders();
-  });
-  socket.on("order-status-updated", () => {
-    refetchOrders();
-  });
-
   const [
     updateOrderStatus,
     { isLoading: isLoadingUpdateOrderStatus, error: errorUpdateOrderStatus },
   ] = useUpdateOrderStatusMutation();
+
+  const [onDownload, { isLoading: isLoadingPdf, error: errorPdf }] =
+    useDownloadOrderPdfMutation();
+
+  // Manejo de eventos del socket
+  useEffect(() => {
+    const handleNewOrder = () => {
+      // Si ya tenemos data cargada, permitimos el refetch
+      if (dataOrders) {
+        refetchOrders();
+      }
+    };
+
+    const handleOrderStatusUpdated = () => {
+      // Si ya tenemos data cargada, permitimos el refetch
+      if (dataOrders) {
+        refetchOrders();
+        if (id) {
+          refetchOrderById();
+        }
+      }
+    };
+
+    socket.on("new-order", handleNewOrder);
+    socket.on("order-status-updated", handleOrderStatusUpdated);
+
+    // Limpieza de los listeners del socket
+    return () => {
+      socket.off("new-order", handleNewOrder);
+      socket.off("order-status-updated", handleOrderStatusUpdated);
+    };
+  }, [dataOrders, refetchOrders, refetchOrderById, id]);
 
   const onOrderStatusUpdate = (id: string, status: string) => {
     const promise = () =>
@@ -95,9 +120,30 @@ export const useOrders = (options: UseOrdersProps = {}) => {
     }
     return toast.promise(promise(), {
       loading: "Actualizando estado del pedido...",
-      success: `Estado de pedido a ${translateStatus(status)} actualizado`,
+      success: `Estado de pedido a ${translateStatus(status).toUpperCase()} actualizado`,
       error: (err) => err.message,
     });
+  };
+
+  const onDownloadPdf = async (id: string, code: string) => {
+    try {
+      const response = await onDownload({ id }).unwrap();
+      // Crear el enlace de descarga
+      const url = window.URL.createObjectURL(response);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `pedido-${code}.pdf`);
+
+      // Añadir el enlace al DOM y disparar la descarga
+      document.body.appendChild(link);
+      link.click();
+
+      // Eliminar el enlace temporal del DOM
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url); // Limpiar el objeto URL
+    } catch (error) {
+      toast.error("Error al descargar el PDF del pedido");
+    }
   };
 
   return {
@@ -109,5 +155,8 @@ export const useOrders = (options: UseOrdersProps = {}) => {
     isLoadingUpdateOrderStatus,
     errorUpdateOrderStatus,
     orderById,
+    onDownloadPdf,
+    isLoadingPdf,
+    errorPdf,
   };
 };

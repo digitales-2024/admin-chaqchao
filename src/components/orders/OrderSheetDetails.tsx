@@ -1,17 +1,21 @@
 import { useOrders } from "@/hooks/use-orders";
-import { Order } from "@/types";
+import { Order, OrderStatus } from "@/types";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import {
-  Apple,
+  Clock,
+  Coffee,
   Copy,
   CreditCard,
   Mail,
   MessageCircleMore,
   MoreVertical,
+  PackageCheck,
   PackageX,
   Phone,
+  Truck,
 } from "lucide-react";
+import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { CardDescription, CardTitle } from "@/components/ui/card";
@@ -25,12 +29,32 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Separator } from "@/components/ui/separator";
 
+import { cn } from "@/lib/utils";
+
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Badge } from "../ui/badge";
 import { ScrollArea, ScrollBar } from "../ui/scroll-area";
-import { Sheet, SheetContent, SheetFooter, SheetTitle } from "../ui/sheet";
-import { iconsStatus, statusColors, translateStatus } from "./kanban/OrderCard";
+import { Sheet, SheetContent, SheetTitle } from "../ui/sheet";
 
+export const statusColors: Record<Order["orderStatus"], string> = {
+  CONFIRMED: "border-slate-300 text-slate-300",
+  READY: "border-cyan-500 text-cyan-500",
+  COMPLETED: "border-green-500 text-green-500",
+  CANCELLED: "border-rose-500 text-rose-500",
+};
+
+export const iconsStatus: Record<Order["orderStatus"], React.ReactElement> = {
+  CONFIRMED: <Clock size={15} />,
+  READY: <PackageCheck size={15} />,
+  COMPLETED: <Truck size={15} />,
+  CANCELLED: <PackageX size={15} />,
+};
+export const translateStatus: Record<Order["orderStatus"], string> = {
+  CONFIRMED: "Pendiente",
+  READY: "Listo",
+  COMPLETED: "Completado",
+  CANCELLED: "Cancelado",
+};
 interface OrderSheetDetailsProps {
   order: Order | null;
   open: boolean;
@@ -46,21 +70,44 @@ export const OrderSheetDetails = ({
     id: order?.id,
   });
 
+  const [isCopy, setIsCopy] = useState<boolean>(false);
+  const handleCopyOrderID = () => {
+    setIsCopy(true);
+    navigator.clipboard.writeText(orderById?.pickupCode as string);
+    setTimeout(() => {
+      setIsCopy(false);
+    }, 2000);
+  };
+
+  const { onOrderStatusUpdate, onDownloadPdf } = useOrders();
+
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="flex h-full min-h-screen flex-col gap-5 sm:max-w-[36rem]">
         <ScrollArea className="h-fit">
           <SheetTitle className="flex flex-row flex-wrap-reverse items-start gap-2 bg-muted/50 py-4">
             <div className="grid gap-0.5">
-              <CardTitle className="group flex items-center gap-2 text-lg">
+              <CardTitle className="group relative flex w-fit items-center gap-2 text-lg">
                 <span className="font-thin uppercase text-slate-500">
                   Pedido#{" "}
                 </span>
                 <span className="truncate">{orderById?.pickupCode}</span>
+                <span
+                  className={cn(
+                    "absolute -top-3 right-0 rotate-12 truncate text-xs font-thin text-slate-400 transition-all duration-300",
+                    {
+                      "scale-0 opacity-0": !isCopy,
+                      "scale-105 opacity-100": isCopy,
+                    },
+                  )}
+                >
+                  copiado
+                </span>
                 <Button
                   size="icon"
                   variant="outline"
                   className="h-6 w-6 opacity-0 transition-opacity group-hover:opacity-100"
+                  onClick={handleCopyOrderID}
                 >
                   <Copy className="h-3 w-3" />
                   <span className="sr-only">Copy Order ID</span>
@@ -82,12 +129,16 @@ export const OrderSheetDetails = ({
             <div className="ml-auto flex items-center gap-1">
               <Badge
                 variant="outline"
-                className={`${statusColors[order?.orderStatus as keyof typeof statusColors]} flex gap-2 font-light`}
+                className={`${statusColors[orderById?.orderStatus as keyof typeof statusColors]} flex gap-2 font-light`}
               >
-                {iconsStatus[order?.orderStatus as keyof typeof iconsStatus]}
+                {
+                  iconsStatus[
+                    orderById?.orderStatus as keyof typeof iconsStatus
+                  ]
+                }
                 {
                   translateStatus[
-                    order?.orderStatus as keyof typeof translateStatus
+                    orderById?.orderStatus as keyof typeof translateStatus
                   ]
                 }
               </Badge>
@@ -99,9 +150,23 @@ export const OrderSheetDetails = ({
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <DropdownMenuItem>Exportar</DropdownMenuItem>
+                  <DropdownMenuItem
+                    onSelect={() =>
+                      order?.id && onDownloadPdf(order.id, order.pickupCode)
+                    }
+                  >
+                    Exportar
+                  </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem>
+                  <DropdownMenuItem
+                    className="hover:cursor-pointer hover:text-rose-500"
+                    onSelect={() =>
+                      onOrderStatusUpdate(
+                        orderById?.id as string,
+                        OrderStatus.CANCELLED,
+                      )
+                    }
+                  >
                     Cancelar
                     <DropdownMenuShortcut>
                       <PackageX className="size-4" aria-hidden="true" />
@@ -115,24 +180,24 @@ export const OrderSheetDetails = ({
             <div className="grid gap-4">
               <div className="font-semibold">Detalles del pedido</div>
               <ul className="grid gap-3">
-                {orderById?.cart.map((item) => (
+                {orderById?.cart.products.map((product) => (
                   <li
                     className="flex items-center justify-between"
-                    key={item.id}
+                    key={product.id}
                   >
                     <div className="flex items-center gap-2 truncate">
                       <Avatar className="bg-slate-100">
-                        <AvatarImage src={item.image} alt={item.name} />
+                        <AvatarImage src={product.image} alt={product.name} />
                         <AvatarFallback>
-                          <Apple />
+                          <Coffee />
                         </AvatarFallback>
                       </Avatar>
                       <span className="text-muted-foreground">
-                        {item.name} x{" "}
-                        <span className="text-xs">{item.quantity}</span>
+                        {product.name} x{" "}
+                        <span className="text-xs">{product.quantity}</span>
                       </span>
                     </div>
-                    <span>S/.{item.price}</span>
+                    <span>S/.{product.price}</span>
                   </li>
                 ))}
               </ul>
@@ -142,13 +207,7 @@ export const OrderSheetDetails = ({
                   <span className="text-xs font-extralight text-slate-400">
                     Subtotal
                   </span>
-                  <span>
-                    S/.
-                    {orderById?.cart.reduce(
-                      (acc, item) => acc + item.price * item.quantity,
-                      0,
-                    )}
-                  </span>
+                  <span>S/. 00</span>
                 </li>
                 <li className="flex items-center justify-between">
                   <span className="text-xs font-extralight text-slate-400">
@@ -181,7 +240,7 @@ export const OrderSheetDetails = ({
                       className="h-6 w-6 opacity-0 transition-opacity group-hover/email:opacity-100"
                     >
                       <span className="sr-only">Email client</span>
-                      <a href="mailto:">
+                      <a href={`mailto: ${orderById?.client.email}`}>
                         <Mail className="h-3 w-3" />
                       </a>
                     </Button>
@@ -197,7 +256,7 @@ export const OrderSheetDetails = ({
                       className="h-6 w-6 opacity-0 transition-opacity group-hover/phone:opacity-100"
                     >
                       <span className="sr-only">Phone client</span>
-                      <a href="tel:">
+                      <a href={`tel:${orderById?.client.phone}`}>
                         <Phone className="h-3 w-3" />
                       </a>
                     </Button>
@@ -232,14 +291,6 @@ export const OrderSheetDetails = ({
                 </div>
               </dl>
             </div>
-
-            <SheetFooter className="flex flex-row items-center border-t bg-muted/50 px-6 py-3">
-              <div className="text-xs text-muted-foreground">
-                {orderById?.updatedAt
-                  ? format(orderById.updatedAt, "PPPp", { locale: es })
-                  : "Fecha no disponible"}
-              </div>
-            </SheetFooter>
             <ScrollBar orientation="horizontal" />
           </div>
         </ScrollArea>

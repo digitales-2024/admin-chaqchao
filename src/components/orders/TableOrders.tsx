@@ -1,16 +1,23 @@
 "use client";
 import { Order } from "@/types";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 
 import { DataTableExpanded } from "../data-table/DataTableExpanded";
-import { OrderSheetDetails } from "./OrderSheetDetails";
 import { getColumnsOrders } from "./OrdersTableColumns";
 
-export const TableOrders = ({ data }: { data: Order[] }) => {
+interface TableOrdersProps {
+  data: Order[];
+  setOpenDetailsOrder: (value: boolean) => void;
+  setSelectedOrder: (value: Order | null) => void;
+}
+
+export const TableOrders = ({
+  data,
+  setOpenDetailsOrder,
+  setSelectedOrder,
+}: TableOrdersProps) => {
   const columns = useMemo(() => getColumnsOrders(), []);
 
-  const [openDetailsOrder, setOpenDetailsOrder] = useState(false);
-  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   return (
     <>
       <DataTableExpanded
@@ -21,11 +28,6 @@ export const TableOrders = ({ data }: { data: Order[] }) => {
           setOpenDetailsOrder(true);
           setSelectedOrder(row);
         }}
-      />
-      <OrderSheetDetails
-        order={selectedOrder}
-        open={openDetailsOrder}
-        onOpenChange={() => setOpenDetailsOrder(false)}
       />
     </>
   );

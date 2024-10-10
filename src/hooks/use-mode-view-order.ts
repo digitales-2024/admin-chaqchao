@@ -1,24 +1,24 @@
 import { create } from "zustand";
-import { createJSONStorage, persist } from "zustand/middleware";
+import { persist } from "zustand/middleware";
 
-interface useModeViewOrderStore {
-  modeViewOrder: "kanban" | "table";
-  setModeViewOrder: (mode: "kanban" | "table") => void;
+// Define los tipos para el estado y las acciones
+interface ViewModeState {
+  viewMode: "table" | "kanban";
+  toggleViewMode: () => void;
 }
 
-export const useModeViewOrder = create(
-  persist<useModeViewOrderStore>(
-    (set, get) => ({
-      modeViewOrder: "table",
-      setModeViewOrder: () => {
-        set({
-          modeViewOrder: get().modeViewOrder === "table" ? "kanban" : "table",
-        });
-      },
+// Define el store usando el middleware persist
+export const useViewModeStore = create<ViewModeState>()(
+  persist(
+    (set) => ({
+      viewMode: "table", // Estado inicial es 'table'
+      toggleViewMode: () =>
+        set((state) => ({
+          viewMode: state.viewMode === "table" ? "kanban" : "table",
+        })),
     }),
     {
-      name: "modeViewOrder",
-      storage: createJSONStorage(() => localStorage),
+      name: "view-mode-storage", // Nombre del item en localStorage
     },
   ),
 );

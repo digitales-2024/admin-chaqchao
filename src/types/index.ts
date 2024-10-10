@@ -31,7 +31,6 @@ export type { Client } from "./client";
 
 export type {
   Order,
-  OrderData,
   OrderDetails,
   OrderReportData,
   OrderFilters,
