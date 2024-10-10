@@ -4,7 +4,9 @@ import {
   useExportClassesToPdfMutation,
 } from "@/redux/services/classApi";
 import { socket } from "@/socket/socket";
-import { ClassesDataAdmin } from "@/types";
+import { ClassesDataAdmin, CustomErrorData } from "@/types";
+import { translateError } from "@/utils/translateError";
+import { toast } from "sonner"; // Importa toast
 
 /**
  * Mapear las filas seleccionadas a un objeto de datos de clases
@@ -73,26 +75,44 @@ export const useClasses = (date?: string) => {
    * @returns Excel Blob
    */
   const exportClassesToExcel = async (selectedRows: ClassesDataAdmin[]) => {
-    try {
-      // Mapear los datos de las filas seleccionadas
-      const data = mapSelectedRowsToClassesData(selectedRows);
+    const promise = () =>
+      new Promise(async (resolve, reject) => {
+        try {
+          // Mapear los datos de las filas seleccionadas
+          const data = mapSelectedRowsToClassesData(selectedRows);
 
-      const response = await exportToExcel(data).unwrap();
+          const result = await exportToExcel(data).unwrap();
 
-      // Crear un enlace para descargar el archivo
-      const url = window.URL.createObjectURL(new Blob([response]));
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", "classes.xlsx");
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
+          // Crear un enlace para descargar el archivo
+          const url = window.URL.createObjectURL(new Blob([result]));
+          const link = document.createElement("a");
+          link.href = url;
+          link.setAttribute("download", "classes.xlsx");
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
 
-      return response;
-    } catch (error) {
-      console.error("Error exporting to Excel:", error);
-      throw error;
-    }
+          resolve(result);
+        } catch (error) {
+          if (error && typeof error === "object" && "data" in error) {
+            const errorMessage = (error.data as CustomErrorData).message;
+            const message = translateError(errorMessage as string);
+            reject(new Error(message));
+          } else {
+            reject(
+              new Error(
+                "Ocurrió un error inesperado, por favor intenta de nuevo",
+              ),
+            );
+          }
+        }
+      });
+
+    return toast.promise(promise(), {
+      loading: "Descargando clases en Excel...",
+      success: "Clases descargadas con éxito en Excel",
+      error: (err) => err.message,
+    });
   };
 
   /**
@@ -100,30 +120,49 @@ export const useClasses = (date?: string) => {
    * @param selectedRows Filas seleccionadas
    */
   const exportClassesToPdf = async (selectedRows: ClassesDataAdmin[]) => {
-    try {
-      // Mapear los datos de las filas seleccionadas
-      const data = mapSelectedRowsToClassesData(selectedRows);
+    const promise = () =>
+      new Promise(async (resolve, reject) => {
+        try {
+          // Mapear los datos de las filas seleccionadas
+          const data = mapSelectedRowsToClassesData(selectedRows);
 
-      // Llama a la mutación para exportar a PDF
-      const response = await exportToPdf(data).unwrap();
+          const result = await exportToPdf(data).unwrap();
 
-      // Crear el enlace de descarga
-      const url = window.URL.createObjectURL(response);
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", "class_report.pdf");
+          // Crear el enlace de descarga
+          const url = window.URL.createObjectURL(result);
+          const link = document.createElement("a");
+          link.href = url;
+          link.setAttribute("download", "class_report.pdf");
 
-      // Añadir el enlace al DOM y disparar la descarga
-      document.body.appendChild(link);
-      link.click();
+          // Añadir el enlace al DOM y disparar la descarga
+          document.body.appendChild(link);
+          link.click();
 
-      // Eliminar el enlace temporal del DOM
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url); // Limpiar el objeto URL
-    } catch (error) {
-      console.error("Error exporting to PDF:", error);
-      throw error;
-    }
+          // Eliminar el enlace temporal del DOM
+          document.body.removeChild(link);
+          window.URL.revokeObjectURL(url); // Limpiar el objeto URL
+
+          resolve(result);
+        } catch (error) {
+          if (error && typeof error === "object" && "data" in error) {
+            const errorMessage = (error.data as CustomErrorData).message;
+            const message = translateError(errorMessage as string);
+            reject(new Error(message));
+          } else {
+            reject(
+              new Error(
+                "Ocurrió un error inesperado, por favor intenta de nuevo",
+              ),
+            );
+          }
+        }
+      });
+
+    return toast.promise(promise(), {
+      loading: "Descargando clases en PDF...",
+      success: "Clases descargadas con éxito en PDF",
+      error: (err) => err.message,
+    });
   };
 
   return {
