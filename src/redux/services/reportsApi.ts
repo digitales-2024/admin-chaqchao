@@ -1,6 +1,6 @@
 import { FilterOrdersSchema } from "@/schemas/reports/filterOrdersSchema";
 import { FilterProductSchema } from "@/schemas/reports/filterProductSchema";
-import { Order, ProductData } from "@/types";
+import { OrderReportData, ProductData } from "@/types";
 import { createApi } from "@reduxjs/toolkit/query/react";
 
 import baseQueryWithReauth from "./baseQuery";
@@ -11,7 +11,10 @@ export const reportsApi = createApi({
   tagTypes: ["Report"],
   endpoints: (build) => ({
     // Obtener reporte de órdenes
-    getOrdersReport: build.query<Order, { filter: FilterOrdersSchema }>({
+    getOrdersReport: build.query<
+      OrderReportData[],
+      { filter: FilterOrdersSchema }
+    >({
       query: ({ filter }) => ({
         url: "/reports/orders",
         method: "GET",
@@ -22,7 +25,7 @@ export const reportsApi = createApi({
     }),
     // Obtener reporte de productos
     getProductsReport: build.query<
-      ProductData,
+      ProductData[],
       { filter: FilterProductSchema }
     >({
       query: ({ filter }) => ({
@@ -77,15 +80,17 @@ export const reportsApi = createApi({
       }),
     }),
     // Obtener reporte de productos top
-    getTopProducts: build.query<ProductData, { filter: FilterProductSchema }>({
-      query: ({ filter }) => ({
-        url: "/reports/top-products",
-        method: "GET",
-        params: filter,
-        credentials: "include",
-      }),
-      providesTags: ["Report"],
-    }),
+    getTopProducts: build.query<ProductData[], { filter: FilterProductSchema }>(
+      {
+        query: ({ filter }) => ({
+          url: "/reports/top-products",
+          method: "GET",
+          params: filter,
+          credentials: "include",
+        }),
+        providesTags: ["Report"],
+      },
+    ),
     // Exportar reporte de productos top a PDF
     exportTopProductsToPdf: build.mutation<
       Blob,
