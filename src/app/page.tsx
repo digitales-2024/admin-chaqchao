@@ -3,6 +3,7 @@ import { CardNewClients } from "@/components/dashboard/CardNewClients";
 import { CardNewOrders } from "@/components/dashboard/CardNewOrders";
 import { CardTotal } from "@/components/dashboard/CardTotal";
 import { ChartOrderDay } from "@/components/dashboard/ChartOrderDay";
+import { ChartOrdersYear } from "@/components/dashboard/ChartOrdersYear";
 import { ChartProducts } from "@/components/dashboard/ChartProducts";
 import { Greeting } from "@/components/dashboard/Greeting";
 
@@ -24,7 +25,7 @@ export default function Home() {
         <ChartOrderDay />
       </div>
       <div className="mb-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <ChartOrderDay />
+        <ChartOrdersYear />
         <ChartProducts />
       </div>
     </AdminLayout>
