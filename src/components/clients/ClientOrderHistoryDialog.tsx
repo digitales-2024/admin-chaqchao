@@ -55,7 +55,13 @@ export const ClientOrderHistoryDialog = ({
   if (isDesktop) {
     return (
       <Dialog open={isOpen} onOpenChange={onOpenChange}>
-        <DialogContent className="max-w-6xl px-10 py-6">
+        <DialogContent
+          style={{
+            width: "95%",
+            maxWidth: "1200px",
+            padding: "2rem",
+          }}
+        >
           <DialogHeader>
             <DialogTitle>Historial de pedidos de {client.name}</DialogTitle>
             <DialogDescription>
