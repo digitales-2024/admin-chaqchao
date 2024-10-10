@@ -1,24 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { Order } from "@/types";
+import { useMemo, useState } from "react";
 
 import { DataTableExpanded } from "../data-table/DataTableExpanded";
 import { ClientOrderDetails } from "./ClientOrderDetails";
-import { useOrdersData } from "./ClientOrdersHistoryTableColumns";
+import { ordersColumns } from "./ClientOrdersHistoryTableColumns";
 
-interface OrdersTableProps {
-  clientId: string;
-}
+export function OrdersTable({ data }: { data: Order[] }) {
+  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
 
-export function OrdersTable({ clientId }: OrdersTableProps) {
-  const [selectedOrderId] = useState<string | null>(null);
-  const { columns, data } = useOrdersData(clientId);
+  const columns = useMemo(() => ordersColumns(), []);
 
-  // // Manejar el clic en la fila
-  // const handleRowClick = (orderId: string) => {
-  //   setSelectedOrderId(orderId);
-  //   console.log("Esto deberia funcionar");
-  // };
+  const handleRowClick = (order: Order) => {
+    setSelectedOrderId(order.id);
+  };
 
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
@@ -27,6 +23,7 @@ export function OrdersTable({ clientId }: OrdersTableProps) {
           data={data}
           columns={columns}
           placeholder="Buscar pedidos..."
+          onClickRow={(row) => handleRowClick(row)}
         />
       </div>
       <div className="order-1 lg:order-2">
