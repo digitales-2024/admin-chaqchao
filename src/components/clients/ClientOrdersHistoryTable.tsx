@@ -18,7 +18,8 @@ export function OrdersTable({ data }: { data: Order[] }) {
 
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-      <div className="order-2 lg:order-1">
+      <div className="order-1 lg:order-1">
+        {/* Esto asegura que la tabla siempre esté arriba, incluso en móviles */}
         <DataTableExpanded
           data={data}
           columns={columns}
@@ -26,11 +27,11 @@ export function OrdersTable({ data }: { data: Order[] }) {
           onClickRow={(row) => handleRowClick(row)}
         />
       </div>
-      <div className="order-1 lg:order-2">
+      <div className="order-2 lg:order-2">
         {selectedOrderId ? (
           <ClientOrderDetails orderId={selectedOrderId} />
         ) : (
-          <div className="rounded-md bg-gray-50 p-4">
+          <div className="max-h-[80vh] overflow-auto rounded-md bg-gray-50 p-4">
             <p className="text-center text-gray-500">
               Seleccione un pedido para ver los detalles
             </p>
