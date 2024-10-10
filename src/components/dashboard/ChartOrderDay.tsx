@@ -4,7 +4,13 @@ import { getStartEndDate } from "@/utils/getStartEndDate";
 import { useMemo } from "react";
 import { CartesianGrid, Line, LineChart, XAxis } from "recharts";
 
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "../ui/card";
 import {
   ChartConfig,
   ChartContainer,
@@ -75,7 +81,8 @@ export const ChartOrderDay = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Pedidos Diarios</CardTitle>
+        <CardTitle>Pedidos por día</CardTitle>
+        <CardDescription>Últimos 30 días</CardDescription>
       </CardHeader>
       <CardContent className="px-2 sm:p-6">
         <ChartContainer
