@@ -13,7 +13,7 @@ export default function Home() {
   return (
     <AdminLayout>
       <Greeting />
-      <div className="mb-8 grid grid-cols-1 gap-6 lg:grid-cols-[1fr_2fr]">
+      <div className="mb-8 grid grid-cols-1 gap-6 xl:grid-cols-[1fr_2fr]">
         <CardTotal />
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <div className="grid grid-cols-1 grid-rows-2 gap-6">
