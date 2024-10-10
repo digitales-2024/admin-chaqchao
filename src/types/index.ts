@@ -28,9 +28,14 @@ export type {
 } from "./product";
 export type { Client } from "./client";
 
+export type { Order, OrderDetails } from "./orders";
+export { OrderStatus } from "./orders";
+
 export interface Option {
   label: string;
   value: string;
   icon?: React.ComponentType<{ className?: string }>;
   withCount?: boolean;
 }
+
+export type { ClassData, ClassesDataAdmin } from "./class";

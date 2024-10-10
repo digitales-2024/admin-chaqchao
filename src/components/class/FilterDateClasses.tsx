@@ -9,12 +9,15 @@ import { Button } from "../ui/button";
 import { Calendar } from "../ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 
-interface FilterDateProps {
+interface FilterDateClassesProps {
   date: Date;
   setDate: (date: Date) => void;
 }
 
-export const FilterDate = ({ date, setDate }: FilterDateProps) => {
+export const FilterDateClasses = ({
+  date,
+  setDate,
+}: FilterDateClassesProps) => {
   const isNow = date && format(date, "PPP") === format(new Date(), "PPP");
 
   return (
@@ -24,7 +27,7 @@ export const FilterDate = ({ date, setDate }: FilterDateProps) => {
           variant={"outline"}
           size="sm"
           className={cn(
-            "inline-flex w-full justify-start gap-1 truncate text-left font-normal sm:w-72",
+            "inline-flex w-72 justify-start gap-1 text-left font-normal",
             !date && "text-muted-foreground",
           )}
         >
@@ -44,6 +47,9 @@ export const FilterDate = ({ date, setDate }: FilterDateProps) => {
           onSelect={(day) => setDate(day ?? new Date())}
           initialFocus
           locale={es}
+          // disabled={(date) =>
+          //   date > new Date() || date < new Date("1900-01-01")
+          // }
         />
       </PopoverContent>
     </Popover>

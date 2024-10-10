@@ -6,11 +6,13 @@ import { authApi } from "./services/authApi";
 import { businessConfigApi } from "./services/businessConfigApi";
 import { businessHoursApi } from "./services/businessHoursApi";
 import { categoriesApi } from "./services/categoriesApi";
+import { classApi } from "./services/classApi";
 import { classLanguageApi } from "./services/classLanguageConfigApi";
 import { classPriceApi } from "./services/classPriceApi";
 import { classRegistrationApi } from "./services/classRegistrationApi";
 import { classScheduleApi } from "./services/classScheduleApi";
 import { clientsApi } from "./services/clientsApi";
+import { ordersApi } from "./services/ordersApi";
 import { productsApi } from "./services/productsApi";
 import { rolesApi } from "./services/rolesApi";
 import { usersApi } from "./services/usersApi";
@@ -30,9 +32,22 @@ export const store = configureStore({
     [categoriesApi.reducerPath]: categoriesApi.reducer,
     [productsApi.reducerPath]: productsApi.reducer,
     [clientsApi.reducerPath]: clientsApi.reducer,
+    [ordersApi.reducerPath]: ordersApi.reducer,
+    [classApi.reducerPath]: classApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware()
+    getDefaultMiddleware({
+      // Configuración para evitar errores de "non-serializable value"
+      serializableCheck: {
+        // Ignorar las acciones que no son serializables, específicamente de classApi
+        ignoredActions: [
+          "classApi/executeMutation/fulfilled",
+          "ordersApi/executeMutation/fulfilled",
+        ],
+        // Ignorar las rutas en el estado que contienen valores no serializables
+        ignoredPaths: ["classApi.mutations", "ordersApi.mutations"],
+      },
+    })
       .concat(authApi.middleware)
       .concat(adminApi.middleware)
       .concat(usersApi.middleware)
@@ -45,8 +60,11 @@ export const store = configureStore({
       .concat(classLanguageApi.middleware)
       .concat(classScheduleApi.middleware)
       .concat(classRegistrationApi.middleware)
-      .concat(productsApi.middleware),
+      .concat(productsApi.middleware)
+      .concat(ordersApi.middleware)
+      .concat(classApi.middleware),
 });
+
 setupListeners(store.dispatch);
 
 export type RootState = ReturnType<typeof store.getState>;
