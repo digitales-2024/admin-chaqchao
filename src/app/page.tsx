@@ -13,13 +13,15 @@ export default function Home() {
   return (
     <AdminLayout>
       <Greeting />
-      <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-3">
+      <div className="mb-8 grid grid-cols-1 gap-6 lg:grid-cols-[1fr_2fr]">
         <CardTotal />
-        <div className="grid grid-cols-1 grid-rows-2 gap-6">
-          <CardNewOrders />
-          <CardNewClients />
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <div className="grid grid-cols-1 grid-rows-2 gap-6">
+            <CardNewOrders />
+            <CardNewClients />
+          </div>
+          <CardCalendar />
         </div>
-        <CardCalendar />
       </div>
       <div className="mb-8 grid grid-cols-1">
         <ChartOrderDay />
