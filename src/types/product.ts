@@ -25,3 +25,15 @@ export type CategoryData = {
   name: string;
   description: string;
 };
+
+export interface ProductFilters {
+  startDate?: string;
+  endDate?: string;
+  name?: string;
+  priceMin?: number;
+  priceMax?: number;
+  isActive?: boolean;
+  isRestricted?: boolean;
+  isAvailable?: boolean;
+  categoryName?: string;
+}
