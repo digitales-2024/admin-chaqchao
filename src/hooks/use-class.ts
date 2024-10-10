@@ -35,6 +35,7 @@ const mapSelectedRowsToClassesData = (
         typeCurrency: classDetail.typeCurrency,
         dateClass: classDetail.dateClass,
         scheduleClass: classDetail.scheduleClass,
+        comments: classDetail.comments,
       })),
     };
   });
