@@ -7,9 +7,13 @@ import {
   useExportTopProductsToExcelMutation,
   useGetProductsReportQuery,
   useGetOrdersReportQuery,
+  useGetTopProductsReportQuery,
 } from "@/redux/services/reportsApi";
 import { FilterOrdersSchema } from "@/schemas/reports/filterOrdersSchema";
-import { FilterProductSchema } from "@/schemas/reports/filterProductSchema";
+import {
+  FilterProductSchema,
+  FilterTopProductsSchema,
+} from "@/schemas/reports/filterProductSchema";
 import { toast } from "sonner";
 
 // Hook para exportar y obtener reportes
@@ -30,6 +34,11 @@ export const useReports = () => {
   // Obtener reportes de órdenes
   const useGetOrdersReport = (filter: FilterOrdersSchema) => {
     return useGetOrdersReportQuery({ filter });
+  };
+
+  // Obtener reportes de productos top
+  const useGetTopProductsReport = (filter: FilterTopProductsSchema) => {
+    return useGetTopProductsReportQuery({ filter });
   };
 
   // Función para exportar las órdenes a PDF
@@ -209,5 +218,6 @@ export const useReports = () => {
     exportTopProductsReportToExcel,
     useGetOrdersReport,
     useGetProductsReport,
+    useGetTopProductsReport,
   };
 };
