@@ -1,6 +1,9 @@
 import { FilterOrdersSchema } from "@/schemas/reports/filterOrdersSchema";
-import { FilterProductSchema } from "@/schemas/reports/filterProductSchema";
-import { OrderReportData, ProductData } from "@/types";
+import {
+  FilterProductSchema,
+  FilterTopProductsSchema,
+} from "@/schemas/reports/filterProductSchema";
+import { OrderReportData, ProductData, TopProduct } from "@/types";
 import { createApi } from "@reduxjs/toolkit/query/react";
 
 import baseQueryWithReauth from "./baseQuery";
@@ -30,6 +33,19 @@ export const reportsApi = createApi({
     >({
       query: ({ filter }) => ({
         url: "/reports/products",
+        method: "GET",
+        params: filter,
+        credentials: "include",
+      }),
+      providesTags: ["Report"],
+    }),
+    // Obtener reporte de productos top
+    getTopProductsReport: build.query<
+      TopProduct[],
+      { filter: FilterTopProductsSchema }
+    >({
+      query: ({ filter }) => ({
+        url: "/reports/top-products",
         method: "GET",
         params: filter,
         credentials: "include",
@@ -130,4 +146,5 @@ export const {
   useGetTopProductsQuery,
   useExportTopProductsToPdfMutation,
   useExportTopProductsToExcelMutation,
+  useGetTopProductsReportQuery,
 } = reportsApi;
