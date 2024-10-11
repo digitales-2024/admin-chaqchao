@@ -34,6 +34,7 @@ import {
 } from "@/components/ui/drawer";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
+import { Progress } from "../ui/progress";
 import { CreateProductsForm } from "./CreateProductForm";
 
 const dataForm = {
@@ -97,6 +98,17 @@ export function CreateProductDialog() {
     form.reset();
   };
 
+  const [processLoadingImage, setProcessLoadingImage] = useState(0);
+
+  useEffect(() => {
+    if (isLoadingUploadImageProduct) {
+      const interval = setInterval(() => {
+        setProcessLoadingImage((prev) => (prev + 10) % 100);
+      }, 500);
+      return () => clearInterval(interval);
+    }
+  }, [isLoadingUploadImageProduct]);
+
   if (isDesktop)
     return (
       <Dialog open={open} onOpenChange={setOpen}>
@@ -113,6 +125,9 @@ export function CreateProductDialog() {
           </DialogHeader>
           <ScrollArea className="h-full max-h-[80vh] w-full justify-center gap-4">
             <CreateProductsForm form={form} onSubmit={onSubmit}>
+              {isLoadingUploadImageProduct && (
+                <Progress value={processLoadingImage} className="h-2" />
+              )}
               <DialogFooter className="gap-2 sm:space-x-0">
                 <Button
                   disabled={isCreatePending || isLoadingUploadImageProduct}
