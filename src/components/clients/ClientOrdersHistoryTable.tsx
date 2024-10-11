@@ -20,14 +20,13 @@ export function OrdersTable({ data }: { data: Order[] }) {
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
       {/* Tabla de pedidos */}
-      <div className="max-h-[400px] overflow-y-auto rounded-md border bg-white p-4 shadow-sm">
-        <DataTableExpanded
-          data={data}
-          columns={columns}
-          placeholder="Buscar pedidos..."
-          onClickRow={(row) => handleRowClick(row)}
-        />
-      </div>
+
+      <DataTableExpanded
+        data={data}
+        columns={columns}
+        placeholder="Buscar pedidos..."
+        onClickRow={(row) => handleRowClick(row)}
+      />
 
       {/* Detalles del pedido */}
       <Card>
