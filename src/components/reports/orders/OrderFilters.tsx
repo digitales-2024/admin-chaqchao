@@ -9,8 +9,10 @@ interface OrderFiltersProps {
   setOrderDateRange: (value: { from: string; to: string | undefined }) => void;
   orderStatus: OrderStatus;
   setOrderStatus: (value: OrderStatus) => void;
-  totalAmount: string;
-  setTotalAmount: (value: string) => void;
+  priceMin: string;
+  setPriceMin: (value: string) => void;
+  priceMax: string;
+  setPriceMax: (value: string) => void;
   isLoading: boolean;
   downloadReportPdf: () => void;
   downloadReportExcel: () => void;
@@ -22,8 +24,10 @@ export function OrderFilters({
   setOrderDateRange,
   orderStatus,
   setOrderStatus,
-  totalAmount,
-  setTotalAmount,
+  priceMin,
+  setPriceMin,
+  priceMax,
+  setPriceMax,
   isLoading,
   downloadReportPdf,
   downloadReportExcel,
@@ -36,8 +40,10 @@ export function OrderFilters({
         setOrderDateRange={setOrderDateRange}
         orderStatus={orderStatus}
         setOrderStatus={setOrderStatus}
-        totalAmount={totalAmount}
-        setTotalAmount={setTotalAmount}
+        priceMin={priceMin}
+        setPriceMin={setPriceMin}
+        priceMax={priceMax}
+        setPriceMax={setPriceMax}
         isLoading={isLoading}
         downloadReportPdf={downloadReportPdf}
         downloadReportExcel={downloadReportExcel}
