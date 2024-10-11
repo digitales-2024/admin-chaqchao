@@ -3,6 +3,7 @@ import {
   useDownloadOrderPdfMutation,
   useGetOrderByIdQuery,
   useGetOrdersAllQuery,
+  useGetOrdersClientByIdQuery,
   useUpdateOrderStatusMutation,
 } from "@/redux/services/ordersApi";
 import { socket } from "@/socket/socket";
@@ -57,6 +58,16 @@ export const useOrders = (options: UseOrdersProps = {}) => {
 
   const [onDownload, { isLoading: isLoadingPdf, error: errorPdf }] =
     useDownloadOrderPdfMutation();
+
+  const { data: dataOrdersClient, isLoading: isLoadingOrdersClient } =
+    useGetOrdersClientByIdQuery(
+      {
+        id: id as string,
+      },
+      {
+        skip: !id,
+      },
+    );
 
   // Manejo de eventos del socket
   useEffect(() => {
@@ -158,5 +169,7 @@ export const useOrders = (options: UseOrdersProps = {}) => {
     onDownloadPdf,
     isLoadingPdf,
     errorPdf,
+    dataOrdersClient,
+    isLoadingOrdersClient,
   };
 };

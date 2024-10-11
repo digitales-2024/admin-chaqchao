@@ -5,7 +5,7 @@ import { Client } from "@/types";
 import { type ColumnDef } from "@tanstack/react-table";
 import { parseISO, format } from "date-fns";
 import { es } from "date-fns/locale";
-import { Ellipsis, Trash, RefreshCcwDot } from "lucide-react"; // Agrega RefreshCcwDot para la reactivación
+import { Ellipsis, Trash, RefreshCcwDot, History } from "lucide-react"; // Agrega RefreshCcwDot para la reactivación
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -20,6 +20,7 @@ import {
 
 import { DataTableColumnHeader } from "../data-table/DataTableColumnHeader";
 import { Badge } from "../ui/badge";
+import { ClientOrderHistoryDialog } from "./ClientOrderHistoryDialog";
 import { DesactivateClientDialog } from "./DesactivateClientDialog";
 import { ReactivateClientDialog } from "./ReactivateClientDialog"; // Asegúrate de importar el diálogo para reactivar
 import { UpdateClientSheet } from "./UpdateClientSheet";
@@ -125,6 +126,9 @@ export const clientsColumns = (): ColumnDef<Client>[] => {
         const client = row.original;
         const { user } = useProfile();
 
+        const [isOpenDialogHistory, setIsOpenDialogHistory] =
+          useState<boolean>(false);
+
         return (
           <div>
             <UpdateClientSheet
@@ -154,6 +158,12 @@ export const clientsColumns = (): ColumnDef<Client>[] => {
                 <DropdownMenuItem onSelect={() => setShowEditDialog(true)}>
                   Editar
                 </DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => setIsOpenDialogHistory(true)}>
+                  Ver historial de pedidos
+                  <DropdownMenuShortcut>
+                    <History className="size-4" aria-hidden="true" />
+                  </DropdownMenuShortcut>
+                </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 {user?.isSuperAdmin && (
                   <DropdownMenuItem
@@ -179,6 +189,11 @@ export const clientsColumns = (): ColumnDef<Client>[] => {
               isOpen={isDialogOpen}
               onOpenChange={setIsDialogOpen}
               onSuccess={() => setIsDialogOpen(false)}
+            />
+            <ClientOrderHistoryDialog
+              client={client}
+              isOpen={isOpenDialogHistory}
+              onOpenChange={setIsOpenDialogHistory}
             />
           </div>
         );

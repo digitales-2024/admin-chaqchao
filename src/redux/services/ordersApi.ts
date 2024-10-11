@@ -59,6 +59,16 @@ export const ordersApi = createApi({
       }),
       invalidatesTags: ["Orders"],
     }),
+
+    // Obtener los pedidos de un cliente por su id
+    getOrdersClientById: build.query<Order[], { id: string }>({
+      query: ({ id }) => ({
+        url: `/orders/client/${id}`,
+        method: "GET",
+        credentials: "include",
+      }),
+      providesTags: ["Orders"],
+    }),
   }),
 });
 
@@ -67,4 +77,5 @@ export const {
   useGetOrdersAllQuery,
   useUpdateOrderStatusMutation,
   useDownloadOrderPdfMutation,
+  useGetOrdersClientByIdQuery,
 } = ordersApi;
