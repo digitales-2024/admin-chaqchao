@@ -2,9 +2,9 @@ import { OrderStatus } from "@/types/orders";
 import {
   Calendar as CalendarIcon,
   Tag,
-  Bookmark,
   FileDown,
   Download,
+  Package,
 } from "lucide-react";
 import React from "react";
 
@@ -34,8 +34,10 @@ interface OrderFiltersFormProps {
   setOrderDateRange: (value: { from: string; to: string | undefined }) => void;
   orderStatus: OrderStatus;
   setOrderStatus: (value: OrderStatus) => void;
-  totalAmount: string;
-  setTotalAmount: (value: string) => void;
+  priceMin: string;
+  setPriceMin: (value: string) => void;
+  priceMax: string;
+  setPriceMax: (value: string) => void;
   isLoading: boolean;
   downloadReportPdf: () => void;
   downloadReportExcel: () => void;
@@ -46,8 +48,10 @@ export function OrderFiltersForm({
   setOrderDateRange,
   orderStatus,
   setOrderStatus,
-  totalAmount,
-  setTotalAmount,
+  priceMin,
+  setPriceMin,
+  priceMax,
+  setPriceMax,
   isLoading,
   downloadReportPdf,
   downloadReportExcel,
@@ -74,8 +78,8 @@ export function OrderFiltersForm({
           </div>
           <div className="grid gap-2">
             <Label htmlFor="order-status">
-              <Bookmark className="mr-2 inline h-4 w-4" />
-              Estado de la orden
+              <Package className="mr-2 inline h-4 w-4" />
+              Estado del pedido
             </Label>
             <Select value={orderStatus} onValueChange={setOrderStatus}>
               <SelectTrigger id="order-status">
@@ -96,17 +100,26 @@ export function OrderFiltersForm({
             </Select>
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="total-amount">
+            <Label htmlFor="price-range">
               <Tag className="mr-2 inline h-4 w-4" />
-              Monto Total
+              Rango de precios
             </Label>
-            <Input
-              id="total-amount"
-              type="number"
-              placeholder="Monto Total"
-              value={totalAmount}
-              onChange={(e) => setTotalAmount(e.target.value)}
-            />
+            <div className="flex space-x-2">
+              <Input
+                id="price-min"
+                type="number"
+                placeholder="Min"
+                value={priceMin}
+                onChange={(e) => setPriceMin(e.target.value)}
+              />
+              <Input
+                id="price-max"
+                type="number"
+                placeholder="Max"
+                value={priceMax}
+                onChange={(e) => setPriceMax(e.target.value)}
+              />
+            </div>
           </div>
         </div>
       </CardContent>
