@@ -7,6 +7,8 @@ import {
   CheckSquare,
   XSquare,
   Archive,
+  Download,
+  FileDown,
 } from "lucide-react";
 import React from "react";
 
@@ -91,7 +93,7 @@ export function ProductFiltersForm({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 xl:grid-cols-3">
           <div className="grid gap-2">
             <Label htmlFor="product-name">
               <Search className="mr-2 inline h-4 w-4" />
@@ -178,7 +180,7 @@ export function ProductFiltersForm({
               <SelectTrigger id="category-name">
                 <SelectValue>
                   <span className="capitalize">
-                    {categoryName || "Seleccionar categoría"}
+                    {categoryName === "all" ? "Todas" : categoryName}
                   </span>
                 </SelectValue>
               </SelectTrigger>
@@ -204,21 +206,23 @@ export function ProductFiltersForm({
           </div>
         </div>
       </CardContent>
-      <CardFooter className="flex justify-between">
+      <CardFooter className="flex justify-end">
         <div>
           <Button
             onClick={downloadReportPdf}
-            variant="outline"
-            className="mr-2"
+            variant="secondary"
+            className="my-4 mr-2 sm:my-0"
             disabled={isLoading}
           >
+            <FileDown className="mr-2 inline h-4 w-4" />
             Descargar PDF
           </Button>
           <Button
             onClick={downloadReportExcel}
-            variant="outline"
+            variant="secondary"
             disabled={isLoading}
           >
+            <Download className="mr-2 inline h-4 w-4" />
             Descargar Excel
           </Button>
         </div>
