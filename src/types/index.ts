@@ -26,6 +26,8 @@ export type {
   ProductVariationData,
   CategoryData,
   ProductFilters,
+  TopProductFilters,
+  TopProduct,
 } from "./product";
 export type { Client } from "./client";
 
