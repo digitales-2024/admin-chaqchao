@@ -39,7 +39,6 @@ export default function ReportsPage() {
     OrderStatus.ALL,
   );
   const [totalAmount, setTotalAmount] = React.useState("");
-  const [isOrderActive, setIsOrderActive] = React.useState(false);
 
   // Estado para el filtro de top productos
   const [topValue, setTopValue] = React.useState("all");
@@ -128,8 +127,6 @@ export default function ReportsPage() {
     startDate: orderFilters.startDate,
     endDate: orderFilters.endDate,
     orderStatus: orderStatus !== OrderStatus.ALL ? orderStatus : undefined,
-    totalAmount: totalAmount ? parseFloat(totalAmount) : undefined,
-    isActive: orderFilters.isActive,
   };
 
   const finalTopProductFilters: FilterTopProductsSchema = {
@@ -232,11 +229,6 @@ export default function ReportsPage() {
             setOrderStatus={setOrderStatus}
             totalAmount={totalAmount}
             setTotalAmount={setTotalAmount}
-            isActive={isOrderActive}
-            setIsOrderActive={(value) => {
-              setIsOrderActive(value);
-              updateOrderFilters({ isActive: value });
-            }}
             isLoading={isLoadingOrders}
             downloadReportPdf={() => exportOrdersReportToPdf(finalOrderFilters)}
             downloadReportExcel={() =>
