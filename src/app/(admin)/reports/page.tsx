@@ -3,7 +3,8 @@
 import { useCategories } from "@/hooks/use-categories";
 import { useReports } from "@/hooks/use-reports";
 import { FilterOrdersSchema } from "@/schemas/reports/filterOrdersSchema";
-import { ProductData, ProductFilters } from "@/types";
+import { FilterTopProductsSchema } from "@/schemas/reports/filterProductSchema";
+import { ProductData, ProductFilters, TopProduct } from "@/types";
 import { OrderReportData, OrderStatus } from "@/types/orders";
 import { addDays, format } from "date-fns";
 import * as React from "react";
@@ -13,6 +14,7 @@ import { Shell } from "@/components/common/Shell";
 import { OrderFilters } from "@/components/reports/orders/OrderFilters";
 import { ProductFilters as ProductFiltersComponent } from "@/components/reports/products/ProductFilters";
 import { ReportTabs } from "@/components/reports/TabsContent";
+import { TopProductsFilters } from "@/components/reports/top-products/TopProductsFilters";
 
 export default function ReportsPage() {
   // Estados para filtros de productos
@@ -39,15 +41,21 @@ export default function ReportsPage() {
   const [totalAmount, setTotalAmount] = React.useState("");
   const [isOrderActive, setIsOrderActive] = React.useState(false);
 
+  // Estado para el filtro de top productos
+  const [topValue, setTopValue] = React.useState("all");
+
   const [activeTab, setActiveTab] = React.useState("products");
 
   const {
     useGetProductsReport,
+    useGetTopProductsReport,
     exportProductsReportToPdf,
     exportProductsReportToExcel,
     useGetOrdersReport,
     exportOrdersReportToPdf,
     exportOrdersReportToExcel,
+    exportTopProductsReportToExcel,
+    exportTopProductsReportToPdf,
   } = useReports();
 
   // Obtenemos las categorías
@@ -65,12 +73,19 @@ export default function ReportsPage() {
     endDate: orderDateRange.to,
   };
 
+  const initialTopProductFilters: FilterTopProductsSchema = {
+    startDate: productDateRange.from,
+    endDate: productDateRange.to,
+  };
+
   // Estado para los filtros
   const [productFilters, setProductFilters] = React.useState<ProductFilters>(
     initialProductFilters,
   );
   const [orderFilters, setOrderFilters] =
     React.useState<FilterOrdersSchema>(initialOrderFilters);
+  const [topProductFilters, setTopProductFilters] =
+    React.useState<FilterTopProductsSchema>(initialTopProductFilters);
 
   // Función para actualizar los filtros
   const updateProductFilters = (newFilters: Partial<ProductFilters>) => {
@@ -82,6 +97,15 @@ export default function ReportsPage() {
 
   const updateOrderFilters = (newFilters: Partial<FilterOrdersSchema>) => {
     setOrderFilters((prevFilters) => ({
+      ...prevFilters,
+      ...newFilters,
+    }));
+  };
+
+  const updateTopProductFilters = (
+    newFilters: Partial<FilterTopProductsSchema>,
+  ) => {
+    setTopProductFilters((prevFilters) => ({
       ...prevFilters,
       ...newFilters,
     }));
@@ -108,11 +132,21 @@ export default function ReportsPage() {
     isActive: orderFilters.isActive,
   };
 
+  const finalTopProductFilters: FilterTopProductsSchema = {
+    startDate: topProductFilters.startDate,
+    endDate: topProductFilters.endDate,
+  };
+
   // Pasamos los filtros al hook useGetProductsReport
   const {
     data: productsData = [] as ProductData[],
     isLoading: isLoadingProducts,
   } = useGetProductsReport(finalProductFilters);
+
+  const {
+    data: topProductsData = [] as TopProduct[],
+    isLoading: isLoadingTopProducts,
+  } = useGetTopProductsReport(finalTopProductFilters);
 
   // Pasamos los filtros al hook useGetOrdersReport
   const {
@@ -134,7 +168,10 @@ export default function ReportsPage() {
             setProductName={setProductName}
             productDateRange={productDateRange}
             setProductDateRange={(range) => {
-              setProductDateRange(range);
+              setProductDateRange({
+                ...range,
+                to: range.to || format(addDays(new Date(), 7), "yyyy-MM-dd"),
+              });
               updateProductFilters({
                 startDate: range.from,
                 endDate: range.to,
@@ -160,7 +197,12 @@ export default function ReportsPage() {
               updateProductFilters({ isAvailable: value });
             }}
             categoryName={categoryName}
-            setCategoryName={setCategoryName}
+            setCategoryName={(value) => {
+              setCategoryName(value === "all" ? "Todas" : value);
+              updateProductFilters({
+                categoryName: value !== "all" ? value : undefined,
+              });
+            }}
             categoriesData={categoriesData}
             isLoadingCategories={isLoadingCategories}
             isLoading={isLoadingProducts}
@@ -201,6 +243,31 @@ export default function ReportsPage() {
               exportOrdersReportToExcel(finalOrderFilters)
             }
             reportData={ordersData}
+          />
+        )}
+        {activeTab === "trends" && (
+          <TopProductsFilters
+            productDateRange={productDateRange}
+            setProductDateRange={(range) => {
+              setProductDateRange({
+                ...range,
+                to: range.to || format(addDays(new Date(), 7), "yyyy-MM-dd"),
+              });
+              updateTopProductFilters({
+                startDate: range.from,
+                endDate: range.to,
+              });
+            }}
+            topValue={topValue}
+            setTopValue={setTopValue}
+            isLoading={isLoadingTopProducts}
+            downloadReportPdf={() =>
+              exportTopProductsReportToPdf(finalTopProductFilters)
+            }
+            downloadReportExcel={() =>
+              exportTopProductsReportToExcel(finalTopProductFilters)
+            }
+            reportData={topProductsData}
           />
         )}
       </ReportTabs>
