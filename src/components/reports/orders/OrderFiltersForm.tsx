@@ -1,10 +1,5 @@
 import { OrderStatus } from "@/types/orders";
-import {
-  Calendar as CalendarIcon,
-  Tag,
-  Bookmark,
-  CheckSquare,
-} from "lucide-react";
+import { Calendar as CalendarIcon, Tag, Bookmark } from "lucide-react";
 import React from "react";
 
 import { Button } from "@/components/ui/button";
@@ -16,7 +11,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -36,8 +30,6 @@ interface OrderFiltersFormProps {
   setOrderStatus: (value: OrderStatus) => void;
   totalAmount: string;
   setTotalAmount: (value: string) => void;
-  isActive: boolean;
-  setIsOrderActive: (value: boolean) => void;
   isLoading: boolean;
   downloadReportPdf: () => void;
   downloadReportExcel: () => void;
@@ -50,8 +42,6 @@ export function OrderFiltersForm({
   setOrderStatus,
   totalAmount,
   setTotalAmount,
-  isActive,
-  setIsOrderActive,
   isLoading,
   downloadReportPdf,
   downloadReportExcel,
@@ -111,17 +101,6 @@ export function OrderFiltersForm({
               value={totalAmount}
               onChange={(e) => setTotalAmount(e.target.value)}
             />
-          </div>
-          <div className="flex items-center space-x-2">
-            <Checkbox
-              id="is-active"
-              checked={isActive}
-              onCheckedChange={(value) => setIsOrderActive(Boolean(value))}
-            />
-            <Label htmlFor="is-active">
-              <CheckSquare className="mr-2 inline h-4 w-4" />
-              Activo
-            </Label>
           </div>
         </div>
       </CardContent>
