@@ -38,7 +38,8 @@ export default function ReportsPage() {
   const [orderStatus, setOrderStatus] = React.useState<OrderStatus>(
     OrderStatus.ALL,
   );
-  const [totalAmount, setTotalAmount] = React.useState("");
+  const [orderPriceMin, setOrderPriceMin] = React.useState("");
+  const [orderPriceMax, setOrderPriceMax] = React.useState("");
 
   // Estado para el filtro de top productos
   const [topValue, setTopValue] = React.useState("all");
@@ -127,6 +128,8 @@ export default function ReportsPage() {
     startDate: orderFilters.startDate,
     endDate: orderFilters.endDate,
     orderStatus: orderStatus !== OrderStatus.ALL ? orderStatus : undefined,
+    priceMin: orderPriceMin ? parseFloat(orderPriceMin) : undefined,
+    priceMax: orderPriceMax ? parseFloat(orderPriceMax) : undefined,
   };
 
   const finalTopProductFilters: FilterTopProductsSchema = {
@@ -227,8 +230,10 @@ export default function ReportsPage() {
             }}
             orderStatus={orderStatus}
             setOrderStatus={setOrderStatus}
-            totalAmount={totalAmount}
-            setTotalAmount={setTotalAmount}
+            priceMin={orderPriceMin}
+            setPriceMin={setOrderPriceMin}
+            priceMax={orderPriceMax}
+            setPriceMax={setOrderPriceMax}
             isLoading={isLoadingOrders}
             downloadReportPdf={() => exportOrdersReportToPdf(finalOrderFilters)}
             downloadReportExcel={() =>
