@@ -1,7 +1,7 @@
 import { TopProduct } from "@/types";
-import { Circle, PackageCheck, Tag } from "lucide-react";
+import { Circle, PackageCheck, Tag, ImageOff } from "lucide-react";
 import Image from "next/image";
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import {
@@ -45,52 +45,70 @@ export function TopProductsReport({ reportData }: ProductReportTableProps) {
       <CardContent>
         <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
           {reportData.map((product) => (
-            <Card key={product.id} className="overflow-hidden">
-              <CardHeader className="p-0">
-                <div className="relative h-0 w-full pb-[50%]">
-                  <Image
-                    src={product.image}
-                    alt={product.name}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-              </CardHeader>
-              <CardContent className="p-4">
-                <div className="flex items-start justify-between">
-                  <CardTitle className="text-base capitalize md:text-lg">
-                    {product.name}
-                  </CardTitle>
-                  {getStatusIcon(product.isActive)}
-                </div>
-                <CardDescription className="text-sm capitalize md:text-base">
-                  {product.category.name}
-                </CardDescription>
-                <div className="mt-4 flex">
-                  <Badge
-                    variant="secondary"
-                    className="flex items-center space-x-1 text-sm md:text-base"
-                  >
-                    <Tag className="mr-1 h-4 w-4" />
-                    <span className="font-light">
-                      ${product.price.toFixed(2)}
-                    </span>
-                  </Badge>
-                </div>
-                <div className="mt-4 flex">
-                  <Badge
-                    variant="secondary"
-                    className="flex items-center space-x-1 text-sm md:text-base"
-                  >
-                    <PackageCheck className="mr-1 h-4 w-4" />
-                    <span className="font-light">
-                      {product.totalOrdered} vendidos
-                    </span>
-                  </Badge>
-                </div>
-              </CardContent>
-            </Card>
+            <ProductCard key={product.id} product={product} />
           ))}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function ProductCard({ product }: { product: TopProduct }) {
+  const [imageError, setImageError] = useState(false);
+
+  useEffect(() => {
+    setImageError(false);
+  }, [product.image]);
+
+  return (
+    <Card className="overflow-hidden">
+      <CardHeader className="p-0">
+        <div className="relative h-0 w-full bg-slate-100 pb-[70%]">
+          {imageError ? (
+            <div className="flex h-auto flex-col content-center items-center justify-center pt-[20%] text-center">
+              <ImageOff className="h-14 w-14 text-slate-400" strokeWidth={1} />
+              <span className="text-sm text-slate-400">
+                Imagen no disponible
+              </span>
+            </div>
+          ) : (
+            <Image
+              src={product.image}
+              alt={product.name}
+              fill
+              className="object-cover"
+              onError={() => setImageError(true)}
+            />
+          )}
+        </div>
+      </CardHeader>
+      <CardContent className="p-4">
+        <div className="flex items-start justify-between">
+          <CardTitle className="text-base capitalize md:text-lg">
+            {product.name}
+          </CardTitle>
+          {getStatusIcon(product.isActive)}
+        </div>
+        <CardDescription className="text-sm capitalize md:text-base">
+          {product.category.name}
+        </CardDescription>
+        <div className="mt-4 flex">
+          <Badge
+            variant="secondary"
+            className="flex items-center space-x-1 text-sm md:text-base"
+          >
+            <Tag className="mr-1 h-4 w-4" />
+            <span className="font-light">${product.price.toFixed(2)}</span>
+          </Badge>
+        </div>
+        <div className="mt-4 flex">
+          <Badge
+            variant="secondary"
+            className="flex items-center space-x-1 text-sm md:text-base"
+          >
+            <PackageCheck className="mr-1 h-4 w-4" />
+            <span className="font-light">{product.totalOrdered} vendidos</span>
+          </Badge>
         </div>
       </CardContent>
     </Card>
