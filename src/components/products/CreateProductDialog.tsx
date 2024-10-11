@@ -58,6 +58,7 @@ export function CreateProductDialog() {
       name: "",
       categoryId: "",
       description: "",
+      price: "",
       image: undefined,
       isRestricted: false,
     },
@@ -80,7 +81,10 @@ export function CreateProductDialog() {
       };
 
       startCreateTransition(async () => {
-        await onCreateProduct(inputWithImage);
+        await onCreateProduct({
+          ...inputWithImage,
+          price: parseFloat(inputWithImage.price),
+        });
       });
     } catch (error) {
       console.error("Error al subir la imagen o crear el producto", error);
@@ -118,7 +122,7 @@ export function CreateProductDialog() {
             {dataForm.button}
           </Button>
         </DialogTrigger>
-        <DialogContent>
+        <DialogContent tabIndex={undefined}>
           <DialogHeader>
             <DialogTitle>{dataForm.title}</DialogTitle>
             <DialogDescription>{dataForm.description}</DialogDescription>
