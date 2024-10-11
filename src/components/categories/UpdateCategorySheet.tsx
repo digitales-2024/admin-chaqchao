@@ -30,6 +30,8 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 
+import { Textarea } from "../ui/textarea";
+
 const infoSheet = {
   title: "Actualizar Categoría",
   description: "Actualiza la información de la categoría y guarda los cambios",
@@ -131,10 +133,11 @@ export function UpdateCategorySheet({
                       Descripción
                     </FormLabel>
                     <FormControl>
-                      <Input
+                      <Textarea
+                        rows={5}
+                        className="resize-y"
                         id="category-description"
                         placeholder="Descripción de la categoría"
-                        className="resize-none"
                         {...field}
                       />
                     </FormControl>
