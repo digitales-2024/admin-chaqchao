@@ -111,20 +111,8 @@ export const CreateProductsForm = ({
                 <FormLabel htmlFor="price">Precio</FormLabel>
                 <FormControl>
                   <Input
-                    id="price"
-                    type="number"
                     placeholder="Ingrese el precio del producto"
                     {...field}
-                    onChange={(e) => {
-                      const value = parseFloat(e.target.value);
-                      if (!isNaN(value)) {
-                        field.onChange(value);
-                      } else {
-                        field.onChange(0);
-                      }
-                    }}
-                    min="0"
-                    step="0.01"
                   />
                 </FormControl>
                 <FormMessage />
