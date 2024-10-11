@@ -65,7 +65,7 @@ export function OrderFiltersForm({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 xl:grid-cols-3">
           <div className="grid gap-2">
             <Label htmlFor="order-date-range">
               <CalendarIcon className="mr-2 inline h-4 w-4" />
