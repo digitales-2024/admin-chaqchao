@@ -1,5 +1,11 @@
 import { OrderStatus } from "@/types/orders";
-import { Calendar as CalendarIcon, Tag, Bookmark } from "lucide-react";
+import {
+  Calendar as CalendarIcon,
+  Tag,
+  Bookmark,
+  FileDown,
+  Download,
+} from "lucide-react";
 import React from "react";
 
 import { Button } from "@/components/ui/button";
@@ -104,21 +110,23 @@ export function OrderFiltersForm({
           </div>
         </div>
       </CardContent>
-      <CardFooter className="flex justify-between">
+      <CardFooter className="flex justify-end">
         <div>
           <Button
             onClick={downloadReportPdf}
-            variant="outline"
+            variant="secondary"
             className="mr-2"
             disabled={isLoading}
           >
+            <FileDown className="mr-2 inline h-4 w-4" />
             Descargar PDF
           </Button>
           <Button
             onClick={downloadReportExcel}
-            variant="outline"
+            variant="secondary"
             disabled={isLoading}
           >
+            <Download className="mr-2 inline h-4 w-4" />
             Descargar Excel
           </Button>
         </div>
