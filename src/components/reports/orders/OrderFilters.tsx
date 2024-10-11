@@ -11,8 +11,6 @@ interface OrderFiltersProps {
   setOrderStatus: (value: OrderStatus) => void;
   totalAmount: string;
   setTotalAmount: (value: string) => void;
-  isActive: boolean;
-  setIsOrderActive: (value: boolean) => void;
   isLoading: boolean;
   downloadReportPdf: () => void;
   downloadReportExcel: () => void;
@@ -26,8 +24,6 @@ export function OrderFilters({
   setOrderStatus,
   totalAmount,
   setTotalAmount,
-  isActive,
-  setIsOrderActive,
   isLoading,
   downloadReportPdf,
   downloadReportExcel,
@@ -42,8 +38,6 @@ export function OrderFilters({
         setOrderStatus={setOrderStatus}
         totalAmount={totalAmount}
         setTotalAmount={setTotalAmount}
-        isActive={isActive}
-        setIsOrderActive={setIsOrderActive}
         isLoading={isLoading}
         downloadReportPdf={downloadReportPdf}
         downloadReportExcel={downloadReportExcel}
