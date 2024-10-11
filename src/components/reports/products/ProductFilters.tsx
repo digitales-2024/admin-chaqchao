@@ -7,8 +7,11 @@ import { ProductReportTable } from "./ProductReportTable";
 interface ProductFiltersProps {
   productName: string;
   setProductName: (value: string) => void;
-  productDateRange: { from: string; to: string };
-  setProductDateRange: (value: { from: string; to: string }) => void;
+  productDateRange: { from: string; to: string | undefined };
+  setProductDateRange: (value: {
+    from: string;
+    to: string | undefined;
+  }) => void;
   priceMin: string;
   setPriceMin: (value: string) => void;
   priceMax: string;
