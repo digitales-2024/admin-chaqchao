@@ -20,6 +20,7 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from "../ui/drawer";
+import { ScrollArea } from "../ui/scroll-area";
 import { OrdersTable } from "./ClientOrdersHistoryTable";
 
 interface ClientOrderHistoryDialogProps {
@@ -56,13 +57,15 @@ export const ClientOrderHistoryDialog = ({
     return (
       <Dialog open={isOpen} onOpenChange={onOpenChange}>
         <DialogContent className="flex h-[80vh] w-[95%] max-w-[1200px] flex-col gap-4">
-          <DialogHeader>
-            <DialogTitle>Historial de pedidos de {client.name}</DialogTitle>
-            <DialogDescription>
-              Aquí puedes ver todos los pedidos realizados por este cliente.
-            </DialogDescription>
-          </DialogHeader>
-          {content}
+          <ScrollArea className="h-full">
+            <DialogHeader>
+              <DialogTitle>Historial de pedidos de {client.name}</DialogTitle>
+              <DialogDescription>
+                Aquí puedes ver todos los pedidos realizados por este cliente.
+              </DialogDescription>
+            </DialogHeader>
+            {content}
+          </ScrollArea>
         </DialogContent>
       </Dialog>
     );
@@ -70,19 +73,21 @@ export const ClientOrderHistoryDialog = ({
 
   return (
     <Drawer open={isOpen} onOpenChange={onOpenChange}>
-      <DrawerContent className="max-w-full px-4 py-4">
-        <DrawerHeader>
-          <DrawerTitle>Historial de pedidos de {client.name}</DrawerTitle>
-          <DrawerDescription>
-            Aquí puedes ver todos los pedidos realizados por este cliente.
-          </DrawerDescription>
-        </DrawerHeader>
-        {content}
-        <DrawerFooter>
-          <DrawerClose asChild>
-            <button className="btn btn-outline">Cerrar</button>
-          </DrawerClose>
-        </DrawerFooter>
+      <DrawerContent className="h-[80vh] max-w-full px-4 py-4">
+        <ScrollArea className="h-full">
+          <DrawerHeader>
+            <DrawerTitle>Historial de pedidos de {client.name}</DrawerTitle>
+            <DrawerDescription>
+              Aquí puedes ver todos los pedidos realizados por este cliente.
+            </DrawerDescription>
+          </DrawerHeader>
+          {content}
+          <DrawerFooter>
+            <DrawerClose asChild>
+              <button className="btn btn-outline">Cerrar</button>
+            </DrawerClose>
+          </DrawerFooter>
+        </ScrollArea>
       </DrawerContent>
     </Drawer>
   );
