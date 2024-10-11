@@ -86,8 +86,8 @@ export interface OrderFilters {
   startDate?: string;
   endDate?: string;
   orderStatus?: string;
-  totalAmountMin?: number;
-  totalAmountMax?: number;
+  priceMin?: number;
+  priceMax?: number;
   isActive?: boolean;
 }
 
