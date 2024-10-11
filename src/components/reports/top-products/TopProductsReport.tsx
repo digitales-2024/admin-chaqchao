@@ -21,7 +21,7 @@ function getStatusIcon(isActive: boolean) {
   if (isActive) {
     return <span className="text-green-500">Activo</span>;
   } else {
-    return <span className="text-gray-500">Inactivo</span>;
+    return <span className="text-red-500">Inactivo</span>;
   }
 }
 
@@ -41,24 +41,28 @@ export function TopProductsReport({ reportData }: ProductReportTableProps) {
                 <Image
                   src={product.image}
                   alt={product.name}
-                  width={500} // Especifica el ancho de la imagen
-                  height={300} // Especifica la altura de la imagen
+                  width={500}
+                  height={300}
                   className="h-48 w-full object-cover"
                 />
               </CardHeader>
               <CardContent className="p-4">
                 <div className="mb-2 flex items-start justify-between">
-                  <CardTitle>{product.name}</CardTitle>
+                  <CardTitle className="capitalize">{product.name}</CardTitle>
                   {getStatusIcon(product.isActive)}
                 </div>
-                <CardDescription>{product.category.name}</CardDescription>
+                <CardDescription className="capitalize">
+                  {product.category.name}
+                </CardDescription>
                 <div className="mt-4 flex">
                   <Badge
                     variant="secondary"
                     className="flex items-center space-x-1"
                   >
                     <Tag className="mr-1 h-3 w-3" />
-                    <span>${product.price.toFixed(2)}</span>
+                    <span className="font-light">
+                      ${product.price.toFixed(2)}
+                    </span>
                   </Badge>
                 </div>
               </CardContent>
