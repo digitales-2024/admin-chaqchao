@@ -51,13 +51,14 @@ export function TopProductsFiltersForm({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Filtros de Productos</CardTitle>
+        <CardTitle>Filtros de Productos más vendidos</CardTitle>
         <CardDescription>
-          Personaliza tu reporte de productos con los siguientes filtros
+          Personaliza tu reporte de productos más vendidos con los siguientes
+          filtros
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="grid gap-4 xl:grid-cols-3">
+        <div className="grid gap-4 xl:grid-cols-2">
           <div className="grid gap-2">
             <Label htmlFor="top-select">
               <ChartNoAxesCombined className="mr-2 inline h-4 w-4" />
@@ -67,12 +68,12 @@ export function TopProductsFiltersForm({
               <SelectTrigger id="top-select">
                 <SelectValue>
                   <span className="capitalize">
-                    {topValue === "all" ? "Todas" : `Top ${topValue}`}
+                    {topValue === "all" ? "Todos" : `Top ${topValue}`}
                   </span>
                 </SelectValue>
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Todas</SelectItem>
+                <SelectItem value="all">Todos</SelectItem>
                 <SelectItem value="10">Top 10</SelectItem>
                 <SelectItem value="15">Top 15</SelectItem>
                 <SelectItem value="20">Top 20</SelectItem>
