@@ -12,6 +12,7 @@ import { Badge } from "../ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { ScrollArea } from "../ui/scroll-area";
 import { Separator } from "../ui/separator";
+import { Skeleton } from "../ui/skeleton";
 import {
   Table,
   TableBody,
@@ -33,8 +34,8 @@ export function ClientOrderDetails({ orderId }: ClientOrderDetailsProps) {
 
   if (!orderById) {
     return (
-      <div className="p-4 text-center text-gray-500">
-        Cargando detalles del pedido...
+      <div className="p-10 text-center text-gray-500">
+        <Skeleton className="flex h-fit min-h-[400px] flex-col gap-4" />
       </div>
     );
   }
