@@ -80,7 +80,7 @@ export function UpdateProductSheet({
       name: product.name ?? "",
       description: product.description ?? "",
       categoryId: product.category.id ?? "",
-      price: product.price ?? 0,
+      price: product.price.toString() ?? 0,
       image: undefined,
     },
   });
@@ -91,7 +91,7 @@ export function UpdateProductSheet({
         name: product.name ?? "",
         description: product.description ?? "",
         categoryId: product.category.id ?? "",
-        price: product.price ?? 0,
+        price: product.price.toString() ?? 0,
         image: undefined,
       });
       setSelectedFile(null);
@@ -164,8 +164,9 @@ export function UpdateProductSheet({
     };
 
     onUpdateProduct({
-      id: product.id,
       ...inputWithImage,
+      id: product.id,
+      price: parseFloat(input.price as string),
     });
   };
 
@@ -196,7 +197,10 @@ export function UpdateProductSheet({
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="flex flex-col gap-6 sm:max-w-md">
+      <SheetContent
+        className="flex flex-col gap-6 sm:max-w-md"
+        tabIndex={undefined}
+      >
         <SheetHeader className="text-left">
           <SheetTitle className="flex flex-col items-start">
             {infoSheet.title}
@@ -257,17 +261,8 @@ export function UpdateProductSheet({
                     <FormLabel>Precio</FormLabel>
                     <FormControl>
                       <Input
-                        type="number"
                         placeholder="Ingrese el precio del producto"
                         {...field}
-                        onChange={(e) => {
-                          const value = parseFloat(e.target.value);
-                          if (!isNaN(value)) {
-                            field.onChange(value);
-                          }
-                        }}
-                        min="0"
-                        step="0.01"
                       />
                     </FormControl>
                     <FormMessage />
