@@ -4,6 +4,7 @@ import { Order } from "@/types";
 import { useMemo, useState } from "react";
 
 import { DataTableExpanded } from "../data-table/DataTableExpanded";
+import { Card, CardContent } from "../ui/card";
 import { ClientOrderDetails } from "./ClientOrderDetails";
 import { ordersColumns } from "./ClientOrdersHistoryTableColumns";
 
@@ -29,17 +30,19 @@ export function OrdersTable({ data }: { data: Order[] }) {
       </div>
 
       {/* Detalles del pedido */}
-      <div className="rounded-md border bg-white p-4 shadow-sm">
-        {selectedOrderId ? (
-          <ClientOrderDetails orderId={selectedOrderId} />
-        ) : (
-          <div className="flex h-full items-center justify-center">
-            <p className="text-center text-gray-500">
-              Seleccione un pedido para ver los detalles
-            </p>
-          </div>
-        )}
-      </div>
+      <Card>
+        <CardContent className="size-full">
+          {selectedOrderId ? (
+            <ClientOrderDetails orderId={selectedOrderId} />
+          ) : (
+            <div className="flex h-full items-center justify-center">
+              <p className="text-center text-gray-500">
+                Seleccione un pedido para ver los detalles
+              </p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }
