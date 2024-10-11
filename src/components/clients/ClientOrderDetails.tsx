@@ -4,7 +4,7 @@ import { useOrders } from "@/hooks/use-orders";
 import { AvatarImage } from "@radix-ui/react-avatar";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { Coffee } from "lucide-react";
+import { PackageOpen } from "lucide-react";
 
 import { statusColors, translateStatus } from "../orders/OrderSheetDetails";
 import { Avatar, AvatarFallback } from "../ui/avatar";
@@ -109,7 +109,7 @@ export function ClientOrderDetails({ orderId }: ClientOrderDetailsProps) {
                   <Avatar className="rounded-lg">
                     <AvatarImage src={product.image} />
                     <AvatarFallback>
-                      <Coffee />
+                      <PackageOpen />
                     </AvatarFallback>
                   </Avatar>
                 </TableCell>
