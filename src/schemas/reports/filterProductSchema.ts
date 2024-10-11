@@ -13,3 +13,10 @@ export const filterProductSchema = z.object({
 });
 
 export type FilterProductSchema = z.infer<typeof filterProductSchema>;
+
+export const filterTopProductsSchema = z.object({
+  startDate: z.string().describe("Fecha de inicio"),
+  endDate: z.string().describe("Fecha de fin"),
+});
+
+export type FilterTopProductsSchema = z.infer<typeof filterTopProductsSchema>;
