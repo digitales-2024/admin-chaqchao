@@ -17,9 +17,8 @@ export default function ClassPage() {
   const [newParticipants, setNewParticipants] = useState<{
     [key: string]: number;
   }>({});
-  const { allDataClasses, isLoadingDataClasses } = useClasses(
-    format(date, "yyyy-MM-dd"),
-  );
+  const { allDataClasses, isLoadingDataClasses, exportClassesToExcel } =
+    useClasses(format(date, "yyyy-MM-dd"));
 
   useEffect(() => {
     if (allDataClasses && allDataClasses !== previousData) {
@@ -76,7 +75,11 @@ export default function ClassPage() {
           <FilterDateClasses date={date} setDate={setDate} />
         </div>
       </div>
-      <ClassesTable data={allDataClasses} newParticipants={newParticipants} />
+      <ClassesTable
+        data={allDataClasses}
+        newParticipants={newParticipants}
+        exportClassesToExcel={exportClassesToExcel}
+      />
     </Shell>
   );
 }

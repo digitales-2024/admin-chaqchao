@@ -15,7 +15,28 @@ export default function DashboardSkeleton() {
     return (
       <AdminPanelLayout>
         <Card className="border-none">
-          <Shell>Cargando dashboard</Shell>
+          <Shell>
+            <Skeleton className="h-10 w-full max-w-64" />
+            <div className="mb-8 grid grid-cols-1 gap-6 xl:grid-cols-[1fr_2fr]">
+              <Skeleton className="h-full w-full" />
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                <div className="grid grid-cols-1 grid-rows-2 gap-6">
+                  <Skeleton className="h-60 w-full" />
+                  <Skeleton className="h-60 w-full" />
+                </div>
+                <Skeleton className="h-full w-full" />
+              </div>
+            </div>
+
+            <div className="mb-8 grid grid-cols-1">
+              <Skeleton className="h-60 w-full" />
+            </div>
+
+            <div className="mb-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
+              <Skeleton className="h-60 w-full" />
+              <Skeleton className="h-60 w-full" />
+            </div>
+          </Shell>
         </Card>
       </AdminPanelLayout>
     );

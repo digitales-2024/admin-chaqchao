@@ -25,10 +25,16 @@ export type {
   ProductData,
   ProductVariationData,
   CategoryData,
+  ProductFilters,
 } from "./product";
 export type { Client } from "./client";
 
-export type { Order, OrderDetails } from "./orders";
+export type {
+  Order,
+  OrderDetails,
+  OrderReportData,
+  OrderFilters,
+} from "./orders";
 export { OrderStatus } from "./orders";
 
 export interface Option {

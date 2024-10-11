@@ -81,3 +81,28 @@ enum PaymentStatus {
   PENDING,
   FAILED,
 }
+
+export interface OrderFilters {
+  startDate?: string;
+  endDate?: string;
+  orderStatus?: string;
+  totalAmountMin?: number;
+  totalAmountMax?: number;
+  isActive?: boolean;
+}
+
+export type OrderReportData = {
+  id: string;
+  cartId: string;
+  pickupCode: string;
+  totalAmount: number;
+  pickupTime: string;
+  orderStatus: string;
+  pickupAddress: string;
+  someonePickup: boolean;
+  comments: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+  cart: Cart;
+};
