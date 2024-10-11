@@ -10,7 +10,7 @@ import { statusColors, translateStatus } from "../orders/OrderSheetDetails";
 import { Avatar, AvatarFallback } from "../ui/avatar";
 import { Badge } from "../ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import { ScrollArea } from "../ui/scroll-area";
+import { ScrollArea, ScrollBar } from "../ui/scroll-area";
 import { Separator } from "../ui/separator";
 import { Skeleton } from "../ui/skeleton";
 import {
@@ -34,8 +34,14 @@ export function ClientOrderDetails({ orderId }: ClientOrderDetailsProps) {
 
   if (!orderById) {
     return (
-      <div className="p-10 text-center text-gray-500">
-        <Skeleton className="flex h-fit min-h-[400px] flex-col gap-4" />
+      <div className="flex flex-col gap-2 p-10 text-center text-gray-500">
+        <Skeleton className="flex h-6" />
+        <Skeleton className="flex h-5" />
+        <Skeleton className="flex h-5" />
+        <Separator className="my-4" />
+        <Skeleton className="flex h-5" />
+        <Skeleton className="flex h-5" />
+        <Skeleton className="flex h-5" />
       </div>
     );
   }
@@ -87,12 +93,15 @@ export function ClientOrderDetails({ orderId }: ClientOrderDetailsProps) {
           <Separator className="my-4" />
           <Table>
             <TableHeader>
-              <TableHead></TableHead>
-              <TableHead>Nombre</TableHead>
-              <TableHead>Cantidad</TableHead>
-              <TableHead>Precio/U</TableHead>
-              <TableHead>Precio Total</TableHead>
+              <TableRow>
+                <TableHead></TableHead>
+                <TableHead>Nombre</TableHead>
+                <TableHead>Cantidad</TableHead>
+                <TableHead>Precio/U</TableHead>
+                <TableHead>Precio Total</TableHead>
+              </TableRow>
             </TableHeader>
+
             <TableBody>
               {orderById.cart.products.map((product) => (
                 <TableRow key={product.id}>
@@ -106,7 +115,7 @@ export function ClientOrderDetails({ orderId }: ClientOrderDetailsProps) {
                   </TableCell>
                   <TableCell>{product.name}</TableCell>
                   <TableCell>
-                    <span className="text-xs text-slate-400">x</span>{" "}
+                    <span className="text-xs text-slate-400">x</span>
                     {product.quantity}
                   </TableCell>
                   <TableCell>
@@ -120,19 +129,23 @@ export function ClientOrderDetails({ orderId }: ClientOrderDetailsProps) {
                 </TableRow>
               ))}
             </TableBody>
+
             <TableFooter>
-              <TableCell colSpan={orderById.cart.products.length + 1}>
-                Total
-              </TableCell>
-              <TableCell colSpan={orderById.cart.products.length}>
-                <span className="text-slate-500">S/.</span>
-                {orderById.cart.products.reduce(
-                  (ac, va) => ac + va.quantity * va.price,
-                  0,
-                )}
-              </TableCell>
+              <TableRow>
+                <TableCell colSpan={4} className="text-right">
+                  Total
+                </TableCell>
+                <TableCell>
+                  <span className="text-slate-500">S/.</span>
+                  {orderById.cart.products.reduce(
+                    (ac, va) => ac + va.quantity * va.price,
+                    0,
+                  )}
+                </TableCell>
+              </TableRow>
             </TableFooter>
           </Table>
+          <ScrollBar orientation="horizontal" />
         </ScrollArea>
       </CardContent>
     </Card>
