@@ -4,6 +4,7 @@ import { format } from "date-fns";
 import { es } from "date-fns/locale";
 
 import { DataTableColumnHeader } from "../data-table/DataTableColumnHeader";
+import { statusColors, translateStatus } from "../orders/OrderSheetDetails";
 import { Badge } from "../ui/badge";
 
 export const ordersColumns = (): ColumnDef<Order>[] => {
@@ -33,39 +34,15 @@ export const ordersColumns = (): ColumnDef<Order>[] => {
       ),
       cell: ({ row }) => {
         const status = row.getValue("Estado") as OrderStatus;
-        let badgeClass = "";
-        let statusText = "";
-
-        switch (status) {
-          case "PENDING":
-            badgeClass = "bg-yellow-100 text-yellow-500";
-            statusText = "Pendiente";
-            break;
-          case "CONFIRMED":
-            badgeClass = "bg-blue-100 text-blue-500";
-            statusText = "Confirmado";
-            break;
-          case "COMPLETED":
-            badgeClass = "bg-green-100 text-green-500";
-            statusText = "Completado";
-            break;
-          case "READY":
-            badgeClass = "bg-purple-100 text-purple-500";
-            statusText = "Listo";
-            break;
-          case "CANCELLED":
-            badgeClass = "bg-red-100 text-red-500";
-            statusText = "Cancelado";
-            break;
-          default:
-            badgeClass = "bg-gray-100 text-gray-500";
-            statusText = "Desconocido";
-        }
-
         return (
           <div className="cursor-pointer">
-            <Badge variant="secondary" className={badgeClass}>
-              {statusText}
+            <Badge
+              variant="outline"
+              className={`px-2 py-1 text-xs uppercase ${
+                statusColors[status] || "bg-gray-100 text-gray-500"
+              }`}
+            >
+              {translateStatus[status] || "Desconocido"}
             </Badge>
           </div>
         );
