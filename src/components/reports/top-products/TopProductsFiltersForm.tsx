@@ -1,6 +1,6 @@
 import {
-  Bookmark,
   Calendar as CalendarIcon,
+  ChartNoAxesCombined,
   Download,
   FileDown,
 } from "lucide-react";
@@ -60,8 +60,8 @@ export function TopProductsFiltersForm({
         <div className="grid gap-4 xl:grid-cols-3">
           <div className="grid gap-2">
             <Label htmlFor="top-select">
-              <Bookmark className="mr-2 inline h-4 w-4" />
-              Top
+              <ChartNoAxesCombined className="mr-2 inline h-4 w-4" />
+              Productos a mostrar
             </Label>
             <Select value={topValue} onValueChange={setTopValue}>
               <SelectTrigger id="top-select">
