@@ -15,10 +15,12 @@ import { ReactivateProductsDialog } from "./ReactivateProductsDialog";
 
 export interface ProductsTableToolbarActionsProps {
   table?: Table<ProductData>;
+  exportFile?: boolean;
 }
 
 export function ProductsTableToolbarActions({
   table,
+  exportFile = false,
 }: ProductsTableToolbarActionsProps) {
   const { user } = useProfile();
   return (
@@ -42,21 +44,24 @@ export function ProductsTableToolbarActions({
         </>
       ) : null}
       <CreateProductDialog />
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={() => {
-          if (table) {
-            exportTableToCSV(table, {
-              filename: "products",
-              excludeColumns: ["select", "actions"],
-            });
-          }
-        }}
-      >
-        <Download className="mr-2 size-4" aria-hidden="true" />
-        Exportar
-      </Button>
+      {exportFile ||
+        (user?.isSuperAdmin && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              if (table) {
+                exportTableToCSV(table, {
+                  filename: "products",
+                  excludeColumns: ["select", "actions"],
+                });
+              }
+            }}
+          >
+            <Download className="mr-2 size-4" aria-hidden="true" />
+            Exportar
+          </Button>
+        ))}
     </div>
   );
 }
