@@ -173,12 +173,12 @@ export function CreateProductDialog() {
         </Button>
       </DrawerTrigger>
 
-      <DrawerContent>
+      <DrawerContent className="h-[90vh]">
         <DrawerHeader>
           <DrawerTitle>{dataForm.title}</DrawerTitle>
           <DrawerDescription>{dataForm.description}</DrawerDescription>
         </DrawerHeader>
-        <ScrollArea className="mt-4 max-h-[750px] w-full gap-4 overflow-y-auto pr-4">
+        <ScrollArea className="mt-4 max-h-full w-full gap-4 pr-4">
           <CreateProductsForm form={form} onSubmit={onSubmit}>
             <DrawerFooter className="gap-2 sm:space-x-0">
               <Button disabled={isCreatePending || isLoadingUploadImageProduct}>
