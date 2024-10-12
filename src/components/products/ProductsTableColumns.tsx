@@ -104,6 +104,7 @@ export const productsColumns = (
                   key={row.original.id}
                   width={80}
                   height={80}
+                  priority
                   className="h-full w-full rounded-md object-cover"
                   onError={() => setImageError(true)}
                 />
