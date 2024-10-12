@@ -129,9 +129,7 @@ export function CreateProductDialog() {
           </DialogHeader>
           <ScrollArea className="h-full max-h-[80vh] w-full justify-center gap-4">
             <CreateProductsForm form={form} onSubmit={onSubmit}>
-              {isLoadingUploadImageProduct && (
-                <Progress value={processLoadingImage} className="h-2" />
-              )}
+              <Progress value={processLoadingImage} className="h-2" />
               <DialogFooter>
                 <div className="flex w-full flex-row-reverse gap-2">
                   <Button
