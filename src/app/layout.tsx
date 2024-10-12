@@ -35,10 +35,8 @@ export default function RootLayout({
           }}
           closeButton
         />
-        <Providers>
-          <ApiStatus />
-          {children}
-        </Providers>
+        <ApiStatus />
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
