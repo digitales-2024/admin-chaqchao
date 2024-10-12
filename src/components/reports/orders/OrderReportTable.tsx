@@ -1,5 +1,6 @@
 import { OrderReportData, OrderStatus } from "@/types/orders";
 import { format } from "date-fns";
+import { es } from "date-fns/locale";
 import { motion } from "framer-motion";
 import {
   Calendar,
@@ -9,6 +10,7 @@ import {
   CheckSquare,
   ChevronUp,
   ChevronDown,
+  Users,
 } from "lucide-react";
 import React, { useState } from "react";
 
@@ -114,7 +116,7 @@ export function OrderReportTable({ reportData }: OrderReportTableProps) {
                       className={`${getStatusColor(order.orderStatus as OrderStatus)} flex items-center space-x-1`}
                     >
                       {getStatusIcon(order.orderStatus as OrderStatus)}
-                      <span>
+                      <span className="text-sm font-extralight">
                         {getStatusLabel(order.orderStatus as OrderStatus)}
                       </span>
                     </Badge>
@@ -125,19 +127,32 @@ export function OrderReportTable({ reportData }: OrderReportTableProps) {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                     <div className="flex items-center space-x-2">
                       <Calendar className="h-4 w-4 text-muted-foreground" />
                       <span>
-                        {format(new Date(order.pickupTime), "dd/MM/yyyy HH:mm")}
+                        {format(
+                          new Date(order.pickupTime),
+                          "d 'de' MMMM 'de' yyyy, HH:mm",
+                          { locale: es },
+                        )}
                       </span>
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <DollarSign className="h-4 w-4 text-muted-foreground" />
-                      <span>${order.totalAmount.toFixed(2)}</span>
+                    <div className="flex items-center justify-center space-x-2">
+                      <Badge variant="outline" className="border-emerald-500">
+                        <DollarSign className="h-4 w-4" strokeWidth={1} />
+                        <span className="font-light">
+                          Total: {order.totalAmount.toFixed(2)}
+                        </span>
+                      </Badge>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <User className="h-4 w-4 text-muted-foreground" />
+                      {order.someonePickup ? (
+                        <Users className="h-4 w-4" />
+                      ) : (
+                        <User className="h-4 w-4" />
+                      )}
+
                       <span>
                         {order.someonePickup
                           ? "Recogida por terceros"
