@@ -3,6 +3,8 @@ import { createApi } from "@reduxjs/toolkit/query/react";
 
 import { adminApi } from "./adminApi";
 import baseQueryWithReauth from "./baseQuery";
+import { categoriesApi } from "./categoriesApi";
+import { productsApi } from "./productsApi";
 
 export const authApi = createApi({
   reducerPath: "authApi",
@@ -21,6 +23,16 @@ export const authApi = createApi({
           await queryFulfilled;
           dispatch(
             adminApi.endpoints.profile.initiate(undefined, {
+              forceRefetch: true,
+            }),
+          );
+          dispatch(
+            productsApi.endpoints.getAllProducts.initiate(undefined, {
+              forceRefetch: true,
+            }),
+          );
+          dispatch(
+            categoriesApi.endpoints.getCategories.initiate(undefined, {
               forceRefetch: true,
             }),
           );
