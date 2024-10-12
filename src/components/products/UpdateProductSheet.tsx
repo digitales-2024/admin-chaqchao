@@ -288,10 +288,11 @@ export function UpdateProductSheet({
                               src={preview}
                               alt={product.name}
                               key={product.id}
-                              layout="fill"
-                              objectFit="contain"
+                              width={160}
+                              height={160}
                               className="rounded-md"
                               onError={() => setImageError(true)}
+                              priority
                             />
                           </div>
                         </div>
