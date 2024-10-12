@@ -80,7 +80,7 @@ export function UpdateProductSheet({
       name: product.name ?? "",
       description: product.description ?? "",
       categoryId: product.category.id ?? "",
-      price: product.price ?? 0,
+      price: product.price.toString() ?? 0,
       image: undefined,
     },
   });
@@ -91,7 +91,7 @@ export function UpdateProductSheet({
         name: product.name ?? "",
         description: product.description ?? "",
         categoryId: product.category.id ?? "",
-        price: product.price ?? 0,
+        price: product.price.toString() ?? 0,
         image: undefined,
       });
       setSelectedFile(null);
@@ -164,8 +164,9 @@ export function UpdateProductSheet({
     };
 
     onUpdateProduct({
-      id: product.id,
       ...inputWithImage,
+      id: product.id,
+      price: parseFloat(input.price as string),
     });
   };
 
@@ -196,7 +197,10 @@ export function UpdateProductSheet({
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="flex flex-col gap-6 sm:max-w-md">
+      <SheetContent
+        className="flex flex-col gap-6 sm:max-w-md"
+        tabIndex={undefined}
+      >
         <SheetHeader className="text-left">
           <SheetTitle className="flex flex-col items-start">
             {infoSheet.title}
@@ -223,7 +227,10 @@ export function UpdateProductSheet({
                   <FormItem>
                     <FormLabel>Nombre del Producto</FormLabel>
                     <FormControl>
-                      <Input placeholder="Ejemplo: Hamburguesa" {...field} />
+                      <Input
+                        placeholder="Ingrese el nombre del producto"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -239,7 +246,7 @@ export function UpdateProductSheet({
                     <FormLabel>Descripción</FormLabel>
                     <FormControl>
                       <Textarea
-                        placeholder="Ejemplo: Hamburguesa con papas"
+                        placeholder="Ingrese la descripción del producto"
                         {...field}
                       />
                     </FormControl>
@@ -257,86 +264,14 @@ export function UpdateProductSheet({
                     <FormLabel>Precio</FormLabel>
                     <FormControl>
                       <Input
-                        type="number"
                         placeholder="Ingrese el precio del producto"
                         {...field}
-                        onChange={(e) => {
-                          const value = parseFloat(e.target.value);
-                          if (!isNaN(value)) {
-                            field.onChange(value);
-                          }
-                        }}
-                        min="0"
-                        step="0.01"
                       />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-
-              {/* Subida de Imagen */}
-              <FormItem>
-                <FormLabel>Imagen del Producto</FormLabel>
-                <FormControl>
-                  <div className="space-y-4">
-                    <div
-                      className="cursor-pointer rounded-md border border-dashed border-gray-300 text-center transition-colors duration-300 hover:bg-gray-50"
-                      onClick={() => document.getElementById("image")?.click()}
-                      onDragOver={handleDragOver}
-                      onDrop={handleDrop}
-                    >
-                      {preview && !imageError ? (
-                        <div className="flex flex-col items-center">
-                          <div className="relative h-40 w-40">
-                            <Image
-                              src={preview}
-                              alt={product.name}
-                              key={product.id}
-                              layout="fill"
-                              objectFit="contain"
-                              className="rounded-md"
-                              onError={() => setImageError(true)}
-                            />
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="flex size-40 w-full flex-col items-center justify-center text-center">
-                          {imageError ? (
-                            <>
-                              <ImageOff
-                                className="size-14 text-slate-400"
-                                strokeWidth={1}
-                              />
-                            </>
-                          ) : (
-                            <>
-                              <ImagePlus
-                                className="h-10 w-10 text-gray-400"
-                                strokeWidth={1}
-                              />
-                              <p className="mt-2 text-gray-600">
-                                Haga clic o arrastre una imagen aquí
-                              </p>
-                            </>
-                          )}
-                        </div>
-                      )}
-                      <Input
-                        id="image"
-                        type="file"
-                        accept="image/*"
-                        onChange={handleFileChange}
-                        className="hidden"
-                      />
-                    </div>
-                    {isLoadingUpdateImageProduct && (
-                      <Progress value={processLoadingImage} className="h-2" />
-                    )}
-                  </div>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
 
               {/* Categoría */}
               <FormField
@@ -372,6 +307,76 @@ export function UpdateProductSheet({
                   </FormItem>
                 )}
               />
+
+              {/* Subida de Imagen */}
+              <FormItem>
+                <FormLabel>Imagen del Producto</FormLabel>
+                <FormControl>
+                  <div className="space-y-4">
+                    <div
+                      className="cursor-pointer rounded-md border border-dashed border-gray-300 text-center transition-colors duration-300 hover:bg-gray-50"
+                      onClick={() => document.getElementById("image")?.click()}
+                      onDragOver={handleDragOver}
+                      onDrop={handleDrop}
+                    >
+                      {preview && !imageError ? (
+                        <div
+                          className="flex flex-col items-center"
+                          tabIndex={0}
+                        >
+                          <div className="relative h-40 w-40">
+                            <Image
+                              src={preview}
+                              alt={product.name}
+                              key={product.id}
+                              width={160}
+                              height={160}
+                              className="rounded-md"
+                              onError={() => setImageError(true)}
+                              priority
+                            />
+                          </div>
+                        </div>
+                      ) : (
+                        <div
+                          className="flex size-40 w-full flex-col items-center justify-center text-center"
+                          tabIndex={0}
+                        >
+                          {imageError ? (
+                            <>
+                              <ImageOff
+                                className="size-14 text-slate-400"
+                                strokeWidth={1}
+                              />
+                            </>
+                          ) : (
+                            <>
+                              <ImagePlus
+                                className="h-10 w-10 text-gray-400"
+                                strokeWidth={1}
+                              />
+                              <p className="mt-2 text-gray-600">
+                                Haga clic o arrastre una imagen aquí
+                              </p>
+                            </>
+                          )}
+                        </div>
+                      )}
+                      <Input
+                        id="image"
+                        type="file"
+                        accept="image/*"
+                        onChange={handleFileChange}
+                        className="hidden"
+                      />
+                    </div>
+                    {isLoadingUpdateImageProduct && (
+                      <Progress value={processLoadingImage} className="h-2" />
+                    )}
+                  </div>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
 
               <SheetFooter className="gap-2 pt-2 sm:space-x-0">
                 <div className="flex flex-row-reverse gap-2">

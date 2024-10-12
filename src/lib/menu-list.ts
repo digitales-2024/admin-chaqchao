@@ -59,7 +59,7 @@ export function getMenuList(pathname: string): Group[] {
             },
             {
               href: "/products/categories",
-              label: "Categorias",
+              label: "Categorías",
               active: pathname.includes("/categories"),
             },
           ],
