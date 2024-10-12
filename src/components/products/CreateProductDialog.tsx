@@ -132,29 +132,31 @@ export function CreateProductDialog() {
               {isLoadingUploadImageProduct && (
                 <Progress value={processLoadingImage} className="h-2" />
               )}
-              <DialogFooter className="gap-2 sm:space-x-0">
-                <Button
-                  disabled={isCreatePending || isLoadingUploadImageProduct}
-                  className="w-full"
-                >
-                  {isCreatePending && (
-                    <RefreshCcw
-                      className="mr-2 size-4 animate-spin"
-                      aria-hidden="true"
-                    />
-                  )}
-                  Registrar
-                </Button>
-                <DialogClose asChild>
+              <DialogFooter>
+                <div className="flex w-full flex-row-reverse gap-2">
                   <Button
-                    onClick={handleClose}
-                    type="button"
-                    variant="outline"
+                    disabled={isCreatePending || isLoadingUploadImageProduct}
                     className="w-full"
                   >
-                    Cancelar
+                    {isCreatePending && (
+                      <RefreshCcw
+                        className="mr-2 size-4 animate-spin"
+                        aria-hidden="true"
+                      />
+                    )}
+                    Registrar
                   </Button>
-                </DialogClose>
+                  <DialogClose asChild>
+                    <Button
+                      onClick={handleClose}
+                      type="button"
+                      variant="outline"
+                      className="w-full"
+                    >
+                      Cancelar
+                    </Button>
+                  </DialogClose>
+                </div>
               </DialogFooter>
             </CreateProductsForm>
           </ScrollArea>
