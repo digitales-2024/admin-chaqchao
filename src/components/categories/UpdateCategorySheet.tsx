@@ -78,13 +78,6 @@ export function UpdateCategorySheet({
     });
   }
 
-  useEffect(() => {
-    const errors = form.formState.errors;
-    if (Object.keys(errors).length > 0) {
-      console.log("Errores de validación:", errors);
-    }
-  }, [form.formState.errors]);
-
   return (
     <Sheet {...props}>
       <SheetContent

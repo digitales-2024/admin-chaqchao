@@ -87,7 +87,7 @@ export function CreateProductDialog() {
         });
       });
     } catch (error) {
-      console.error("Error al subir la imagen o crear el producto", error);
+      throw error;
     }
   };
 
