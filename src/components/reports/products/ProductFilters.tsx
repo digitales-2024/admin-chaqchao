@@ -16,12 +16,12 @@ interface ProductFiltersProps {
   setPriceMin: (value: string) => void;
   priceMax: string;
   setPriceMax: (value: string) => void;
-  isActive: boolean;
-  setIsProductActive: (value: boolean) => void;
-  isRestricted: boolean;
-  setIsRestricted: (value: boolean) => void;
-  isAvailable: boolean;
-  setIsAvailable: (value: boolean) => void;
+  isActive: string;
+  setIsProductActive: (value: string) => void;
+  isRestricted: string;
+  setIsRestricted: (value: string) => void;
+  isAvailable: string;
+  setIsAvailable: (value: string) => void;
   categoryName: string;
   setCategoryName: (value: string) => void;
   isLoading: boolean;
