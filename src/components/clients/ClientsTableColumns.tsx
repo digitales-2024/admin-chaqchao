@@ -100,7 +100,7 @@ export const clientsColumns = (): ColumnDef<Client>[] => {
       ),
       cell: ({ row }) => (
         <div className="">
-          {!row.getValue("isGoogleAuth") ? (
+          {!row.original.isGoogleAuth ? (
             <span className="inline-flex items-center gap-2 text-slate-400">
               <Mail /> Correo
             </span>
@@ -196,7 +196,10 @@ export const clientsColumns = (): ColumnDef<Client>[] => {
                     </DropdownMenuShortcut>
                   </DropdownMenuItem>
                 )}
-                <DropdownMenuItem onSelect={() => setIsDialogOpen(true)}>
+                <DropdownMenuItem
+                  onSelect={() => setIsDialogOpen(true)}
+                  disabled={!row.original.isActive}
+                >
                   Eliminar
                   <DropdownMenuShortcut>
                     <Trash className="size-4" aria-hidden="true" />
