@@ -5,10 +5,10 @@ import {
   Tag,
   Bookmark,
   CheckSquare,
-  XSquare,
   Archive,
   Download,
   FileDown,
+  ShieldAlert,
 } from "lucide-react";
 import React from "react";
 
@@ -21,7 +21,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -46,12 +45,12 @@ interface ProductFiltersFormProps {
   setPriceMin: (value: string) => void;
   priceMax: string;
   setPriceMax: (value: string) => void;
-  isActive: boolean;
-  setIsProductActive: (value: boolean) => void;
-  isRestricted: boolean;
-  setIsRestricted: (value: boolean) => void;
-  isAvailable: boolean;
-  setIsAvailable: (value: boolean) => void;
+  isActive: string;
+  setIsProductActive: (value: string) => void;
+  isRestricted: string;
+  setIsRestricted: (value: string) => void;
+  isAvailable: string;
+  setIsAvailable: (value: string) => void;
   categoryName: string;
   setCategoryName: (value: string) => void;
   categoriesData: Category[];
@@ -138,38 +137,53 @@ export function ProductFiltersForm({
               />
             </div>
           </div>
-          <div className="flex items-center space-x-2">
-            <Checkbox
-              id="is-active"
-              checked={isActive}
-              onCheckedChange={(value) => setIsProductActive(Boolean(value))}
-            />
+          <div className="grid gap-2">
             <Label htmlFor="is-active">
               <CheckSquare className="mr-2 inline h-4 w-4" />
               Activo
             </Label>
+            <Select value={isActive} onValueChange={setIsProductActive}>
+              <SelectTrigger id="is-active">
+                <SelectValue placeholder="Seleccionar estado" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todos</SelectItem>
+                <SelectItem value="true">Activo</SelectItem>
+                <SelectItem value="false">Inactivo</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
-          <div className="flex items-center space-x-2">
-            <Checkbox
-              id="is-restricted"
-              checked={isRestricted}
-              onCheckedChange={(value) => setIsRestricted(Boolean(value))}
-            />
+          <div className="grid gap-2">
             <Label htmlFor="is-restricted">
-              <XSquare className="mr-2 inline h-4 w-4" />
+              <ShieldAlert className="mr-2 inline h-4 w-4" />
               Restringido
             </Label>
+            <Select value={isRestricted} onValueChange={setIsRestricted}>
+              <SelectTrigger id="is-restricted">
+                <SelectValue placeholder="Seleccionar estado" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todos</SelectItem>
+                <SelectItem value="true">Restringido</SelectItem>
+                <SelectItem value="false">Sin restricción</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
-          <div className="flex items-center space-x-2">
-            <Checkbox
-              id="is-available"
-              checked={isAvailable}
-              onCheckedChange={(value) => setIsAvailable(Boolean(value))}
-            />
+          <div className="grid gap-2">
             <Label htmlFor="is-available">
               <Archive className="mr-2 inline h-4 w-4" />
               Disponible
             </Label>
+            <Select value={isAvailable} onValueChange={setIsAvailable}>
+              <SelectTrigger id="is-available">
+                <SelectValue placeholder="Seleccionar estado" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todos</SelectItem>
+                <SelectItem value="true">Disponible</SelectItem>
+                <SelectItem value="false">No disponible</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
           <div className="grid gap-2">
             <Label htmlFor="category-name">
