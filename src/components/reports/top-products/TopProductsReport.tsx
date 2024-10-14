@@ -1,5 +1,5 @@
 import { TopProduct } from "@/types";
-import { Circle, PackageCheck, Tag, ImageOff } from "lucide-react";
+import { Circle, PackageCheck, Tag, ImageOff, Info } from "lucide-react";
 import Image from "next/image";
 import React, { useState, useEffect } from "react";
 
@@ -38,16 +38,23 @@ export function TopProductsReport({ reportData }: ProductReportTableProps) {
   return (
     <Card className="container p-4">
       <CardHeader>
-        <CardTitle className="text-2xl font-bold md:text-3xl">
+        <CardTitle className="text-2xl font-bold">
           Reporte de Productos más vendidos
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
-          {reportData.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
+        {reportData.length === 0 ? (
+          <Badge className="font-medium text-slate-400" variant="outline">
+            <Info className="mr-2 size-3" aria-hidden="true" />
+            No hay productos a mostrar
+          </Badge>
+        ) : (
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+            {reportData.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        )}
       </CardContent>
     </Card>
   );
