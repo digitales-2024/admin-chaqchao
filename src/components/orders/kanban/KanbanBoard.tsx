@@ -84,7 +84,7 @@ export default function KanbanBoard({
       >
         {(provided) => (
           <ul
-            className="grid gap-3 md:grid-cols-3"
+            className="flex flex-row space-x-4 overflow-auto"
             ref={provided.innerRef}
             {...provided.droppableProps}
           >
