@@ -1,6 +1,6 @@
 import { ProductData } from "@/types";
+import { generateColors } from "@/utils/generateColors";
 import {
-  DollarSign,
   ImageOff,
   ShieldMinus,
   ShieldAlert,
@@ -8,9 +8,10 @@ import {
   PackageX,
   CheckSquare,
   SquareX,
+  Info,
 } from "lucide-react";
 import Image from "next/image";
-import React, { useState, useEffect, ReactNode } from "react";
+import React, { useState, useEffect, useMemo, ReactNode } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -46,16 +47,27 @@ function StatusIcon({
   );
 }
 
-function ProductRow({ product }: { product: ProductData }) {
+function ProductRow({
+  product,
+  categoryColors,
+}: {
+  product: ProductData;
+  categoryColors: { [key: string]: string };
+}) {
   const [imageError, setImageError] = useState(false);
+  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
 
   useEffect(() => {
     setImageError(false);
   }, [product.image]);
 
+  const handleDescriptionClick = () => {
+    setIsDescriptionExpanded(!isDescriptionExpanded);
+  };
+
   return (
     <TableRow key={product.id} className="transition-colors">
-      <TableCell className="flex w-36 items-center justify-items-center">
+      <TableCell className="flex w-full items-center justify-center justify-items-center">
         {imageError ? (
           <div className="flex size-24 flex-col items-center justify-center rounded-lg bg-slate-100 text-center">
             <ImageOff className="h-10 w-10 text-slate-400" strokeWidth={1} />
@@ -76,20 +88,34 @@ function ProductRow({ product }: { product: ProductData }) {
       </TableCell>
       <TableCell className="w-64">
         <div className="space-y-2">
-          <div className="text-xl font-semibold">{product.name}</div>
-          <Badge variant="secondary" className="text-sm">
-            {product.category.name}
+          <div>
+            <span className="text-sm font-light">{product.name}</span>
+          </div>
+          <Badge
+            variant="outline"
+            className="capitalize"
+            style={{ borderColor: categoryColors[product.category.name] }}
+          >
+            <span className="font-extralight">{product.category.name}</span>
           </Badge>
-          <p className="text-sm text-muted-foreground">{product.description}</p>
+          <div className="flex items-center space-x-1 text-justify">
+            <span
+              className={`text-sm text-slate-500 ${isDescriptionExpanded ? "" : "line-clamp-2"}`}
+              onClick={handleDescriptionClick}
+              style={{ cursor: "pointer" }}
+            >
+              {product.description}
+            </span>
+          </div>
         </div>
       </TableCell>
-      <TableCell className="w-24">
-        <div className="flex items-center space-x-1 text-sm text-slate-500">
-          <DollarSign className="h-4 w-4 text-slate-500" strokeWidth={1} />
-          <span>{product.price.toFixed(2)}</span>
+      <TableCell className="w-20">
+        <div className="flex justify-center space-x-1 text-center text-sm text-slate-500">
+          <span className="mr-2 h-4 w-4 items-center text-slate-500">S/. </span>
+          <span className="">{product.price.toFixed(2)}</span>
         </div>
       </TableCell>
-      <TableCell className="w-40">
+      <TableCell className="w-28">
         <div className="flex flex-col space-y-2">
           <StatusIcon
             condition={product.isActive}
@@ -140,6 +166,28 @@ function ProductRow({ product }: { product: ProductData }) {
 }
 
 export function ProductReportTable({ reportData }: ProductReportTableProps) {
+  // Obtener categorías únicas
+  const uniqueCategories = useMemo(() => {
+    return Array.from(
+      new Set(reportData.map((product) => product.category.name)),
+    );
+  }, [reportData]);
+
+  // Generar colores basados en la cantidad de categorías únicas
+  const colors = useMemo(
+    () => generateColors(uniqueCategories.length),
+    [uniqueCategories],
+  );
+
+  // Crear un objeto para mapear categorías a colores
+  const categoryColors = useMemo(() => {
+    const colorMap: { [key: string]: string } = {};
+    uniqueCategories.forEach((category, index) => {
+      colorMap[category] = colors[index];
+    });
+    return colorMap;
+  }, [uniqueCategories, colors]);
+
   return (
     <Card className="container p-4">
       <CardHeader>
@@ -149,21 +197,32 @@ export function ProductReportTable({ reportData }: ProductReportTableProps) {
       </CardHeader>
       <CardContent>
         <div className="overflow-x-auto">
-          <Table className="table-fixed">
-            <TableHeader>
-              <TableRow className="bg-muted">
-                <TableHead className="w-36 text-center">Imagen</TableHead>
-                <TableHead className="w-64 text-center">Producto</TableHead>
-                <TableHead className="w-24 text-center">Precio</TableHead>
-                <TableHead className="w-40 text-center">Estado</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {reportData.map((product) => (
-                <ProductRow key={product.id} product={product} />
-              ))}
-            </TableBody>
-          </Table>
+          {reportData.length === 0 ? (
+            <Badge className="font-medium text-slate-400" variant="outline">
+              <Info className="mr-2 size-3" aria-hidden="true" />
+              No hay productos a mostrar
+            </Badge>
+          ) : (
+            <Table className="table-fixed">
+              <TableHeader>
+                <TableRow className="bg-muted">
+                  <TableHead className="w-32 text-center">Imagen</TableHead>
+                  <TableHead className="w-64 text-center">Producto</TableHead>
+                  <TableHead className="w-20 text-center">Precio</TableHead>
+                  <TableHead className="w-28 text-center">Estado</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {reportData.map((product) => (
+                  <ProductRow
+                    key={product.id}
+                    product={product}
+                    categoryColors={categoryColors}
+                  />
+                ))}
+              </TableBody>
+            </Table>
+          )}
         </div>
       </CardContent>
     </Card>
