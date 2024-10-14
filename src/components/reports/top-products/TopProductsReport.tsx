@@ -82,6 +82,7 @@ function ProductCard({ product }: { product: TopProduct }) {
             <Image
               src={product.image}
               alt={product.name}
+              sizes="(min-width: 640px) 144px, 100px"
               fill
               className="object-cover"
               onError={() => setImageError(true)}
