@@ -58,14 +58,12 @@ export const clientsColumns = (): ColumnDef<Client>[] => {
       ),
     },
     {
-      /* TODO: Añadir el caso cuando la fecha llega en null */
       id: "fechaNacimiento",
       accessorKey: "birthDate",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Fecha de nacimiento" />
       ),
       cell: ({ row }) => {
-        console.log(row.original.birthDate);
         return (
           <div>{format(row.original.birthDate, "PPP", { locale: es })}</div>
         );
@@ -190,11 +188,13 @@ export const clientsColumns = (): ColumnDef<Client>[] => {
               onOpenChange={setIsDialogOpen}
               onSuccess={() => setIsDialogOpen(false)}
             />
-            <ClientOrderHistoryDialog
-              client={client}
-              isOpen={isOpenDialogHistory}
-              onOpenChange={setIsOpenDialogHistory}
-            />
+            {isOpenDialogHistory && (
+              <ClientOrderHistoryDialog
+                client={client}
+                isOpen={isOpenDialogHistory}
+                onOpenChange={setIsOpenDialogHistory}
+              />
+            )}
           </div>
         );
       },
