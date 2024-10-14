@@ -1,11 +1,12 @@
 "use client";
 
+import { GoogleIcon } from "@/assets/icons";
 import { useProfile } from "@/hooks/use-profile";
 import { Client } from "@/types";
 import { type ColumnDef } from "@tanstack/react-table";
 import { parseISO, format } from "date-fns";
 import { es } from "date-fns/locale";
-import { Ellipsis, Trash, RefreshCcwDot, History } from "lucide-react"; // Agrega RefreshCcwDot para la reactivación
+import { Ellipsis, Trash, RefreshCcwDot, History, Mail } from "lucide-react"; // Agrega RefreshCcwDot para la reactivación
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -90,6 +91,27 @@ export const clientsColumns = (): ColumnDef<Client>[] => {
 
         return <div>{format(parsedDate, "yyyy-MM-dd HH:mm:ss")}</div>;
       },
+    },
+    {
+      id: "métodoAcceso",
+      accessorKey: "lastLoginMethod",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Método de acceso" />
+      ),
+      cell: ({ row }) => (
+        <div className="">
+          {!row.getValue("isGoogleAuth") ? (
+            <span className="inline-flex items-center gap-2 text-slate-400">
+              <Mail /> Correo
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-2 text-slate-400">
+              <GoogleIcon className="size-5" />
+              Google
+            </span>
+          )}
+        </div>
+      ),
     },
     {
       id: "estado",
