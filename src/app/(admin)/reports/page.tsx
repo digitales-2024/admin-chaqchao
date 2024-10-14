@@ -23,6 +23,11 @@ export default function ReportsPage() {
     from: format(new Date(), "yyyy-MM-dd"),
     to: format(addDays(new Date(), 7), "yyyy-MM-dd"),
   });
+
+  const [topProductDateRange, setTopProductDateRange] = React.useState({
+    from: format(new Date(), "yyyy-MM-dd"),
+    to: format(addDays(new Date(), 7), "yyyy-MM-dd"),
+  });
   const [priceMin, setPriceMin] = React.useState("");
   const [priceMax, setPriceMax] = React.useState("");
   const [isActive, setIsActive] = React.useState<string>("all");
@@ -250,9 +255,9 @@ export default function ReportsPage() {
         )}
         {activeTab === "trends" && (
           <TopProductsFilters
-            productDateRange={productDateRange}
+            productDateRange={topProductDateRange}
             setProductDateRange={(range) => {
-              setProductDateRange({
+              setTopProductDateRange({
                 ...range,
                 to: range.to || format(addDays(new Date(), 7), "yyyy-MM-dd"),
               });
