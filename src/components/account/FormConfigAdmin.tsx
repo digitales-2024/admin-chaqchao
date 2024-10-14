@@ -1,4 +1,4 @@
-import { useAuth } from "@/hooks/use-auth";
+import { useProfile } from "@/hooks/use-profile";
 
 import { Badge } from "../ui/badge";
 import {
@@ -12,7 +12,7 @@ import { Label } from "../ui/label";
 import { TablePermissions } from "./TablePermissions";
 
 export const FormConfigAdmin = () => {
-  const { user } = useAuth();
+  const { user } = useProfile();
   return (
     <Card>
       <CardHeader>
@@ -28,7 +28,7 @@ export const FormConfigAdmin = () => {
         </div>
         <div className="space-y-2">
           <Label>Permisos</Label>
-          <TablePermissions />
+          <TablePermissions rol={user?.roles[0].id} />
         </div>
       </CardContent>
     </Card>
