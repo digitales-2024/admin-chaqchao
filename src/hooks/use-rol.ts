@@ -17,7 +17,9 @@ interface UseRolProps {
   id?: string;
 }
 
-export const useRol = ({ id }: UseRolProps) => {
+export const useRol = (options: UseRolProps = {}) => {
+  const { id } = options;
+
   const { data: dataRoles, isLoading: isLoadingRoles } = useGetRolesQuery();
 
   const { data: dataRole, isLoading: isLoadingRole } = useGetRoleQuery(
