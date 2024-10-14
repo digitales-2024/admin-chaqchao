@@ -1,4 +1,4 @@
-import { Order } from "@/types";
+import { Order, OrderStatus } from "@/types";
 import {
   Draggable,
   DraggableProvided,
@@ -35,29 +35,35 @@ export default function OrderList({
   setSelectedOrder,
 }: OrderListProps) {
   return (
-    <Droppable
-      droppableId={listId}
-      type={listType}
-      isDropDisabled={isDropDisabled}
+    <Card
+      className={cn(
+        "flex h-full min-h-[600px] w-full min-w-96 flex-1 flex-col border-none bg-slate-50",
+      )}
     >
-      {(dropProvided: DroppableProvided, snapshot) => (
-        <Card
-          {...dropProvided.droppableProps}
-          ref={dropProvided.innerRef} // Asegura que el ref del droppable esté correctamente asignado
-          className={cn(
-            "flex h-full min-h-[600px] flex-1 flex-col border-none bg-slate-50",
-            {
-              "bg-cyan-50": snapshot.isDraggingOver,
-            },
-          )}
-        >
-          <CardHeader className="space-between flex flex-row items-center p-4 text-left font-semibold">
-            <span className="ml-auto text-xs font-thin uppercase text-slate-400">
-              {" "}
-              {translateStatus[listTitle as keyof typeof translateStatus]}
-            </span>
-          </CardHeader>
-          <CardContent className="h-full flex-1 flex-grow">
+      <CardHeader className="space-between flex flex-row items-center p-4 text-left font-semibold">
+        <span className="ml-auto text-xs font-thin uppercase text-slate-400">
+          {" "}
+          {translateStatus[listTitle as keyof typeof translateStatus]}
+        </span>
+      </CardHeader>
+      <Droppable
+        droppableId={listId}
+        type={listType}
+        isDropDisabled={isDropDisabled}
+      >
+        {(dropProvided: DroppableProvided, snapshot) => (
+          <CardContent
+            {...dropProvided.droppableProps}
+            ref={dropProvided.innerRef} // Asegura que el ref del droppable esté correctamente asignado
+            className={cn("h-full flex-1 flex-grow", {
+              "bg-slate-100":
+                snapshot.isDraggingOver && listTitle === OrderStatus.CONFIRMED,
+              "bg-cyan-50":
+                snapshot.isDraggingOver && listTitle === OrderStatus.READY,
+              "bg-emerald-50":
+                snapshot.isDraggingOver && listTitle === OrderStatus.COMPLETED,
+            })}
+          >
             <InnerList
               listOfOrders={listOfOrders}
               dropProvided={dropProvided}
@@ -66,9 +72,9 @@ export default function OrderList({
               setSelectedOrder={setSelectedOrder}
             />
           </CardContent>
-        </Card>
-      )}
-    </Droppable>
+        )}
+      </Droppable>
+    </Card>
   );
 }
 
