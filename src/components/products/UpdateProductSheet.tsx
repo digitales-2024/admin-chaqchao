@@ -152,7 +152,6 @@ export function UpdateProductSheet({
         ); // Actualizamos la imagen
         imageUrl = uploadResult.data; // Obtenemos la nueva URL de la imagen
       } catch (error) {
-        console.error("Error al subir la imagen", error);
         return;
       }
     }

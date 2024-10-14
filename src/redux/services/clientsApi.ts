@@ -22,7 +22,7 @@ export const clientsApi = createApi({
     // Obtener todos los clientes
     getClients: build.query<Client[], void>({
       query: () => ({
-        url: `/admin/client/`,
+        url: `/admin/client`,
         credentials: "include",
       }),
       providesTags: ["Clients"],
@@ -34,7 +34,7 @@ export const clientsApi = createApi({
       UpdateClientsSchema & { id: string }
     >({
       query: ({ id, ...body }) => ({
-        url: `admin/client/${id}`,
+        url: `/admin/client/${id}`,
         method: "PATCH",
         body,
         credentials: "include",
@@ -45,7 +45,7 @@ export const clientsApi = createApi({
     // Desactivar/Reactivar un cliente por id
     toggleClientActivation: build.mutation<ClientResponse, string>({
       query: (id) => ({
-        url: `admin/client/desactivate/${id}`,
+        url: `/admin/client/desactivate/${id}`,
         method: "PATCH",
         credentials: "include",
       }),
@@ -55,7 +55,7 @@ export const clientsApi = createApi({
     // Desactivar un cliente por id
     deactivateClient: build.mutation<ClientResponse, string>({
       query: (id) => ({
-        url: `admin/client/desactivate/${id}`,
+        url: `/admin/client/desactivate/${id}`,
         method: "PATCH",
         credentials: "include",
       }),
@@ -65,7 +65,7 @@ export const clientsApi = createApi({
     // Reactivar un cliente por id
     reactivateClient: build.mutation<ClientResponse, string>({
       query: (id) => ({
-        url: `admin/client/desactivate/${id}`, // Por ahora se trabaja así la resactivación
+        url: `/admin/client/desactivate/${id}`, // Por ahora se trabaja así la resactivación
         method: "PATCH",
         credentials: "include",
       }),
@@ -75,7 +75,7 @@ export const clientsApi = createApi({
     // Eliminar un cliente por id
     deleteClient: build.mutation<ClientResponse, string>({
       query: (id) => ({
-        url: `admin/client/${id}`,
+        url: `/admin/client/${id}`,
         method: "DELETE",
         credentials: "include",
       }),

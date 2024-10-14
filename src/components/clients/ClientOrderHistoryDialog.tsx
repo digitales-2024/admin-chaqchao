@@ -38,6 +38,7 @@ export const ClientOrderHistoryDialog = ({
   const { dataOrdersClient, isLoadingOrdersClient } = useOrders({
     id: client.id,
   });
+
   let content = null;
 
   if (isLoadingOrdersClient) {
@@ -55,7 +56,7 @@ export const ClientOrderHistoryDialog = ({
   if (isDesktop) {
     return (
       <Dialog open={isOpen} onOpenChange={onOpenChange}>
-        <DialogContent className="flex h-[80vh] w-[95%] max-w-[1200px] flex-col gap-4">
+        <DialogContent className="flex h-[80vh] min-w-[80vw] flex-col gap-4">
           <DialogHeader className="mb-6">
             <DialogTitle>
               Historial de pedidos de{" "}

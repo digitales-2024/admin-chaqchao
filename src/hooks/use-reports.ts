@@ -48,7 +48,6 @@ export const useReports = () => {
           window.URL.revokeObjectURL(url);
           resolve("Órdenes exportadas a PDF con éxito");
         } catch (error) {
-          console.error("Error al exportar órdenes a PDF:", error);
           reject(new Error("Error al exportar órdenes a PDF"));
         }
       });
@@ -75,7 +74,6 @@ export const useReports = () => {
           link.remove();
           resolve("Órdenes exportadas a Excel con éxito");
         } catch (error) {
-          console.error("Error al exportar órdenes a Excel:", error);
           reject(new Error("Error al exportar órdenes a Excel"));
         }
       });
@@ -103,7 +101,6 @@ export const useReports = () => {
           window.URL.revokeObjectURL(url);
           resolve("Productos exportados a PDF con éxito");
         } catch (error) {
-          console.error("Error al exportar productos a PDF:", error);
           reject(new Error("Error al exportar productos a PDF"));
         }
       });
@@ -130,7 +127,6 @@ export const useReports = () => {
           link.remove();
           resolve("Productos exportados a Excel con éxito");
         } catch (error) {
-          console.error("Error al exportar productos a Excel:", error);
           reject(new Error("Error al exportar productos a Excel"));
         }
       });
@@ -158,7 +154,6 @@ export const useReports = () => {
           window.URL.revokeObjectURL(url);
           resolve("Productos top exportados a PDF con éxito");
         } catch (error) {
-          console.error("Error al exportar productos top a PDF:", error);
           reject(new Error("Error al exportar productos top a PDF"));
         }
       });
@@ -187,7 +182,6 @@ export const useReports = () => {
           link.remove();
           resolve("Productos top exportados a Excel con éxito");
         } catch (error) {
-          console.error("Error al exportar productos top a Excel:", error);
           reject(new Error("Error al exportar productos top a Excel"));
         }
       });

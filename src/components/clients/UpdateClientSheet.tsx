@@ -48,7 +48,8 @@ export function UpdateClientSheet({
   client,
   ...props
 }: UpdateClientSheetProps) {
-  const { onUpdateClient, isLoadingUpdateClient } = useClients();
+  const { onUpdateClient, isLoadingUpdateClient, isSuccessUpdateClient } =
+    useClients();
 
   const defaultValues = {
     id: client.id ?? "",
@@ -84,13 +85,26 @@ export function UpdateClientSheet({
     });
   }
 
+  useEffect(() => {
+    if (isSuccessUpdateClient && props.onOpenChange) {
+      props.onOpenChange(false);
+    }
+  }, [isSuccessUpdateClient]);
+
   return (
     <Sheet {...props}>
-      <SheetContent className="flex flex-col gap-6 sm:max-w-md">
+      <SheetContent
+        className="flex flex-col gap-6 sm:max-w-md"
+        tabIndex={undefined}
+      >
         <SheetHeader className="text-left">
           <SheetTitle className="flex flex-col items-start">
             Actualizar Cliente
-            <Badge className="bg-emerald-100 capitalize text-emerald-700">
+            <Badge
+              className={cn("bg-emerald-100 capitalize text-emerald-700", {
+                "bg-rose-100 text-rose-500": !client.isActive,
+              })}
+            >
               {client.name}
             </Badge>
           </SheetTitle>
@@ -192,20 +206,22 @@ export function UpdateClientSheet({
               </div>
 
               <SheetFooter className="flex justify-end gap-2 pt-2 sm:space-x-0">
-                <SheetClose asChild>
-                  <Button type="button" variant="outline">
-                    Cancelar
+                <div className="flex flex-row-reverse gap-2">
+                  <Button type="submit" disabled={isLoadingUpdateClient}>
+                    {isLoadingUpdateClient && (
+                      <RefreshCcw
+                        className="mr-2 size-4 animate-spin"
+                        aria-hidden="true"
+                      />
+                    )}
+                    Actualizar
                   </Button>
-                </SheetClose>
-                <Button type="submit" disabled={isLoadingUpdateClient}>
-                  {isLoadingUpdateClient && (
-                    <RefreshCcw
-                      className="mr-2 size-4 animate-spin"
-                      aria-hidden="true"
-                    />
-                  )}
-                  Actualizar
-                </Button>
+                  <SheetClose asChild>
+                    <Button type="button" variant="outline">
+                      Cancelar
+                    </Button>
+                  </SheetClose>
+                </div>
               </SheetFooter>
             </form>
           </Form>

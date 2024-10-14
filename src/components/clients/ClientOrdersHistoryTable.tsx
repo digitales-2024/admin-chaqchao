@@ -12,7 +12,10 @@ import { ordersColumns } from "./ClientOrdersHistoryTableColumns";
 export function OrdersTable({ data }: { data: Order[] }) {
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
 
-  const columns = useMemo(() => ordersColumns(), []);
+  const columns = useMemo(
+    () => ordersColumns(selectedOrderId),
+    [selectedOrderId],
+  );
 
   const handleRowClick = (order: Order) => {
     setSelectedOrderId(order.id);

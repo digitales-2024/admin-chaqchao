@@ -37,8 +37,6 @@ export function ClassesTableToolbarActions({
         .rows.filter((row) => row.getIsSelected())
         .map((row) => row.original);
 
-      console.log(selectedRows);
-
       // Llamar a la función de exportación con los datos seleccionados
       exportClassesToExcel(selectedRows);
     }
