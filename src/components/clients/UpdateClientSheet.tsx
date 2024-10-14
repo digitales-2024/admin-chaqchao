@@ -48,7 +48,8 @@ export function UpdateClientSheet({
   client,
   ...props
 }: UpdateClientSheetProps) {
-  const { onUpdateClient, isLoadingUpdateClient } = useClients();
+  const { onUpdateClient, isLoadingUpdateClient, isSuccessUpdateClient } =
+    useClients();
 
   const defaultValues = {
     id: client.id ?? "",
@@ -83,6 +84,12 @@ export function UpdateClientSheet({
       birthDate,
     });
   }
+
+  useEffect(() => {
+    if (isSuccessUpdateClient && props.onOpenChange) {
+      props.onOpenChange(false);
+    }
+  }, [isSuccessUpdateClient]);
 
   return (
     <Sheet {...props}>
