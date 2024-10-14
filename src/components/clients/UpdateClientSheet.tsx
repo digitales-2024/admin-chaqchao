@@ -100,7 +100,11 @@ export function UpdateClientSheet({
         <SheetHeader className="text-left">
           <SheetTitle className="flex flex-col items-start">
             Actualizar Cliente
-            <Badge className="bg-emerald-100 capitalize text-emerald-700">
+            <Badge
+              className={cn("bg-emerald-100 capitalize text-emerald-700", {
+                "bg-rose-100 text-rose-500": !client.isActive,
+              })}
+            >
               {client.name}
             </Badge>
           </SheetTitle>
