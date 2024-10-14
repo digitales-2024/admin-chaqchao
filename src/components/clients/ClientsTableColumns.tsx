@@ -59,7 +59,7 @@ export const clientsColumns = (): ColumnDef<Client>[] => {
       ),
     },
     {
-      id: "fechaNacimiento",
+      id: "fecha nacimiento",
       accessorKey: "birthDate",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Fecha de nacimiento" />
@@ -71,18 +71,18 @@ export const clientsColumns = (): ColumnDef<Client>[] => {
       },
     },
     {
-      id: "últimoAcceso",
+      id: "último acceso",
       accessorKey: "lastLogin",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Último acceso" />
       ),
       cell: ({ row }) => {
         // Verificar si el valor es undefined
-        if (row.getValue("últimoAcceso") === undefined) {
+        if (row.original.lastLogin === undefined) {
           return <div>Sin datos</div>;
         }
 
-        const parsedDate = parseISO(row.getValue("últimoAcceso"));
+        const parsedDate = parseISO(row.original.lastLogin);
 
         // Asegúrate de que parsedDate es un objeto Date válido
         if (isNaN(parsedDate.getTime())) {
@@ -93,7 +93,7 @@ export const clientsColumns = (): ColumnDef<Client>[] => {
       },
     },
     {
-      id: "métodoAcceso",
+      id: "método acceso",
       accessorKey: "lastLoginMethod",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Método de acceso" />
