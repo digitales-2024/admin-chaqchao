@@ -10,6 +10,8 @@ import * as React from "react";
 
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
+import { cn } from "@/lib/utils";
+
 import { translateStatus } from "../OrderSheetDetails";
 import OrderItem from "./OrderItem";
 
@@ -38,10 +40,16 @@ export default function OrderList({
       type={listType}
       isDropDisabled={isDropDisabled}
     >
-      {(dropProvided: DroppableProvided) => (
+      {(dropProvided: DroppableProvided, snapshot) => (
         <Card
           {...dropProvided.droppableProps}
-          className="min-h-[500px] flex-1 border-none bg-slate-50"
+          ref={dropProvided.innerRef} // Asegura que el ref del droppable esté correctamente asignado
+          className={cn(
+            "flex h-full min-h-[600px] flex-1 flex-col border-none bg-slate-50",
+            {
+              "bg-cyan-50": snapshot.isDraggingOver,
+            },
+          )}
         >
           <CardHeader className="space-between flex flex-row items-center p-4 text-left font-semibold">
             <span className="ml-auto text-xs font-thin uppercase text-slate-400">
@@ -49,7 +57,7 @@ export default function OrderList({
               {translateStatus[listTitle as keyof typeof translateStatus]}
             </span>
           </CardHeader>
-          <CardContent>
+          <CardContent className="h-full flex-1 flex-grow">
             <InnerList
               listOfOrders={listOfOrders}
               dropProvided={dropProvided}
