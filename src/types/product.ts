@@ -36,6 +36,7 @@ export interface ProductFilters {
   isRestricted?: boolean;
   isAvailable?: boolean;
   categoryName?: string;
+  refreshKey?: number;
 }
 
 export interface TopProductFilters {
