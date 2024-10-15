@@ -43,21 +43,23 @@ export function RolesTableToolbarActions({
         </>
       ) : null}
       <CreateRolesDialog />
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={() => {
-          if (table) {
-            exportTableToCSV(table, {
-              filename: "roles",
-              excludeColumns: ["select", "actions"],
-            });
-          }
-        }}
-      >
-        <Download className="mr-2 size-4" aria-hidden="true" />
-        Exportar
-      </Button>
+      {user?.isSuperAdmin && (
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => {
+            if (table) {
+              exportTableToCSV(table, {
+                filename: "roles",
+                excludeColumns: ["select", "actions"],
+              });
+            }
+          }}
+        >
+          <Download className="mr-2 size-4" aria-hidden="true" />
+          Exportar
+        </Button>
+      )}
     </div>
   );
 }
