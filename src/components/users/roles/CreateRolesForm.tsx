@@ -97,7 +97,7 @@ export const CreateRolesForm = ({
           />
           <h3 className="text-lg font-semibold">Módulos y Permisos</h3>
           <ScrollArea className="h-[35vh] py-4">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               {dataRolPermissions?.map(({ module, permissions }) => (
                 <Card
                   key={module.id}

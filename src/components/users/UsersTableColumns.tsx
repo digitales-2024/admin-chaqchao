@@ -96,6 +96,8 @@ export const usersColumns = (isSuperAdmin: boolean): ColumnDef<User>[] => [
   {
     id: "rol",
     accessorKey: "roles",
+    accessorFn: (row) => row.roles.map((role) => role.name).join(", "),
+    enableGlobalFilter: true,
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Rol" />
     ),
