@@ -80,6 +80,7 @@ export default function ReportsPage() {
   const initialTopProductFilters: FilterTopProductsSchema = {
     startDate: productDateRange.from,
     endDate: productDateRange.to,
+    limit: topValue !== "all" ? String(topValue) : "",
   };
 
   // Estado para los filtros
@@ -139,6 +140,7 @@ export default function ReportsPage() {
   const finalTopProductFilters: FilterTopProductsSchema = {
     startDate: topProductFilters.startDate,
     endDate: topProductFilters.endDate,
+    limit: topValue !== "all" ? topValue : "",
   };
 
   // Pasamos los filtros al hook useGetProductsReport
@@ -266,7 +268,12 @@ export default function ReportsPage() {
               });
             }}
             topValue={topValue}
-            setTopValue={setTopValue}
+            setTopValue={(value) => {
+              setTopValue(value);
+              updateTopProductFilters({
+                limit: value !== "all" ? value : undefined,
+              });
+            }}
             isLoading={isLoadingTopProducts}
             downloadReportPdf={() =>
               exportTopProductsReportToPdf(finalTopProductFilters)
