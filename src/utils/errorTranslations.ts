@@ -71,6 +71,8 @@ const errorTranslations = {
   "phone must be a valid phone number":
     "El teléfono debe ser un número de teléfono válido",
   "Error update order status": "Error actualizando el estado del pedido",
+  "You cannot deactivate a superadmin user":
+    "No puedes desactivar un superadmin",
 };
 
 export default errorTranslations;
