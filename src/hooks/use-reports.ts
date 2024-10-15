@@ -28,17 +28,26 @@ export const useReports = () => {
 
   // Obtener reportes de productos
   const useGetProductsReport = (filter: FilterProductSchema) => {
-    return useGetProductsReportQuery({ filter });
+    return useGetProductsReportQuery(
+      { filter },
+      { refetchOnMountOrArgChange: true },
+    );
   };
 
   // Obtener reportes de órdenes
   const useGetOrdersReport = (filter: FilterOrdersSchema) => {
-    return useGetOrdersReportQuery({ filter });
+    return useGetOrdersReportQuery(
+      { filter },
+      { refetchOnMountOrArgChange: true },
+    );
   };
 
   // Obtener reportes de productos top
   const useGetTopProductsReport = (filter: FilterTopProductsSchema) => {
-    return useGetTopProductsReportQuery({ filter });
+    return useGetTopProductsReportQuery(
+      { filter },
+      { refetchOnMountOrArgChange: true },
+    );
   };
 
   // Función para exportar las órdenes a PDF
