@@ -106,7 +106,7 @@ function ProductCard({ product }: { product: TopProduct }) {
             className="flex items-center space-x-1 text-sm md:text-base"
           >
             <Tag className="mr-1 h-4 w-4" />
-            <span className="font-light">${product.price.toFixed(2)}</span>
+            <span className="font-light">S/. {product.price.toFixed(2)}</span>
           </Badge>
         </div>
         <div className="mt-4 flex">
