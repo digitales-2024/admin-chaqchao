@@ -57,7 +57,9 @@ export const ProductRow = ({ product, categoryColors }: ProductRowProps) => {
       <TableCell className="w-64">
         <div className="space-y-2">
           <div>
-            <span className="text-sm font-light">{product.name}</span>
+            <span className="text-sm font-light capitalize">
+              {product.name}
+            </span>
           </div>
           <Badge
             variant="outline"
