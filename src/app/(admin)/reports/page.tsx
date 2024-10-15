@@ -1,5 +1,4 @@
 "use client";
-
 import { useCategories } from "@/hooks/use-categories";
 import { useReports } from "@/hooks/use-reports";
 import { FilterOrdersSchema } from "@/schemas/reports/filterOrdersSchema";
@@ -209,7 +208,7 @@ export default function ReportsPage() {
             }}
             categoryName={categoryName}
             setCategoryName={(value) => {
-              setCategoryName(value === "all" ? "Todas" : value);
+              setCategoryName(value);
               updateProductFilters({
                 categoryName: value !== "all" ? value : undefined,
               });
