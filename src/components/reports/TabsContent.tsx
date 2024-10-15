@@ -1,4 +1,4 @@
-import { Package, ShoppingCart } from "lucide-react";
+import { Package, ShoppingCart, TrendingUp } from "lucide-react";
 import React from "react";
 
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -24,6 +24,10 @@ export function ReportTabs({
         <TabsTrigger value="orders">
           <ShoppingCart className="mr-2 h-4 w-4" />
           Pedidos
+        </TabsTrigger>
+        <TabsTrigger value="trends">
+          <TrendingUp className="mr-2 h-4 w-4" />
+          Tendencias
         </TabsTrigger>
       </TabsList>
       {children}

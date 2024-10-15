@@ -2,8 +2,9 @@ import { OrderStatus } from "@/types/orders";
 import {
   Calendar as CalendarIcon,
   Tag,
-  Bookmark,
-  CheckSquare,
+  FileDown,
+  Download,
+  Package,
 } from "lucide-react";
 import React from "react";
 
@@ -16,7 +17,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -34,10 +34,10 @@ interface OrderFiltersFormProps {
   setOrderDateRange: (value: { from: string; to: string | undefined }) => void;
   orderStatus: OrderStatus;
   setOrderStatus: (value: OrderStatus) => void;
-  totalAmount: string;
-  setTotalAmount: (value: string) => void;
-  isActive: boolean;
-  setIsOrderActive: (value: boolean) => void;
+  priceMin: string;
+  setPriceMin: (value: string) => void;
+  priceMax: string;
+  setPriceMax: (value: string) => void;
   isLoading: boolean;
   downloadReportPdf: () => void;
   downloadReportExcel: () => void;
@@ -48,10 +48,10 @@ export function OrderFiltersForm({
   setOrderDateRange,
   orderStatus,
   setOrderStatus,
-  totalAmount,
-  setTotalAmount,
-  isActive,
-  setIsOrderActive,
+  priceMin,
+  setPriceMin,
+  priceMax,
+  setPriceMax,
   isLoading,
   downloadReportPdf,
   downloadReportExcel,
@@ -65,7 +65,7 @@ export function OrderFiltersForm({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 xl:grid-cols-3">
           <div className="grid gap-2">
             <Label htmlFor="order-date-range">
               <CalendarIcon className="mr-2 inline h-4 w-4" />
@@ -78,8 +78,8 @@ export function OrderFiltersForm({
           </div>
           <div className="grid gap-2">
             <Label htmlFor="order-status">
-              <Bookmark className="mr-2 inline h-4 w-4" />
-              Estado de la orden
+              <Package className="mr-2 inline h-4 w-4" />
+              Estado del pedido
             </Label>
             <Select value={orderStatus} onValueChange={setOrderStatus}>
               <SelectTrigger id="order-status">
@@ -100,46 +100,46 @@ export function OrderFiltersForm({
             </Select>
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="total-amount">
+            <Label htmlFor="price-range">
               <Tag className="mr-2 inline h-4 w-4" />
-              Monto Total
+              Rango de precios
             </Label>
-            <Input
-              id="total-amount"
-              type="number"
-              placeholder="Monto Total"
-              value={totalAmount}
-              onChange={(e) => setTotalAmount(e.target.value)}
-            />
-          </div>
-          <div className="flex items-center space-x-2">
-            <Checkbox
-              id="is-active"
-              checked={isActive}
-              onCheckedChange={(value) => setIsOrderActive(Boolean(value))}
-            />
-            <Label htmlFor="is-active">
-              <CheckSquare className="mr-2 inline h-4 w-4" />
-              Activo
-            </Label>
+            <div className="flex space-x-2">
+              <Input
+                id="price-min"
+                type="number"
+                placeholder="Min"
+                value={priceMin}
+                onChange={(e) => setPriceMin(e.target.value)}
+              />
+              <Input
+                id="price-max"
+                type="number"
+                placeholder="Max"
+                value={priceMax}
+                onChange={(e) => setPriceMax(e.target.value)}
+              />
+            </div>
           </div>
         </div>
       </CardContent>
-      <CardFooter className="flex justify-between">
+      <CardFooter className="flex justify-end">
         <div>
           <Button
             onClick={downloadReportPdf}
-            variant="outline"
+            variant="secondary"
             className="mr-2"
             disabled={isLoading}
           >
+            <FileDown className="mr-2 inline h-4 w-4" />
             Descargar PDF
           </Button>
           <Button
             onClick={downloadReportExcel}
-            variant="outline"
+            variant="secondary"
             disabled={isLoading}
           >
+            <Download className="mr-2 inline h-4 w-4" />
             Descargar Excel
           </Button>
         </div>

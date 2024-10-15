@@ -36,4 +36,20 @@ export interface ProductFilters {
   isRestricted?: boolean;
   isAvailable?: boolean;
   categoryName?: string;
+  refreshKey?: number;
 }
+
+export interface TopProductFilters {
+  startDate: string;
+  endDate: string;
+}
+
+export type TopProduct = {
+  id: string;
+  name: string;
+  isActive: boolean;
+  price: number;
+  image: string;
+  category: CategoryData;
+  totalOrdered: number;
+};

@@ -1,17 +1,22 @@
-import { OrderReportData, OrderStatus } from "@/types/orders";
+import { OrderReportData } from "@/types/orders";
 import { format } from "date-fns";
-import { motion } from "framer-motion";
+import { es } from "date-fns/locale";
 import {
   Calendar,
-  DollarSign,
   User,
   MapPin,
-  CheckSquare,
   ChevronUp,
   ChevronDown,
+  Users,
+  Info,
 } from "lucide-react";
 import React, { useState } from "react";
 
+import {
+  iconsStatus,
+  statusColors,
+  translateStatus,
+} from "@/components/orders/OrderSheetDetails";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -24,64 +29,12 @@ import {
 import {
   Tooltip,
   TooltipContent,
-  TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
 interface OrderReportTableProps {
   reportData: OrderReportData[];
 }
-
-const getStatusColor = (status: OrderStatus) => {
-  switch (status) {
-    case OrderStatus.READY:
-      return "bg-green-500";
-    case OrderStatus.CONFIRMED:
-      return "bg-blue-500";
-    case OrderStatus.PENDING:
-      return "bg-yellow-500";
-    case OrderStatus.COMPLETED:
-      return "bg-gray-500";
-    case OrderStatus.CANCELLED:
-      return "bg-red-500";
-    default:
-      return "bg-gray-500";
-  }
-};
-
-const getStatusIcon = (status: OrderStatus) => {
-  switch (status) {
-    case OrderStatus.READY:
-      return <CheckSquare className="h-4 w-4" />;
-    case OrderStatus.CONFIRMED:
-      return <CheckSquare className="h-4 w-4" />;
-    case OrderStatus.PENDING:
-      return <CheckSquare className="h-4 w-4" />;
-    case OrderStatus.COMPLETED:
-      return <CheckSquare className="h-4 w-4" />;
-    case OrderStatus.CANCELLED:
-      return <CheckSquare className="h-4 w-4" />;
-    default:
-      return <CheckSquare className="h-4 w-4" />;
-  }
-};
-
-const getStatusLabel = (status: OrderStatus) => {
-  switch (status) {
-    case OrderStatus.READY:
-      return "Listo";
-    case OrderStatus.CONFIRMED:
-      return "Confirmado";
-    case OrderStatus.PENDING:
-      return "Pendiente";
-    case OrderStatus.COMPLETED:
-      return "Completado";
-    case OrderStatus.CANCELLED:
-      return "Cancelado";
-    default:
-      return "Desconocido";
-  }
-};
 
 export function OrderReportTable({ reportData }: OrderReportTableProps) {
   const [expandedOrderId, setExpandedOrderId] = useState<string | null>(null);
@@ -93,29 +46,30 @@ export function OrderReportTable({ reportData }: OrderReportTableProps) {
   return (
     <Card className="container mx-auto p-4">
       <CardHeader>
-        <CardTitle className="text-3xl font-bold">Reporte de Pedidos</CardTitle>
+        <CardTitle className="text-2xl font-bold">Reporte de Pedidos</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid gap-6">
-          {reportData.map((order, index) => (
-            <motion.div
-              key={order.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: index * 0.1 }}
-            >
-              <Card className="overflow-hidden">
+        {reportData.length === 0 ? (
+          <Badge className="font-medium text-slate-400" variant="outline">
+            <Info className="mr-2 size-3" aria-hidden="true" />
+            No hay pedidos a mostrar
+          </Badge>
+        ) : (
+          <div className="grid gap-6">
+            {reportData.map((order, index) => (
+              <Card className="overflow-hidden" key={index}>
                 <CardHeader className="pb-2">
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-lg">
                       Pedido #{order.pickupCode}
                     </CardTitle>
                     <Badge
-                      className={`${getStatusColor(order.orderStatus as OrderStatus)} flex items-center space-x-1`}
+                      className={`${statusColors[order.orderStatus]} flex items-center space-x-1`}
+                      variant="outline"
                     >
-                      {getStatusIcon(order.orderStatus as OrderStatus)}
-                      <span>
-                        {getStatusLabel(order.orderStatus as OrderStatus)}
+                      {iconsStatus[order.orderStatus]}
+                      <span className="text-sm font-extralight">
+                        {translateStatus[order.orderStatus]}
                       </span>
                     </Badge>
                   </div>
@@ -125,19 +79,32 @@ export function OrderReportTable({ reportData }: OrderReportTableProps) {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                     <div className="flex items-center space-x-2">
                       <Calendar className="h-4 w-4 text-muted-foreground" />
                       <span>
-                        {format(new Date(order.pickupTime), "dd/MM/yyyy HH:mm")}
+                        {format(
+                          new Date(order.pickupTime),
+                          "d 'de' MMMM 'de' yyyy, HH:mm",
+                          { locale: es },
+                        )}
                       </span>
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <DollarSign className="h-4 w-4 text-muted-foreground" />
-                      <span>${order.totalAmount.toFixed(2)}</span>
+                    <div className="flex items-center justify-center space-x-2">
+                      <Badge variant="outline" className="border-emerald-500">
+                        <span className="mr-1 font-light">S/. </span>
+                        <span className="font-light">
+                          Total: {order.totalAmount.toFixed(2)}
+                        </span>
+                      </Badge>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <User className="h-4 w-4 text-muted-foreground" />
+                      {order.someonePickup ? (
+                        <Users className="h-4 w-4" />
+                      ) : (
+                        <User className="h-4 w-4" />
+                      )}
+
                       <span>
                         {order.someonePickup
                           ? "Recogida por terceros"
@@ -152,36 +119,34 @@ export function OrderReportTable({ reportData }: OrderReportTableProps) {
                   {order.comments && (
                     <>
                       <div className="mt-2 flex justify-end">
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => toggleExpand(order.id)}
-                              >
-                                {expandedOrderId === order.id ? (
-                                  <>
-                                    <ChevronUp className="mr-1 h-4 w-4" />
-                                    Menos detalles
-                                  </>
-                                ) : (
-                                  <>
-                                    <ChevronDown className="mr-1 h-4 w-4" />
-                                    Más detalles
-                                  </>
-                                )}
-                              </Button>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>
-                                {expandedOrderId === order.id
-                                  ? "Ocultar detalles adicionales"
-                                  : "Ver detalles adicionales"}
-                              </p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => toggleExpand(order.id)}
+                            >
+                              {expandedOrderId === order.id ? (
+                                <>
+                                  <ChevronUp className="mr-1 h-4 w-4" />
+                                  Menos detalles
+                                </>
+                              ) : (
+                                <>
+                                  <ChevronDown className="mr-1 h-4 w-4" />
+                                  Más detalles
+                                </>
+                              )}
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>
+                              {expandedOrderId === order.id
+                                ? "Ocultar detalles adicionales"
+                                : "Ver detalles adicionales"}
+                            </p>
+                          </TooltipContent>
+                        </Tooltip>
                       </div>
                       {expandedOrderId === order.id && (
                         <div className="mt-4 rounded-md bg-muted p-2">
@@ -192,9 +157,9 @@ export function OrderReportTable({ reportData }: OrderReportTableProps) {
                   )}
                 </CardContent>
               </Card>
-            </motion.div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </CardContent>
     </Card>
   );

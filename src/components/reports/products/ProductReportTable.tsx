@@ -1,83 +1,110 @@
 import { ProductData } from "@/types";
-import { Tag } from "lucide-react";
-import Image from "next/image";
-import React from "react";
+import { generateColors } from "@/utils/generateColors";
+import { Info } from "lucide-react";
+import { useMemo, useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
+  Table,
+  TableBody,
+  TableHeader,
+  TableRow,
+  TableHead,
+} from "@/components/ui/table";
+
+import { ProductCard } from "./ProductCard";
+import { ProductRow } from "./ProductRow";
 
 interface ProductReportTableProps {
   reportData: ProductData[];
 }
 
-function getStatusIcon(
-  isActive: boolean,
-  isRestricted: boolean,
-  isAvailable: boolean,
-) {
-  // Aquí puedes definir los íconos que deseas mostrar según el estado del producto
-  if (isActive) {
-    return <span className="text-green-500">Activo</span>;
-  } else if (isRestricted) {
-    return <span className="text-red-500">Restringido</span>;
-  } else if (isAvailable) {
-    return <span className="text-yellow-500">Disponible</span>;
-  } else {
-    return <span className="text-gray-500">Inactivo</span>;
-  }
-}
+export const ProductReportTable = ({ reportData }: ProductReportTableProps) => {
+  // Obtener categorías únicas
+  const uniqueCategories = useMemo(() => {
+    return Array.from(
+      new Set(reportData.map((product) => product.category.name)),
+    );
+  }, [reportData]);
 
-export function ProductReportTable({ reportData }: ProductReportTableProps) {
+  // Generar colores basados en la cantidad de categorías únicas
+  const colors = useMemo(
+    () => generateColors(uniqueCategories.length),
+    [uniqueCategories],
+  );
+
+  // Crear un objeto para mapear categorías a colores
+  const categoryColors = useMemo(() => {
+    const colorMap: { [key: string]: string } = {};
+    uniqueCategories.forEach((category, index) => {
+      colorMap[category] = colors[index];
+    });
+    return colorMap;
+  }, [uniqueCategories, colors]);
+
+  const [expandedProduct, setExpandedProduct] = useState<string | null>(null);
+
+  const toggleExpand = (productId: string) => {
+    setExpandedProduct(expandedProduct === productId ? null : productId);
+  };
+
   return (
-    <Card className="container mx-auto p-4">
+    <Card className="container p-4">
       <CardHeader>
-        <CardTitle className="text-3xl font-bold">
+        <CardTitle className="text-2xl font-bold">
           Reporte de Productos
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {reportData.map((product) => (
-            <Card key={product.id} className="overflow-hidden">
-              <CardHeader className="p-0">
-                <Image
-                  src={product.image}
-                  alt={product.name}
-                  width={500} // Especifica el ancho de la imagen
-                  height={300} // Especifica la altura de la imagen
-                  className="h-48 w-full object-cover"
-                />
-              </CardHeader>
-              <CardContent className="p-4">
-                <div className="mb-2 flex items-start justify-between">
-                  <CardTitle>{product.name}</CardTitle>
-                  {getStatusIcon(
-                    product.isActive,
-                    product.isRestricted,
-                    product.isAvailable,
-                  )}
-                </div>
-                <CardDescription>{product.category.name}</CardDescription>
-                <div className="mt-4 flex">
-                  <Badge
-                    variant="secondary"
-                    className="flex items-center space-x-1"
-                  >
-                    <Tag className="mr-1 h-3 w-3" />
-                    <span>${product.price.toFixed(2)}</span>
-                  </Badge>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+        <div className="overflow-x-auto">
+          {reportData.length === 0 ? (
+            <Badge className="font-medium text-slate-400" variant="outline">
+              <Info className="mr-2 h-4 w-4" aria-hidden="true" />
+              No hay productos a mostrar
+            </Badge>
+          ) : (
+            <div className="w-full">
+              {/* Vista de escritorio */}
+              <div className="hidden md:block">
+                <Table className="table-fixed">
+                  <TableHeader>
+                    <TableRow className="bg-muted">
+                      <TableHead className="w-32 text-center">Imagen</TableHead>
+                      <TableHead className="w-64 text-center">
+                        Producto
+                      </TableHead>
+                      <TableHead className="w-20 text-center">Precio</TableHead>
+                      <TableHead className="w-28 text-center">Estado</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {reportData.map((product) => (
+                      <ProductRow
+                        key={product.id}
+                        product={product}
+                        categoryColors={categoryColors}
+                      />
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+              {/* Vista móvil */}
+              <div className="md:hidden">
+                {reportData.map((product) => (
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    categoryColors={categoryColors}
+                    expandedProduct={expandedProduct}
+                    toggleExpand={toggleExpand}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>
   );
-}
+};

@@ -284,7 +284,7 @@ export const DateRangePicker: FC<DateRangePickerProps> & {
     >
       <PopoverTrigger asChild>
         <Button
-          size={"lg"}
+          size={"sm"}
           variant="outline"
           className="flex w-full justify-between"
         >
@@ -300,43 +300,76 @@ export const DateRangePicker: FC<DateRangePickerProps> & {
           </div>
         </Button>
       </PopoverTrigger>
-      <PopoverContent align={align} className="w-auto">
+      <PopoverContent align={align} className="w-full">
         <div className="flex py-2">
           <div className="flex">
             <div className="flex flex-col">
               <div className="flex flex-col items-center justify-end gap-2 px-3 pb-4 lg:flex-row lg:items-start lg:pb-0">
                 <div className="flex flex-col gap-2">
-                  <div className="flex gap-2">
-                    <DateInput
-                      value={range.from}
-                      onChange={() => {
-                        const newDate = new Date(); // Este será el nuevo valor de la fecha, deberías obtenerlo de manera adecuada
-                        const toDate =
-                          range.to == null || newDate > range.to
-                            ? newDate
-                            : range.to;
-                        setRange((prevRange) => ({
-                          ...prevRange,
-                          from: newDate,
-                          to: toDate,
-                        }));
-                      }}
-                    />
-                    <div className="py-1">-</div>
-                    <DateInput
-                      value={range.to}
-                      onChange={() => {
-                        const newDate = new Date(); // Este será el nuevo valor de la fecha, deberías obtenerlo de manera adecuada
-                        const fromDate =
-                          newDate < range.from ? newDate : range.from;
-                        setRange((prevRange) => ({
-                          ...prevRange,
-                          from: fromDate,
-                          to: newDate,
-                        }));
-                      }}
-                    />
-                  </div>
+                  {isSmallScreen ? (
+                    <div className="flex flex-col gap-2">
+                      <DateInput
+                        value={range.from}
+                        onChange={() => {
+                          const newDate = new Date();
+                          const toDate =
+                            range.to == null || newDate > range.to
+                              ? newDate
+                              : range.to;
+                          setRange((prevRange) => ({
+                            ...prevRange,
+                            from: newDate,
+                            to: toDate,
+                          }));
+                        }}
+                      />
+                      <DateInput
+                        value={range.to}
+                        onChange={() => {
+                          const newDate = new Date();
+                          const fromDate =
+                            newDate < range.from ? newDate : range.from;
+                          setRange((prevRange) => ({
+                            ...prevRange,
+                            from: fromDate,
+                            to: newDate,
+                          }));
+                        }}
+                      />
+                    </div>
+                  ) : (
+                    <div className="flex gap-2">
+                      <DateInput
+                        value={range.from}
+                        onChange={() => {
+                          const newDate = new Date();
+                          const toDate =
+                            range.to == null || newDate > range.to
+                              ? newDate
+                              : range.to;
+                          setRange((prevRange) => ({
+                            ...prevRange,
+                            from: newDate,
+                            to: toDate,
+                          }));
+                        }}
+                      />
+                      <div className="py-1">-</div>
+                      <DateInput
+                        value={range.to}
+                        onChange={() => {
+                          const newDate = new Date();
+                          const fromDate =
+                            newDate < range.from ? newDate : range.from;
+                          setRange((prevRange) => ({
+                            ...prevRange,
+                            from: fromDate,
+                            to: newDate,
+                          }));
+                        }}
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
               {isSmallScreen && (
@@ -347,7 +380,7 @@ export const DateRangePicker: FC<DateRangePickerProps> & {
                   }}
                 >
                   <SelectTrigger className="mx-auto mb-2 w-[180px]">
-                    <SelectValue placeholder="Select..." />
+                    <SelectValue placeholder="Seleccionar..." />
                   </SelectTrigger>
                   <SelectContent>
                     {PRESETS.map((preset) => (
@@ -358,7 +391,7 @@ export const DateRangePicker: FC<DateRangePickerProps> & {
                   </SelectContent>
                 </Select>
               )}
-              <div>
+              <div className="">
                 <Calendar
                   mode="range"
                   onSelect={(value: { from?: Date; to?: Date } | undefined) => {
@@ -376,12 +409,34 @@ export const DateRangePicker: FC<DateRangePickerProps> & {
                     )
                   }
                 />
+
+                <div className="flex justify-end">
+                  <Button
+                    onClick={() => {
+                      setIsOpen(false);
+                      resetValues();
+                    }}
+                    variant="ghost"
+                  >
+                    Cancelar
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      setIsOpen(false);
+                      if (!areRangesEqual(range, openedRangeRef.current)) {
+                        onUpdate?.({ range });
+                      }
+                    }}
+                  >
+                    Aplicar
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
           {!isSmallScreen && (
-            <div className="flex flex-col items-end gap-1 pb-6 pl-6 pr-2">
-              <div className="flex w-full flex-col items-end gap-1 pb-6 pl-6 pr-2">
+            <div className="flex flex-col items-end gap-1">
+              <div className="flex w-full flex-col items-end gap-1">
                 {PRESETS.map((preset) => (
                   <PresetButton
                     key={preset.name}
@@ -393,27 +448,6 @@ export const DateRangePicker: FC<DateRangePickerProps> & {
               </div>
             </div>
           )}
-        </div>
-        <div className="flex justify-end gap-2 py-2 pr-4">
-          <Button
-            onClick={() => {
-              setIsOpen(false);
-              resetValues();
-            }}
-            variant="ghost"
-          >
-            Cancelar
-          </Button>
-          <Button
-            onClick={() => {
-              setIsOpen(false);
-              if (!areRangesEqual(range, openedRangeRef.current)) {
-                onUpdate?.({ range });
-              }
-            }}
-          >
-            Aplicar
-          </Button>
         </div>
       </PopoverContent>
     </Popover>
