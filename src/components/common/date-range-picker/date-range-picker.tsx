@@ -284,7 +284,7 @@ export const DateRangePicker: FC<DateRangePickerProps> & {
     >
       <PopoverTrigger asChild>
         <Button
-          size={"sm"}
+          size={"default"}
           variant="outline"
           className="flex w-full justify-between"
         >
@@ -295,12 +295,12 @@ export const DateRangePicker: FC<DateRangePickerProps> & {
               }`}</div>
             </div>
           </div>
-          <div className="-mr-2 flex scale-125 items-center pl-1 opacity-60">
-            {isOpen ? <ChevronUp width={16} /> : <ChevronDown width={16} />}
+          <div className="-mr-2 flex scale-125 cursor-pointer items-center p-2 opacity-60">
+            {isOpen ? <ChevronUp width={13} /> : <ChevronDown width={13} />}
           </div>
         </Button>
       </PopoverTrigger>
-      <PopoverContent align={align} className="w-full">
+      <PopoverContent align={align} className="w-full" side="bottom">
         <div className="flex py-2">
           <div className="flex">
             <div className="flex flex-col">
