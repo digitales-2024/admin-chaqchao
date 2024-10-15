@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import React from "react";
 
+import { translateStatus } from "@/components/orders/OrderSheetDetails";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -87,15 +88,18 @@ export function OrderFiltersForm({
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value={OrderStatus.ALL}>Todos</SelectItem>
-                <SelectItem value={OrderStatus.PENDING}>Pendiente</SelectItem>
                 <SelectItem value={OrderStatus.CONFIRMED}>
-                  Confirmado
+                  {translateStatus[OrderStatus.CONFIRMED]}
                 </SelectItem>
-                <SelectItem value={OrderStatus.READY}>Listo</SelectItem>
+                <SelectItem value={OrderStatus.READY}>
+                  {translateStatus[OrderStatus.READY]}
+                </SelectItem>
                 <SelectItem value={OrderStatus.COMPLETED}>
-                  Completado
+                  {translateStatus[OrderStatus.COMPLETED]}
                 </SelectItem>
-                <SelectItem value={OrderStatus.CANCELLED}>Cancelado</SelectItem>
+                <SelectItem value={OrderStatus.CANCELLED}>
+                  {translateStatus[OrderStatus.CANCELLED]}
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
