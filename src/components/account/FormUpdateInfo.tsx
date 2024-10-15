@@ -25,7 +25,7 @@ export interface FormUpdateInfoProps {
 export const FormUpdateInfo = () => {
   const [formActive, setFormActive] = useState(false);
 
-  const { user, onUpdate, isLoading } = useProfile();
+  const { user, onUpdate, isLoading, isSuccess, refetch } = useProfile();
 
   const {
     register,
@@ -35,9 +35,9 @@ export const FormUpdateInfo = () => {
   } = useForm<FormUpdateInfoProps>({
     resolver: zodResolver(updateInfoSchema),
     values: {
-      email: user?.email,
-      name: user?.name,
-      phone: user?.phone,
+      name: user?.name ?? "",
+      phone: user?.phone ?? "",
+      email: user?.email ?? "",
     },
   });
 
@@ -48,8 +48,24 @@ export const FormUpdateInfo = () => {
     setFormActive(isFormActive);
   }, [isFormActive, watch, user?.name, user?.phone]);
 
+  const submitForm = (data: FormUpdateInfoProps) => {
+    const updateData = {
+      id: user?.id,
+      roles: user?.roles.map((role) => role.id) ?? [],
+      name: data.name ?? "",
+      phone: data?.phone ?? "",
+    };
+    onUpdate(updateData);
+  };
+
+  useEffect(() => {
+    if (isSuccess) {
+      refetch();
+    }
+  }, [isSuccess]);
+
   return (
-    <form onSubmit={handleSubmit(onUpdate)}>
+    <form onSubmit={handleSubmit(submitForm)}>
       <Card>
         <CardHeader>
           <CardTitle>Información general</CardTitle>
