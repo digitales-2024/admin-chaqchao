@@ -24,8 +24,12 @@ export function ClassesTableToolbarActions({
         .rows.filter((row) => row.getIsSelected())
         .map((row) => row.original); // Obtener solo la propiedad original
 
-      // Llamar a la función de exportación con los datos seleccionados
-      exportClassesToPdf(selectedRows);
+      if (selectedRows.length === 0) {
+        exportClassesToPdf(table.getRowModel().rows.map((row) => row.original));
+      } else {
+        // Llamar a la función de exportación con los datos seleccionados
+        exportClassesToPdf(selectedRows);
+      }
     }
   };
 
@@ -38,7 +42,15 @@ export function ClassesTableToolbarActions({
         .map((row) => row.original);
 
       // Llamar a la función de exportación con los datos seleccionados
-      exportClassesToExcel(selectedRows);
+
+      if (selectedRows.length === 0) {
+        // Si no hay filas seleccionadas, exportar todas las filas
+        exportClassesToExcel(
+          table.getRowModel().rows.map((row) => row.original),
+        );
+      } else {
+        exportClassesToExcel(selectedRows);
+      }
     }
   };
 

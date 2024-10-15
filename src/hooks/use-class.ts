@@ -6,6 +6,7 @@ import {
 import { socket } from "@/socket/socket";
 import { ClassesDataAdmin, CustomErrorData } from "@/types";
 import { translateError } from "@/utils/translateError";
+import { format } from "date-fns";
 import { toast } from "sonner"; // Importa toast
 
 /**
@@ -87,7 +88,10 @@ export const useClasses = (date?: string) => {
           const url = window.URL.createObjectURL(new Blob([result]));
           const link = document.createElement("a");
           link.href = url;
-          link.setAttribute("download", "classes.xlsx");
+          link.setAttribute(
+            "download",
+            `report-classes-${format(new Date(), "yyyy-MM-dd")}.xlsx`,
+          );
           document.body.appendChild(link);
           link.click();
           link.remove();
@@ -132,7 +136,10 @@ export const useClasses = (date?: string) => {
           const url = window.URL.createObjectURL(result);
           const link = document.createElement("a");
           link.href = url;
-          link.setAttribute("download", "class_report.pdf");
+          link.setAttribute(
+            "download",
+            `report-classes-${format(new Date(), "yyyy-MM-dd")}.pdf`,
+          );
 
           // Añadir el enlace al DOM y disparar la descarga
           document.body.appendChild(link);

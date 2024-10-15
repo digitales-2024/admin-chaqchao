@@ -32,7 +32,7 @@ import { Separator } from "../ui/separator";
 const formatCurrency = (amount: number, currency: string) => {
   const currencyFormat: { [key: string]: Intl.NumberFormatOptions } = {
     SOL: { style: "currency", currency: "PEN" },
-    DOLLAR: { style: "currency", currency: "USD" },
+    DOLAR: { style: "currency", currency: "USD" },
   };
 
   if (!(currency in currencyFormat)) {
