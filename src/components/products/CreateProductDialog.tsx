@@ -58,6 +58,7 @@ export function CreateProductDialog() {
       name: "",
       categoryId: "",
       description: "",
+      price: "",
       image: undefined,
       isRestricted: false,
     },
@@ -80,10 +81,13 @@ export function CreateProductDialog() {
       };
 
       startCreateTransition(async () => {
-        await onCreateProduct(inputWithImage);
+        await onCreateProduct({
+          ...inputWithImage,
+          price: parseFloat(inputWithImage.price),
+        });
       });
     } catch (error) {
-      console.error("Error al subir la imagen o crear el producto", error);
+      throw error;
     }
   };
 
@@ -118,39 +122,39 @@ export function CreateProductDialog() {
             {dataForm.button}
           </Button>
         </DialogTrigger>
-        <DialogContent>
+        <DialogContent tabIndex={undefined}>
           <DialogHeader>
             <DialogTitle>{dataForm.title}</DialogTitle>
             <DialogDescription>{dataForm.description}</DialogDescription>
           </DialogHeader>
           <ScrollArea className="h-full max-h-[80vh] w-full justify-center gap-4">
             <CreateProductsForm form={form} onSubmit={onSubmit}>
-              {isLoadingUploadImageProduct && (
-                <Progress value={processLoadingImage} className="h-2" />
-              )}
-              <DialogFooter className="gap-2 sm:space-x-0">
-                <Button
-                  disabled={isCreatePending || isLoadingUploadImageProduct}
-                  className="w-full"
-                >
-                  {isCreatePending && (
-                    <RefreshCcw
-                      className="mr-2 size-4 animate-spin"
-                      aria-hidden="true"
-                    />
-                  )}
-                  Registrar
-                </Button>
-                <DialogClose asChild>
+              <Progress value={processLoadingImage} className="h-2" />
+              <DialogFooter>
+                <div className="flex w-full flex-row-reverse gap-2">
                   <Button
-                    onClick={handleClose}
-                    type="button"
-                    variant="outline"
+                    disabled={isCreatePending || isLoadingUploadImageProduct}
                     className="w-full"
                   >
-                    Cancelar
+                    {isCreatePending && (
+                      <RefreshCcw
+                        className="mr-2 size-4 animate-spin"
+                        aria-hidden="true"
+                      />
+                    )}
+                    Registrar
                   </Button>
-                </DialogClose>
+                  <DialogClose asChild>
+                    <Button
+                      onClick={handleClose}
+                      type="button"
+                      variant="outline"
+                      className="w-full"
+                    >
+                      Cancelar
+                    </Button>
+                  </DialogClose>
+                </div>
               </DialogFooter>
             </CreateProductsForm>
           </ScrollArea>
@@ -167,12 +171,12 @@ export function CreateProductDialog() {
         </Button>
       </DrawerTrigger>
 
-      <DrawerContent>
+      <DrawerContent className="h-[90vh]">
         <DrawerHeader>
           <DrawerTitle>{dataForm.title}</DrawerTitle>
           <DrawerDescription>{dataForm.description}</DrawerDescription>
         </DrawerHeader>
-        <ScrollArea className="mt-4 max-h-[750px] w-full gap-4 overflow-y-auto pr-4">
+        <ScrollArea className="mt-4 max-h-full w-full gap-4 pr-4">
           <CreateProductsForm form={form} onSubmit={onSubmit}>
             <DrawerFooter className="gap-2 sm:space-x-0">
               <Button disabled={isCreatePending || isLoadingUploadImageProduct}>

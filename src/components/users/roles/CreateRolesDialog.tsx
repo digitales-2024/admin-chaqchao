@@ -29,6 +29,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 import { CreateRolesForm } from "./CreateRolesForm";
 
@@ -78,34 +79,41 @@ export function CreateRolesDialog() {
             {dataForm.button}
           </Button>
         </DialogTrigger>
-        <DialogContent className="sm:max-w-[40vw]">
-          <DialogHeader>
-            <DialogTitle>{dataForm.title}</DialogTitle>
-            <DialogDescription>{dataForm.description}</DialogDescription>
-          </DialogHeader>
-          <CreateRolesForm form={form} onSubmit={onSubmit}>
-            <DialogFooter className="gap-2 sm:space-x-0">
-              <Button disabled={isCreatePending} className="w-full">
-                {isCreatePending && (
-                  <RefreshCcw
-                    className="mr-2 size-4 animate-spin"
-                    aria-hidden="true"
-                  />
-                )}
-                Registrar
-              </Button>
-              <DialogClose asChild>
-                <Button
-                  onClick={handleClose}
-                  type="button"
-                  variant="outline"
-                  className="w-full"
-                >
-                  Cancelar
-                </Button>
-              </DialogClose>
-            </DialogFooter>
-          </CreateRolesForm>
+        <DialogContent
+          className="max-h-[95vh] overflow-auto"
+          tabIndex={undefined}
+        >
+          <ScrollArea className="max-h-[95vh]">
+            <DialogHeader>
+              <DialogTitle>{dataForm.title}</DialogTitle>
+              <DialogDescription>{dataForm.description}</DialogDescription>
+            </DialogHeader>
+            <CreateRolesForm form={form} onSubmit={onSubmit}>
+              <DialogFooter className="gap-2 sm:space-x-0">
+                <div className="inline-flex w-full flex-row-reverse gap-2">
+                  <Button disabled={isCreatePending} className="w-full">
+                    {isCreatePending && (
+                      <RefreshCcw
+                        className="mr-2 size-4 animate-spin"
+                        aria-hidden="true"
+                      />
+                    )}
+                    Registrar
+                  </Button>
+                  <DialogClose asChild>
+                    <Button
+                      onClick={handleClose}
+                      type="button"
+                      variant="outline"
+                      className="w-full"
+                    >
+                      Cancelar
+                    </Button>
+                  </DialogClose>
+                </div>
+              </DialogFooter>
+            </CreateRolesForm>
+          </ScrollArea>
         </DialogContent>
       </Dialog>
     );
@@ -119,7 +127,7 @@ export function CreateRolesDialog() {
         </Button>
       </DrawerTrigger>
 
-      <DrawerContent>
+      <DrawerContent tabIndex={undefined}>
         <DrawerHeader>
           <DrawerTitle>{dataForm.title}</DrawerTitle>
           <DrawerDescription>{dataForm.description}</DrawerDescription>

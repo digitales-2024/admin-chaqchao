@@ -2,6 +2,7 @@
 
 import { useProfile } from "@/hooks/use-profile";
 import { Category } from "@/types";
+import { capitalizeSentences } from "@/utils/capitalizeSentences";
 import { type ColumnDef } from "@tanstack/react-table";
 import { Trash, Ellipsis, RefreshCcwDot } from "lucide-react";
 import { useState } from "react";
@@ -15,6 +16,8 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+
+import { cn } from "@/lib/utils";
 
 import { DataTableColumnHeader } from "../data-table/DataTableColumnHeader";
 import { Badge } from "../ui/badge";
@@ -48,9 +51,29 @@ export const categoriesColumns = (): ColumnDef<Category>[] => {
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Descripción" />
       ),
-      cell: ({ row }) => (
-        <div className="truncate capitalize">{row.getValue("descripción")}</div>
-      ),
+      cell: function Cell({ row }) {
+        const description = row.getValue("descripción") as string;
+        const [expandido, setExpandido] = useState(false);
+
+        const handleToggle = () => {
+          setExpandido(!expandido);
+        };
+        return (
+          <div
+            className={cn(
+              "w-72 truncate",
+              expandido ? "whitespace-normal" : "whitespace-nowrap",
+            )}
+            onClick={handleToggle}
+          >
+            {description ? (
+              capitalizeSentences(description)
+            ) : (
+              <span className="text-xs text-slate-300">Sin descripción</span>
+            )}
+          </div>
+        );
+      },
     },
     {
       id: "estado",

@@ -2,25 +2,58 @@ import { Order, OrderStatus } from "@/types";
 import { type ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
+import { ArrowBigRightDash } from "lucide-react";
+
+import { cn } from "@/lib/utils";
 
 import { DataTableColumnHeader } from "../data-table/DataTableColumnHeader";
 import { statusColors, translateStatus } from "../orders/OrderSheetDetails";
 import { Badge } from "../ui/badge";
 
-export const ordersColumns = (): ColumnDef<Order>[] => {
+export const ordersColumns = (
+  selectedOrderId: string | null,
+): ColumnDef<Order>[] => {
   return [
     {
-      id: "FechaDeRecogida",
+      id: "Code",
+      accessorKey: "pickupCode",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Código" />
+      ),
+      cell: ({ row }) => (
+        <div
+          className={cn("relative cursor-pointer", {
+            "text-indigo-600": row.original.id === selectedOrderId,
+          })}
+        >
+          <ArrowBigRightDash
+            className={cn(
+              "absolute -left-4 bottom-0 top-0 size-4 animate-pulse",
+              {
+                hidden: row.original.id !== selectedOrderId,
+              },
+            )}
+          />
+          {row.original.pickupCode}
+        </div>
+      ),
+    },
+    {
+      id: "Fecha",
       accessorKey: "pickupTime",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Fecha de Recogida" />
       ),
       cell: ({ row }) => {
-        const pickupTime = row.getValue("FechaDeRecogida") as string;
+        const pickupTime = row.getValue("Fecha") as string;
         return (
-          <div className="cursor-pointer">
+          <div
+            className={cn("cursor-pointer", {
+              "text-indigo-500": row.original.id === selectedOrderId,
+            })}
+          >
             {pickupTime
-              ? format(new Date(pickupTime), "PPP", { locale: es })
+              ? format(new Date(pickupTime), "yyyy-MM-dd", { locale: es })
               : "Sin datos"}
           </div>
         );
@@ -56,7 +89,15 @@ export const ordersColumns = (): ColumnDef<Order>[] => {
       ),
       cell: ({ row }) => {
         const totalAmount = row.getValue("Total") as number;
-        return <div>S/. {totalAmount.toFixed(2)}</div>;
+        return (
+          <div
+            className={cn({
+              "text-indigo-500": row.original.id === selectedOrderId,
+            })}
+          >
+            S/. {totalAmount?.toFixed(2) || "00"}
+          </div>
+        );
       },
     },
   ];

@@ -15,6 +15,10 @@ import {
 
 const options = [
   {
+    label: "Todos",
+    value: OrderStatus.ALL,
+  },
+  {
     label: "Pendiente",
     value: OrderStatus.PENDING,
   },
@@ -33,10 +37,6 @@ const options = [
   {
     label: "Cancelado",
     value: OrderStatus.CANCELLED,
-  },
-  {
-    label: "Todos",
-    value: OrderStatus.ALL,
   },
 ];
 

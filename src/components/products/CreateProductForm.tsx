@@ -111,60 +111,43 @@ export const CreateProductsForm = ({
                 <FormLabel htmlFor="price">Precio</FormLabel>
                 <FormControl>
                   <Input
-                    id="price"
-                    type="number"
                     placeholder="Ingrese el precio del producto"
                     {...field}
-                    onChange={(e) => {
-                      const value = parseFloat(e.target.value);
-                      if (!isNaN(value)) {
-                        field.onChange(value);
-                      } else {
-                        field.onChange(0);
-                      }
-                    }}
-                    min="0"
-                    step="0.01"
                   />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-
-          {/* Campo de Restricción */}
+          {/* Campo de Categoría */}
           <FormField
             control={form.control}
-            name="isRestricted"
+            name="categoryId"
             render={({ field }) => (
-              <FormItem className="flex flex-col">
-                <FormLabel htmlFor="isRestricted">Restricción</FormLabel>
+              <FormItem>
+                <FormLabel htmlFor="categoryId">Categoría</FormLabel>
                 <FormControl>
-                  <div className="flex items-center gap-2">
-                    <Switch
-                      className="translate-y-0.5"
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                    <span
-                      className={cn(
-                        "text-xs",
-                        field.value ? "text-orange-500" : "text-slate-500",
-                      )}
-                    >
-                      {field.value ? (
-                        <span className="inline-flex gap-2 align-bottom">
-                          <ShieldAlert size={16} className="flex-shrink-0" />{" "}
-                          Restricción de Edad
-                        </span>
-                      ) : (
-                        <span className="inline-flex gap-2">
-                          <ShieldMinus size={16} className="flex-shrink-0" />{" "}
-                          Sin Restricción de Edad
-                        </span>
-                      )}
-                    </span>
-                  </div>
+                  <Select
+                    onValueChange={(value) => field.onChange(value)}
+                    defaultValue={field.value || ""}
+                  >
+                    <SelectTrigger className="capitalize">
+                      <SelectValue placeholder="Selecciona una categoría" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        {data?.map((category) => (
+                          <SelectItem
+                            key={category.id}
+                            value={category.id}
+                            className="capitalize"
+                          >
+                            {category.name}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -199,7 +182,10 @@ export const CreateProductsForm = ({
                         </p>
                       </div>
                     ) : (
-                      <div className="flex size-60 w-full flex-col items-center justify-center">
+                      <div
+                        className="flex size-60 w-full flex-col items-center justify-center"
+                        tabIndex={0}
+                      >
                         <ImagePlus
                           className="h-10 w-10 text-gray-300"
                           strokeWidth={1}
@@ -225,36 +211,39 @@ export const CreateProductsForm = ({
               </FormItem>
             )}
           />
-
-          {/* Campo de Categoría */}
+          {/* Campo de Restricción */}
           <FormField
             control={form.control}
-            name="categoryId"
+            name="isRestricted"
             render={({ field }) => (
-              <FormItem>
-                <FormLabel htmlFor="categoryId">Categoría</FormLabel>
+              <FormItem className="flex flex-col">
+                <FormLabel htmlFor="isRestricted">Restricción</FormLabel>
                 <FormControl>
-                  <Select
-                    onValueChange={(value) => field.onChange(value)}
-                    defaultValue={field.value || ""}
-                  >
-                    <SelectTrigger className="capitalize">
-                      <SelectValue placeholder="Selecciona una categoría" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        {data?.map((category) => (
-                          <SelectItem
-                            key={category.id}
-                            value={category.id}
-                            className="capitalize"
-                          >
-                            {category.name}
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
+                  <div className="flex items-center gap-2">
+                    <Switch
+                      className="translate-y-0.5"
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                    <span
+                      className={cn(
+                        "text-xs",
+                        field.value ? "text-orange-500" : "text-slate-500",
+                      )}
+                    >
+                      {field.value ? (
+                        <span className="inline-flex gap-2 align-bottom">
+                          <ShieldAlert size={16} className="flex-shrink-0" />{" "}
+                          Restricción de Edad
+                        </span>
+                      ) : (
+                        <span className="inline-flex gap-2">
+                          <ShieldMinus size={16} className="flex-shrink-0" />{" "}
+                          Sin Restricción de Edad
+                        </span>
+                      )}
+                    </span>
+                  </div>
                 </FormControl>
                 <FormMessage />
               </FormItem>

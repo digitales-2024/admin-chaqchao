@@ -24,18 +24,12 @@ export function DataTableViewOptions<TData>({
     <div className="w-fit">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button
-            aria-label="Toggle columns"
-            variant="outline"
-            size="sm"
-            className="ml-auto flex w-fit"
-          >
-            <Settings2 className="mr-2 size-4 flex-shrink-0" />
-            Columnas
+          <Button aria-label="Toggle columns" variant="outline" size="icon">
+            <Settings2 className="size-4 flex-shrink-0" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-40">
-          <DropdownMenuLabel>Columnas de alternar</DropdownMenuLabel>
+          <DropdownMenuLabel>Columnas</DropdownMenuLabel>
           <DropdownMenuSeparator />
           {table
             .getAllColumns()

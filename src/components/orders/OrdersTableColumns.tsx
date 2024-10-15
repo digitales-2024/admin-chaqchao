@@ -53,7 +53,7 @@ export const getColumnsOrders = (): ColumnDef<Order>[] => [
   },
   {
     id: "cliente",
-    accessorKey: "clientName",
+    accessorKey: "client.name",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Cliente" />
     ),

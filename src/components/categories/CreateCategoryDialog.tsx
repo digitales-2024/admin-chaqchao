@@ -87,26 +87,28 @@ export function CreateCategoryDialog() {
             <DialogDescription>{dataForm.description}</DialogDescription>
           </DialogHeader>
           <CreateCategoryForm form={form} onSubmit={onSubmit}>
-            <DialogFooter className="gap-2 sm:space-x-0">
-              <Button disabled={isCreatePending} className="w-full">
-                {isCreatePending && (
-                  <RefreshCcw
-                    className="mr-2 size-4 animate-spin"
-                    aria-hidden="true"
-                  />
-                )}
-                Registrar
-              </Button>
-              <DialogClose asChild>
-                <Button
-                  onClick={handleClose}
-                  type="button"
-                  variant="outline"
-                  className="w-full"
-                >
-                  Cancelar
+            <DialogFooter>
+              <div className="flex w-full flex-row-reverse gap-2">
+                <Button disabled={isCreatePending} className="w-full">
+                  {isCreatePending && (
+                    <RefreshCcw
+                      className="mr-2 size-4 animate-spin"
+                      aria-hidden="true"
+                    />
+                  )}
+                  Registrar
                 </Button>
-              </DialogClose>
+                <DialogClose asChild>
+                  <Button
+                    onClick={handleClose}
+                    type="button"
+                    variant="outline"
+                    className="w-full"
+                  >
+                    Cancelar
+                  </Button>
+                </DialogClose>
+              </div>
             </DialogFooter>
           </CreateCategoryForm>
         </DialogContent>

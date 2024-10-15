@@ -4,7 +4,7 @@ import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import {
   Clock,
-  Coffee,
+  PackageOpen,
   Copy,
   CreditCard,
   Mail,
@@ -189,7 +189,7 @@ export const OrderSheetDetails = ({
                       <Avatar className="bg-slate-100">
                         <AvatarImage src={product.image} alt={product.name} />
                         <AvatarFallback>
-                          <Coffee />
+                          <PackageOpen />
                         </AvatarFallback>
                       </Avatar>
                       <span className="text-muted-foreground">

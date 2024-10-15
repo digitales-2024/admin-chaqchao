@@ -25,6 +25,7 @@ export default function Column({
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
+          className="flex min-w-96 flex-grow flex-col"
         >
           <OrderList
             setOpenDetailsOrder={setOpenDetailsOrder}

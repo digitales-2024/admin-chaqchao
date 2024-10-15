@@ -6,6 +6,10 @@ import { UpdateRoleSchema } from "@/components/users/roles/UpdateRoleSheet";
 
 import baseQueryWithReauth from "./baseQuery";
 
+interface GetRoleByIdProps {
+  id: string;
+}
+
 export const rolesApi = createApi({
   reducerPath: "rolesApi",
   baseQuery: baseQueryWithReauth,
@@ -21,11 +25,12 @@ export const rolesApi = createApi({
     }),
 
     // Obtener un rol por id
-    getRole: build.query({
-      query: (id: string) => ({
+    getRole: build.query<Role, GetRoleByIdProps>({
+      query: ({ id }) => ({
         url: `rol/${id}`,
         credentials: "include",
       }),
+      providesTags: ["Roles"],
     }),
 
     // Crear un nuevo rol

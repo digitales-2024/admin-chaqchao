@@ -1,11 +1,12 @@
 "use client";
 
+import { GoogleIcon } from "@/assets/icons";
 import { useProfile } from "@/hooks/use-profile";
 import { Client } from "@/types";
 import { type ColumnDef } from "@tanstack/react-table";
 import { parseISO, format } from "date-fns";
 import { es } from "date-fns/locale";
-import { Ellipsis, Trash, RefreshCcwDot, History } from "lucide-react"; // Agrega RefreshCcwDot para la reactivación
+import { Ellipsis, Trash, RefreshCcwDot, History, Mail } from "lucide-react"; // Agrega RefreshCcwDot para la reactivación
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -58,32 +59,30 @@ export const clientsColumns = (): ColumnDef<Client>[] => {
       ),
     },
     {
-      /* TODO: Añadir el caso cuando la fecha llega en null */
-      id: "fechaNacimiento",
+      id: "fecha nacimiento",
       accessorKey: "birthDate",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Fecha de nacimiento" />
       ),
       cell: ({ row }) => {
-        console.log(row.original.birthDate);
         return (
           <div>{format(row.original.birthDate, "PPP", { locale: es })}</div>
         );
       },
     },
     {
-      id: "últimoAcceso",
+      id: "último acceso",
       accessorKey: "lastLogin",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Último acceso" />
       ),
       cell: ({ row }) => {
         // Verificar si el valor es undefined
-        if (row.getValue("últimoAcceso") === undefined) {
+        if (row.original.lastLogin === undefined) {
           return <div>Sin datos</div>;
         }
 
-        const parsedDate = parseISO(row.getValue("últimoAcceso"));
+        const parsedDate = parseISO(row.original.lastLogin);
 
         // Asegúrate de que parsedDate es un objeto Date válido
         if (isNaN(parsedDate.getTime())) {
@@ -92,6 +91,27 @@ export const clientsColumns = (): ColumnDef<Client>[] => {
 
         return <div>{format(parsedDate, "yyyy-MM-dd HH:mm:ss")}</div>;
       },
+    },
+    {
+      id: "método acceso",
+      accessorKey: "lastLoginMethod",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Método de acceso" />
+      ),
+      cell: ({ row }) => (
+        <div className="">
+          {!row.original.isGoogleAuth ? (
+            <span className="inline-flex items-center gap-2 text-slate-400">
+              <Mail /> Correo
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-2 text-slate-400">
+              <GoogleIcon className="size-5" />
+              Google
+            </span>
+          )}
+        </div>
+      ),
     },
     {
       id: "estado",
@@ -176,7 +196,10 @@ export const clientsColumns = (): ColumnDef<Client>[] => {
                     </DropdownMenuShortcut>
                   </DropdownMenuItem>
                 )}
-                <DropdownMenuItem onSelect={() => setIsDialogOpen(true)}>
+                <DropdownMenuItem
+                  onSelect={() => setIsDialogOpen(true)}
+                  disabled={!row.original.isActive}
+                >
                   Eliminar
                   <DropdownMenuShortcut>
                     <Trash className="size-4" aria-hidden="true" />
@@ -190,11 +213,13 @@ export const clientsColumns = (): ColumnDef<Client>[] => {
               onOpenChange={setIsDialogOpen}
               onSuccess={() => setIsDialogOpen(false)}
             />
-            <ClientOrderHistoryDialog
-              client={client}
-              isOpen={isOpenDialogHistory}
-              onOpenChange={setIsOpenDialogHistory}
-            />
+            {isOpenDialogHistory && (
+              <ClientOrderHistoryDialog
+                client={client}
+                isOpen={isOpenDialogHistory}
+                onOpenChange={setIsOpenDialogHistory}
+              />
+            )}
           </div>
         );
       },

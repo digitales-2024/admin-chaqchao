@@ -107,16 +107,14 @@ export default function PagePermissions() {
               <TableRow key={module.id}>
                 <TableCell className="inline-flex w-full items-center justify-between bg-slate-50">
                   <span className="uppercase">{module.name}</span>
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Info className="size-4 text-slate-500" />
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>{module.description}</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Info className="size-4 text-slate-500" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>{module.description}</p>
+                    </TooltipContent>
+                  </Tooltip>
                 </TableCell>
                 {headerPermissions?.map((permission) => {
                   const hasPermission = permissions.find(
