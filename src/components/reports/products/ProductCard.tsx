@@ -43,7 +43,9 @@ export const ProductCard = ({
 
   return (
     <div key={product.id} className="mb-4 rounded-md border">
-      <div className="flex items-center p-4">
+      <div
+        className={`flex p-4 ${expandedProduct ? "items-start" : "items-center"}`}
+      >
         {imageError ? (
           <div className="flex size-24 flex-col items-center justify-center rounded-lg bg-slate-100 text-center">
             <ImageOff className="h-10 w-10 text-slate-400" strokeWidth={1} />
