@@ -1,6 +1,5 @@
 "use client";
 
-import { LogoChaqchao } from "@/assets/icons";
 import { useBussinessConfig } from "@/hooks/use-business-config";
 import { useBusinessHours } from "@/hooks/use-business-hours";
 import {
@@ -12,6 +11,7 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 
 import { BusinessTabs } from "@/components/business-config/BusinessTabs";
+import { CardBussiness } from "@/components/business-config/CardBussiness";
 import { ErrorPage } from "@/components/common/ErrorPage";
 import { HeaderPage } from "@/components/common/HeaderPage";
 import { Shell } from "@/components/common/Shell";
@@ -116,8 +116,8 @@ export default function BusinessInformationPage() {
         title="Configuración de la Empresa"
         description="Complete la información de su empresa y configure su horario de atención."
       />
-      <div className="flex items-start gap-x-6">
-        <LogoChaqchao className="mt-12 hidden size-72 flex-shrink-0 md:block" />
+      <div className="grid grid-cols-1 items-start gap-x-6 md:grid-cols-[1fr_2fr]">
+        <CardBussiness />
         <div className="flex-grow">
           <BusinessTabs
             form={form}

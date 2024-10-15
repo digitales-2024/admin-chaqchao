@@ -87,7 +87,7 @@ export function UpdateBusinessHoursSheet({
           Actualizar Horario Completo
         </Button>
       </SheetTrigger>
-      <SheetContent className="flex flex-col gap-6">
+      <SheetContent className="flex flex-col gap-6" tabIndex={undefined}>
         <SheetHeader>
           <SheetTitle>Actualizar Horario de Atención</SheetTitle>
           <SheetDescription>
@@ -95,7 +95,7 @@ export function UpdateBusinessHoursSheet({
           </SheetDescription>
         </SheetHeader>
         <ScrollArea className="h-fit w-full rounded-md border p-4">
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-6 p-3">
             <div className="space-y-4">
               <div className="flex items-center space-x-2">
                 <Checkbox
