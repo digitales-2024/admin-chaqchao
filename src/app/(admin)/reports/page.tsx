@@ -44,7 +44,7 @@ export default function ReportsPage() {
   // Estado para el filtro de top productos
   const [topValue, setTopValue] = React.useState("all");
 
-  const [activeTab, setActiveTab] = React.useState("products");
+  const [activeTab, setActiveTab] = React.useState("orders");
 
   const {
     useGetProductsReport,
