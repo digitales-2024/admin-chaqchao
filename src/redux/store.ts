@@ -50,7 +50,11 @@ export const store = configureStore({
           "ordersApi/executeMutation/fulfilled",
         ],
         // Ignorar las rutas en el estado que contienen valores no serializables
-        ignoredPaths: ["classApi.mutations"],
+        ignoredPaths: [
+          "classApi.mutations",
+          "reportsApi.mutations",
+          "ordersApi.mutations",
+        ],
       },
     })
       .concat(authApi.middleware)
