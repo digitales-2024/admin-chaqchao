@@ -1,21 +1,9 @@
 import { ProductData } from "@/types";
-import {
-  ImageOff,
-  CheckSquare,
-  SquareX,
-  PackageCheck,
-  PackageX,
-  ShieldMinus,
-  ShieldAlert,
-  ChevronUp,
-  ChevronDown,
-} from "lucide-react";
+import { ImageOff, ChevronUp, ChevronDown } from "lucide-react";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 
 import { Badge } from "@/components/ui/badge";
-
-import { StatusIcon } from "./StatusIcon";
 
 interface ProductCardProps {
   product: ProductData;
@@ -102,52 +90,6 @@ export const ProductCard = ({
                 >
                   {product.description}
                 </span>
-              </div>
-              <div className="mt-2">
-                <StatusIcon
-                  condition={product.isActive}
-                  positiveIcon={
-                    <CheckSquare className="h-4 w-4 text-emerald-500" />
-                  }
-                  negativeIcon={<SquareX className="h-4 w-4 text-red-500" />}
-                  label={
-                    product.isActive ? (
-                      <span className="text-emerald-500">Activo</span>
-                    ) : (
-                      <span className="text-red-500">Inactivo</span>
-                    )
-                  }
-                />
-                <StatusIcon
-                  condition={product.isAvailable}
-                  positiveIcon={
-                    <PackageCheck className="h-4 w-4 text-emerald-500" />
-                  }
-                  negativeIcon={<PackageX className="h-4 w-4 text-red-500" />}
-                  label={
-                    product.isAvailable ? (
-                      <span className="text-emerald-500">Disponible</span>
-                    ) : (
-                      <span className="text-red-500">No disponible</span>
-                    )
-                  }
-                />
-                <StatusIcon
-                  condition={!product.isRestricted}
-                  positiveIcon={
-                    <ShieldMinus className="h-4 w-4 text-orange-500" />
-                  }
-                  negativeIcon={
-                    <ShieldAlert className="h-4 w-4 text-slate-500" />
-                  }
-                  label={
-                    !product.isRestricted ? (
-                      <span className="text-orange-500">Sin restricciones</span>
-                    ) : (
-                      <span className="text-slate-500">Restringido</span>
-                    )
-                  }
-                />
               </div>
             </div>
           )}

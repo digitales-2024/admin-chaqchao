@@ -27,10 +27,6 @@ export function TopProductsFilters({
   topValue,
   setTopValue,
 }: TopProductsFiltersProps) {
-  // Filtrar los productos según el valor de topValue
-  const filteredReportData =
-    topValue === "all" ? reportData : reportData.slice(0, parseInt(topValue));
-
   return (
     <>
       <TopProductsFiltersForm
@@ -42,7 +38,7 @@ export function TopProductsFilters({
         downloadReportExcel={downloadReportExcel}
         isLoading={isLoading}
       />
-      <TopProductsReport reportData={filteredReportData} />
+      <TopProductsReport reportData={reportData} />
     </>
   );
 }

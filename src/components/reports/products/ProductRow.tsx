@@ -1,20 +1,10 @@
 import { ProductData } from "@/types";
-import {
-  ImageOff,
-  CheckSquare,
-  SquareX,
-  PackageCheck,
-  PackageX,
-  ShieldMinus,
-  ShieldAlert,
-} from "lucide-react";
+import { ImageOff } from "lucide-react";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { TableRow, TableCell } from "@/components/ui/table";
-
-import { StatusIcon } from "./StatusIcon";
 
 interface ProductRowProps {
   product: ProductData;
@@ -85,52 +75,6 @@ export const ProductRow = ({ product, categoryColors }: ProductRowProps) => {
         <div className="flex justify-center space-x-1 text-center text-sm text-slate-500">
           <span className="mr-2 h-4 w-4 items-center text-slate-500">S/. </span>
           <span className="">{product.price.toFixed(2)}</span>
-        </div>
-      </TableCell>
-      <TableCell className="w-28">
-        <div className="flex flex-col space-y-2">
-          <StatusIcon
-            condition={product.isActive}
-            positiveIcon={<CheckSquare className="h-4 w-4 text-emerald-500" />}
-            negativeIcon={<SquareX className="h-4 w-4 text-red-500" />}
-            label={
-              <span
-                className={
-                  product.isActive ? "text-emerald-500" : "text-red-500"
-                }
-              >
-                {product.isActive ? "Activo" : "Inactivo"}
-              </span>
-            }
-          />
-          <StatusIcon
-            condition={product.isAvailable}
-            positiveIcon={<PackageCheck className="h-4 w-4 text-emerald-500" />}
-            negativeIcon={<PackageX className="h-4 w-4 text-red-500" />}
-            label={
-              <span
-                className={
-                  product.isAvailable ? "text-emerald-500" : "text-red-500"
-                }
-              >
-                {product.isAvailable ? "Disponible" : "No disponible"}
-              </span>
-            }
-          />
-          <StatusIcon
-            condition={!product.isRestricted}
-            positiveIcon={<ShieldMinus className="h-4 w-4 text-orange-500" />}
-            negativeIcon={<ShieldAlert className="h-4 w-4 text-slate-500" />}
-            label={
-              <span
-                className={
-                  !product.isRestricted ? "text-orange-500" : "text-slate-500"
-                }
-              >
-                {!product.isRestricted ? "Sin restricciones" : "Restringido"}
-              </span>
-            }
-          />
         </div>
       </TableCell>
     </TableRow>

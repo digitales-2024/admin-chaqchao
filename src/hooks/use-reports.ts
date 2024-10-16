@@ -170,15 +170,15 @@ export const useReports = () => {
           link.click();
           link.remove();
           window.URL.revokeObjectURL(url);
-          resolve("Productos top exportados a PDF con éxito");
+          resolve("Productos en tendencia exportados a PDF con éxito");
         } catch (error) {
-          reject(new Error("Error al exportar productos top a PDF"));
+          reject(new Error("Error al exportar productos en tendencia a PDF"));
         }
       });
 
     return toast.promise(promise(), {
-      loading: "Exportando productos top a PDF...",
-      success: "Productos top exportados a PDF con éxito",
+      loading: "Exportando productos en tendencia a PDF...",
+      success: "Productos en tendencia exportados a PDF con éxito",
       error: (err) => err.message,
     });
   };
@@ -198,15 +198,15 @@ export const useReports = () => {
           document.body.appendChild(link);
           link.click();
           link.remove();
-          resolve("Productos top exportados a Excel con éxito");
+          resolve("Productos en tendencia exportados a Excel con éxito");
         } catch (error) {
-          reject(new Error("Error al exportar productos top a Excel"));
+          reject(new Error("Error al exportar productos en tendencia a Excel"));
         }
       });
 
     return toast.promise(promise(), {
-      loading: "Exportando productos top a Excel...",
-      success: "Productos top exportados a Excel con éxito",
+      loading: "Exportando productos en tendencia a Excel...",
+      success: "Productos en tendencia exportados a Excel con éxito",
       error: (err) => err.message,
     });
   };

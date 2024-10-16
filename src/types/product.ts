@@ -29,19 +29,15 @@ export type CategoryData = {
 export interface ProductFilters {
   startDate?: string;
   endDate?: string;
-  name?: string;
   priceMin?: number;
   priceMax?: number;
-  isActive?: boolean;
-  isRestricted?: boolean;
-  isAvailable?: boolean;
   categoryName?: string;
-  refreshKey?: number;
 }
 
 export interface TopProductFilters {
   startDate: string;
   endDate: string;
+  limit: string;
 }
 
 export type TopProduct = {

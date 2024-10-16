@@ -16,18 +16,18 @@ export function ReportTabs({
 }: ReportTabsProps) {
   return (
     <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-      <TabsList>
-        <TabsTrigger value="products">
-          <Package className="mr-2 h-4 w-4" />
-          Productos
-        </TabsTrigger>
+      <TabsList className="grid grid-cols-3">
         <TabsTrigger value="orders">
-          <ShoppingCart className="mr-2 h-4 w-4" />
-          Pedidos
+          <ShoppingCart className="mr-2 h-4 w-4 flex-shrink-0" />
+          <span className="truncate text-ellipsis">Pedidos</span>
+        </TabsTrigger>
+        <TabsTrigger value="products">
+          <Package className="mr-2 h-4 w-4 flex-shrink-0" />
+          <span className="truncate text-ellipsis">Productos de Pedidos</span>
         </TabsTrigger>
         <TabsTrigger value="trends">
-          <TrendingUp className="mr-2 h-4 w-4" />
-          Tendencias
+          <TrendingUp className="mr-2 h-4 w-4 flex-shrink-0" />
+          <span className="truncate text-ellipsis">Productos en Tendencia</span>
         </TabsTrigger>
       </TabsList>
       {children}

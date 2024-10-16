@@ -75,7 +75,6 @@ export const ProductReportTable = ({ reportData }: ProductReportTableProps) => {
                         Producto
                       </TableHead>
                       <TableHead className="w-20 text-center">Precio</TableHead>
-                      <TableHead className="w-28 text-center">Estado</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
