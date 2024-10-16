@@ -17,7 +17,6 @@ import { TopProductsFilters } from "@/components/reports/top-products/TopProduct
 
 export default function ReportsPage() {
   // Estados para filtros de productos
-  const [productName, setProductName] = React.useState("");
   const [productDateRange, setProductDateRange] = React.useState({
     from: format(new Date(), "yyyy-MM-dd"),
     to: format(addDays(new Date(), 7), "yyyy-MM-dd"),
@@ -29,9 +28,6 @@ export default function ReportsPage() {
   });
   const [priceMin, setPriceMin] = React.useState("");
   const [priceMax, setPriceMax] = React.useState("");
-  const [isActive, setIsActive] = React.useState<string>("all");
-  const [isRestricted, setIsRestricted] = React.useState<string>("all");
-  const [isAvailable, setIsAvailable] = React.useState<string>("all");
   const [categoryName, setCategoryName] = React.useState("all");
 
   // Estados para filtros de órdenes
@@ -120,12 +116,8 @@ export default function ReportsPage() {
   const finalProductFilters: ProductFilters = {
     startDate: productFilters.startDate,
     endDate: productFilters.endDate,
-    name: productName || undefined,
     priceMin: priceMin ? parseFloat(priceMin) : undefined,
     priceMax: priceMax ? parseFloat(priceMax) : undefined,
-    isActive: isActive !== "all" ? isActive === "true" : undefined,
-    isRestricted: isRestricted !== "all" ? isRestricted === "true" : undefined,
-    isAvailable: isAvailable !== "all" ? isAvailable === "true" : undefined,
     categoryName: categoryName !== "all" ? categoryName : undefined,
   };
 
@@ -170,8 +162,6 @@ export default function ReportsPage() {
       <ReportTabs activeTab={activeTab} setActiveTab={setActiveTab}>
         {activeTab === "products" && (
           <ProductFiltersComponent
-            productName={productName}
-            setProductName={setProductName}
             productDateRange={productDateRange}
             setProductDateRange={(range) => {
               setProductDateRange({
@@ -187,27 +177,6 @@ export default function ReportsPage() {
             setPriceMin={setPriceMin}
             priceMax={priceMax}
             setPriceMax={setPriceMax}
-            isActive={isActive}
-            setIsProductActive={(value) => {
-              setIsActive(value);
-              updateProductFilters({
-                isActive: value !== "all" ? value === "true" : undefined,
-              });
-            }}
-            isRestricted={isRestricted}
-            setIsRestricted={(value) => {
-              setIsRestricted(value);
-              updateProductFilters({
-                isRestricted: value !== "all" ? value === "true" : undefined,
-              });
-            }}
-            isAvailable={isAvailable}
-            setIsAvailable={(value) => {
-              setIsAvailable(value);
-              updateProductFilters({
-                isAvailable: value !== "all" ? value === "true" : undefined,
-              });
-            }}
             categoryName={categoryName}
             setCategoryName={(value) => {
               setCategoryName(value);
