@@ -14,6 +14,7 @@ import {
   FilterProductSchema,
   FilterTopProductsSchema,
 } from "@/schemas/reports/filterProductSchema";
+import { format } from "date-fns";
 import { toast } from "sonner";
 
 // Hook para exportar y obtener reportes
@@ -59,7 +60,10 @@ export const useReports = () => {
           const url = window.URL.createObjectURL(response);
           const link = document.createElement("a");
           link.href = url;
-          link.setAttribute("download", "orders_report.pdf");
+          link.setAttribute(
+            "download",
+            `orders_report_${format(new Date(), "yyyy-MM-dd")}.pdf`,
+          );
           document.body.appendChild(link);
           link.click();
           link.remove();
@@ -86,7 +90,10 @@ export const useReports = () => {
           const url = window.URL.createObjectURL(new Blob([response]));
           const link = document.createElement("a");
           link.href = url;
-          link.setAttribute("download", "orders_report.xlsx");
+          link.setAttribute(
+            "download",
+            `orders_report_${format(new Date(), "yyyy-MM-dd")}.xlsx`,
+          );
           document.body.appendChild(link);
           link.click();
           link.remove();
@@ -112,7 +119,10 @@ export const useReports = () => {
           const url = window.URL.createObjectURL(response);
           const link = document.createElement("a");
           link.href = url;
-          link.setAttribute("download", "products_report.pdf");
+          link.setAttribute(
+            "download",
+            `products_report_${format(new Date(), "yyyy-MM-dd")}.pdf`,
+          );
           document.body.appendChild(link);
           link.click();
           link.remove();
@@ -139,7 +149,10 @@ export const useReports = () => {
           const url = window.URL.createObjectURL(new Blob([response]));
           const link = document.createElement("a");
           link.href = url;
-          link.setAttribute("download", "products_report.xlsx");
+          link.setAttribute(
+            "download",
+            `products_report_${format(new Date(), "yyyy-MM-dd")}.xlsx`,
+          );
           document.body.appendChild(link);
           link.click();
           link.remove();
@@ -165,7 +178,10 @@ export const useReports = () => {
           const url = window.URL.createObjectURL(response);
           const link = document.createElement("a");
           link.href = url;
-          link.setAttribute("download", "top_products_report.pdf");
+          link.setAttribute(
+            "download",
+            `top_products_report_${format(new Date(), "yyyy-MM-dd")}.pdf`,
+          );
           document.body.appendChild(link);
           link.click();
           link.remove();
@@ -194,7 +210,10 @@ export const useReports = () => {
           const url = window.URL.createObjectURL(new Blob([response]));
           const link = document.createElement("a");
           link.href = url;
-          link.setAttribute("download", "top_products_report.xlsx");
+          link.setAttribute(
+            "download",
+            `top_products_report_${format(new Date(), "yyyy-MM-dd")}.xlsx`,
+          );
           document.body.appendChild(link);
           link.click();
           link.remove();
