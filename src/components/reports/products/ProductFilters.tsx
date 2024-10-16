@@ -5,8 +5,6 @@ import { ProductFiltersForm } from "./ProductFiltersForm";
 import { ProductReportTable } from "./ProductReportTable";
 
 interface ProductFiltersProps {
-  productName: string;
-  setProductName: (value: string) => void;
   productDateRange: { from: string; to: string | undefined };
   setProductDateRange: (value: {
     from: string;
@@ -16,12 +14,6 @@ interface ProductFiltersProps {
   setPriceMin: (value: string) => void;
   priceMax: string;
   setPriceMax: (value: string) => void;
-  isActive: string;
-  setIsProductActive: (value: string) => void;
-  isRestricted: string;
-  setIsRestricted: (value: string) => void;
-  isAvailable: string;
-  setIsAvailable: (value: string) => void;
   categoryName: string;
   setCategoryName: (value: string) => void;
   isLoading: boolean;
@@ -33,20 +25,12 @@ interface ProductFiltersProps {
 }
 
 export function ProductFilters({
-  productName,
-  setProductName,
   productDateRange,
   setProductDateRange,
   priceMin,
   setPriceMin,
   priceMax,
   setPriceMax,
-  isActive,
-  setIsProductActive,
-  isRestricted,
-  setIsRestricted,
-  isAvailable,
-  setIsAvailable,
   categoryName,
   setCategoryName,
   downloadReportPdf,
@@ -59,20 +43,12 @@ export function ProductFilters({
   return (
     <>
       <ProductFiltersForm
-        productName={productName}
-        setProductName={setProductName}
         productDateRange={productDateRange}
         setProductDateRange={setProductDateRange}
         priceMin={priceMin}
         setPriceMin={setPriceMin}
         priceMax={priceMax}
         setPriceMax={setPriceMax}
-        isActive={isActive}
-        setIsProductActive={setIsProductActive}
-        isRestricted={isRestricted}
-        setIsRestricted={setIsRestricted}
-        isAvailable={isAvailable}
-        setIsAvailable={setIsAvailable}
         categoryName={categoryName}
         setCategoryName={setCategoryName}
         downloadReportPdf={downloadReportPdf}
