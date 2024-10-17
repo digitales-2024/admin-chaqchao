@@ -136,7 +136,7 @@ export const productsColumns = (
         <DataTableColumnHeader column={column} title="Categoría" />
       ),
       cell: ({ row }) => {
-        const categoryName = row.getValue("categoria") as string;
+        const categoryName = row.getValue("categoría") as string;
         const index = uniqueCategories.indexOf(categoryName);
         const borderColor = colors[index];
         return (
