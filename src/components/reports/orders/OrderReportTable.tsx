@@ -94,7 +94,8 @@ export function OrderReportTable({ reportData }: OrderReportTableProps) {
                       <Badge variant="outline" className="border-emerald-500">
                         <span className="mr-1 font-light">S/. </span>
                         <span className="font-light">
-                          Total: {order.totalAmount.toFixed(2)}
+                          Total:{" "}
+                          {order.totalAmount && order.totalAmount.toFixed(2)}
                         </span>
                       </Badge>
                     </div>
