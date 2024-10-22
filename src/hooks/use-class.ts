@@ -7,6 +7,7 @@ import { socket } from "@/socket/socket";
 import { ClassesDataAdmin, CustomErrorData } from "@/types";
 import { translateError } from "@/utils/translateError";
 import { format } from "date-fns";
+import { useEffect } from "react";
 import { toast } from "sonner"; // Importa toast
 
 /**
@@ -56,9 +57,18 @@ export const useClasses = (date?: string) => {
     refetch: refetchClasses,
   } = useGetAllClassesQuery({ date: queryDate });
 
-  socket.on("new-class-register", () => {
-    refetchClasses();
-  });
+  // Manejo de eventos del socket
+  useEffect(() => {
+    // Escuchar el evento de nueva clase
+    socket.on("new-class-register", () => {
+      refetchClasses();
+    });
+
+    return () => {
+      // Remover los eventos del socket al desmontar el componente
+      socket.off("new-class-register");
+    };
+  }, [refetchClasses]);
 
   const [
     exportToExcel,
