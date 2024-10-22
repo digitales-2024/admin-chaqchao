@@ -203,21 +203,15 @@ export const OrderSheetDetails = ({
               </ul>
               <Separator className="my-2" />
               <ul className="grid gap-3">
-                <li className="flex items-center justify-between">
-                  <span className="text-xs font-extralight text-slate-400">
-                    Subtotal
-                  </span>
-                  <span>S/. 00</span>
-                </li>
-                <li className="flex items-center justify-between">
-                  <span className="text-xs font-extralight text-slate-400">
-                    Impuesto
-                  </span>
-                  <span>S/.00</span>
-                </li>
                 <li className="flex items-center justify-between font-semibold">
                   <span className="text-muted-foreground">Total</span>
-                  <span>S/. 000</span>
+                  <span>
+                    S/.{" "}
+                    {orderById?.cart.products.reduce(
+                      (acc, product) => acc + product.price,
+                      0,
+                    )}
+                  </span>
                 </li>
               </ul>
             </div>
