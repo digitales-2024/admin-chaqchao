@@ -63,7 +63,7 @@ export const CreateRolesForm = ({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 p-2">
         <div className="flex flex-col gap-6 p-4 sm:p-0">
           <FormField
             control={form.control}
