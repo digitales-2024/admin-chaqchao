@@ -57,6 +57,28 @@ export const authApi = createApi({
         body,
         credentials: "include",
       }),
+      async onQueryStarted(_args, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          dispatch(
+            adminApi.endpoints.profile.initiate(undefined, {
+              forceRefetch: true,
+            }),
+          );
+          dispatch(
+            productsApi.endpoints.getAllProducts.initiate(undefined, {
+              forceRefetch: true,
+            }),
+          );
+          dispatch(
+            categoriesApi.endpoints.getCategories.initiate(undefined, {
+              forceRefetch: true,
+            }),
+          );
+        } catch (error) {
+          console.error(error);
+        }
+      },
       invalidatesTags: ["Auth"],
     }),
 

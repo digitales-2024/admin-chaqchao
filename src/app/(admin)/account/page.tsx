@@ -28,7 +28,7 @@ export default function PageAccount() {
     <div className="container mx-auto py-10">
       <h1 className="mb-6 text-3xl font-bold">Administración de la cuenta</h1>
       <div className="grid gap-4 lg:grid-cols-[1fr_2fr]">
-        <Card className="relative mx-auto hidden h-[500px] max-w-[320px] flex-col gap-6 overflow-hidden lg:flex">
+        <Card className="relative mx-auto hidden h-[500px] w-full max-w-[320px] flex-col gap-6 overflow-hidden lg:flex">
           <div className="pattern absolute bottom-0 left-0 right-0 top-0 opacity-5"></div>
           <CardHeader>
             <CardTitle className="text-balance text-xl">
