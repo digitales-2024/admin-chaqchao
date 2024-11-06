@@ -111,12 +111,16 @@ export const productsApi = createApi({
     }),
 
     // Subir Imagenes de un Producto a CloudFlare
-    uploadProductImage: build.mutation<UploadImageResponse, FormData>({
-      query: (formData) => ({
+    uploadProductImage: build.mutation<
+      UploadImageResponse,
+      { formData: FormData; signal: AbortSignal }
+    >({
+      query: ({ formData, signal }) => ({
         url: "products/upload/image",
         method: "POST",
         body: formData,
         credentials: "include",
+        signal,
       }),
       invalidatesTags: ["Product"],
     }),

@@ -7,8 +7,8 @@ import {
   productsSchema,
 } from "@/schemas/products/createProductsSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Plus, RefreshCcw } from "lucide-react";
-import { useEffect, useState, useTransition } from "react";
+import { Plus, RefreshCcw, X } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
@@ -46,11 +46,18 @@ const dataForm = {
 
 export function CreateProductDialog() {
   const [open, setOpen] = useState(false);
-  const [isCreatePending, startCreateTransition] = useTransition();
   const isDesktop = useMediaQuery("(min-width: 640px)");
+  const [isMinimized, setIsMinimized] = useState<boolean>(false);
 
-  const { onCreateProduct, isSuccessCreateProduct } = useProducts();
-  const { onUploadImageProduct, isLoadingUploadImageProduct } = useProducts();
+  const {
+    onCreateProduct,
+    isLoadingCreateProduct,
+    cancelUploadImage,
+    onUploadImageProduct,
+    isLoadingUploadImageProduct,
+    isSuccessCreateProduct,
+  } = useProducts();
+  const [progress, setProgress] = useState(0);
 
   const form = useForm<CreateProductsSchema>({
     resolver: zodResolver(productsSchema),
@@ -66,135 +73,253 @@ export function CreateProductDialog() {
 
   const onSubmit = async (input: CreateProductsSchema) => {
     try {
-      let imageUrl = "";
-      // Subir la imagen antes de crear el producto
       if (input.image) {
-        const uploadResult = await onUploadImageProduct(input.image);
-        imageUrl = uploadResult.data;
-      }
+        const imageResponse = await onUploadImageProduct(input.image);
+        const imageUrl = imageResponse?.data;
 
-      // Asignar la URL de la imagen al campo correspondiente
-      const inputWithImage = {
-        ...input,
-        image: imageUrl || "",
-        variations: [],
-      };
+        const productData = {
+          ...input,
+          image: imageUrl,
+          variations: [],
+        };
 
-      startCreateTransition(async () => {
         await onCreateProduct({
-          ...inputWithImage,
-          price: parseFloat(inputWithImage.price),
+          ...productData,
+          price: parseFloat(productData.price),
         });
-      });
+      } else {
+        throw new Error("Image file is required");
+      }
     } catch (error) {
       throw error;
     }
   };
 
-  useEffect(() => {
-    if (isSuccessCreateProduct) {
-      form.reset();
-      setOpen(false);
-    }
-  }, [isSuccessCreateProduct, form]);
-
   const handleClose = () => {
+    setOpen(!open);
     form.reset();
   };
 
-  const [processLoadingImage, setProcessLoadingImage] = useState(0);
+  // Actualiza el progreso de la subida de la imagen y la creacion del producto pero solo si esta en proceso
+  useEffect(() => {
+    let timer: NodeJS.Timeout | null = null;
+
+    if (isLoadingUploadImageProduct || isLoadingCreateProduct) {
+      timer = setInterval(() => {
+        setProgress((oldProgress) => {
+          if (oldProgress >= 100) {
+            if (timer) clearInterval(timer);
+            return 100;
+          }
+          const diff = Math.random() * 10;
+          return Math.min(oldProgress + diff, 100);
+        });
+      }, 500);
+    }
+
+    return () => {
+      if (timer) clearInterval(timer);
+    };
+  }, [isLoadingUploadImageProduct, isLoadingCreateProduct]);
+
+  // Minimiza el dialogo si la subida de la imagen esta en
+  useEffect(() => {
+    if (open) {
+      setIsMinimized(false);
+    }
+    if (!open && isLoadingUploadImageProduct) {
+      setIsMinimized(true);
+    }
+    if (!isLoadingUploadImageProduct) {
+      setIsMinimized(false);
+    }
+  }, [open, isLoadingUploadImageProduct]);
+
+  /**
+   * Cancela la subida de la imagen, la creacion de un producto y minimiza el dialogo
+   */
+  const cancelUploadImageAndProduct = () => {
+    cancelUploadImage();
+    setProgress(0);
+    setIsMinimized(false);
+    setOpen(false);
+  };
 
   useEffect(() => {
-    if (isLoadingUploadImageProduct) {
-      const interval = setInterval(() => {
-        setProcessLoadingImage((prev) => (prev + 10) % 100);
-      }, 500);
-      return () => clearInterval(interval);
+    if (isSuccessCreateProduct) {
+      setProgress(0);
+      form.reset();
+      setOpen(false);
+      setIsMinimized(false);
     }
-  }, [isLoadingUploadImageProduct]);
+  }, [isSuccessCreateProduct]);
+
+  const ProgressIndicator = () => (
+    <div className="w-full space-y-2">
+      <Progress value={progress} className="w-full" />
+      <p className="text-sm">
+        {progress < 100
+          ? `Subiendo imagen... ${Math.round(progress)}%`
+          : "Creando producto..."}
+      </p>
+      <p className="text-xs text-muted-foreground">
+        Por favor, no cierre esta ventana.
+      </p>
+    </div>
+  );
 
   if (isDesktop)
     return (
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogTrigger asChild>
-          <Button variant="outline" size="sm">
-            <Plus className="mr-2 size-4" aria-hidden="true" />
-            {dataForm.button}
-          </Button>
-        </DialogTrigger>
-        <DialogContent tabIndex={undefined}>
-          <DialogHeader>
-            <DialogTitle>{dataForm.title}</DialogTitle>
-            <DialogDescription>{dataForm.description}</DialogDescription>
-          </DialogHeader>
-          <ScrollArea className="h-full max-h-[80vh] w-full justify-center gap-4">
-            <CreateProductsForm form={form} onSubmit={onSubmit}>
-              <Progress value={processLoadingImage} className="h-2" />
-              <DialogFooter>
-                <div className="flex w-full flex-row-reverse gap-2">
-                  <Button
-                    disabled={isCreatePending || isLoadingUploadImageProduct}
-                    className="w-full"
-                  >
-                    {isCreatePending && (
-                      <RefreshCcw
-                        className="mr-2 size-4 animate-spin"
-                        aria-hidden="true"
-                      />
-                    )}
-                    Registrar
-                  </Button>
-                  <DialogClose asChild>
+      <>
+        <Dialog open={open} onOpenChange={handleClose}>
+          <DialogTrigger asChild>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={isLoadingCreateProduct || isLoadingUploadImageProduct}
+            >
+              <Plus className="mr-2 size-4" aria-hidden="true" />
+              {dataForm.button}
+            </Button>
+          </DialogTrigger>
+          <DialogContent tabIndex={undefined}>
+            <DialogHeader>
+              <DialogTitle>{dataForm.title}</DialogTitle>
+              <DialogDescription>{dataForm.description}</DialogDescription>
+            </DialogHeader>
+            <ScrollArea className="h-full max-h-[80vh] w-full justify-center gap-4">
+              <CreateProductsForm form={form} onSubmit={onSubmit}>
+                {isLoadingCreateProduct || isLoadingUploadImageProduct ? (
+                  <ProgressIndicator />
+                ) : null}
+                <DialogFooter>
+                  <div className="flex w-full flex-row-reverse gap-2">
                     <Button
-                      onClick={handleClose}
-                      type="button"
-                      variant="outline"
+                      disabled={
+                        isLoadingCreateProduct || isLoadingUploadImageProduct
+                      }
                       className="w-full"
                     >
-                      Cancelar
+                      {isLoadingCreateProduct && (
+                        <RefreshCcw
+                          className="mr-2 size-4 animate-spin"
+                          aria-hidden="true"
+                        />
+                      )}
+                      Registrar
                     </Button>
-                  </DialogClose>
-                </div>
-              </DialogFooter>
-            </CreateProductsForm>
-          </ScrollArea>
-        </DialogContent>
-      </Dialog>
+                    <DialogClose asChild>
+                      <Button
+                        onClick={cancelUploadImageAndProduct}
+                        type="button"
+                        variant="outline"
+                        className="w-full"
+                      >
+                        Cancelar
+                      </Button>
+                    </DialogClose>
+                  </div>
+                </DialogFooter>
+              </CreateProductsForm>
+            </ScrollArea>
+          </DialogContent>
+        </Dialog>
+        {isMinimized && (
+          <div className="fixed bottom-4 right-4 z-50 w-64 rounded-lg border bg-background p-4 shadow-lg">
+            <div className="flex items-center justify-between">
+              <div className="inline-flex text-sm text-emerald-500">
+                <RefreshCcw className="mr-2 size-4 animate-spin" />
+                Creando Producto <span className="animate-pulse">...</span>
+              </div>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={cancelUploadImageAndProduct}
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+            <ProgressIndicator />
+          </div>
+        )}
+      </>
     );
 
   return (
-    <Drawer open={open} onOpenChange={setOpen}>
-      <DrawerTrigger asChild>
-        <Button variant="outline" size="sm">
-          <Plus className="mr-2 size-4" aria-hidden="true" />
-          {dataForm.button}
-        </Button>
-      </DrawerTrigger>
+    <>
+      <Drawer
+        open={open}
+        onOpenChange={setOpen}
+        onClose={() => {
+          form.reset();
+        }}
+      >
+        <DrawerTrigger asChild>
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={isLoadingCreateProduct || isLoadingUploadImageProduct}
+          >
+            <Plus className="mr-2 size-4" aria-hidden="true" />
+            {dataForm.button}
+          </Button>
+        </DrawerTrigger>
 
-      <DrawerContent className="h-[90vh]">
-        <DrawerHeader>
-          <DrawerTitle>{dataForm.title}</DrawerTitle>
-          <DrawerDescription>{dataForm.description}</DrawerDescription>
-        </DrawerHeader>
-        <ScrollArea className="mt-4 max-h-full w-full gap-4 pr-4">
-          <CreateProductsForm form={form} onSubmit={onSubmit}>
-            <DrawerFooter className="gap-2 sm:space-x-0">
-              <Button disabled={isCreatePending || isLoadingUploadImageProduct}>
-                {isCreatePending && (
-                  <RefreshCcw
-                    className="mr-2 size-4 animate-spin"
-                    aria-hidden="true"
-                  />
-                )}
-                Registrar
-              </Button>
-              <DrawerClose asChild>
-                <Button variant="outline">Cancelar</Button>
-              </DrawerClose>
-            </DrawerFooter>
-          </CreateProductsForm>
-        </ScrollArea>
-      </DrawerContent>
-    </Drawer>
+        <DrawerContent className="h-[90vh]" tabIndex={undefined}>
+          <DrawerHeader>
+            <DrawerTitle>{dataForm.title}</DrawerTitle>
+            <DrawerDescription>{dataForm.description}</DrawerDescription>
+          </DrawerHeader>
+          <ScrollArea className="mt-4 max-h-full w-full gap-4 pr-4">
+            <CreateProductsForm form={form} onSubmit={onSubmit}>
+              {isLoadingCreateProduct || isLoadingUploadImageProduct ? (
+                <ProgressIndicator />
+              ) : null}
+              <DrawerFooter className="gap-2 sm:space-x-0">
+                <Button
+                  disabled={
+                    isLoadingCreateProduct || isLoadingUploadImageProduct
+                  }
+                >
+                  {isLoadingCreateProduct && (
+                    <RefreshCcw
+                      className="mr-2 size-4 animate-spin"
+                      aria-hidden="true"
+                    />
+                  )}
+                  Registrar
+                </Button>
+                <DrawerClose asChild>
+                  <Button
+                    variant="outline"
+                    onClick={cancelUploadImageAndProduct}
+                  >
+                    Cancelar
+                  </Button>
+                </DrawerClose>
+              </DrawerFooter>
+            </CreateProductsForm>
+          </ScrollArea>
+        </DrawerContent>
+      </Drawer>
+      {isMinimized && (
+        <div className="fixed bottom-4 right-4 z-50 w-64 rounded-lg border bg-background p-4 shadow-lg">
+          <div className="flex items-center justify-between">
+            <div className="inline-flex text-sm text-emerald-500">
+              <RefreshCcw className="mr-2 size-4 animate-spin" />
+              Creando Producto <span className="animate-pulse">...</span>
+            </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={cancelUploadImageAndProduct}
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+          <ProgressIndicator />
+        </div>
+      )}
+    </>
   );
 }
