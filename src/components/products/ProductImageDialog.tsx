@@ -2,7 +2,7 @@
 
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { useProducts } from "@/hooks/use-products";
-import { ProductData } from "@/types";
+import { familyLabels, ProductData } from "@/types";
 import { DialogTitle as UIDialogTitle } from "@radix-ui/react-dialog";
 import {
   ImageOff,
@@ -94,20 +94,33 @@ export function ProductImageDialog({
         <Card className="border-slate-50">
           <CardContent className="flex flex-col gap-6 p-10">
             <div className="space-y-2">
-              <Label htmlFor="description">Descripción</Label>
+              <Label htmlFor="description" className="font-bold">
+                Descripción
+              </Label>
               <p className="text-balance text-sm font-light text-gray-400">
-                {product.description}
+                {product.description || "No hay descripción disponible."}
               </p>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="category">Categoría</Label>
+              <Label htmlFor="category" className="font-bold">
+                Categoría
+              </Label>
               <div className="mb-2 flex items-center">
                 <Badge
                   variant="outline"
-                  className="capitalize"
+                  className="inline-flex gap-2 capitalize"
                   style={{ borderColor }}
                 >
                   {product.category.name}
+                  <span
+                    style={{
+                      color: borderColor,
+                    }}
+                    className="font-light"
+                  >
+                    {" / "}
+                    {familyLabels[product.category.family]}
+                  </span>
                 </Badge>
               </div>
             </div>
