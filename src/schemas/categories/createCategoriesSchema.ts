@@ -11,6 +11,7 @@ export const categoriesSchema = z.object({
       message: "La descripción no puede tener más de 255 caracteres",
     })
     .optional(),
+  family: z.string().min(1, { message: "Debes seleccionar una familia" }),
 });
 
 // Esquema para crear categorías

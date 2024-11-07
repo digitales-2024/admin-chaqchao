@@ -1,5 +1,7 @@
 "use client";
 import { CreateCategoriesSchema } from "@/schemas";
+import { familyOptions } from "@/types";
+import { Families } from "@/types/category";
 import { UseFormReturn } from "react-hook-form";
 
 import {
@@ -11,6 +13,15 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 
 interface CreateCategoryFormProps
   extends Omit<React.ComponentPropsWithRef<"form">, "onSubmit"> {
@@ -57,6 +68,39 @@ export const CreateCategoryForm = ({
                     placeholder="Descripción breve de la categoría"
                     {...field}
                   />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="family"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel htmlFor="family">Familia</FormLabel>
+                <FormControl>
+                  <Select
+                    onValueChange={(value) => field.onChange(value)}
+                    defaultValue={field.value || Families[0]}
+                  >
+                    <SelectTrigger className="capitalize">
+                      <SelectValue placeholder="Selecciona una categoría" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        {familyOptions?.map((family) => (
+                          <SelectItem
+                            key={family.value}
+                            value={family.value}
+                            className="capitalize"
+                          >
+                            {family.label}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
                 </FormControl>
                 <FormMessage />
               </FormItem>
