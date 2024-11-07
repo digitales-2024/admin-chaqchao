@@ -55,8 +55,6 @@ export function CreateCategoryDialog() {
       family: Families[0],
     },
   });
-  console.log("🚀 ~ CreateCategoryDialog ~ form:", form.watch());
-
   const onSubmit = async (input: CreateCategoriesSchema) => {
     startCreateTransition(async () => {
       await onCreateCategory(input);
