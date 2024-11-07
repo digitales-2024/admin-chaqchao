@@ -1,7 +1,7 @@
 "use client";
 
 import { useProfile } from "@/hooks/use-profile";
-import { Category } from "@/types";
+import { Category, familyLabels } from "@/types";
 import { capitalizeSentences } from "@/utils/capitalizeSentences";
 import { type ColumnDef } from "@tanstack/react-table";
 import { Trash, Ellipsis, RefreshCcwDot } from "lucide-react";
@@ -76,6 +76,18 @@ export const categoriesColumns = (): ColumnDef<Category>[] => {
       },
     },
     {
+      id: "familia",
+      accessorKey: "family",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Familia" />
+      ),
+      cell: ({ row }) => (
+        <div className="truncate capitalize">
+          {familyLabels[row.original.family]}
+        </div>
+      ),
+    },
+    {
       id: "estado",
       accessorKey: "isActive",
       header: ({ column }) => (
@@ -111,11 +123,13 @@ export const categoriesColumns = (): ColumnDef<Category>[] => {
 
         return (
           <div>
-            <UpdateCategorySheet
-              open={showEditDialog}
-              onOpenChange={setShowEditDialog}
-              category={category}
-            />
+            {showEditDialog && (
+              <UpdateCategorySheet
+                open={showEditDialog}
+                onOpenChange={setShowEditDialog}
+                category={category}
+              />
+            )}
             <ReactivateCategoryDialog
               category={category}
               open={showReactivateDialog}
