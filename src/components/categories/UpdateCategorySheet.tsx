@@ -2,7 +2,7 @@
 
 import { useCategories } from "@/hooks/use-categories";
 import { UpdateCategoriesSchema, updateCategoriesSchema } from "@/schemas";
-import { Category } from "@/types";
+import { Category, familyOptions } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { RefreshCcw } from "lucide-react";
 import { useEffect } from "react";
@@ -30,6 +30,14 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 import { Textarea } from "../ui/textarea";
 
 const infoSheet = {
@@ -52,31 +60,23 @@ export function UpdateCategorySheet({
     id: category.id,
     name: category?.name || "",
     description: category?.description || "",
+    family: category.family,
   };
 
   const form = useForm<UpdateCategoriesSchema>({
     resolver: zodResolver(updateCategoriesSchema),
     defaultValues,
   });
-
   useEffect(() => {
     if (category) {
       form.reset({
         id: category.id, // Solo resetear cuando category está disponible
         name: category.name ?? "",
         description: category.description ?? "",
+        family: category.family,
       });
     }
   }, [category, form]);
-
-  function onSubmit(input: UpdateCategoriesSchema) {
-    const { id, name, description } = input;
-    onUpdateCategory({
-      id, // Enviar el ID junto con los demás campos
-      name,
-      description,
-    });
-  }
 
   return (
     <Sheet {...props}>
@@ -99,7 +99,7 @@ export function UpdateCategorySheet({
         <ScrollArea className="mt-4 w-full gap-4 rounded-md border p-4">
           <Form {...form}>
             <form
-              onSubmit={form.handleSubmit(onSubmit)}
+              onSubmit={form.handleSubmit(onUpdateCategory)}
               className="flex flex-col gap-4 p-4"
             >
               <FormField
@@ -136,6 +136,39 @@ export function UpdateCategorySheet({
                         placeholder="Descripción de la categoría"
                         {...field}
                       />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="family"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel htmlFor="family">Familia</FormLabel>
+                    <FormControl>
+                      <Select
+                        value={field.value}
+                        onValueChange={field.onChange}
+                      >
+                        <SelectTrigger className="capitalize">
+                          <SelectValue placeholder="Selecciona una categoría" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            {familyOptions?.map((family) => (
+                              <SelectItem
+                                key={family.value}
+                                value={family.value}
+                                className="capitalize"
+                              >
+                                {family.label}
+                              </SelectItem>
+                            ))}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
