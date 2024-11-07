@@ -82,7 +82,7 @@ export const categoriesColumns = (): ColumnDef<Category>[] => {
         <DataTableColumnHeader column={column} title="Familia" />
       ),
       cell: ({ row }) => (
-        <div className="truncate capitalize">
+        <div className="w-56 truncate capitalize">
           {familyLabels[row.original.family]}
         </div>
       ),
