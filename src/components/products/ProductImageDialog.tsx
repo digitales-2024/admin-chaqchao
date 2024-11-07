@@ -19,6 +19,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTrigger,
 } from "@/components/ui/dialog";
@@ -28,6 +29,7 @@ import {
   DrawerHeader,
   DrawerTitle as UIDrawerTitle,
   DrawerTrigger,
+  DrawerDescription,
 } from "@/components/ui/drawer";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
@@ -82,7 +84,6 @@ export function ProductImageDialog({
               src={product.image}
               alt={product.name}
               key={product.id}
-              objectFit="cover"
               className="flex-1"
               onError={() => setImageError(true)}
             />
@@ -207,11 +208,15 @@ export function ProductImageDialog({
     return (
       <Dialog>
         <DialogTrigger asChild>{children}</DialogTrigger>
-        <DialogContent className="max-w-2xl justify-start p-10 lg:max-w-4xl">
+        <DialogContent
+          className="max-w-2xl justify-start p-10 lg:max-w-4xl"
+          tabIndex={undefined}
+        >
           <DialogHeader>
             <UIDialogTitle className="w-full text-2xl font-bold uppercase">
               {product.name}
             </UIDialogTitle>
+            <DialogDescription></DialogDescription>
             <Separator className="my-4" />
           </DialogHeader>
           <ScrollArea>{content}</ScrollArea>
@@ -222,11 +227,12 @@ export function ProductImageDialog({
   return (
     <Drawer>
       <DrawerTrigger asChild>{children}</DrawerTrigger>
-      <DrawerContent className="h-4/5">
+      <DrawerContent className="h-4/5" tabIndex={undefined}>
         <DrawerHeader>
           <UIDrawerTitle className="text-2xl font-bold uppercase">
             {product.name}
           </UIDrawerTitle>
+          <DrawerDescription />
           <Separator className="my-4" />
         </DrawerHeader>
 
