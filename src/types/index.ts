@@ -20,7 +20,12 @@ export type {
   ClassRegistrationData,
   ClassScheduleData,
 } from "./classConfigs";
-export type { Category } from "./category";
+export {
+  type Category,
+  type Family,
+  familyLabels,
+  familyOptions,
+} from "./category";
 export type {
   ProductData,
   ProductVariationData,

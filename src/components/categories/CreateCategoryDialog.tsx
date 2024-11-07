@@ -51,6 +51,7 @@ export function CreateCategoryDialog() {
     defaultValues: {
       name: "",
       description: "",
+      family: "",
     },
   });
 

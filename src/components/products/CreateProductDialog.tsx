@@ -188,39 +188,41 @@ export function CreateProductDialog() {
               <DialogDescription>{dataForm.description}</DialogDescription>
             </DialogHeader>
             <ScrollArea className="h-full max-h-[80vh] w-full justify-center gap-4">
-              <CreateProductsForm form={form} onSubmit={onSubmit}>
-                {isLoadingCreateProduct || isLoadingUploadImageProduct ? (
-                  <ProgressIndicator />
-                ) : null}
-                <DialogFooter>
-                  <div className="flex w-full flex-row-reverse gap-2">
-                    <Button
-                      disabled={
-                        isLoadingCreateProduct || isLoadingUploadImageProduct
-                      }
-                      className="w-full"
-                    >
-                      {isLoadingCreateProduct && (
-                        <RefreshCcw
-                          className="mr-2 size-4 animate-spin"
-                          aria-hidden="true"
-                        />
-                      )}
-                      Registrar
-                    </Button>
-                    <DialogClose asChild>
+              {open && (
+                <CreateProductsForm form={form} onSubmit={onSubmit}>
+                  {isLoadingCreateProduct || isLoadingUploadImageProduct ? (
+                    <ProgressIndicator />
+                  ) : null}
+                  <DialogFooter>
+                    <div className="flex w-full flex-row-reverse gap-2">
                       <Button
-                        onClick={cancelUploadImageAndProduct}
-                        type="button"
-                        variant="outline"
+                        disabled={
+                          isLoadingCreateProduct || isLoadingUploadImageProduct
+                        }
                         className="w-full"
                       >
-                        Cancelar
+                        {isLoadingCreateProduct && (
+                          <RefreshCcw
+                            className="mr-2 size-4 animate-spin"
+                            aria-hidden="true"
+                          />
+                        )}
+                        Registrar
                       </Button>
-                    </DialogClose>
-                  </div>
-                </DialogFooter>
-              </CreateProductsForm>
+                      <DialogClose asChild>
+                        <Button
+                          onClick={cancelUploadImageAndProduct}
+                          type="button"
+                          variant="outline"
+                          className="w-full"
+                        >
+                          Cancelar
+                        </Button>
+                      </DialogClose>
+                    </div>
+                  </DialogFooter>
+                </CreateProductsForm>
+              )}
             </ScrollArea>
           </DialogContent>
         </Dialog>

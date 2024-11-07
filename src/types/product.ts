@@ -1,3 +1,5 @@
+import { Family } from "./category";
+
 export type ProductData = {
   id: string;
   name: string;
@@ -24,6 +26,7 @@ export type CategoryData = {
   id: string;
   name: string;
   description: string;
+  family: Family;
 };
 
 export interface ProductFilters {
