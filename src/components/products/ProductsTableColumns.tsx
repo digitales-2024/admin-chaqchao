@@ -268,29 +268,36 @@ export const productsColumns = (
         return (
           <div>
             <div>
-              <UpdateProductSheet
-                open={showEditDialog}
-                onOpenChange={setShowEditDialog}
-                product={row?.original}
-              />
-              <DeleteProductsDialog
-                open={showDeleteDialog}
-                onOpenChange={setShowDeleteDialog}
-                products={[row?.original]}
-                showTrigger={false}
-                onSuccess={() => {
-                  row.toggleSelected(false);
-                }}
-              />
-              <ReactivateProductsDialog
-                open={showReactivateDialog}
-                onOpenChange={setShowReactivateDialog}
-                products={[row?.original]}
-                showTrigger={false}
-                onSuccess={() => {
-                  row.toggleSelected(false);
-                }}
-              />
+              {showEditDialog && (
+                <UpdateProductSheet
+                  open={showEditDialog}
+                  onOpenChange={setShowEditDialog}
+                  product={row?.original}
+                />
+              )}
+
+              {showDeleteDialog && (
+                <DeleteProductsDialog
+                  open={showDeleteDialog}
+                  onOpenChange={setShowDeleteDialog}
+                  products={[row?.original]}
+                  showTrigger={false}
+                  onSuccess={() => {
+                    row.toggleSelected(false);
+                  }}
+                />
+              )}
+              {showReactivateDialog && (
+                <ReactivateProductsDialog
+                  open={showReactivateDialog}
+                  onOpenChange={setShowReactivateDialog}
+                  products={[row?.original]}
+                  showTrigger={false}
+                  onSuccess={() => {
+                    row.toggleSelected(false);
+                  }}
+                />
+              )}
             </div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
