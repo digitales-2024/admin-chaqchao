@@ -2,7 +2,7 @@
 
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { useProducts } from "@/hooks/use-products";
-import { ProductData } from "@/types";
+import { familyLabels, ProductData } from "@/types";
 import { DialogTitle as UIDialogTitle } from "@radix-ui/react-dialog";
 import {
   ImageOff,
@@ -19,6 +19,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTrigger,
 } from "@/components/ui/dialog";
@@ -28,6 +29,7 @@ import {
   DrawerHeader,
   DrawerTitle as UIDrawerTitle,
   DrawerTrigger,
+  DrawerDescription,
 } from "@/components/ui/drawer";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
@@ -82,7 +84,6 @@ export function ProductImageDialog({
               src={product.image}
               alt={product.name}
               key={product.id}
-              objectFit="cover"
               className="flex-1"
               onError={() => setImageError(true)}
             />
@@ -94,20 +95,33 @@ export function ProductImageDialog({
         <Card className="border-slate-50">
           <CardContent className="flex flex-col gap-6 p-10">
             <div className="space-y-2">
-              <Label htmlFor="description">Descripción</Label>
+              <Label htmlFor="description" className="font-bold">
+                Descripción
+              </Label>
               <p className="text-balance text-sm font-light text-gray-400">
-                {product.description}
+                {product.description || "No hay descripción disponible."}
               </p>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="category">Categoría</Label>
+              <Label htmlFor="category" className="font-bold">
+                Categoría
+              </Label>
               <div className="mb-2 flex items-center">
                 <Badge
                   variant="outline"
-                  className="capitalize"
+                  className="inline-flex gap-2 capitalize"
                   style={{ borderColor }}
                 >
                   {product.category.name}
+                  <span
+                    style={{
+                      color: borderColor,
+                    }}
+                    className="font-light"
+                  >
+                    {" / "}
+                    {familyLabels[product.category.family]}
+                  </span>
                 </Badge>
               </div>
             </div>
@@ -194,11 +208,15 @@ export function ProductImageDialog({
     return (
       <Dialog>
         <DialogTrigger asChild>{children}</DialogTrigger>
-        <DialogContent className="max-w-2xl justify-start p-10 lg:max-w-4xl">
+        <DialogContent
+          className="max-w-2xl justify-start p-10 lg:max-w-4xl"
+          tabIndex={undefined}
+        >
           <DialogHeader>
             <UIDialogTitle className="w-full text-2xl font-bold uppercase">
               {product.name}
             </UIDialogTitle>
+            <DialogDescription></DialogDescription>
             <Separator className="my-4" />
           </DialogHeader>
           <ScrollArea>{content}</ScrollArea>
@@ -209,11 +227,12 @@ export function ProductImageDialog({
   return (
     <Drawer>
       <DrawerTrigger asChild>{children}</DrawerTrigger>
-      <DrawerContent className="h-4/5">
+      <DrawerContent className="h-4/5" tabIndex={undefined}>
         <DrawerHeader>
           <UIDrawerTitle className="text-2xl font-bold uppercase">
             {product.name}
           </UIDrawerTitle>
+          <DrawerDescription />
           <Separator className="my-4" />
         </DrawerHeader>
 
