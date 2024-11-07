@@ -1,7 +1,6 @@
 "use client";
 import { CreateCategoriesSchema } from "@/schemas";
 import { familyOptions } from "@/types";
-import { Families } from "@/types/category";
 import { UseFormReturn } from "react-hook-form";
 
 import {
@@ -82,7 +81,7 @@ export const CreateCategoryForm = ({
                 <FormControl>
                   <Select
                     onValueChange={(value) => field.onChange(value)}
-                    defaultValue={field.value || Families[0]}
+                    defaultValue={field.value}
                   >
                     <SelectTrigger className="capitalize">
                       <SelectValue placeholder="Selecciona una categoría" />

@@ -3,6 +3,7 @@
 import { useCategories } from "@/hooks/use-categories";
 import { useMediaQuery } from "@/hooks/use-media-query"; // Asegúrate de tener este hook disponible
 import { CreateCategoriesSchema, categoriesSchema } from "@/schemas";
+import { Families } from "@/types/category";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus, RefreshCcw } from "lucide-react";
 import { useEffect, useState, useTransition } from "react";
@@ -51,9 +52,10 @@ export function CreateCategoryDialog() {
     defaultValues: {
       name: "",
       description: "",
-      family: "",
+      family: Families[0],
     },
   });
+  console.log("🚀 ~ CreateCategoryDialog ~ form:", form.watch());
 
   const onSubmit = async (input: CreateCategoriesSchema) => {
     startCreateTransition(async () => {
