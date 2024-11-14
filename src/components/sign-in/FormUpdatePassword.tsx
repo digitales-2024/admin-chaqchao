@@ -44,7 +44,11 @@ export const FormUpdatePassword = () => {
       new Promise(async (resolve, reject) => {
         try {
           const result = await updatePassword(data);
-          if (result.error && "data" in result.error) {
+          if (
+            result.error &&
+            typeof result.error === "object" &&
+            "data" in result.error
+          ) {
             const error = (result.error.data as CustomErrorData).error;
             const message = translateError(error as string);
             reject(new Error(message));
