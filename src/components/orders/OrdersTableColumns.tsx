@@ -49,13 +49,6 @@ export const getColumnsOrders = (newOrders: Order[]): ColumnDef<Order>[] => [
     ),
     cell: function Cell({ row }) {
       const datePassed = new Date(row.original.pickupTime) < new Date();
-      console.log("🚀 ~ Cell ~ new Date():", new Date());
-      console.log(
-        "🚀 ~ Cell ~ Date(row.original.pickupTime):",
-        new Date(row.original.pickupTime),
-      );
-      console.log("🚀 ~ Cell ~ datePassed:", datePassed);
-
       return (
         <div className="inline-flex w-full items-center justify-start gap-2 truncate">
           <TooltipProvider>
