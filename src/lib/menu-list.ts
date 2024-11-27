@@ -8,6 +8,7 @@ import {
   Clipboard,
   Store,
   BookOpenCheck,
+  Book,
 } from "lucide-react";
 
 type Submenu = {
@@ -90,6 +91,13 @@ export function getMenuList(pathname: string): Group[] {
           label: "Clases",
           active: pathname === "/class",
           icon: BookOpenCheck,
+          submenus: [],
+        },
+        {
+          href: "/claims",
+          label: "Reclamos",
+          active: pathname === "/claims",
+          icon: Book,
           submenus: [],
         },
       ],
