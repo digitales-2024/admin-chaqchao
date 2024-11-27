@@ -3,10 +3,11 @@ import { socket } from "@/socket/socket";
 import { Order } from "@/types";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { Bell } from "lucide-react";
+import { Bell, ShoppingBag } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import {
   DropdownMenu,
@@ -26,9 +27,12 @@ export const Notifications = () => {
   });
 
   // Eliminar los duplicados
-  const uniqueOrders = newOrders.filter(
-    (order, index, self) => index === self.findIndex((t) => t.id === order.id),
-  );
+  const uniqueOrders = newOrders
+    .filter(
+      (order, index, self) =>
+        index === self.findIndex((t) => t.id === order.id),
+    )
+    .reverse();
 
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen} modal={false}>
@@ -37,7 +41,9 @@ export const Notifications = () => {
           <Bell className="h-5 w-5" />
           <span className="sr-only">Toggle notifications</span>
           {uniqueOrders.length > 0 && (
-            <span className="absolute right-0 top-0 h-2 w-2 rounded-full bg-red-500" />
+            <span className="absolute right-0 top-0 h-2 w-2 rounded-full bg-emerald-500">
+              <span className="absolute right-0 top-0 h-2 w-2 animate-ping rounded-full bg-emerald-500" />
+            </span>
           )}
         </Button>
       </DropdownMenuTrigger>
@@ -53,29 +59,39 @@ export const Notifications = () => {
             uniqueOrders.map((order) => (
               <DropdownMenuItem
                 key={order.id}
-                className="flex flex-col items-start px-4 py-2"
+                className="flex-rows flex cursor-pointer items-start justify-start gap-2 px-4 py-2"
                 onSelect={() => {
                   setIsOpen(false);
                   // Navegar a la página de pedidos
                   router.push(`/orders`);
                 }}
               >
-                <span>
-                  Nuevo pedido con código de retiro{" "}
-                  <span className="truncate uppercase text-emerald-500">
-                    {order?.pickupCode}
+                <div className="rounded-full bg-emerald-100 p-2">
+                  <ShoppingBag className="text-emerald-500" />
+                </div>
+                <div className="flex flex-col gap-2">
+                  <span>
+                    Nuevo pedido{" "}
+                    <span className="truncate uppercase text-emerald-500">
+                      # {order?.pickupCode}
+                    </span>{" "}
+                  </span>
+                  <span className="text-xs capitalize">
+                    {order?.client?.name || order.customerName}{" "}
+                    {order?.client?.lastName || order.customerLastName} (
+                    {order?.client?.phone || order.customerPhone})
+                  </span>
+                  <span className="flex flex-col items-start text-xs text-slate-500">
+                    <Badge variant={"outline"} className="text-balance">
+                      Fecha de recogida:{" "}
+                    </Badge>
+                    <span>
+                      {format(order?.pickupTime || new Date(), "PPPp", {
+                        locale: es,
+                      })}
+                    </span>
                   </span>{" "}
-                  para el día{" "}
-                  <span className="text-slate-500">
-                    {format(order?.pickupTime || new Date(), "dd/MM/yyyy", {
-                      locale: es,
-                    })}
-                  </span>{" "}
-                  de <span className="capitalize">{order?.client?.name}</span>
-                </span>
-                {/* <span className="text-xs text-muted-foreground">
-              {order.pickupTime}
-            </span> */}
+                </div>
               </DropdownMenuItem>
             ))}
           {uniqueOrders.length === 0 && (
