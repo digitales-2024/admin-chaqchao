@@ -22,22 +22,16 @@ interface SelectStatusProps {
 
 export const optionsStatus = [
   {
-    label: "Pendiente",
-    value: OrderStatus.PENDING,
-    color: "text-yellow-500 ring-yellow-500 focus:ring-yellow-500",
-    fill: "fill-yellow-500",
-  },
-  {
     label: "Confirmado",
     value: OrderStatus.CONFIRMED,
     color: "text-sky-500 ring-sky-500 focus:ring-sky-500",
     fill: "fill-sky-500",
   },
   {
-    label: "Listo",
-    value: OrderStatus.READY,
-    color: "text-emerald-500 ring-emerald-500 focus:ring-emerald-500",
-    fill: "fill-emerald-500",
+    label: "En proceso",
+    value: OrderStatus.PROCESSING,
+    color: "text-cyan-500 ring-cyan-500 focus:ring-cyan-500",
+    fill: "fill-cyan-500",
   },
   {
     label: "Completado",
@@ -86,7 +80,7 @@ export default function SelectStatus({ id, data }: SelectStatusProps) {
               size={8}
               className={cn("stroke-none", selectedOption?.fill)}
             />
-            <SelectValue placeholder="Selecciona un estador" />
+            <SelectValue placeholder="Selecciona un estado" />
           </div>
         </SelectTrigger>
         <SelectContent>

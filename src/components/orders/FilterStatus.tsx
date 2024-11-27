@@ -19,16 +19,12 @@ const options = [
     value: OrderStatus.ALL,
   },
   {
-    label: "Pendiente",
-    value: OrderStatus.PENDING,
-  },
-  {
     label: "Confirmado",
     value: OrderStatus.CONFIRMED,
   },
   {
-    label: "Listo",
-    value: OrderStatus.READY,
+    label: "En proceso",
+    value: OrderStatus.PROCESSING,
   },
   {
     label: "Completado",

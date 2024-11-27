@@ -8,6 +8,10 @@ export type Order = {
   pickupCode: string;
   totalAmount: null;
   client: Client;
+  customerName: string;
+  customerLastName: string;
+  customerPhone: string;
+  customerEmail: string;
 };
 
 export type OrderDetails = {
@@ -52,6 +56,7 @@ export type BillingDocument = {
 type Client = {
   id: string;
   name: string;
+  lastName: string;
   email: string;
   phone: string;
 };
@@ -59,7 +64,7 @@ type Client = {
 export enum OrderStatus {
   PENDING = "PENDING",
   CONFIRMED = "CONFIRMED",
-  READY = "READY",
+  PROCESSING = "PROCESSING",
   COMPLETED = "COMPLETED",
   CANCELLED = "CANCELLED",
   ALL = "ALL",

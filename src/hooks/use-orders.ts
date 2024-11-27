@@ -19,7 +19,7 @@ type StatusTranslations = {
 const OrderStatusEs = {
   PENDING: "Pendiente",
   CONFIRMED: "Confirmado",
-  READY: "Listo",
+  PROCESSING: "En proceso",
   COMPLETED: "Completado",
   CANCELLED: "Cancelado",
 };
