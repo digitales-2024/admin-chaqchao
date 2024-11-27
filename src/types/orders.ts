@@ -25,6 +25,20 @@ export type OrderDetails = {
   totalAmount: null;
   client: Client;
   cart: Cart;
+  billingDocument: BillingDocument;
+};
+
+type BillingDocument = {
+  billingDocumentType: BillingDocumentType;
+  documentNumber: string;
+  address: string;
+  state: string;
+  country: string;
+  city: string;
+  postalCode: string;
+  typeDocument: string;
+  businessName: string;
+  paymentStatus: PaymentStatus;
 };
 
 export type Cart = { quantity: number; products: ProductData[] };
@@ -40,17 +54,6 @@ type ProductData = {
 type CategoryData = {
   id: string;
   name: string;
-};
-
-export type BillingDocument = {
-  id: string;
-  orderId: string;
-  billingDocumentType: BillingDocumentType;
-  documentNumber: string;
-  issuedAt: string;
-  totalAmount: number;
-  paymentStatus: PaymentStatus;
-  isActive: boolean;
 };
 
 type Client = {
