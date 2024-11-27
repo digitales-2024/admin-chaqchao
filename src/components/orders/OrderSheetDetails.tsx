@@ -1,12 +1,13 @@
+import { Izipay } from "@/assets/icons";
 import { useOrders } from "@/hooks/use-orders";
 import { Order, OrderStatus } from "@/types";
+import { BillingDocumentType } from "@/types/orders";
+import { numberToLetter } from "@/utils/numberToLetter";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import {
-  Clock,
   PackageOpen,
   Copy,
-  CreditCard,
   Mail,
   MessageCircleMore,
   MoreVertical,
@@ -18,7 +19,6 @@ import {
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import { CardDescription, CardTitle } from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,31 +27,40 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Separator } from "@/components/ui/separator";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 import { cn } from "@/lib/utils";
 
+import { Line } from "../common/Line";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Badge } from "../ui/badge";
 import { ScrollArea, ScrollBar } from "../ui/scroll-area";
 import { Sheet, SheetContent, SheetTitle } from "../ui/sheet";
 
 export const statusColors: Record<Order["orderStatus"], string> = {
-  CONFIRMED: "border-slate-300 text-slate-300",
-  READY: "border-cyan-500 text-cyan-500",
+  CONFIRMED: "border-blue-300 text-blue-300",
+  PROCESSING: "border-cyan-500 text-cyan-500",
   COMPLETED: "border-green-500 text-green-500",
   CANCELLED: "border-rose-500 text-rose-500",
 };
 
 export const iconsStatus: Record<Order["orderStatus"], React.ReactElement> = {
-  CONFIRMED: <Clock size={15} />,
-  READY: <PackageCheck size={15} />,
+  CONFIRMED: <PackageOpen size={15} />,
+  PROCESSING: <PackageCheck size={15} />,
   COMPLETED: <Truck size={15} />,
   CANCELLED: <PackageX size={15} />,
 };
 export const translateStatus: Record<Order["orderStatus"], string> = {
-  CONFIRMED: "Pendiente",
-  READY: "Listo",
+  CONFIRMED: "Confirmado",
+  PROCESSING: "Procesando",
   COMPLETED: "Completado",
   CANCELLED: "Cancelado",
 };
@@ -83,49 +92,9 @@ export const OrderSheetDetails = ({
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="flex h-full min-h-screen flex-col gap-5 sm:max-w-[36rem]">
+      <SheetContent className="m-2 flex h-full min-h-screen flex-col gap-5 rounded-xl border-none sm:max-w-[36rem]">
         <ScrollArea className="h-fit">
-          <SheetTitle className="flex flex-row flex-wrap-reverse items-start gap-2 bg-muted/50 py-4">
-            <div className="grid gap-0.5">
-              <CardTitle className="group relative flex w-fit items-center gap-2 text-lg">
-                <span className="font-thin uppercase text-slate-500">
-                  Pedido#{" "}
-                </span>
-                <span className="truncate">{orderById?.pickupCode}</span>
-                <span
-                  className={cn(
-                    "absolute -top-3 right-0 rotate-12 truncate text-xs font-thin text-slate-400 transition-all duration-300",
-                    {
-                      "scale-0 opacity-0": !isCopy,
-                      "scale-105 opacity-100": isCopy,
-                    },
-                  )}
-                >
-                  copiado
-                </span>
-                <Button
-                  size="icon"
-                  variant="outline"
-                  className="h-6 w-6 opacity-0 transition-opacity group-hover:opacity-100"
-                  onClick={handleCopyOrderID}
-                >
-                  <Copy className="h-3 w-3" />
-                  <span className="sr-only">Copy Order ID</span>
-                </Button>
-              </CardTitle>
-              <CardDescription className="text-xs font-thin">
-                Fecha:{" "}
-                <span>
-                  {format(
-                    orderById ? orderById?.pickupTime : new Date(),
-                    "PPPp",
-                    {
-                      locale: es,
-                    },
-                  )}
-                </span>
-              </CardDescription>
-            </div>
+          <SheetTitle className="flex flex-col items-start gap-2 px-2 py-4">
             <div className="ml-auto flex items-center gap-1">
               <Badge
                 variant="outline"
@@ -175,59 +144,57 @@ export const OrderSheetDetails = ({
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
-          </SheetTitle>
-          <div className="flex-1 px-0 py-2 sm:px-6">
-            <div className="grid gap-4">
-              <div className="font-semibold">Detalles del pedido</div>
-              <ul className="grid gap-3">
-                {orderById?.cart.products.map((product) => (
-                  <li
-                    className="flex items-center justify-between"
-                    key={product.id}
-                  >
-                    <div className="flex items-center gap-2 truncate">
-                      <Avatar className="bg-slate-100">
-                        <AvatarImage src={product.image} alt={product.name} />
-                        <AvatarFallback>
-                          <PackageOpen />
-                        </AvatarFallback>
-                      </Avatar>
-                      <span className="text-muted-foreground">
-                        {product.name} x{" "}
-                        <span className="text-xs">{product.quantity}</span>
-                      </span>
-                    </div>
-                    <span>S/.{product.price}</span>
-                  </li>
-                ))}
-              </ul>
-              <Separator className="my-2" />
-              <ul className="grid gap-3">
-                <li className="flex items-center justify-between font-semibold">
-                  <span className="text-muted-foreground">Total</span>
-                  <span>
-                    S/.{" "}
-                    {orderById?.cart.products.reduce(
-                      (acc, product) => acc + product.price,
-                      0,
-                    )}
-                  </span>
-                </li>
-              </ul>
+            <Line className="border-dashed" />
+            <div className="flex w-full flex-col items-center justify-center gap-1">
+              <div>
+                {orderById?.billingDocument.billingDocumentType ===
+                ("INVOICE" as unknown as BillingDocumentType)
+                  ? "Factura"
+                  : "Boleta"}{" "}
+              </div>
+              <div className="group relative flex w-fit items-center gap-2 text-lg">
+                <span className="font-thin uppercase text-slate-500">
+                  Pedido #{" "}
+                </span>
+                <span className="truncate">{orderById?.pickupCode}</span>
+                <span
+                  className={cn(
+                    "absolute -top-3 right-0 rotate-12 truncate text-xs font-thin text-slate-400 transition-all duration-300",
+                    {
+                      "scale-0 opacity-0": !isCopy,
+                      "scale-105 opacity-100": isCopy,
+                    },
+                  )}
+                >
+                  copiado
+                </span>
+                <Button
+                  size="icon"
+                  variant="outline"
+                  className="h-6 w-6 opacity-0 transition-opacity group-hover:opacity-100"
+                  onClick={handleCopyOrderID}
+                >
+                  <Copy className="h-3 w-3" />
+                  <span className="sr-only">Copy Order ID</span>
+                </Button>
+              </div>
             </div>
-            <Separator className="my-4" />
-            <div className="grid gap-3">
+            <Line className="border-dashed" />
+            <div className="grid w-full gap-3 text-sm">
               <div className="font-semibold">Información del cliente</div>
-              <dl className="grid gap-3">
-                <div className="flex flex-wrap items-center justify-between">
-                  <dt className="text-sm text-muted-foreground">Cliente</dt>
-                  <dd className="capitalize">{orderById?.client.name}</dd>
+              <dl className="grid grid-cols-2 gap-3">
+                <div className="flex flex-col items-start justify-between">
+                  <dt className="text-xs font-thin text-gray-500">Cliente</dt>
+                  <dd className="font-normal capitalize">
+                    {orderById?.client.name} {orderById?.client.lastName}{" "}
+                  </dd>
                 </div>
                 <div className="flex flex-wrap items-center justify-between">
-                  <dt className="text-sm text-muted-foreground">
+                  <dt className="text-xs font-thin text-gray-500">
                     Correo electrónico
                   </dt>
-                  <dd className="group/email">
+                  <dd className="group/email font-normal">
+                    {orderById?.client.email}
                     <Button
                       size="icon"
                       variant="outline"
@@ -238,12 +205,12 @@ export const OrderSheetDetails = ({
                         <Mail className="h-3 w-3" />
                       </a>
                     </Button>
-                    {orderById?.client.email}
                   </dd>
                 </div>
-                <div className="flex flex-wrap items-center justify-between">
-                  <dt className="text-sm text-muted-foreground">Teléfono</dt>
-                  <dd className="group/phone space-x-2">
+                <div className="flex flex-col items-start justify-between">
+                  <dt className="text-xs font-thin text-gray-500">Teléfono</dt>
+                  <dd className="group/phone space-x-2 font-normal">
+                    {orderById?.client.phone}
                     <Button
                       size="icon"
                       variant="outline"
@@ -267,23 +234,132 @@ export const OrderSheetDetails = ({
                         <MessageCircleMore className="h-3 w-3" />
                       </a>
                     </Button>
-                    {orderById?.client.phone}
                   </dd>
                 </div>
+                <div></div>
+                <div className="flex flex-col items-start justify-between">
+                  <dt className="text-xs font-thin text-gray-500">
+                    Tipo documento
+                  </dt>
+                  <dd className="font-normal capitalize">
+                    {orderById?.billingDocument.typeDocument}
+                  </dd>
+                </div>
+                <div className="flex flex-col items-start justify-between">
+                  <dt className="text-xs font-thin text-gray-500">
+                    N° documento
+                  </dt>
+                  <dd className="font-normal capitalize">
+                    {orderById?.billingDocument.documentNumber}
+                  </dd>
+                </div>
+                <div className="flex flex-col items-start justify-between">
+                  <dt className="text-xs font-thin text-gray-500">Dirección</dt>
+                  <dd className="font-normal capitalize">
+                    {orderById?.billingDocument.address}
+                  </dd>
+                </div>
+                <div className="flex flex-col items-start justify-between">
+                  <dt className="text-xs font-thin text-gray-500">País</dt>
+                  <dd className="font-normal capitalize">
+                    {orderById?.billingDocument.country}
+                  </dd>
+                </div>
+                <div className="flex flex-col items-start justify-between">
+                  <dt className="text-xs font-thin text-gray-500">Estado</dt>
+                  <dd className="font-normal capitalize">
+                    {orderById?.billingDocument.state}
+                  </dd>
+                </div>
+                <div className="flex flex-col items-start justify-between">
+                  <dt className="text-xs font-thin text-gray-500">Ciudad</dt>
+                  <dd className="font-normal capitalize">
+                    {orderById?.billingDocument.city}
+                  </dd>
+                </div>
+                {orderById?.billingDocument.businessName !== "" && (
+                  <div className="flex flex-col items-start justify-between">
+                    <dt className="text-xs font-thin text-gray-500">Empresa</dt>
+                    <dd className="font-normal capitalize">
+                      {orderById?.billingDocument.businessName}
+                    </dd>
+                  </div>
+                )}
               </dl>
             </div>
-            <Separator className="my-4" />
-            <div className="grid gap-3">
-              <div className="font-semibold">Información de pago</div>
-              <dl className="grid gap-3">
-                <div className="flex flex-wrap items-center justify-between">
-                  <dt className="flex items-center gap-1 text-muted-foreground">
-                    <CreditCard className="h-4 w-4 flex-shrink-0" />
-                    Visa
-                  </dt>
-                  <dd>**** **** **** 4532</dd>
-                </div>
-              </dl>
+            <Line className="border-dashed" />
+            <div className="w-full text-center text-xs font-thin">
+              {format(
+                orderById ? orderById?.pickupTime : new Date(),
+                "dd/MM/yyyy HH:mm:ss",
+                {
+                  locale: es,
+                },
+              )}
+            </div>
+            <Line className="border-dashed" />
+          </SheetTitle>
+          <div className="flex-1 px-0 py-2 sm:px-6">
+            <div className="space-y-4">
+              <div className="text-sm font-semibold">Detalles del pedido</div>
+              <Table>
+                <TableCaption className="text-xs text-gray-300">
+                  Productos
+                </TableCaption>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="max-w-40">Artículo</TableHead>
+                    <TableHead>Cant.</TableHead>
+                    <TableHead>P.U</TableHead>
+                    <TableHead className="text-right">Importe</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {orderById?.cart.products.map((product) => (
+                    <TableRow key={product.id}>
+                      <TableCell className="flex items-center gap-2 truncate">
+                        <Avatar className="rounded-md bg-slate-100">
+                          <AvatarImage src={product.image} alt={product.name} />
+                          <AvatarFallback>
+                            <PackageOpen />
+                          </AvatarFallback>
+                        </Avatar>
+                        <span className="text-muted-foreground">
+                          {product.name}
+                        </span>
+                      </TableCell>
+                      <TableCell>{product.quantity}</TableCell>
+                      <TableCell>{product.price.toFixed(2)}</TableCell>
+                      <TableCell className="text-right">
+                        {(product.price * product.quantity).toFixed(2)}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+              <ul className="grid gap-3">
+                <li className="flex items-center justify-between font-semibold">
+                  <span className="font-thin">Total venta</span>
+                  <span>S/. {(order?.totalAmount ?? 0).toFixed(2)}</span>
+                </li>
+              </ul>
+            </div>
+            <div className="mt-10 flex flex-col gap-2">
+              <p className="text-center text-xs">
+                Son{" "}
+                {numberToLetter(Number((order?.totalAmount ?? 0).toFixed(2)))}{" "}
+              </p>
+              <div className="grid grid-cols-3 items-center gap-3">
+                <Line className="w-full border-dashed" />
+                <span className="text-center text-xs">Forma de Pago</span>
+                <Line className="border-dashed" />
+              </div>
+              <li className="flex items-center justify-between font-semibold">
+                <span className="font-thin">
+                  <Izipay className="h-4" />
+                </span>
+                <span>S/. {(order?.totalAmount ?? 0).toFixed(2)}</span>
+              </li>
             </div>
             <ScrollBar orientation="horizontal" />
           </div>
