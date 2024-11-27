@@ -1,6 +1,7 @@
 "use client";
+import { socket } from "@/socket/socket";
 import { Order } from "@/types";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 
 import { DataTableExpanded } from "../data-table/DataTableExpanded";
 import { getColumnsOrders } from "./OrdersTableColumns";
@@ -16,7 +17,11 @@ export const TableOrders = ({
   setOpenDetailsOrder,
   setSelectedOrder,
 }: TableOrdersProps) => {
-  const columns = useMemo(() => getColumnsOrders(), []);
+  const [newOrders, setNewOrders] = useState<Order[]>([]);
+  socket.on("new-order", (order: Order) => {
+    setNewOrders((prevOrders) => [...prevOrders, order]);
+  });
+  const columns = useMemo(() => getColumnsOrders(newOrders), [newOrders]);
 
   return (
     <>
