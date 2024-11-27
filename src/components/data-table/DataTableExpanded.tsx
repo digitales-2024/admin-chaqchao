@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/table";
 
 import { Empty } from "../common/Empty";
+import { DataTableFloatingBar } from "./advanced/DataTableFloatingBar";
 import { DataTablePagination } from "./DataTablePagination";
 import { DataTableToolbar } from "./DataTableToolbar";
 
@@ -38,6 +39,7 @@ interface DataTableExpandedProps<TData, TValue> {
   getSubRows?: (row: TData) => TData[] | undefined;
   renderExpandedRow?: (row: TData) => ReactElement;
   onClickRow?: (row: TData) => void;
+  customExcelExport?: (data: TData[]) => void;
 }
 
 export function DataTableExpanded<TData, TValue>({
@@ -49,6 +51,7 @@ export function DataTableExpanded<TData, TValue>({
   getSubRows,
   renderExpandedRow,
   onClickRow,
+  customExcelExport,
 }: DataTableExpandedProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
@@ -71,8 +74,8 @@ export function DataTableExpanded<TData, TValue>({
       globalFilter,
       columnPinning,
     },
-    getSubRows,
     enableRowSelection: true,
+    getSubRows,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -166,7 +169,7 @@ export function DataTableExpanded<TData, TValue>({
                     <TableRow key={row.id}>
                       <TableCell colSpan={columns.length}>
                         {renderExpandedRow
-                          ? renderExpandedRow(row.original)
+                          ? renderExpandedRow(row.original) // Renderizado dinámico
                           : "No expanded content"}
                       </TableCell>
                     </TableRow>
@@ -187,6 +190,12 @@ export function DataTableExpanded<TData, TValue>({
         </Table>
       </div>
       <DataTablePagination table={table} />
+      {table.getFilteredSelectedRowModel().rows.length > 0 && (
+        <DataTableFloatingBar
+          table={table}
+          customExcelExport={customExcelExport}
+        />
+      )}
     </div>
   );
 }
