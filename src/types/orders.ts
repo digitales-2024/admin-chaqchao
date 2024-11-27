@@ -79,9 +79,13 @@ export enum OrderStatus {
 //   COMPLETED = "COMPLETED",
 // }
 
-enum BillingDocumentType {
+export enum BillingDocumentType {
   INVOICE,
   RECEIPT,
+}
+
+export interface BillingDocumentData {
+  [key: string]: BillingDocumentType;
 }
 
 enum PaymentStatus {
