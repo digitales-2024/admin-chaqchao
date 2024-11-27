@@ -43,7 +43,7 @@ import { Line } from "../common/Line";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Badge } from "../ui/badge";
 import { ScrollArea, ScrollBar } from "../ui/scroll-area";
-import { Sheet, SheetContent, SheetTitle } from "../ui/sheet";
+import { Sheet, SheetContent, SheetDescription, SheetTitle } from "../ui/sheet";
 
 export const statusColors: Record<Order["orderStatus"], string> = {
   CONFIRMED: "border-blue-300 text-blue-300",
@@ -93,277 +93,288 @@ export const OrderSheetDetails = ({
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="m-2 flex h-full min-h-screen flex-col gap-5 rounded-xl border-none sm:max-w-[36rem]">
-        <ScrollArea className="h-fit">
-          <SheetTitle className="flex flex-col items-start gap-2 px-2 py-4">
-            <div className="ml-auto flex items-center gap-1">
-              <Badge
-                variant="outline"
-                className={`${statusColors[orderById?.orderStatus as keyof typeof statusColors]} flex gap-2 font-light`}
-              >
-                {
-                  iconsStatus[
-                    orderById?.orderStatus as keyof typeof iconsStatus
-                  ]
-                }
-                {
-                  translateStatus[
-                    orderById?.orderStatus as keyof typeof translateStatus
-                  ]
-                }
-              </Badge>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button size="icon" variant="outline" className="h-8 w-8">
-                    <MoreVertical className="h-3.5 w-3.5" />
-                    <span className="sr-only">Mas</span>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem
-                    onSelect={() =>
-                      order?.id && onDownloadPdf(order.id, order.pickupCode)
-                    }
-                  >
-                    Exportar
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem
-                    className="hover:cursor-pointer hover:text-rose-500"
-                    onSelect={() =>
-                      onOrderStatusUpdate(
-                        orderById?.id as string,
-                        OrderStatus.CANCELLED,
-                      )
-                    }
-                  >
-                    Cancelar
-                    <DropdownMenuShortcut>
-                      <PackageX className="size-4" aria-hidden="true" />
-                    </DropdownMenuShortcut>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-            <Line className="border-dashed" />
-            <div className="flex w-full flex-col items-center justify-center gap-1">
-              <div>
-                {orderById?.billingDocument.billingDocumentType ===
-                ("INVOICE" as unknown as BillingDocumentType)
-                  ? "Factura"
-                  : "Boleta"}{" "}
-              </div>
-              <div className="group relative flex w-fit items-center gap-2 text-lg">
-                <span className="font-thin uppercase text-slate-500">
-                  Pedido #{" "}
-                </span>
-                <span className="truncate">{orderById?.pickupCode}</span>
-                <span
-                  className={cn(
-                    "absolute -top-3 right-0 rotate-12 truncate text-xs font-thin text-slate-400 transition-all duration-300",
-                    {
-                      "scale-0 opacity-0": !isCopy,
-                      "scale-105 opacity-100": isCopy,
-                    },
-                  )}
-                >
-                  copiado
-                </span>
-                <Button
-                  size="icon"
+        <SheetDescription asChild>
+          <ScrollArea className="h-fit">
+            <SheetTitle className="flex flex-col items-start gap-2 px-2 py-4">
+              <div className="ml-auto flex items-center gap-1">
+                <Badge
                   variant="outline"
-                  className="h-6 w-6 opacity-0 transition-opacity group-hover:opacity-100"
-                  onClick={handleCopyOrderID}
+                  className={`${statusColors[orderById?.orderStatus as keyof typeof statusColors]} flex gap-2 font-light`}
                 >
-                  <Copy className="h-3 w-3" />
-                  <span className="sr-only">Copy Order ID</span>
-                </Button>
+                  {
+                    iconsStatus[
+                      orderById?.orderStatus as keyof typeof iconsStatus
+                    ]
+                  }
+                  {
+                    translateStatus[
+                      orderById?.orderStatus as keyof typeof translateStatus
+                    ]
+                  }
+                </Badge>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button size="icon" variant="outline" className="h-8 w-8">
+                      <MoreVertical className="h-3.5 w-3.5" />
+                      <span className="sr-only">Mas</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem
+                      onSelect={() =>
+                        order?.id && onDownloadPdf(order.id, order.pickupCode)
+                      }
+                    >
+                      Exportar
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      className="hover:cursor-pointer hover:text-rose-500"
+                      onSelect={() =>
+                        onOrderStatusUpdate(
+                          orderById?.id as string,
+                          OrderStatus.CANCELLED,
+                        )
+                      }
+                    >
+                      Cancelar
+                      <DropdownMenuShortcut>
+                        <PackageX className="size-4" aria-hidden="true" />
+                      </DropdownMenuShortcut>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
-            </div>
-            <Line className="border-dashed" />
-            <div className="grid w-full gap-3 text-sm">
-              <div className="font-semibold">Información del cliente</div>
-              <dl className="grid grid-cols-2 gap-3">
-                <div className="flex flex-col items-start justify-between">
-                  <dt className="text-xs font-thin text-gray-500">Cliente</dt>
-                  <dd className="font-normal capitalize">
-                    {orderById?.client.name} {orderById?.client.lastName}{" "}
-                  </dd>
+              <Line className="border-dashed" />
+              <div className="flex w-full flex-col items-center justify-center gap-1">
+                <div>
+                  {orderById?.billingDocument.billingDocumentType ===
+                  ("INVOICE" as unknown as BillingDocumentType)
+                    ? "Factura"
+                    : "Boleta"}{" "}
                 </div>
-                <div className="flex flex-wrap items-center justify-between">
-                  <dt className="text-xs font-thin text-gray-500">
-                    Correo electrónico
-                  </dt>
-                  <dd className="group/email font-normal">
-                    {orderById?.client.email}
-                    <Button
-                      size="icon"
-                      variant="outline"
-                      className="h-6 w-6 opacity-0 transition-opacity group-hover/email:opacity-100"
-                    >
-                      <span className="sr-only">Email client</span>
-                      <a href={`mailto: ${orderById?.client.email}`}>
-                        <Mail className="h-3 w-3" />
-                      </a>
-                    </Button>
-                  </dd>
+                <div className="group relative flex w-fit items-center gap-2 text-lg">
+                  <span className="font-thin uppercase text-slate-500">
+                    Pedido #{" "}
+                  </span>
+                  <span className="truncate">{orderById?.pickupCode}</span>
+                  <span
+                    className={cn(
+                      "absolute -top-3 right-0 rotate-12 truncate text-xs font-thin text-slate-400 transition-all duration-300",
+                      {
+                        "scale-0 opacity-0": !isCopy,
+                        "scale-105 opacity-100": isCopy,
+                      },
+                    )}
+                  >
+                    copiado
+                  </span>
+                  <Button
+                    size="icon"
+                    variant="outline"
+                    className="h-6 w-6 opacity-0 transition-opacity group-hover:opacity-100"
+                    onClick={handleCopyOrderID}
+                  >
+                    <Copy className="h-3 w-3" />
+                    <span className="sr-only">Copy Order ID</span>
+                  </Button>
                 </div>
-                <div className="flex flex-col items-start justify-between">
-                  <dt className="text-xs font-thin text-gray-500">Teléfono</dt>
-                  <dd className="group/phone space-x-2 font-normal">
-                    {orderById?.client.phone}
-                    <Button
-                      size="icon"
-                      variant="outline"
-                      className="h-6 w-6 opacity-0 transition-opacity group-hover/phone:opacity-100"
-                    >
-                      <span className="sr-only">Phone client</span>
-                      <a href={`tel:${orderById?.client.phone}`}>
-                        <Phone className="h-3 w-3" />
-                      </a>
-                    </Button>
-                    <Button
-                      size="icon"
-                      variant="outline"
-                      className="h-6 w-6 opacity-0 transition-opacity group-hover/phone:opacity-100"
-                    >
-                      <span className="sr-only">Phone client</span>
-                      <a
-                        href={`https://wa.me/${orderById?.client.phone.replace(/\s+/g, "")}`}
-                        target="_blank"
-                      >
-                        <MessageCircleMore className="h-3 w-3" />
-                      </a>
-                    </Button>
-                  </dd>
-                </div>
-                <div></div>
-                <div className="flex flex-col items-start justify-between">
-                  <dt className="text-xs font-thin text-gray-500">
-                    Tipo documento
-                  </dt>
-                  <dd className="font-normal capitalize">
-                    {orderById?.billingDocument.typeDocument}
-                  </dd>
-                </div>
-                <div className="flex flex-col items-start justify-between">
-                  <dt className="text-xs font-thin text-gray-500">
-                    N° documento
-                  </dt>
-                  <dd className="font-normal capitalize">
-                    {orderById?.billingDocument.documentNumber}
-                  </dd>
-                </div>
-                <div className="flex flex-col items-start justify-between">
-                  <dt className="text-xs font-thin text-gray-500">Dirección</dt>
-                  <dd className="font-normal capitalize">
-                    {orderById?.billingDocument.address}
-                  </dd>
-                </div>
-                <div className="flex flex-col items-start justify-between">
-                  <dt className="text-xs font-thin text-gray-500">País</dt>
-                  <dd className="font-normal capitalize">
-                    {orderById?.billingDocument.country}
-                  </dd>
-                </div>
-                <div className="flex flex-col items-start justify-between">
-                  <dt className="text-xs font-thin text-gray-500">Estado</dt>
-                  <dd className="font-normal capitalize">
-                    {orderById?.billingDocument.state}
-                  </dd>
-                </div>
-                <div className="flex flex-col items-start justify-between">
-                  <dt className="text-xs font-thin text-gray-500">Ciudad</dt>
-                  <dd className="font-normal capitalize">
-                    {orderById?.billingDocument.city}
-                  </dd>
-                </div>
-                {orderById?.billingDocument.businessName !== "" && (
-                  <div className="flex flex-col items-start justify-between">
-                    <dt className="text-xs font-thin text-gray-500">Empresa</dt>
+              </div>
+              <Line className="border-dashed" />
+              <div className="grid w-full gap-3 text-sm">
+                <div className="font-semibold">Información del cliente</div>
+                <dl className="grid grid-cols-2 gap-3">
+                  <div className="flex flex-col items-start">
+                    <dt className="text-xs font-thin text-gray-500">Cliente</dt>
                     <dd className="font-normal capitalize">
-                      {orderById?.billingDocument.businessName}
+                      {orderById?.client.name} {orderById?.client.lastName}{" "}
                     </dd>
                   </div>
+                  <div className="flex flex-wrap items-center">
+                    <dt className="text-xs font-thin text-gray-500">
+                      Correo electrónico
+                    </dt>
+                    <dd className="group/email font-normal">
+                      {orderById?.client.email}
+                      <Button
+                        size="icon"
+                        variant="outline"
+                        className="h-6 w-6 opacity-0 transition-opacity group-hover/email:opacity-100"
+                      >
+                        <span className="sr-only">Email client</span>
+                        <a href={`mailto: ${orderById?.client.email}`}>
+                          <Mail className="h-3 w-3" />
+                        </a>
+                      </Button>
+                    </dd>
+                  </div>
+                  <div className="flex flex-col items-start">
+                    <dt className="text-xs font-thin text-gray-500">
+                      Teléfono
+                    </dt>
+                    <dd className="group/phone space-x-2 font-normal">
+                      {orderById?.client.phone}
+                      <Button
+                        size="icon"
+                        variant="outline"
+                        className="h-6 w-6 opacity-0 transition-opacity group-hover/phone:opacity-100"
+                      >
+                        <span className="sr-only">Phone client</span>
+                        <a href={`tel:${orderById?.client.phone}`}>
+                          <Phone className="h-3 w-3" />
+                        </a>
+                      </Button>
+                      <Button
+                        size="icon"
+                        variant="outline"
+                        className="h-6 w-6 opacity-0 transition-opacity group-hover/phone:opacity-100"
+                      >
+                        <span className="sr-only">Phone client</span>
+                        <a
+                          href={`https://wa.me/${orderById?.client.phone.replace(/\s+/g, "")}`}
+                          target="_blank"
+                        >
+                          <MessageCircleMore className="h-3 w-3" />
+                        </a>
+                      </Button>
+                    </dd>
+                  </div>
+                  <div></div>
+                  <div className="flex flex-col items-start">
+                    <dt className="text-xs font-thin text-gray-500">
+                      Tipo documento
+                    </dt>
+                    <dd className="font-normal capitalize">
+                      {orderById?.billingDocument.typeDocument}
+                    </dd>
+                  </div>
+                  <div className="flex flex-col items-start">
+                    <dt className="text-xs font-thin text-gray-500">
+                      N° documento
+                    </dt>
+                    <dd className="font-normal capitalize">
+                      {orderById?.billingDocument.documentNumber}
+                    </dd>
+                  </div>
+                  <div className="flex flex-col items-start">
+                    <dt className="text-xs font-thin text-gray-500">
+                      Dirección
+                    </dt>
+                    <dd className="font-normal capitalize">
+                      {orderById?.billingDocument.address}
+                    </dd>
+                  </div>
+                  <div className="flex flex-col items-start">
+                    <dt className="text-xs font-thin text-gray-500">País</dt>
+                    <dd className="font-normal capitalize">
+                      {orderById?.billingDocument.country}
+                    </dd>
+                  </div>
+                  <div className="flex flex-col items-start">
+                    <dt className="text-xs font-thin text-gray-500">Estado</dt>
+                    <dd className="font-normal capitalize">
+                      {orderById?.billingDocument.state}
+                    </dd>
+                  </div>
+                  <div className="flex flex-col items-start">
+                    <dt className="text-xs font-thin text-gray-500">Ciudad</dt>
+                    <dd className="font-normal capitalize">
+                      {orderById?.billingDocument.city}
+                    </dd>
+                  </div>
+                  {orderById?.billingDocument.businessName !== "" && (
+                    <div className="flex flex-col items-start">
+                      <dt className="text-xs font-thin text-gray-500">
+                        Empresa
+                      </dt>
+                      <dd className="font-normal capitalize">
+                        {orderById?.billingDocument.businessName}
+                      </dd>
+                    </div>
+                  )}
+                </dl>
+              </div>
+              <Line className="border-dashed" />
+              <div className="w-full text-center text-xs font-thin">
+                {format(
+                  orderById ? orderById?.pickupTime : new Date(),
+                  "dd/MM/yyyy HH:mm:ss",
+                  {
+                    locale: es,
+                  },
                 )}
-              </dl>
-            </div>
-            <Line className="border-dashed" />
-            <div className="w-full text-center text-xs font-thin">
-              {format(
-                orderById ? orderById?.pickupTime : new Date(),
-                "dd/MM/yyyy HH:mm:ss",
-                {
-                  locale: es,
-                },
-              )}
-            </div>
-            <Line className="border-dashed" />
-          </SheetTitle>
-          <div className="flex-1 px-0 py-2 sm:px-6">
-            <div className="space-y-4">
-              <div className="text-sm font-semibold">Detalles del pedido</div>
-              <Table>
-                <TableCaption className="text-xs text-gray-300">
-                  Productos
-                </TableCaption>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="max-w-40">Artículo</TableHead>
-                    <TableHead>Cant.</TableHead>
-                    <TableHead>P.U</TableHead>
-                    <TableHead className="text-right">Importe</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {orderById?.cart.products.map((product) => (
-                    <TableRow key={product.id}>
-                      <TableCell className="flex items-center gap-2 truncate">
-                        <Avatar className="rounded-md bg-slate-100">
-                          <AvatarImage src={product.image} alt={product.name} />
-                          <AvatarFallback>
-                            <PackageOpen />
-                          </AvatarFallback>
-                        </Avatar>
-                        <span className="text-muted-foreground">
-                          {product.name}
-                        </span>
-                      </TableCell>
-                      <TableCell>{product.quantity}</TableCell>
-                      <TableCell>{product.price.toFixed(2)}</TableCell>
-                      <TableCell className="text-right">
-                        {(product.price * product.quantity).toFixed(2)}
-                      </TableCell>
+              </div>
+              <Line className="border-dashed" />
+            </SheetTitle>
+            <div className="flex-1 px-0 py-2 sm:px-6">
+              <div className="space-y-4">
+                <div className="text-sm font-semibold">Detalles del pedido</div>
+                <Table>
+                  <TableCaption className="text-xs text-gray-300">
+                    Productos
+                  </TableCaption>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="max-w-40">Artículo</TableHead>
+                      <TableHead>Cant.</TableHead>
+                      <TableHead>P.U</TableHead>
+                      <TableHead className="text-right">Importe</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-              <ul className="grid gap-3">
+                  </TableHeader>
+                  <TableBody>
+                    {orderById?.cart.products.map((product) => (
+                      <TableRow key={product.id}>
+                        <TableCell className="flex items-center gap-2 truncate">
+                          <Avatar className="rounded-md bg-slate-100">
+                            <AvatarImage
+                              src={product.image}
+                              alt={product.name}
+                            />
+                            <AvatarFallback>
+                              <PackageOpen />
+                            </AvatarFallback>
+                          </Avatar>
+                          <span className="text-muted-foreground">
+                            {product.name}
+                          </span>
+                        </TableCell>
+                        <TableCell>{product.quantity}</TableCell>
+                        <TableCell>{product.price.toFixed(2)}</TableCell>
+                        <TableCell className="text-right">
+                          {(product.price * product.quantity).toFixed(2)}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+                <ul className="grid gap-3">
+                  <li className="flex items-center justify-between font-semibold">
+                    <span className="font-thin">Total venta</span>
+                    <span>S/. {(order?.totalAmount ?? 0).toFixed(2)}</span>
+                  </li>
+                </ul>
+              </div>
+              <div className="mt-10 flex flex-col gap-2">
+                <p className="text-center text-xs">
+                  Son{" "}
+                  {numberToLetter(Number((order?.totalAmount ?? 0).toFixed(2)))}{" "}
+                </p>
+                <div className="grid grid-cols-3 items-center gap-3">
+                  <Line className="w-full border-dashed" />
+                  <span className="text-center text-xs">Forma de Pago</span>
+                  <Line className="border-dashed" />
+                </div>
                 <li className="flex items-center justify-between font-semibold">
-                  <span className="font-thin">Total venta</span>
+                  <span className="font-thin">
+                    <Izipay className="h-4" />
+                  </span>
                   <span>S/. {(order?.totalAmount ?? 0).toFixed(2)}</span>
                 </li>
-              </ul>
-            </div>
-            <div className="mt-10 flex flex-col gap-2">
-              <p className="text-center text-xs">
-                Son{" "}
-                {numberToLetter(Number((order?.totalAmount ?? 0).toFixed(2)))}{" "}
-              </p>
-              <div className="grid grid-cols-3 items-center gap-3">
-                <Line className="w-full border-dashed" />
-                <span className="text-center text-xs">Forma de Pago</span>
-                <Line className="border-dashed" />
               </div>
-              <li className="flex items-center justify-between font-semibold">
-                <span className="font-thin">
-                  <Izipay className="h-4" />
-                </span>
-                <span>S/. {(order?.totalAmount ?? 0).toFixed(2)}</span>
-              </li>
+              <ScrollBar orientation="horizontal" />
             </div>
-            <ScrollBar orientation="horizontal" />
-          </div>
-        </ScrollArea>
+          </ScrollArea>
+        </SheetDescription>
       </SheetContent>
     </Sheet>
   );
