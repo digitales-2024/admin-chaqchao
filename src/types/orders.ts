@@ -8,6 +8,10 @@ export type Order = {
   pickupCode: string;
   totalAmount: null;
   client: Client;
+  customerName: string;
+  customerLastName: string;
+  customerPhone: string;
+  customerEmail: string;
 };
 
 export type OrderDetails = {
@@ -21,6 +25,20 @@ export type OrderDetails = {
   totalAmount: null;
   client: Client;
   cart: Cart;
+  billingDocument: BillingDocument;
+};
+
+type BillingDocument = {
+  billingDocumentType: BillingDocumentType;
+  documentNumber: string;
+  address: string;
+  state: string;
+  country: string;
+  city: string;
+  postalCode: string;
+  typeDocument: string;
+  businessName: string;
+  paymentStatus: PaymentStatus;
 };
 
 export type Cart = { quantity: number; products: ProductData[] };
@@ -38,20 +56,10 @@ type CategoryData = {
   name: string;
 };
 
-export type BillingDocument = {
-  id: string;
-  orderId: string;
-  billingDocumentType: BillingDocumentType;
-  documentNumber: string;
-  issuedAt: string;
-  totalAmount: number;
-  paymentStatus: PaymentStatus;
-  isActive: boolean;
-};
-
 type Client = {
   id: string;
   name: string;
+  lastName: string;
   email: string;
   phone: string;
 };
@@ -59,7 +67,7 @@ type Client = {
 export enum OrderStatus {
   PENDING = "PENDING",
   CONFIRMED = "CONFIRMED",
-  READY = "READY",
+  PROCESSING = "PROCESSING",
   COMPLETED = "COMPLETED",
   CANCELLED = "CANCELLED",
   ALL = "ALL",
@@ -71,9 +79,13 @@ export enum OrderStatus {
 //   COMPLETED = "COMPLETED",
 // }
 
-enum BillingDocumentType {
+export enum BillingDocumentType {
   INVOICE,
   RECEIPT,
+}
+
+export interface BillingDocumentData {
+  [key: string]: BillingDocumentType;
 }
 
 enum PaymentStatus {

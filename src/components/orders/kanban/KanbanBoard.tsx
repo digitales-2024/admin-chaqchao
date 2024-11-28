@@ -20,7 +20,7 @@ export default function KanbanBoard({
 }: KanbanBoardProps) {
   const boardStatus = [
     OrderStatus.CONFIRMED,
-    OrderStatus.READY,
+    OrderStatus.PROCESSING,
     OrderStatus.COMPLETED,
   ];
   const { onOrderStatusUpdate, isLoadingUpdateOrderStatus } = useOrders();

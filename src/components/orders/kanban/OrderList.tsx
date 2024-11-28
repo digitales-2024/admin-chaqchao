@@ -59,7 +59,7 @@ export default function OrderList({
               "bg-slate-100":
                 snapshot.isDraggingOver && listTitle === OrderStatus.CONFIRMED,
               "bg-cyan-50":
-                snapshot.isDraggingOver && listTitle === OrderStatus.READY,
+                snapshot.isDraggingOver && listTitle === OrderStatus.PROCESSING,
               "bg-emerald-50":
                 snapshot.isDraggingOver && listTitle === OrderStatus.COMPLETED,
             })}
