@@ -91,8 +91,8 @@ export function OrderFiltersForm({
                 <SelectItem value={OrderStatus.CONFIRMED}>
                   {translateStatus[OrderStatus.CONFIRMED]}
                 </SelectItem>
-                <SelectItem value={OrderStatus.READY}>
-                  {translateStatus[OrderStatus.READY]}
+                <SelectItem value={OrderStatus.PROCESSING}>
+                  {translateStatus[OrderStatus.PROCESSING]}
                 </SelectItem>
                 <SelectItem value={OrderStatus.COMPLETED}>
                   {translateStatus[OrderStatus.COMPLETED]}
