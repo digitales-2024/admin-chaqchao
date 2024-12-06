@@ -214,29 +214,33 @@ export const OrderSheetDetails = ({
                     </dt>
                     <dd className="group/phone space-x-2 font-normal">
                       {orderById?.client.phone}
-                      <Button
-                        size="icon"
-                        variant="outline"
-                        className="h-6 w-6 opacity-0 transition-opacity group-hover/phone:opacity-100"
-                      >
-                        <span className="sr-only">Phone client</span>
-                        <a href={`tel:${orderById?.client.phone}`}>
-                          <Phone className="h-3 w-3" />
-                        </a>
-                      </Button>
-                      <Button
-                        size="icon"
-                        variant="outline"
-                        className="h-6 w-6 opacity-0 transition-opacity group-hover/phone:opacity-100"
-                      >
-                        <span className="sr-only">Phone client</span>
-                        <a
-                          href={`https://wa.me/${orderById?.client.phone.replace(/\s+/g, "")}`}
-                          target="_blank"
-                        >
-                          <MessageCircleMore className="h-3 w-3" />
-                        </a>
-                      </Button>
+                      {orderById?.client.phone && (
+                        <>
+                          <Button
+                            size="icon"
+                            variant="outline"
+                            className="h-6 w-6 opacity-0 transition-opacity group-hover/phone:opacity-100"
+                          >
+                            <span className="sr-only">Phone client</span>
+                            <a href={`tel:${orderById?.client.phone}`}>
+                              <Phone className="h-3 w-3" />
+                            </a>
+                          </Button>
+                          <Button
+                            size="icon"
+                            variant="outline"
+                            className="h-6 w-6 opacity-0 transition-opacity group-hover/phone:opacity-100"
+                          >
+                            <span className="sr-only">Phone client</span>
+                            <a
+                              href={`https://wa.me/${orderById?.client.phone.replace(/\s+/g, "")}`}
+                              target="_blank"
+                            >
+                              <MessageCircleMore className="h-3 w-3" />
+                            </a>
+                          </Button>
+                        </>
+                      )}
                     </dd>
                   </div>
                   <div></div>
