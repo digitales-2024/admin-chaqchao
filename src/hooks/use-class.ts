@@ -59,16 +59,20 @@ export const useClasses = (date?: string) => {
 
   // Manejo de eventos del socket
   useEffect(() => {
+    const handleNewClass = () => {
+      // Si ya tenemos data cargada, permitimos el refetch
+      if (allDataClasses) {
+        refetchClasses();
+      }
+    };
     // Escuchar el evento de nueva clase
-    socket.on("new-class-register", () => {
-      refetchClasses();
-    });
+    socket.on("new-class-register", handleNewClass);
 
     return () => {
       // Remover los eventos del socket al desmontar el componente
-      socket.off("new-class-register");
+      socket.off("new-class-register", handleNewClass);
     };
-  }, [refetchClasses]);
+  }, [allDataClasses, refetchClasses]);
 
   const [
     exportToExcel,
