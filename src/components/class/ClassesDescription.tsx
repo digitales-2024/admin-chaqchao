@@ -94,7 +94,7 @@ export const ClassesDescription = ({ row }: { row: ClassesDataAdmin }) => {
                               {classData.userName.charAt(0)}
                             </AvatarFallback>
                           </Avatar>
-                          <h3 className="font-semibold capitalize">
+                          <h3 className="line-clamp-2 text-wrap font-semibold capitalize">
                             {classData.userName}
                           </h3>
                         </div>
