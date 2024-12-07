@@ -152,6 +152,7 @@ export function CreateProductDialog() {
       setOpen(false);
       setIsMinimized(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSuccessCreateProduct]);
 
   const ProgressIndicator = () => (

@@ -50,6 +50,7 @@ export const useLogout = () => {
     if (isSuccess) {
       router.push("/sign-in");
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSuccess]);
 
   return { signOut, isLoading, error };

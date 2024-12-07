@@ -62,6 +62,7 @@ export const FormUpdateInfo = () => {
     if (isSuccess) {
       refetch();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSuccess]);
 
   return (
