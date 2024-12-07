@@ -59,6 +59,7 @@ export const CreateRolesForm = ({
   useEffect(() => {
     setValue("rolPermissions", selectedPermissions);
     clearErrors("rolPermissions");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedPermissions]);
 
   return (

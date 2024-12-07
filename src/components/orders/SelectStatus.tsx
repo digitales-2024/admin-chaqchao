@@ -64,6 +64,7 @@ export default function SelectStatus({ id, data }: SelectStatusProps) {
     if (errorUpdateOrderStatus) {
       setSelected(data);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [errorUpdateOrderStatus]);
 
   useEffect(() => {

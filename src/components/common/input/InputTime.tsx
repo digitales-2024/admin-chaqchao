@@ -40,6 +40,7 @@ export const InputTime = ({ onChange, date }: InputTimeProps) => {
     if (time !== date) {
       onChange(time);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [time]);
 
   return (

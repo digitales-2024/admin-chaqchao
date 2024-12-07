@@ -89,6 +89,7 @@ export function UpdateClientSheet({
     if (isSuccessUpdateClient && props.onOpenChange) {
       props.onOpenChange(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSuccessUpdateClient]);
 
   return (

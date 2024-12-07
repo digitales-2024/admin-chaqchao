@@ -50,6 +50,7 @@ export const useLogin = () => {
     if (isSuccess && data) {
       router.replace("/");
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, isSuccess]);
 
   return { onLogin, isLoading, error };

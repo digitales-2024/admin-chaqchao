@@ -85,6 +85,7 @@ export function UpdateUserSheet({ user, ...props }: UpdateUserSheetProps) {
       form.reset();
       props.onOpenChange?.(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSuccessUpdateUser]);
 
   return (

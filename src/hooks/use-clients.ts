@@ -43,6 +43,7 @@ export const useClients = () => {
         try {
           const result = await updateClient(input);
           if (result.error && "data" in result.error) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const error = (result.error.data as any).message;
             reject(new Error(error));
           }
@@ -75,6 +76,7 @@ export const useClients = () => {
         try {
           const result = await toggleClientActivation(id);
           if (result.error && "data" in result.error) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const error = (result.error.data as any).message;
             reject(new Error(error));
           }
@@ -107,6 +109,7 @@ export const useClients = () => {
         try {
           const result = await deactivateClient(id);
           if (result.error && "data" in result.error) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const error = (result.error.data as any).message;
             reject(new Error(error));
           }
@@ -137,6 +140,7 @@ export const useClients = () => {
         try {
           const result = await reactivateClient(id);
           if (result.error && "data" in result.error) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const error = (result.error.data as any).message;
             reject(new Error(error));
           }

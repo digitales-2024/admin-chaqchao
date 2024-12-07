@@ -41,6 +41,7 @@ export default function BusinessInformationPage() {
   const form = useForm<CreateBusinessConfigSchema>({
     resolver: zodResolver(businessConfigSchema),
     defaultValues: {
+      ruc: "",
       businessName: "",
       contactNumber: "",
       email: "",
@@ -52,6 +53,7 @@ export default function BusinessInformationPage() {
     if (dataBusinessConfigAll && dataBusinessConfigAll.length > 0) {
       const businessConfig = dataBusinessConfigAll[0];
       form.reset({
+        ruc: businessConfig.ruc || "",
         businessName: businessConfig.businessName || "",
         contactNumber: businessConfig.contactNumber || "",
         email: businessConfig.email || "",
