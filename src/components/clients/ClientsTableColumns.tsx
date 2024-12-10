@@ -66,7 +66,10 @@ export const clientsColumns = (): ColumnDef<Client>[] => {
       ),
       cell: ({ row }) => {
         return (
-          <div>{format(row.original.birthDate, "PPP", { locale: es })}</div>
+          <div>
+            {row.original.birthDate &&
+              format(row.original.birthDate, "PPP", { locale: es })}
+          </div>
         );
       },
     },
