@@ -37,6 +37,7 @@ export default function AdminLayout({
     ) {
       router.push("/"); // Redirige si no tiene acceso
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoadingHas, path, router]);
 
   return (
