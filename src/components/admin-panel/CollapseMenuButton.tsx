@@ -32,6 +32,7 @@ type Submenu = {
   href: string;
   label: string;
   active: boolean;
+  show: boolean;
 };
 
 interface CollapseMenuButtonProps {
@@ -109,38 +110,44 @@ export const CollapseMenuButton = ({
         </Button>
       </CollapsibleTrigger>
       <CollapsibleContent className="data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down overflow-hidden">
-        {submenus.map(({ href, label, active }, index) => (
-          <Button
-            key={index}
-            variant={active ? "secondary" : "ghost"}
-            className="group/collapse-submenu mb-1 h-10 w-full justify-start text-secondary-foreground"
-            asChild
-          >
-            <Link href={href}>
-              <span className="ml-2 mr-4">
-                <Hash
-                  size={14}
-                  className={cn("group-hover/collapse-submenu:stroke-primary", {
-                    "stroke-primary": active,
-                  })}
-                />
-              </span>
-              <p
-                className={cn(
-                  "max-w-[170px] truncate font-normal",
-                  isOpen
-                    ? "translate-x-0 opacity-100"
-                    : "-translate-x-96 opacity-0",
-                  {
-                    "text-primary": active,
-                  },
-                )}
+        {submenus.map(
+          ({ href, label, active, show }, index) =>
+            show && (
+              <Button
+                key={index}
+                variant={active ? "secondary" : "ghost"}
+                className="group/collapse-submenu mb-1 h-10 w-full justify-start text-secondary-foreground"
+                asChild
               >
-                {label}
-              </p>
-            </Link>
-          </Button>
-        ))}
+                <Link href={href}>
+                  <span className="ml-2 mr-4">
+                    <Hash
+                      size={14}
+                      className={cn(
+                        "group-hover/collapse-submenu:stroke-primary",
+                        {
+                          "stroke-primary": active,
+                        },
+                      )}
+                    />
+                  </span>
+                  <p
+                    className={cn(
+                      "max-w-[170px] truncate font-normal",
+                      isOpen
+                        ? "translate-x-0 opacity-100"
+                        : "-translate-x-96 opacity-0",
+                      {
+                        "text-primary": active,
+                      },
+                    )}
+                  >
+                    {label}
+                  </p>
+                </Link>
+              </Button>
+            ),
+        )}
       </CollapsibleContent>
     </Collapsible>
   ) : (
@@ -188,23 +195,26 @@ export const CollapseMenuButton = ({
           {label}
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        {submenus.map(({ href, label, active }, index) => (
-          <DropdownMenuItem key={index} asChild>
-            <Link className="cursor-pointer" href={href}>
-              <Hash
-                size={14}
-                className={cn("mr-4", { "stroke-primary": active })}
-              />
-              <p
-                className={cn("max-w-[180px] truncate", {
-                  "text-primary": active,
-                })}
-              >
-                {label}
-              </p>
-            </Link>
-          </DropdownMenuItem>
-        ))}
+        {submenus.map(
+          ({ href, label, active, show }, index) =>
+            show && (
+              <DropdownMenuItem key={index} asChild>
+                <Link className="cursor-pointer" href={href}>
+                  <Hash
+                    size={14}
+                    className={cn("mr-4", { "stroke-primary": active })}
+                  />
+                  <p
+                    className={cn("max-w-[180px] truncate", {
+                      "text-primary": active,
+                    })}
+                  >
+                    {label}
+                  </p>
+                </Link>
+              </DropdownMenuItem>
+            ),
+        )}
         <DropdownMenuArrow className="fill-border" />
       </DropdownMenuContent>
     </DropdownMenu>
