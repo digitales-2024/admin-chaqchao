@@ -2,6 +2,7 @@ import { TypeClass } from "./class";
 
 export type ClassPriceConfigData = {
   id: string;
+  typeClass: TypeClass;
   classTypeUser: string;
   price: number;
   typeCurrency: string;
@@ -27,4 +28,8 @@ export type ClassScheduleData = {
 
 export type TypeClassScheduleData = {
   [key in TypeClass]: ClassScheduleData[];
+};
+
+export type TypeClassPricesData = {
+  [key in TypeClass]: ClassPriceConfigData[];
 };

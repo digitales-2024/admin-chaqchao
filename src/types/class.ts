@@ -38,7 +38,7 @@ export const typeClassLabels = {
 };
 
 export const typeClassColors = {
-  [TypeClass.NORMAL]: "border-emerald-500 text-emerald-500",
-  [TypeClass.PRIVATE]: "border-cyan-500 text-cyan-500",
-  [TypeClass.GROUP]: "border-blue-500 text-blue-500",
+  [TypeClass.NORMAL]: "border-emerald-200 bg-emerald-50/30 text-emerald-500",
+  [TypeClass.PRIVATE]: "border-cyan-200 bg-cyan-50/30 text-cyan-500",
+  [TypeClass.GROUP]: "border-blue-200 bg-blue-50/30 text-blue-500",
 };
