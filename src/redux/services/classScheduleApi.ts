@@ -56,6 +56,19 @@ export const classScheduleApi = createApi({
       }),
       invalidatesTags: ["ClassSchedule"],
     }),
+
+    // Horarios de un tipo de clase
+    getClassSchedulesByTypeClass: build.query<
+      ClassScheduleData[],
+      { typeClass: string }
+    >({
+      query: ({ typeClass }) => ({
+        url: `/class-schedule/type-class/${typeClass}`,
+        method: "GET",
+        credentials: "include",
+      }),
+      providesTags: ["ClassSchedule"],
+    }),
   }),
 });
 
@@ -65,4 +78,5 @@ export const {
   useGetClassScheduleByIdQuery,
   useGetClassSchedulesAllQuery,
   useDeleteClassScheduleMutation,
+  useGetClassSchedulesByTypeClassQuery,
 } = classScheduleApi;
