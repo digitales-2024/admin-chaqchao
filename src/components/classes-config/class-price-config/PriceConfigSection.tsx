@@ -1,5 +1,10 @@
 import { useClassPrices } from "@/hooks/use-class-price";
-import { ClassPriceConfigData } from "@/types";
+import {
+  ClassPriceConfigData,
+  TypeClass,
+  typeClassColors,
+  typeClassLabels,
+} from "@/types";
 import { Edit, Trash, Ellipsis, DollarSign, Info } from "lucide-react";
 import { useState } from "react";
 
@@ -14,6 +19,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuShortcut,
 } from "@/components/ui/dropdown-menu";
+
+import { cn } from "@/lib/utils";
 
 import { AddPriceDialog } from "./AddPriceDialog";
 import { DeletePriceDialog } from "./DeletePriceDialog";
@@ -58,75 +65,109 @@ export function PriceConfigSection() {
       </div>
 
       <div className="space-y-5">
-        {isSuccessPrices &&
-        dataClassPricesAll &&
-        dataClassPricesAll.length > 0 ? (
-          dataClassPricesAll.map((price) => (
-            <Card key={price.id}>
-              <CardContent className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <div>
-                    <p
-                      className="mt-4 text-base font-semibold"
-                      aria-hidden="true"
-                    >
-                      {price.classTypeUser === "ADULT" ? "Adulto" : "Niño"}
-                    </p>
-                    <p className="flex flex-wrap gap-2">
-                      <Badge variant="outline" className="flex gap-2">
-                        {price.typeCurrency === "DOLAR" ? (
-                          <DollarSign
-                            className="size-4 text-blue-500"
-                            aria-hidden="true"
-                          />
-                        ) : (
-                          <span
-                            className="cursor-default select-none text-xs font-medium text-cyan-500"
-                            aria-hidden="true"
-                          >
-                            S/
-                          </span>
-                        )}
-                        Precio:
-                      </Badge>
-                      <span>
-                        {price.typeCurrency === "DOLAR" ? "$" : "S/"}{" "}
-                        {price.price}
-                      </span>
-                    </p>
-                  </div>
+        {isSuccessPrices && dataClassPricesAll ? (
+          Object.keys(TypeClass).map((type) => {
+            const schedules =
+              dataClassPricesAll[type as keyof typeof dataClassPricesAll];
+            return (
+              <div key={type}>
+                <h4
+                  className={cn(
+                    "text-xs font-semibold",
+                    typeClassColors[type as keyof typeof TypeClass],
+                    "bg-transparent",
+                  )}
+                >
+                  {typeClassLabels[type as keyof typeof TypeClass]}
+                </h4>
+                <div
+                  className={cn(
+                    "space-y-5 rounded-lg border p-4",
+                    typeClassColors[type as keyof typeof TypeClass],
+                  )}
+                >
+                  {schedules?.map((price) => (
+                    <Card key={price.id}>
+                      <CardContent className="flex items-center justify-between text-slate-800">
+                        <div className="flex items-center">
+                          <div>
+                            <p
+                              className="mt-4 text-base font-semibold"
+                              aria-hidden="true"
+                            >
+                              {price.classTypeUser === "ADULT"
+                                ? "Adulto"
+                                : "Niño"}
+                            </p>
+                            <p className="flex flex-wrap gap-2">
+                              <Badge variant="outline" className="flex gap-2">
+                                {price.typeCurrency === "DOLAR" ? (
+                                  <DollarSign
+                                    className="size-4 text-blue-500"
+                                    aria-hidden="true"
+                                  />
+                                ) : (
+                                  <span
+                                    className="cursor-default select-none text-xs font-medium text-cyan-500"
+                                    aria-hidden="true"
+                                  >
+                                    S/
+                                  </span>
+                                )}
+                                Precio:
+                              </Badge>
+                              <span>
+                                {price.typeCurrency === "DOLAR" ? "$" : "S/"}{" "}
+                                {price.price}
+                              </span>
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex space-x-2">
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button
+                                aria-label="Open menu"
+                                variant="ghost"
+                                className="flex size-8 p-0 data-[state=open]:bg-muted"
+                              >
+                                <Ellipsis
+                                  className="size-4"
+                                  aria-hidden="true"
+                                />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-40">
+                              <DropdownMenuItem
+                                onSelect={() => handleEdit(price)}
+                              >
+                                Editar
+                                <DropdownMenuShortcut>
+                                  <Edit className="size-4" aria-hidden="true" />
+                                </DropdownMenuShortcut>
+                              </DropdownMenuItem>
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem
+                                onSelect={() => handleDelete(price)}
+                              >
+                                Eliminar
+                                <DropdownMenuShortcut>
+                                  <Trash
+                                    className="size-4"
+                                    aria-hidden="true"
+                                  />
+                                </DropdownMenuShortcut>
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
                 </div>
-                <div className="flex space-x-2">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button
-                        aria-label="Open menu"
-                        variant="ghost"
-                        className="flex size-8 p-0 data-[state=open]:bg-muted"
-                      >
-                        <Ellipsis className="size-4" aria-hidden="true" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-40">
-                      <DropdownMenuItem onSelect={() => handleEdit(price)}>
-                        Editar
-                        <DropdownMenuShortcut>
-                          <Edit className="size-4" aria-hidden="true" />
-                        </DropdownMenuShortcut>
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem onSelect={() => handleDelete(price)}>
-                        Eliminar
-                        <DropdownMenuShortcut>
-                          <Trash className="size-4" aria-hidden="true" />
-                        </DropdownMenuShortcut>
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
-              </CardContent>
-            </Card>
-          ))
+              </div>
+            );
+          })
         ) : (
           <Badge className="font-medium text-slate-400" variant="outline">
             <Info className="mr-2 size-3" aria-hidden="true" />
