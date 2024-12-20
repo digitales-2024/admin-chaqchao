@@ -23,3 +23,16 @@ export type ClassesDataAdmin = {
   classLanguage: string;
   classes: ClassData[];
 };
+
+export enum TypeClass {
+  NORMAL = "NORMAL",
+  PRIVATE = "PRIVATE",
+  GROUP = "GROUP",
+}
+
+// Translate los label de tipo de clase
+export const typeClassLabels = {
+  [TypeClass.NORMAL]: "Normal",
+  [TypeClass.PRIVATE]: "Privada",
+  [TypeClass.GROUP]: "Grupal",
+};
