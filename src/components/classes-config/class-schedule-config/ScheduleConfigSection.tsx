@@ -113,18 +113,19 @@ export function ScheduleConfigSection() {
                   className={cn(
                     "text-xs font-semibold",
                     typeClassColors[type as keyof typeof TypeClass],
+                    "bg-transparent",
                   )}
                 >
                   {typeClassLabels[type as keyof typeof TypeClass]}
                 </h4>
-                <div className="space-y-5">
+                <div
+                  className={cn(
+                    "space-y-5 rounded-lg border p-4",
+                    typeClassColors[type as keyof typeof TypeClass],
+                  )}
+                >
                   {schedules?.map((schedule) => (
-                    <Card
-                      key={schedule.id}
-                      className={cn(
-                        typeClassColors[type as keyof typeof TypeClass],
-                      )}
-                    >
+                    <Card key={schedule.id}>
                       <CardContent className="mt-4 flex items-center justify-between text-slate-800">
                         <div className="flex items-center">
                           {getClockIcon(schedule.startTime)}

@@ -139,9 +139,9 @@ export function AddScheduleDialog({
                         </Select>
                       )}
                     />
-                    {errors.startTime && (
+                    {errors.typeClass && (
                       <p className="text-sm text-red-500">
-                        {errors.startTime.message}
+                        {errors.typeClass.message}
                       </p>
                     )}
                   </div>
