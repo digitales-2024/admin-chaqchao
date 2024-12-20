@@ -50,7 +50,6 @@ export function EditScheduleSheet({
   scheduleData,
   refetchClassSchedules,
 }: EditScheduleSheetProps) {
-  console.log("🚀 ~ scheduleData:", scheduleData);
   const { onUpdateClassSchedule } = useClassSchedules();
   const { dataBusinessConfigAll, isSuccess: isSuccessBusinessConfig } =
     useBussinessConfig();
@@ -62,7 +61,6 @@ export function EditScheduleSheet({
       typeClass: scheduleData.typeClass,
     },
   });
-  console.log("🚀 ~ form:", form.watch());
   const onSubmit = async (data: Partial<CreateClassScheduleSchema>) => {
     if (
       isSuccessBusinessConfig &&
