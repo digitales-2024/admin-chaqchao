@@ -36,3 +36,9 @@ export const typeClassLabels = {
   [TypeClass.PRIVATE]: "Privada",
   [TypeClass.GROUP]: "Grupal",
 };
+
+export const typeClassColors = {
+  [TypeClass.NORMAL]: "border-emerald-500 text-emerald-500",
+  [TypeClass.PRIVATE]: "border-orange-500 text-orange-500",
+  [TypeClass.GROUP]: "border-indigo-500 text-indigo-500",
+};

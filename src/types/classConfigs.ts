@@ -1,3 +1,5 @@
+import { TypeClass } from "./class";
+
 export type ClassPriceConfigData = {
   id: string;
   classTypeUser: string;
@@ -19,5 +21,10 @@ export type ClassRegistrationData = {
 export type ClassScheduleData = {
   id: string;
   startTime: string;
+  typeClass: TypeClass;
   businessId: string;
+};
+
+export type TypeClassScheduleData = {
+  [key in TypeClass]: ClassScheduleData[];
 };

@@ -56,4 +56,5 @@ export {
   type ClassesDataAdmin,
   TypeClass,
   typeClassLabels,
+  typeClassColors,
 } from "./class";
