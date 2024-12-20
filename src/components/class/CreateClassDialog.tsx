@@ -63,8 +63,6 @@ export function CreateClassDialog() {
       totalPrice: 0,
     },
   });
-  console.log("🚀 ~ CreateClassDialog ~ form:", form.watch());
-
   const onSubmit = async (input: createClassSchema) => {
     console.log("🚀 ~ onSubmit ~ input:", input);
     try {
