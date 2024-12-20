@@ -1,0 +1,396 @@
+"use client";
+
+import { useClassLanguages } from "@/hooks/use-class-language";
+import { createClassSchema } from "@/schemas";
+import { typeClassLabels } from "@/types";
+import {
+  CalendarDate,
+  getLocalTimeZone,
+  isWeekend,
+  today,
+} from "@internationalized/date";
+import type { DateValue } from "@react-aria/calendar";
+import { useLocale } from "@react-aria/i18n";
+import { Calendar as CalendarIcon } from "lucide-react";
+import { useEffect, useState } from "react";
+import { UseFormReturn } from "react-hook-form";
+
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+import { Calendar } from "../common/calendar";
+import { InputTime } from "../common/input/InputTime";
+import { Button } from "../ui/button";
+import { PhoneInput } from "../ui/phone-input";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { Separator } from "../ui/separator";
+import { Textarea } from "../ui/textarea";
+
+interface CreateClassFormProps
+  extends Omit<React.ComponentPropsWithRef<"form">, "onSubmit"> {
+  children: React.ReactNode;
+  form: UseFormReturn<createClassSchema>;
+  onSubmit: (data: createClassSchema) => void;
+}
+
+export default function CreateClassForm({
+  form,
+  onSubmit,
+  children,
+}: CreateClassFormProps) {
+  const { locale } = useLocale();
+
+  const [date, setDate] = useState(today(getLocalTimeZone()));
+
+  const handleChangeDate = (date: DateValue) => {
+    setDate(date as CalendarDate);
+  };
+
+  // const now = today(getLocalTimeZone());
+  const day = new CalendarDate(2024, 12, 23);
+  const disabledRanges = [[day, day]];
+  const isDateUnavailable = (date: DateValue) =>
+    isWeekend(date, locale) ||
+    disabledRanges.some(
+      (interval) =>
+        date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0,
+    );
+
+  useEffect(() => {
+    form.setValue("dateClass", new Date(date.year, date.month - 1, date.day));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [date]);
+
+  const { dataClassLanguagesAll, isLoading } = useClassLanguages();
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5 p-5">
+        <div className="grid grid-cols-2 gap-4">
+          <FormField
+            control={form.control}
+            name="typeClass"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Tipo de clase</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Seleccione un tipo de clase" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {Object.entries(typeClassLabels).map(([key, value]) => (
+                      <SelectItem key={key} value={key}>
+                        {value}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="languageClass"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Lenguaje de la clase</FormLabel>
+
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Seleccione un lenguaje" />
+                    </SelectTrigger>
+                  </FormControl>
+                  {isLoading ? (
+                    <SelectContent>
+                      <SelectItem value="loading">Loading...</SelectItem>
+                    </SelectContent>
+                  ) : (
+                    <SelectContent>
+                      {dataClassLanguagesAll?.map((language) => (
+                        <SelectItem
+                          key={language.id}
+                          value={language.languageName}
+                        >
+                          {language.languageName}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  )}
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+        <Separator />
+        <span className="font-bold">Datos de la clase</span>
+        <FormField
+          control={form.control}
+          name="dateClass"
+          render={() => (
+            <FormItem className="flex flex-col">
+              <FormLabel>Selecciona la fecha de la clase</FormLabel>
+              <FormControl>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" size="sm" className="w-fit px-20">
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {date.toString()}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-fit p-0 lg:max-w-full">
+                    <Calendar
+                      minValue={today(getLocalTimeZone())}
+                      defaultValue={today(getLocalTimeZone())}
+                      value={date}
+                      onChange={handleChangeDate}
+                      isDateUnavailable={isDateUnavailable}
+                    />
+                  </PopoverContent>
+                </Popover>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="scheduleClass"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Selecciona el horario</FormLabel>
+              <FormControl>
+                <InputTime onChange={field.onChange} date={field.value} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <div className="grid grid-cols-2 gap-4">
+          <FormField
+            control={form.control}
+            name="totalAdults"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Adultos</FormLabel>
+                <FormControl>
+                  <Input
+                    type="number"
+                    defaultValue={1}
+                    min={1}
+                    {...field}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      const parsedValue = parseInt(value, 10);
+                      if (!isNaN(parsedValue)) {
+                        field.onChange(parsedValue);
+                      } else {
+                        field.onChange(1);
+                      }
+                    }}
+                  />
+                </FormControl>
+                <FormDescription>Los adultos de 12 años o más.</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="totalChildren"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Niños</FormLabel>
+                <FormControl>
+                  <Input
+                    type="number"
+                    defaultValue={0}
+                    min={0}
+                    {...field}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      const parsedValue = parseInt(value, 10);
+                      if (!isNaN(parsedValue)) {
+                        field.onChange(parsedValue);
+                      } else {
+                        field.onChange(0);
+                      }
+                    }}
+                  />
+                </FormControl>
+                <FormDescription>Los niños de 5 a 12 años.</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+          <FormField
+            control={form.control}
+            name="totalPriceAdults"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Precio por adulto</FormLabel>
+                <FormControl>
+                  <div className="flex gap-2">
+                    <Input
+                      type="number"
+                      defaultValue={0}
+                      min={0}
+                      {...field}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        const parsedValue = parseInt(value, 10);
+                        if (!isNaN(parsedValue)) {
+                          field.onChange(parsedValue);
+                        } else {
+                          field.onChange(0);
+                        }
+                      }}
+                    />
+                    <Input
+                      type="number"
+                      defaultValue={0}
+                      min={0}
+                      {...field}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        const parsedValue = parseInt(value, 10);
+                        if (!isNaN(parsedValue)) {
+                          field.onChange(parsedValue);
+                        } else {
+                          field.onChange(0);
+                        }
+                      }}
+                    />
+                  </div>
+                </FormControl>
+                <FormMessage />
+                <FormDescription>$30</FormDescription>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="totalPriceChildren"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Precio niños</FormLabel>
+                <FormControl>
+                  <Input
+                    type="number"
+                    defaultValue={0}
+                    min={0}
+                    {...field}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      const parsedValue = parseInt(value, 10);
+                      if (!isNaN(parsedValue)) {
+                        field.onChange(parsedValue);
+                      } else {
+                        field.onChange(0);
+                      }
+                    }}
+                  />
+                </FormControl>
+                <FormMessage />
+                <FormDescription>$20</FormDescription>
+              </FormItem>
+            )}
+          />
+        </div>
+        <Separator />
+        <span className="font-bold">Datos del cliente</span>
+        <div className="grid grid-cols-2 gap-4">
+          <FormField
+            control={form.control}
+            name="userName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Nombre</FormLabel>
+                <FormControl>
+                  <Input placeholder="" type="" {...field} />
+                </FormControl>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="userEmail"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Correo electrónico</FormLabel>
+                <FormControl>
+                  <Input placeholder="" type="email" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+        <FormField
+          control={form.control}
+          name="userPhone"
+          render={({ field }) => (
+            <FormItem className="flex flex-col items-start">
+              <FormLabel>Teléfono</FormLabel>
+              <FormControl className="w-full">
+                <PhoneInput
+                  placeholder="984 521 113"
+                  {...field}
+                  defaultCountry="PE"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <Separator />
+        <span className="font-bold">Información adicional</span>
+        <FormField
+          control={form.control}
+          name="comments"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Comentarios</FormLabel>
+              <FormControl>
+                <Textarea placeholder="Agrega un comentario" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {children}
+      </form>
+    </Form>
+  );
+}
