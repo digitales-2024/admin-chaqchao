@@ -5,6 +5,7 @@ import {
   createClassPriceSchema,
   CreateClassPriceSchema,
 } from "@/schemas/classConfig/createClassPriceSchema";
+import { TypeClass, typeClassLabels } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus } from "lucide-react";
 import { useState } from "react";
@@ -58,6 +59,7 @@ export function AddPriceDialog({ refetchClassPrices }: AddPriceDialogProps) {
   const methods = useForm<CreateClassPriceSchema>({
     resolver: zodResolver(createClassPriceSchema),
     defaultValues: {
+      typeClass: TypeClass.NORMAL,
       classTypeUser: "",
       typeCurrency: "",
     },
@@ -77,7 +79,11 @@ export function AddPriceDialog({ refetchClassPrices }: AddPriceDialogProps) {
       dataBusinessConfigAll.length > 0
     ) {
       const businessId = dataBusinessConfigAll[0].id;
-      await onCreateClassPrice({ ...data, businessId });
+      await onCreateClassPrice({
+        ...data,
+        typeClass: data.typeClass as TypeClass,
+        businessId,
+      });
       reset();
       refetchClassPrices();
       setIsOpen(false);
@@ -101,6 +107,39 @@ export function AddPriceDialog({ refetchClassPrices }: AddPriceDialogProps) {
             <FormProvider {...methods}>
               <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="mt-4 space-y-4">
+                  <div className="flex items-center justify-between gap-4">
+                    <Label htmlFor="startTime">Tipo de clase</Label>
+                    <Controller
+                      name="typeClass"
+                      control={control}
+                      render={({ field }) => (
+                        <Select
+                          value={field.value}
+                          onValueChange={field.onChange}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Selecciona el tipo de clase" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {Object.keys(TypeClass).map((type) => (
+                              <SelectItem key={type} value={type}>
+                                {
+                                  typeClassLabels[
+                                    type as keyof typeof TypeClass
+                                  ]
+                                }
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      )}
+                    />
+                    {errors.typeClass && (
+                      <p className="text-sm text-red-500">
+                        {errors.typeClass.message}
+                      </p>
+                    )}
+                  </div>
                   {/* Select for classTypeUser */}
                   <div className="space-y-2">
                     <Label htmlFor="classTypeUser">Tipo de Usuario</Label>
