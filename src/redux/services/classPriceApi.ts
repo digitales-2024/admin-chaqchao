@@ -1,4 +1,4 @@
-import { ClassPriceConfigData } from "@/types";
+import { ClassPriceConfigData, TypeClassPricesData } from "@/types";
 import { createApi } from "@reduxjs/toolkit/query/react";
 
 import baseQueryWithReauth from "./baseQuery";
@@ -39,7 +39,7 @@ export const classPriceApi = createApi({
       }),
       providesTags: (result, error, id) => [{ type: "ClassPrice", id }],
     }),
-    getClassPricesAll: build.query<ClassPriceConfigData[], void>({
+    getClassPricesAll: build.query<TypeClassPricesData, void>({
       query: () => ({
         url: "/class-price",
         method: "GET",
