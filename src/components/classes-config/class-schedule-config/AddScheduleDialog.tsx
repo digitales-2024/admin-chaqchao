@@ -5,6 +5,7 @@ import {
   createClassScheduleSchema,
   CreateClassScheduleSchema,
 } from "@/schemas/classConfig/createClassScheduleSchema";
+import { TypeClass } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus } from "lucide-react";
 import { useState } from "react";
@@ -29,6 +30,13 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const formData = {
   button: "Agregar Horario",
@@ -51,6 +59,7 @@ export function AddScheduleDialog({
     resolver: zodResolver(createClassScheduleSchema),
     defaultValues: {
       startTime: "",
+      typeClass: TypeClass.NORMAL,
     },
   });
 
@@ -68,7 +77,11 @@ export function AddScheduleDialog({
       dataBusinessConfigAll.length > 0
     ) {
       const businessId = dataBusinessConfigAll[0].id;
-      await onCreateClassSchedule({ ...data, businessId });
+      await onCreateClassSchedule({
+        ...data,
+        typeClass: data.typeClass as TypeClass,
+        businessId,
+      });
       reset();
       refetchClassSchedules();
       setIsOpen(false);
@@ -99,6 +112,35 @@ export function AddScheduleDialog({
             <FormProvider {...methods}>
               <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="mt-4 space-y-4">
+                  <div className="flex items-center justify-between gap-4">
+                    <Label htmlFor="startTime">Tipo de clase</Label>
+                    <Controller
+                      name="typeClass"
+                      control={control}
+                      render={({ field }) => (
+                        <Select
+                          value={field.value}
+                          onValueChange={field.onChange}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Selecciona el tipo de clase" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {Object.keys(TypeClass).map((type) => (
+                              <SelectItem key={type} value={type}>
+                                {type}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      )}
+                    />
+                    {errors.startTime && (
+                      <p className="text-sm text-red-500">
+                        {errors.startTime.message}
+                      </p>
+                    )}
+                  </div>
                   <div className="flex items-center justify-between gap-4">
                     <Label htmlFor="startTime">Hora de Inicio</Label>
                     <Controller
