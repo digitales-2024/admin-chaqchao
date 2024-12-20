@@ -57,11 +57,6 @@ export function ScheduleConfigSection() {
     isSuccess: isSuccessSchedules,
     refetch: refetchClassSchedules,
   } = useClassSchedules();
-  console.log(
-    "🚀 ~ ScheduleConfigSection ~ dataClassSchedulesAll:",
-    dataClassSchedulesAll,
-  );
-
   // Función para editar
   const handleEdit = (scheduleData: ClassScheduleData) => {
     setSelectedSchedule(scheduleData);
@@ -122,57 +117,65 @@ export function ScheduleConfigSection() {
                 >
                   {typeClassLabels[type as keyof typeof TypeClass]}
                 </h4>
-                {schedules?.map((schedule) => (
-                  <Card
-                    key={schedule.id}
-                    className={cn(
-                      typeClassColors[type as keyof typeof TypeClass],
-                    )}
-                  >
-                    <CardContent className="mt-4 flex items-center justify-between text-slate-800">
-                      <div className="flex items-center">
-                        {getClockIcon(schedule.startTime)}
-                        <div>
-                          <p className="mt-4 text-base font-semibold">
-                            {schedule.startTime}
-                          </p>
+                <div className="space-y-5">
+                  {schedules?.map((schedule) => (
+                    <Card
+                      key={schedule.id}
+                      className={cn(
+                        typeClassColors[type as keyof typeof TypeClass],
+                      )}
+                    >
+                      <CardContent className="mt-4 flex items-center justify-between text-slate-800">
+                        <div className="flex items-center">
+                          {getClockIcon(schedule.startTime)}
+                          <div>
+                            <p className="mt-4 text-base font-semibold">
+                              {schedule.startTime}
+                            </p>
+                          </div>
                         </div>
-                      </div>
-                      <div className="flex space-x-2">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button
-                              aria-label="Open menu"
-                              variant="ghost"
-                              className="flex size-8 p-0 data-[state=open]:bg-muted"
-                            >
-                              <Ellipsis className="size-4" aria-hidden="true" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end" className="w-40">
-                            <DropdownMenuItem
-                              onSelect={() => handleEdit(schedule)}
-                            >
-                              Editar
-                              <DropdownMenuShortcut>
-                                <Edit className="size-4" aria-hidden="true" />
-                              </DropdownMenuShortcut>
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem
-                              onSelect={() => handleDelete(schedule)}
-                            >
-                              Eliminar
-                              <DropdownMenuShortcut>
-                                <Trash className="size-4" aria-hidden="true" />
-                              </DropdownMenuShortcut>
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
+                        <div className="flex space-x-2">
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button
+                                aria-label="Open menu"
+                                variant="ghost"
+                                className="flex size-8 p-0 data-[state=open]:bg-muted"
+                              >
+                                <Ellipsis
+                                  className="size-4"
+                                  aria-hidden="true"
+                                />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-40">
+                              <DropdownMenuItem
+                                onSelect={() => handleEdit(schedule)}
+                              >
+                                Editar
+                                <DropdownMenuShortcut>
+                                  <Edit className="size-4" aria-hidden="true" />
+                                </DropdownMenuShortcut>
+                              </DropdownMenuItem>
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem
+                                onSelect={() => handleDelete(schedule)}
+                              >
+                                Eliminar
+                                <DropdownMenuShortcut>
+                                  <Trash
+                                    className="size-4"
+                                    aria-hidden="true"
+                                  />
+                                </DropdownMenuShortcut>
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
               </div>
             );
           })
