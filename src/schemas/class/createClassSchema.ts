@@ -20,13 +20,7 @@ export const CreateClassSchema = z.object({
   languageClass: z.string().min(1, {
     message: "El idioma de la clase es obligatorio",
   }),
-  dateClass: z.date().refine(
-    (value) => {
-      const date = new Date(value);
-      return date > new Date();
-    },
-    { message: "La fecha de la clase debe ser futura" },
-  ),
+  dateClass: z.date(),
   totalAdults: z.number().int().min(0, {
     message: "El total de adultos es obligatorio",
   }),
@@ -41,9 +35,6 @@ export const CreateClassSchema = z.object({
   }),
   totalPrice: z.number().int().min(0, {
     message: "El precio total es obligatorio",
-  }),
-  typeCurrency: z.string().min(1, {
-    message: "El tipo de moneda es obligatorio",
   }),
   comments: z.string().min(1, {
     message: "Los comentarios son obligatorios",

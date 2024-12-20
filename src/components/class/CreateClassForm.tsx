@@ -1,8 +1,10 @@
 "use client";
 
 import { useClassLanguages } from "@/hooks/use-class-language";
+import { useClassPrices } from "@/hooks/use-class-price";
+import { useClassSchedules } from "@/hooks/use-class-schedule";
 import { createClassSchema } from "@/schemas";
-import { typeClassLabels } from "@/types";
+import { TypeClass, typeClassLabels } from "@/types";
 import {
   CalendarDate,
   getLocalTimeZone,
@@ -34,12 +36,12 @@ import {
 } from "@/components/ui/select";
 
 import { Calendar } from "../common/calendar";
-import { InputTime } from "../common/input/InputTime";
 import { Button } from "../ui/button";
 import { PhoneInput } from "../ui/phone-input";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Separator } from "../ui/separator";
 import { Textarea } from "../ui/textarea";
+import ClassScheduleEditable from "./ClassScheduleEditable";
 
 interface CreateClassFormProps
   extends Omit<React.ComponentPropsWithRef<"form">, "onSubmit"> {
@@ -61,6 +63,21 @@ export default function CreateClassForm({
     setDate(date as CalendarDate);
   };
 
+  const { pricesDolar } = useClassPrices(
+    form.getValues("typeClass") as TypeClass,
+  );
+
+  const {
+    dataClassSchedulesByTypeClass,
+    errorClassSchedulesByTypeClass,
+    isLoadingClassSchedulesByTypeClass,
+  } = useClassSchedules(form.getValues("typeClass") as TypeClass);
+
+  const [prices, setPrices] = useState({
+    adults: 0,
+    children: 0,
+  });
+
   // const now = today(getLocalTimeZone());
   const day = new CalendarDate(2024, 12, 23);
   const disabledRanges = [[day, day]];
@@ -75,6 +92,47 @@ export default function CreateClassForm({
     form.setValue("dateClass", new Date(date.year, date.month - 1, date.day));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [date]);
+
+  useEffect(() => {
+    if (pricesDolar) {
+      const priceAdult =
+        pricesDolar &&
+        pricesDolar.filter((price) => price.classTypeUser === "ADULT");
+      const priceChildren = pricesDolar.filter(
+        (price) => price.classTypeUser === "CHILD",
+      );
+      setPrices({
+        adults: priceAdult[0]?.price ?? 0,
+        children: priceChildren[0]?.price ?? 0,
+      });
+    }
+  }, [pricesDolar]);
+
+  useEffect(() => {
+    if (prices) {
+      form.setValue(
+        "totalPriceAdults",
+        prices.adults * form.getValues("totalAdults"),
+      );
+      form.setValue(
+        "totalPriceChildren",
+        prices.children * form.getValues("totalChildren"),
+      );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [prices, form.watch("totalAdults"), form.watch("totalChildren")]);
+
+  useEffect(
+    () => {
+      form.setValue(
+        "totalPrice",
+        form.getValues("totalPriceAdults") +
+          form.getValues("totalPriceChildren"),
+      );
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [form.watch("totalPriceAdults"), form.watch("totalPriceChildren")],
+  );
 
   const { dataClassLanguagesAll, isLoading } = useClassLanguages();
   return (
@@ -184,7 +242,19 @@ export default function CreateClassForm({
             <FormItem>
               <FormLabel>Selecciona el horario</FormLabel>
               <FormControl>
-                <InputTime onChange={field.onChange} date={field.value} />
+                {isLoadingClassSchedulesByTypeClass ? (
+                  <span>Loading...</span>
+                ) : errorClassSchedulesByTypeClass ? (
+                  <span>Error</span>
+                ) : (
+                  dataClassSchedulesByTypeClass && (
+                    <ClassScheduleEditable
+                      options={dataClassSchedulesByTypeClass}
+                      value={field.value}
+                      onChange={field.onChange}
+                    />
+                  )
+                )}
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -255,27 +325,12 @@ export default function CreateClassForm({
             name="totalPriceAdults"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Precio por adulto</FormLabel>
+                <FormLabel>Precio adultos</FormLabel>
                 <FormControl>
                   <div className="flex gap-2">
                     <Input
                       type="number"
-                      defaultValue={0}
-                      min={0}
-                      {...field}
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        const parsedValue = parseInt(value, 10);
-                        if (!isNaN(parsedValue)) {
-                          field.onChange(parsedValue);
-                        } else {
-                          field.onChange(0);
-                        }
-                      }}
-                    />
-                    <Input
-                      type="number"
-                      defaultValue={0}
+                      defaultValue={field.value}
                       min={0}
                       {...field}
                       onChange={(e) => {
@@ -291,7 +346,13 @@ export default function CreateClassForm({
                   </div>
                 </FormControl>
                 <FormMessage />
-                <FormDescription>$30</FormDescription>
+                <FormDescription>
+                  {pricesDolar &&
+                    `USD ${pricesDolar
+                      .filter((item) => item.classTypeUser === "ADULT")
+                      .map((item) => item.price)
+                      .join(",")}`}
+                </FormDescription>
               </FormItem>
             )}
           />
@@ -304,7 +365,7 @@ export default function CreateClassForm({
                 <FormControl>
                   <Input
                     type="number"
-                    defaultValue={0}
+                    defaultValue={field.value}
                     min={0}
                     {...field}
                     onChange={(e) => {
@@ -319,11 +380,36 @@ export default function CreateClassForm({
                   />
                 </FormControl>
                 <FormMessage />
-                <FormDescription>$20</FormDescription>
+                <FormDescription>
+                  {pricesDolar &&
+                    `USD ${pricesDolar
+                      .filter((item) => item.classTypeUser === "CHILD")
+                      .map((item) => item.price)
+                      .join(",")}`}
+                </FormDescription>
               </FormItem>
             )}
           />
         </div>
+        <FormField
+          control={form.control}
+          name="totalPrice"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Precio total</FormLabel>
+              <FormControl>
+                <Input
+                  readOnly
+                  type="number"
+                  defaultValue={field.value}
+                  min={0}
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <Separator />
         <span className="font-bold">Datos del cliente</span>
         <div className="grid grid-cols-2 gap-4">
@@ -349,7 +435,7 @@ export default function CreateClassForm({
               <FormItem>
                 <FormLabel>Correo electrónico</FormLabel>
                 <FormControl>
-                  <Input placeholder="" type="email" {...field} />
+                  <Input {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

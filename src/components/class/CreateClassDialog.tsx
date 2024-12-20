@@ -1,6 +1,5 @@
 "use client";
 
-import { useClasses } from "@/hooks/use-class";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { CreateClassSchema, createClassSchema } from "@/schemas";
 import { TypeClass } from "@/types";
@@ -44,8 +43,6 @@ export function CreateClassDialog() {
   const [open, setOpen] = useState(false);
   const isDesktop = useMediaQuery("(min-width: 640px)");
 
-  const {} = useClasses();
-
   const form = useForm<createClassSchema>({
     resolver: zodResolver(CreateClassSchema),
     defaultValues: {
@@ -63,6 +60,7 @@ export function CreateClassDialog() {
       totalPrice: 0,
     },
   });
+  console.log("🚀 ~ CreateClassDialog ~ form:", form.watch());
   const onSubmit = async (input: createClassSchema) => {
     console.log("🚀 ~ onSubmit ~ input:", input);
     try {
