@@ -5,7 +5,7 @@ import {
   createClassScheduleSchema,
   CreateClassScheduleSchema,
 } from "@/schemas/classConfig/createClassScheduleSchema";
-import { TypeClass } from "@/types";
+import { TypeClass, typeClassLabels } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus } from "lucide-react";
 import { useState } from "react";
@@ -128,7 +128,11 @@ export function AddScheduleDialog({
                           <SelectContent>
                             {Object.keys(TypeClass).map((type) => (
                               <SelectItem key={type} value={type}>
-                                {type}
+                                {
+                                  typeClassLabels[
+                                    type as keyof typeof TypeClass
+                                  ]
+                                }
                               </SelectItem>
                             ))}
                           </SelectContent>
