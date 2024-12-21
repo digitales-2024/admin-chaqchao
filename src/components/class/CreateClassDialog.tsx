@@ -1,5 +1,6 @@
 "use client";
 
+import { useClasses } from "@/hooks/use-class";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { CreateClassSchema, createClassSchema } from "@/schemas";
 import { TypeClass } from "@/types";
@@ -60,10 +61,12 @@ export function CreateClassDialog() {
       totalPrice: 0,
     },
   });
-  console.log("🚀 ~ CreateClassDialog ~ form:", form.watch());
+  const { createClass } = useClasses();
   const onSubmit = async (input: createClassSchema) => {
-    console.log("🚀 ~ onSubmit ~ input:", input);
     try {
+      await createClass(input);
+      setOpen(!open);
+      form.reset();
     } catch (error) {
       throw error;
     }
