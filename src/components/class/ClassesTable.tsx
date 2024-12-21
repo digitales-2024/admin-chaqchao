@@ -41,7 +41,6 @@ export const ClassesTable = ({
     () => classesTableColumns(colors, uniqueLanguage, newParticipants), // Pasar newParticipants
     [colors, uniqueLanguage, newParticipants],
   );
-
   return (
     <DataTableExpanded
       data={data}
