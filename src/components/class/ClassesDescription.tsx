@@ -1,6 +1,6 @@
 "use client";
 
-import { ClassesDataAdmin } from "@/types";
+import { ClassesDataAdmin, typeClassColors, typeClassLabels } from "@/types";
 import { format, parseISO } from "date-fns";
 import { es } from "date-fns/locale";
 import {
@@ -17,6 +17,8 @@ import {
 
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+
+import { cn } from "@/lib/utils";
 
 import {
   Accordion,
@@ -45,7 +47,8 @@ const formatCurrency = (amount: number, currency: string) => {
 };
 
 export const ClassesDescription = ({ row }: { row: ClassesDataAdmin }) => {
-  const { dateClass, scheduleClass, classes, totalParticipants } = row;
+  const { dateClass, scheduleClass, classes, totalParticipants, typeClass } =
+    row;
   return (
     <div className="p-4">
       <div className="flex items-center justify-between">
@@ -71,6 +74,13 @@ export const ClassesDescription = ({ row }: { row: ClassesDataAdmin }) => {
                   <span className="text-sm font-light">
                     {totalParticipants}/8{" "}
                   </span>
+                </Badge>
+              </div>
+              <div>
+                <Badge
+                  className={cn("font-medium", typeClassColors[typeClass])}
+                >
+                  {typeClassLabels[typeClass]}
                 </Badge>
               </div>
             </div>
