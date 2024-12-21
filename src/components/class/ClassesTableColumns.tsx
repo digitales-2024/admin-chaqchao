@@ -1,10 +1,17 @@
-import { ClassesDataAdmin } from "@/types";
+import {
+  ClassesDataAdmin,
+  TypeClass,
+  typeClassColors,
+  typeClassLabels,
+} from "@/types";
 import { ColumnDef } from "@tanstack/react-table";
 import { Calendar, ChevronDown, ChevronUp, Clock } from "lucide-react";
 
 import { DataTableColumnHeader } from "@/components/data-table/DataTableColumnHeader";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+
+import { cn } from "@/lib/utils";
 
 import { Badge } from "../ui/badge";
 import ParticipantsCell from "./ParticipantsClassCell";
@@ -55,6 +62,27 @@ export const classesTableColumns = (
         <Calendar className="mr-2 h-4 w-4" />
         <div className="min-w-40 truncate capitalize">
           {row.getValue("fecha")}
+        </div>
+      </div>
+    ),
+  },
+  {
+    id: "tipo clase",
+    accessorKey: "typeClass",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Tipo de Clase" />
+    ),
+    cell: ({ row }) => (
+      <div className="flex items-center">
+        <div className="min-w-40 truncate capitalize">
+          <span
+            className={cn(
+              "font-medium",
+              typeClassColors[row.getValue("tipo clase") as TypeClass],
+            )}
+          >
+            {typeClassLabels[row.getValue("tipo clase") as TypeClass]}
+          </span>
         </div>
       </div>
     ),
