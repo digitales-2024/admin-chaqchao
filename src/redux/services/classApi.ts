@@ -1,3 +1,4 @@
+import { createClassSchema } from "@/schemas";
 import { ClassesDataAdmin } from "@/types";
 import { createApi } from "@reduxjs/toolkit/query/react";
 
@@ -8,6 +9,17 @@ export const classApi = createApi({
   baseQuery: baseQueryWithReauth,
   tagTypes: ["Class Admin"],
   endpoints: (build) => ({
+    // Crear una nueva clase
+    createClass: build.mutation<ClassesDataAdmin, createClassSchema>({
+      query: (data) => ({
+        url: "/class/admin",
+        method: "POST",
+        body: data,
+        credentials: "include",
+      }),
+      invalidatesTags: ["Class Admin"],
+    }),
+
     // Obtener todas las clases
     getAllClasses: build.query<ClassesDataAdmin[], { date?: string }>({
       query: ({ date }) => ({
@@ -42,6 +54,7 @@ export const classApi = createApi({
 });
 
 export const {
+  useCreateClassMutation,
   useGetAllClassesQuery,
   useExportClassesToExcelMutation,
   useExportClassesToPdfMutation,

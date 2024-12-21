@@ -14,6 +14,7 @@ export type ClassData = {
   dateClass: Date;
   scheduleClass: string;
   comments: string;
+  typeClass: TypeClass;
 };
 
 export type ClassesDataAdmin = {
@@ -21,6 +22,7 @@ export type ClassesDataAdmin = {
   scheduleClass: string;
   totalParticipants: number;
   classLanguage: string;
+  typeClass: TypeClass;
   classes: ClassData[];
 };
 

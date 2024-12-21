@@ -2,7 +2,9 @@ import {
   useGetAllClassesQuery,
   useExportClassesToExcelMutation,
   useExportClassesToPdfMutation,
+  useCreateClassMutation,
 } from "@/redux/services/classApi";
+import { createClassSchema } from "@/schemas";
 import { socket } from "@/socket/socket";
 import { ClassesDataAdmin, CustomErrorData } from "@/types";
 import { translateError } from "@/utils/translateError";
@@ -24,6 +26,7 @@ const mapSelectedRowsToClassesData = (
       scheduleClass: original.scheduleClass,
       totalParticipants: original.totalParticipants,
       classLanguage: original.classLanguage,
+      typeClass: original.typeClass,
       classes: original.classes.map((classDetail) => ({
         id: classDetail.id,
         userName: classDetail.userName,
@@ -40,6 +43,7 @@ const mapSelectedRowsToClassesData = (
         dateClass: classDetail.dateClass,
         scheduleClass: classDetail.scheduleClass,
         comments: classDetail.comments,
+        typeClass: classDetail.typeClass,
       })),
     };
   });
@@ -49,6 +53,8 @@ const mapSelectedRowsToClassesData = (
 export const useClasses = (date?: string) => {
   // Validacion de la fecha de consulta o fecha actual
   const queryDate = date || new Date().toISOString().split("T")[0];
+
+  const [createClassMutation] = useCreateClassMutation();
 
   const {
     data: allDataClasses,
@@ -186,6 +192,39 @@ export const useClasses = (date?: string) => {
     });
   };
 
+  /**
+   * Crear una nueva clase
+   * @param data Datos de la clase
+   * @returns Datos de la clase creada
+   */
+  const createClass = async (data: createClassSchema) => {
+    const promise = () =>
+      new Promise(async (resolve, reject) => {
+        try {
+          const result = await createClassMutation(data).unwrap();
+          resolve(result);
+        } catch (error) {
+          if (error && typeof error === "object" && "data" in error) {
+            const errorMessage = (error.data as CustomErrorData).message;
+            const message = translateError(errorMessage as string);
+            reject(new Error(message));
+          } else {
+            reject(
+              new Error(
+                "Ocurrió un error inesperado, por favor intenta de nuevo",
+              ),
+            );
+          }
+        }
+      });
+
+    return toast.promise(promise(), {
+      loading: "Creando nueva clase...",
+      success: "Clase creada con éxito",
+      error: (err) => err.message,
+    });
+  };
+
   return {
     allDataClasses,
     error,
@@ -196,5 +235,6 @@ export const useClasses = (date?: string) => {
     exportClassesToPdf,
     isLoadingExportPdf,
     errorExportPdf,
+    createClass,
   };
 };
