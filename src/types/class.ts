@@ -21,9 +21,9 @@ export type ClassesDataAdmin = {
   dateClass: string;
   scheduleClass: string;
   totalParticipants: number;
-  classLanguage: string;
+  languageClass: string;
   typeClass: TypeClass;
-  classes: ClassData[];
+  registers: ClassData[];
 };
 
 export enum TypeClass {

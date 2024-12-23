@@ -25,9 +25,9 @@ const mapSelectedRowsToClassesData = (
       dateClass: original.dateClass,
       scheduleClass: original.scheduleClass,
       totalParticipants: original.totalParticipants,
-      classLanguage: original.classLanguage,
+      languageClass: original.languageClass,
       typeClass: original.typeClass,
-      classes: original.classes.map((classDetail) => ({
+      registers: original.registers.map((classDetail) => ({
         id: classDetail.id,
         userName: classDetail.userName,
         userEmail: classDetail.userEmail,
