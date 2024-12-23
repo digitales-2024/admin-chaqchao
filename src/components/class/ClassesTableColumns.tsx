@@ -5,6 +5,8 @@ import {
   typeClassLabels,
 } from "@/types";
 import { ColumnDef } from "@tanstack/react-table";
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
 import { Calendar, ChevronDown, ChevronUp, Clock } from "lucide-react";
 
 import { DataTableColumnHeader } from "@/components/data-table/DataTableColumnHeader";
@@ -60,8 +62,8 @@ export const classesTableColumns = (
     cell: ({ row }) => (
       <div className="flex items-center">
         <Calendar className="mr-2 h-4 w-4" />
-        <div className="min-w-40 truncate capitalize">
-          {row.getValue("fecha")}
+        <div className="min-w-40 truncate normal-case">
+          {format(new Date(row.getValue("fecha")), "PPP", { locale: es })}
         </div>
       </div>
     ),
