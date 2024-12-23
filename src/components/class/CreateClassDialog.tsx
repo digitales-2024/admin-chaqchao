@@ -64,7 +64,7 @@ export function CreateClassDialog() {
   const { createClass } = useClasses();
   const onSubmit = async (input: createClassSchema) => {
     try {
-      await createClass(input);
+      await createClass({ ...input, isClosed: false, typeCurrency: "DOLAR" });
       setOpen(!open);
       form.reset();
     } catch (error) {
