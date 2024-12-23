@@ -197,7 +197,14 @@ export const useClasses = (date?: string) => {
    * @param data Datos de la clase
    * @returns Datos de la clase creada
    */
-  const createClass = async (data: createClassSchema) => {
+  const createClass = async (
+    data:
+      | createClassSchema
+      | {
+          isClosed: boolean;
+          typeCurrency: string;
+        },
+  ) => {
     const promise = () =>
       new Promise(async (resolve, reject) => {
         try {

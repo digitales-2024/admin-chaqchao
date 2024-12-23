@@ -10,7 +10,10 @@ export const classApi = createApi({
   tagTypes: ["Class Admin"],
   endpoints: (build) => ({
     // Crear una nueva clase
-    createClass: build.mutation<ClassesDataAdmin, createClassSchema>({
+    createClass: build.mutation<
+      ClassesDataAdmin,
+      createClassSchema | { isClosed: boolean; typeCurrency: string }
+    >({
       query: (data) => ({
         url: "/class/admin",
         method: "POST",
