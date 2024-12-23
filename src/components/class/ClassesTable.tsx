@@ -23,14 +23,10 @@ export const ClassesTable = ({
   newParticipants,
 }: ClassesTableProps) => {
   // Obtener lenguajes únicos
-  const uniqueLanguage = useMemo(() => {
-    return Array.from(
-      new Set(
-        data.map((item) => item.classes.map((c) => c.languageClass)).flat(),
-      ),
-    );
-  }, [data]);
-
+  const uniqueLanguage = useMemo(
+    () => data.map((classData) => classData.languageClass),
+    [data],
+  );
   // Generar colores basados en la cantidad de lenguajes únicos
   const colors = useMemo(
     () => generateColors(uniqueLanguage.length),
@@ -45,7 +41,7 @@ export const ClassesTable = ({
     <DataTableExpanded
       data={data}
       columns={columns}
-      getSubRows={(row) => row.classes as unknown as ClassesDataAdmin[]}
+      getSubRows={(row) => row.registers as unknown as ClassesDataAdmin[]}
       toolbarActions={<ClassesTableToolbarActions />}
       placeholder="Buscar clases..."
       renderExpandedRow={(row) => <ClassesDescription row={row} />}
