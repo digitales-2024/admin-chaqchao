@@ -47,7 +47,7 @@ const formatCurrency = (amount: number, currency: string) => {
 };
 
 export const ClassesDescription = ({ row }: { row: ClassesDataAdmin }) => {
-  const { dateClass, scheduleClass, classes, totalParticipants, typeClass } =
+  const { dateClass, scheduleClass, registers, totalParticipants, typeClass } =
     row;
   return (
     <div className="p-4">
@@ -78,7 +78,10 @@ export const ClassesDescription = ({ row }: { row: ClassesDataAdmin }) => {
               </div>
               <div>
                 <Badge
-                  className={cn("font-medium", typeClassColors[typeClass])}
+                  className={cn(
+                    "font-medium hover:bg-transparent",
+                    typeClassColors[typeClass],
+                  )}
                 >
                   {typeClassLabels[typeClass]}
                 </Badge>
@@ -92,7 +95,7 @@ export const ClassesDescription = ({ row }: { row: ClassesDataAdmin }) => {
               className="mb-4 h-1"
             />{" "}
             <div className="space-y-4">
-              {classes.map((classData) => (
+              {registers.map((classData) => (
                 <Card key={classData.id} className="p-3">
                   <CardContent className="p-5">
                     <div className="grid w-full grid-cols-3 items-center gap-4">
