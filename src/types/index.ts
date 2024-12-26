@@ -20,6 +20,8 @@ export type {
   ClassRegistrationData,
   ClassScheduleData,
   TypeClassPricesData,
+  ClassCapacityData,
+  TypeClassCapacitiesData,
 } from "./classConfigs";
 export {
   type Category,
