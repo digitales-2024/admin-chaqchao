@@ -81,7 +81,7 @@ export default function ClassScheduleEditable({
         <Input
           value={editValue}
           onChange={handleInputChange}
-          placeholder="Editar o agregar opción"
+          placeholder="HH:mm"
         />
       )}
       <Button
