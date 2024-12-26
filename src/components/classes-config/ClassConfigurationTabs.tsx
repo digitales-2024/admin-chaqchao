@@ -1,9 +1,16 @@
-import { CalendarClock, Clock2, CreditCard, Languages } from "lucide-react";
+import {
+  CalendarClock,
+  Clock2,
+  CreditCard,
+  Languages,
+  UsersRound,
+} from "lucide-react";
 import { useState } from "react";
 
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
+import { CapacityConfigSection } from "./class-capacity-config/CapacityConfigSection";
 import { LanguageConfigSection } from "./class-language-config/LanguageConfigSection";
 import { PriceConfigSection } from "./class-price-config/PriceConfigSection";
 import { RegistrationConfigSection } from "./class-registration-config/RegistrationConfigSection";
@@ -34,6 +41,12 @@ const tabs = [
     label: "Precio",
     content: <PriceConfigSection />,
   },
+  {
+    id: "capacity",
+    icon: UsersRound,
+    label: "Capacidad",
+    content: <CapacityConfigSection />,
+  },
 ];
 
 export default function ClassConfigurationTabs() {
@@ -46,7 +59,7 @@ export default function ClassConfigurationTabs() {
         onValueChange={(value) => setActiveTab(value)}
         className="w-full"
       >
-        <TabsList className="grid h-fit w-full grid-cols-1 sm:grid-cols-4">
+        <TabsList className="grid h-fit w-full grid-cols-1 sm:grid-cols-5">
           {tabs.map((tab) => (
             <TabsTrigger key={tab.id} className="flex" value={tab.id}>
               <tab.icon className="mr-2 h-4 w-4 flex-shrink-0" />
