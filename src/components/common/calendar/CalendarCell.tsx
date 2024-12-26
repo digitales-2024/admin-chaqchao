@@ -8,7 +8,7 @@ import { useCalendarCell } from "@react-aria/calendar";
 import { useFocusRing } from "@react-aria/focus";
 import { mergeProps } from "@react-aria/utils";
 import type { CalendarState } from "@react-stately/calendar";
-import { X } from "lucide-react";
+import { Minus } from "lucide-react";
 import { useRef } from "react";
 
 import { cn } from "@/lib/utils";
@@ -70,11 +70,13 @@ export function CalendarCell({
           )}
         >
           {isUnavailable && (
-            <X className="absolute size-full" strokeWidth={0.5} />
+            <Minus className="absolute size-full" strokeWidth={0.5} />
           )}
           <div className="flex flex-col items-center justify-center">
             {formattedDate}
-            <span className="text-xs font-thin text-gray-300">$30</span>
+            {!isUnavailable && (
+              <span className="text-xs font-thin text-gray-300">$30</span>
+            )}
           </div>
           {isDateToday && (
             <div

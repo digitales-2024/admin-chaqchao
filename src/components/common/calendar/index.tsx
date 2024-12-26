@@ -29,7 +29,7 @@ export function Calendar(props: CalendarProps<DateValue>) {
   return (
     <div
       {...calendarProps}
-      className="inline-block w-fit rounded-lg p-10 text-gray-800"
+      className="inline-block w-full rounded-lg p-10 text-gray-800"
     >
       <CalendarHeader
         state={state}
