@@ -3,10 +3,11 @@ import {
   useExportClassesToExcelMutation,
   useExportClassesToPdfMutation,
   useCreateClassMutation,
+  useGetClosedClassesQuery,
 } from "@/redux/services/classApi";
 import { createClassSchema } from "@/schemas";
 import { socket } from "@/socket/socket";
-import { ClassesDataAdmin, CustomErrorData } from "@/types";
+import { ClassesDataAdmin, CustomErrorData, TypeClass } from "@/types";
 import { translateError } from "@/utils/translateError";
 import { format } from "date-fns";
 import { useEffect } from "react";
@@ -27,6 +28,7 @@ const mapSelectedRowsToClassesData = (
       totalParticipants: original.totalParticipants,
       languageClass: original.languageClass,
       typeClass: original.typeClass,
+      isClosed: original.isClosed,
       registers: original.registers.map((classDetail) => ({
         id: classDetail.id,
         userName: classDetail.userName,
@@ -50,9 +52,23 @@ const mapSelectedRowsToClassesData = (
 };
 
 // Hook para obtener todas las clases
-export const useClasses = (date?: string) => {
+export const useClasses = (date?: string, typeClass?: TypeClass) => {
   // Validacion de la fecha de consulta o fecha actual
   const queryDate = date || new Date().toISOString().split("T")[0];
+
+  const {
+    data: closedClasses,
+    isLoading: isLoadingClosedClasses,
+    error: errorClosedClasses,
+  } = useGetClosedClassesQuery(
+    {
+      date: queryDate,
+      typeClass,
+    },
+    {
+      skip: !typeClass && !date,
+    },
+  );
 
   const [createClassMutation] = useCreateClassMutation();
 
@@ -243,5 +259,8 @@ export const useClasses = (date?: string) => {
     isLoadingExportPdf,
     errorExportPdf,
     createClass,
+    closedClasses,
+    isLoadingClosedClasses,
+    errorClosedClasses,
   };
 };
