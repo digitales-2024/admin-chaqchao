@@ -14,9 +14,15 @@ export const CreateClassSchema = z.object({
   userPhone: z.string().refine(isValidPhoneNumber, {
     message: "El número de teléfono es inválido",
   }),
-  scheduleClass: z.string().min(1, {
-    message: "El horario de la clase es obligatorio",
-  }),
+  scheduleClass: z
+    .string()
+    .min(1, {
+      message: "El horario de la clase es obligatorio",
+    })
+    .regex(
+      /^(?:[01]\d|2[0-3]):[0-5]\d$/,
+      "Debe ser un formato válido de hora (HH:mm)",
+    ),
   languageClass: z.string().min(1, {
     message: "El idioma de la clase es obligatorio",
   }),

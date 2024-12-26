@@ -23,6 +23,7 @@ export type ClassesDataAdmin = {
   totalParticipants: number;
   languageClass: string;
   typeClass: TypeClass;
+  isClosed: boolean;
   registers: ClassData[];
 };
 
