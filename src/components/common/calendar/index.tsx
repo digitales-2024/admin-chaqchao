@@ -25,7 +25,6 @@ export function Calendar(props: CalendarProps<DateValue>) {
     props,
     state,
   );
-
   return (
     <div
       {...calendarProps}
