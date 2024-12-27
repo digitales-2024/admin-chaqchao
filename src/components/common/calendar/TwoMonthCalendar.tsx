@@ -17,6 +17,7 @@ import { CalendarCheck, ChevronLeft, ChevronRight, Minus } from "lucide-react";
 import * as React from "react";
 
 import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 
 import { cn } from "@/lib/utils";
 
@@ -170,8 +171,9 @@ export function TwoMonthCalendar({
           <ChevronRight className="h-4 w-4" />
         </Button>
       </div>
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-[1fr_auto_1fr]">
         {renderMonth(monthStart)}
+        <Separator orientation="vertical" className="hidden sm:flex" />
         {renderMonth(addMonths(monthStart, 1))}
       </div>
     </div>
