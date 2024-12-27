@@ -26,8 +26,8 @@ export const CreateClassSchema = z.object({
   languageClass: z.string().min(1, {
     message: "El idioma de la clase es obligatorio",
   }),
-  dateClass: z.string().min(1, {
-    message: "La fecha de la clase es obligatoria",
+  dateClass: z.date({
+    required_error: "Seleccione un fecha para su clase",
   }),
   totalAdults: z.number().int().min(0, {
     message: "El total de adultos es obligatorio",

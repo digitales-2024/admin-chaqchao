@@ -1,5 +1,5 @@
 import { createClassSchema } from "@/schemas";
-import { ClassesDataAdmin } from "@/types";
+import { ClassesDataAdmin, TypeClass } from "@/types";
 import { createApi } from "@reduxjs/toolkit/query/react";
 
 import baseQueryWithReauth from "./baseQuery";
@@ -54,15 +54,15 @@ export const classApi = createApi({
       }),
     }),
 
-    // Obtener las clases cerradas de un mes
-    getClosedClasses: build.query<
+    // Obtener las clases futuras
+    getClassesFutures: build.query<
       ClassesDataAdmin[],
-      { date: string; schedule?: string }
+      { typeClass?: TypeClass; schedule?: string }
     >({
-      query: ({ date, schedule }) => ({
-        url: "/class/admin/closed",
+      query: ({ typeClass, schedule }) => ({
+        url: "/class/admin/futures",
         method: "GET",
-        params: { date, schedule },
+        params: { typeClass, schedule },
         credentials: "include",
       }),
       providesTags: ["Class Admin"],
@@ -71,12 +71,12 @@ export const classApi = createApi({
     // Verificar la existencia de una clase
     checkClassExist: build.query<
       ClassesDataAdmin,
-      { schedule?: string; date: string }
+      { schedule?: string; date: string; typeClass: TypeClass }
     >({
-      query: ({ schedule, date }) => ({
+      query: ({ schedule, date, typeClass }) => ({
         url: "/class/admin/check-class",
         method: "GET",
-        params: { schedule, date },
+        params: { schedule, date, typeClass },
         credentials: "include",
       }),
     }),
@@ -88,6 +88,6 @@ export const {
   useGetAllClassesQuery,
   useExportClassesToExcelMutation,
   useExportClassesToPdfMutation,
-  useGetClosedClassesQuery,
+  useGetClassesFuturesQuery,
   useCheckClassExistQuery,
 } = classApi;
