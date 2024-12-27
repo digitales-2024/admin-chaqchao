@@ -1,7 +1,6 @@
 "use client";
 import { useClasses } from "@/hooks/use-class";
 import { useClassCapacity } from "@/hooks/use-class-capacity";
-import { useMediaQuery } from "@/hooks/use-media-query";
 import { CreateClassSchema, createClassSchema } from "@/schemas";
 import { TypeClass } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -30,16 +29,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from "@/components/ui/drawer";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 import CreateClassForm from "./CreateClassForm";
@@ -53,7 +42,6 @@ const dataForm = {
 
 export function CreateClassDialog() {
   const [open, setOpen] = useState(false);
-  const isDesktop = useMediaQuery("(min-width: 640px)");
 
   const form = useForm<createClassSchema>({
     resolver: zodResolver(CreateClassSchema),
@@ -120,152 +108,104 @@ export function CreateClassDialog() {
 
   const [openAlertConfirm, setOpenAlertConfirm] = useState<boolean>(false);
 
-  if (isDesktop)
-    return (
-      <>
-        <Dialog open={open} onOpenChange={handleClose}>
-          <DialogTrigger asChild>
-            <Button variant="outline" size="sm">
-              <Plus className="mr-2 size-4" aria-hidden="true" />
-              {dataForm.button}
-            </Button>
-          </DialogTrigger>
-          <DialogContent
-            tabIndex={undefined}
-            className="w-full lg:min-w-[800px]"
-          >
-            <DialogHeader>
-              <DialogTitle>{dataForm.title}</DialogTitle>
-              <DialogDescription>{dataForm.description}</DialogDescription>
-            </DialogHeader>
-            <ScrollArea className="h-full max-h-[80vh] w-full justify-center gap-4">
-              {open && (
-                <CreateClassForm form={form} onSubmit={onSubmit}>
-                  <DialogFooter>
-                    <div className="flex w-full flex-row-reverse gap-2">
-                      <Button
-                        type="submit"
-                        className="w-full"
-                        disabled={!isDisabled}
-                      >
-                        Crear registro
-                      </Button>
-                      <AlertDialog
-                        open={openAlertConfirm}
-                        onOpenChange={setOpenAlertConfirm}
-                      >
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>
-                              ¿Quieres cerrar la clase?
-                            </AlertDialogTitle>
-                            <AlertDialogDescription>
-                              Resumen de la clase
-                            </AlertDialogDescription>
-                            <SummaryClass class={form} />
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                            <AlertDialogAction asChild>
-                              <Button
-                                className="w-full border-none bg-slate-200 text-gray-900 hover:bg-slate-300"
-                                variant="ghost"
-                                onClick={handleCreateClass}
-                              >
-                                {isLoadingCreateClass ? (
-                                  <>
-                                    <RefreshCcw
-                                      className="mr-2 size-4 animate-spin"
-                                      aria-hidden="true"
-                                    />
-                                    Creando...
-                                  </>
-                                ) : (
-                                  "No, solo crear registro"
-                                )}
-                              </Button>
-                            </AlertDialogAction>
-                            <AlertDialogAction asChild>
-                              <Button
-                                className="w-full"
-                                onClick={handleCreateClassClosed}
-                              >
-                                {isLoadingCreateClass ? (
-                                  <>
-                                    <RefreshCcw
-                                      className="mr-2 size-4 animate-spin"
-                                      aria-hidden="true"
-                                    />
-                                    Creando...
-                                  </>
-                                ) : (
-                                  "Si, cerrar la clase"
-                                )}
-                              </Button>
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                      <DialogClose asChild>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          className="w-full"
-                        >
-                          Cancelar
-                        </Button>
-                      </DialogClose>
-                    </div>
-                  </DialogFooter>
-                </CreateClassForm>
-              )}
-            </ScrollArea>
-          </DialogContent>
-        </Dialog>
-      </>
-    );
-
   return (
     <>
-      <Drawer
-        open={open}
-        onOpenChange={setOpen}
-        onClose={() => {
-          form.reset();
-        }}
-      >
-        <DrawerTrigger asChild>
+      <Dialog open={open} onOpenChange={handleClose}>
+        <DialogTrigger asChild>
           <Button variant="outline" size="sm">
             <Plus className="mr-2 size-4" aria-hidden="true" />
             {dataForm.button}
           </Button>
-        </DrawerTrigger>
-
-        <DrawerContent className="h-[90vh]" tabIndex={undefined}>
-          <DrawerHeader>
-            <DrawerTitle>{dataForm.title}</DrawerTitle>
-            <DrawerDescription>{dataForm.description}</DrawerDescription>
-          </DrawerHeader>
-          <ScrollArea className="mt-4 max-h-full w-full gap-4 pr-4">
-            <CreateClassForm form={form} onSubmit={onSubmit}>
-              <DrawerFooter className="gap-2 sm:space-x-0">
-                <Button>
-                  {/* {isLoadingCreateProduct && (
-                    <RefreshCcw
-                      className="mr-2 size-4 animate-spin"
-                      aria-hidden="true"
-                    />
-                  )} */}
-                  Registrar
-                </Button>
-                <DrawerClose asChild>
-                  <Button variant="outline">Cancelar</Button>
-                </DrawerClose>
-              </DrawerFooter>
-            </CreateClassForm>
+        </DialogTrigger>
+        <DialogContent tabIndex={undefined} className="w-full lg:min-w-[800px]">
+          <DialogHeader>
+            <DialogTitle>{dataForm.title}</DialogTitle>
+            <DialogDescription>{dataForm.description}</DialogDescription>
+          </DialogHeader>
+          <ScrollArea className="h-full max-h-[80vh] w-full justify-center gap-4">
+            {open && (
+              <CreateClassForm form={form} onSubmit={onSubmit}>
+                <DialogFooter>
+                  <div className="flex w-full flex-row-reverse gap-2">
+                    <Button
+                      type="submit"
+                      className="w-full"
+                      disabled={!isDisabled}
+                    >
+                      Crear registro
+                    </Button>
+                    <AlertDialog
+                      open={openAlertConfirm}
+                      onOpenChange={setOpenAlertConfirm}
+                    >
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>
+                            ¿Quieres cerrar la clase?
+                          </AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Resumen de la clase
+                          </AlertDialogDescription>
+                          <SummaryClass class={form} />
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                          <AlertDialogAction asChild>
+                            <Button
+                              className="w-full border-none bg-slate-200 text-gray-900 hover:bg-slate-300"
+                              variant="ghost"
+                              onClick={handleCreateClass}
+                            >
+                              {isLoadingCreateClass ? (
+                                <>
+                                  <RefreshCcw
+                                    className="mr-2 size-4 animate-spin"
+                                    aria-hidden="true"
+                                  />
+                                  Creando...
+                                </>
+                              ) : (
+                                "No, solo crear registro"
+                              )}
+                            </Button>
+                          </AlertDialogAction>
+                          <AlertDialogAction asChild>
+                            <Button
+                              className="w-full"
+                              onClick={handleCreateClassClosed}
+                            >
+                              {isLoadingCreateClass ? (
+                                <>
+                                  <RefreshCcw
+                                    className="mr-2 size-4 animate-spin"
+                                    aria-hidden="true"
+                                  />
+                                  Creando...
+                                </>
+                              ) : (
+                                "Si, cerrar la clase"
+                              )}
+                            </Button>
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                    <DialogClose asChild>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="w-full"
+                      >
+                        Cancelar
+                      </Button>
+                    </DialogClose>
+                  </div>
+                </DialogFooter>
+              </CreateClassForm>
+            )}
           </ScrollArea>
-        </DrawerContent>
-      </Drawer>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
