@@ -117,7 +117,10 @@ export function CreateClassDialog() {
             {dataForm.button}
           </Button>
         </DialogTrigger>
-        <DialogContent tabIndex={undefined} className="w-full lg:min-w-[800px]">
+        <DialogContent
+          tabIndex={undefined}
+          className="min-w-full lg:min-w-[800px]"
+        >
           <DialogHeader>
             <DialogTitle>{dataForm.title}</DialogTitle>
             <DialogDescription>{dataForm.description}</DialogDescription>
