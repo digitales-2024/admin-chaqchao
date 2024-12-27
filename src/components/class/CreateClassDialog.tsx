@@ -53,7 +53,7 @@ export function CreateClassDialog() {
       userPhone: "",
       scheduleClass: "",
       languageClass: "",
-      dateClass: new Date(),
+      dateClass: "",
       totalAdults: 1,
       totalChildren: 0,
       totalPriceAdults: 0,
@@ -61,6 +61,7 @@ export function CreateClassDialog() {
       totalPrice: 0,
     },
   });
+  console.log("🚀 ~ CreateClassDialog ~ form:", form.watch());
   const { createClass } = useClasses();
   const onSubmit = async (input: createClassSchema) => {
     try {
@@ -76,8 +77,6 @@ export function CreateClassDialog() {
     setOpen(!open);
     form.reset();
   };
-
-  // Actualiza el progreso de la subida de la imagen y la creacion del producto pero solo si esta en proceso
 
   if (isDesktop)
     return (

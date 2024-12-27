@@ -1,11 +1,13 @@
 "use client";
 
-import { useClasses } from "@/hooks/use-class";
 import { useClassCapacity } from "@/hooks/use-class-capacity";
 import { useClassLanguages } from "@/hooks/use-class-language";
 import { useClassPrices } from "@/hooks/use-class-price";
 import { useClassSchedules } from "@/hooks/use-class-schedule";
-import { useCheckClassExistQuery } from "@/redux/services/classApi";
+import {
+  useCheckClassExistQuery,
+  useGetClosedClassesQuery,
+} from "@/redux/services/classApi";
 import { createClassSchema } from "@/schemas";
 import { ClassesDataAdmin, TypeClass, typeClassLabels } from "@/types";
 import {
@@ -72,7 +74,7 @@ export default function CreateClassForm({
   onSubmit,
   children,
 }: CreateClassFormProps) {
-  const [date, setDate] = useState(today(getLocalTimeZone()));
+  const [date, setDate] = useState<CalendarDate | null>();
 
   const handleChangeDate = (date: DateValue) => {
     setDate(date as CalendarDate);
@@ -93,50 +95,52 @@ export default function CreateClassForm({
     children: 0,
   });
 
-  const { closedClasses } = useClasses(
-    new Date().toISOString().split("T")[0],
-    form.getValues("typeClass") as TypeClass,
+  const { data: closedClasses } = useGetClosedClassesQuery(
+    {
+      date: form.getValues("dateClass"),
+      schedule: form.getValues("scheduleClass"),
+    },
+    {
+      skip: !form.getValues("dateClass") || !form.getValues("scheduleClass"),
+    },
   );
+
   const [classClosed, setClassClosed] = useState<ClassesDataAdmin[]>([]);
   useEffect(() => {
     if (closedClasses) {
       setClassClosed(closedClasses);
+    }
 
-      // Si la clase cerrda es hoy se muestra la siguiente clase
-      if (closedClasses.length > 0) {
-        closedClasses.forEach((closedClass) => {
-          const dateParse = parseDate(
-            format(closedClass.dateClass, "yyyy-MM-dd"),
-          );
-          if (
-            isEqualDay(dateParse, today(getLocalTimeZone())) &&
-            isEqualMonth(dateParse, today(getLocalTimeZone())) &&
-            isEqualYear(dateParse, today(getLocalTimeZone()))
-          ) {
-            setDate(new CalendarDate(date.year, date.month, date.day + 1));
-            form.setValue(
-              "dateClass",
-              new Date(date.year, date.month - 1, date.day + 1),
-            );
-          } else {
-            setDate(new CalendarDate(date.year, date.month, date.day));
-            form.setValue(
-              "dateClass",
-              new Date(date.year, date.month - 1, date.day),
-            );
-          }
-        });
-      } else {
-        // Si no hay clases cerradas se muestra la fecha actual
-        setDate(today(getLocalTimeZone()));
-        form.setValue(
-          "dateClass",
-          new Date(date.year, date.month - 1, date.day),
-        );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [closedClasses]);
+
+  useEffect(() => {
+    if (form.getValues("dateClass") && form.getValues("scheduleClass")) {
+      console.log("form.getValues(dateClass)", form.getValues("dateClass"));
+      // Busco en los closedClasses si el dia seleccionado es hoy entonces y esta cerrado entonces reseteo dateclass
+      if (
+        classClosed.find(
+          (closedClass) =>
+            isEqualYear(
+              parseDate(closedClass.dateClass),
+              today(getLocalTimeZone()),
+            ) &&
+            isEqualMonth(
+              parseDate(closedClass.dateClass),
+              today(getLocalTimeZone()),
+            ) &&
+            isEqualDay(
+              parseDate(closedClass.dateClass),
+              today(getLocalTimeZone()),
+            ) &&
+            closedClass.scheduleClass === form.getValues("scheduleClass"),
+        )
+      ) {
+        form.setValue("dateClass", "");
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [closedClasses]);
+  }, [form.watch("dateClass"), form.watch("scheduleClass")]);
 
   const disabledRanges =
     classClosed &&
@@ -164,7 +168,7 @@ export default function CreateClassForm({
   };
 
   useEffect(() => {
-    form.setValue("dateClass", new Date(date.year, date.month - 1, date.day));
+    if (date) form.setValue("dateClass", date.toString());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [date]);
 
@@ -211,13 +215,12 @@ export default function CreateClassForm({
 
   const { dataClassLanguagesAll, isLoading } = useClassLanguages();
   const { classCapacities, isLoadingClassCapacities } = useClassCapacity();
-  console.log("🚀 ~ classCapacities:", classCapacities);
-
   const { data, isLoading: isLoadingClassExist } = useCheckClassExistQuery(
     {
       schedule: form.getValues("scheduleClass"),
-      date: format(form.getValues("dateClass"), "yyyy-MM-dd"),
-      typeClass: form.getValues("typeClass") as TypeClass,
+      date:
+        form.getValues("dateClass") &&
+        format(form.getValues("dateClass"), "yyyy-MM-dd"),
     },
     {
       skip:
@@ -232,6 +235,14 @@ export default function CreateClassForm({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
+
+  useEffect(() => {
+    if (form.watch("typeClass")) {
+      form.setValue("scheduleClass", "");
+      form.setValue("dateClass", "");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form.watch("typeClass")]);
 
   return (
     <Form {...form}>
@@ -289,7 +300,7 @@ export default function CreateClassForm({
                   <span className="text-xs">No configurado</span>
                   <TooltipProvider>
                     <Tooltip>
-                      <TooltipTrigger>
+                      <TooltipTrigger type="button">
                         <AlertCircle className="size-5" />
                       </TooltipTrigger>
                       <TooltipContent className="max-w-64">
@@ -319,7 +330,7 @@ export default function CreateClassForm({
           <FormField
             control={form.control}
             name="dateClass"
-            render={() => (
+            render={({ field }) => (
               <FormItem>
                 <FormLabel>Selecciona la fecha de la clase</FormLabel>
                 <FormControl>
@@ -331,13 +342,18 @@ export default function CreateClassForm({
                         className="w-full px-20"
                       >
                         <CalendarIcon className="mr-2 h-4 w-4" />
-                        {date.toString()}
+                        {field.value ? (
+                          field.value.toString()
+                        ) : (
+                          <span className="text-muted-foreground">
+                            Selecciona una fecha
+                          </span>
+                        )}
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-full p-0 lg:max-w-full">
                       <Calendar
                         minValue={today(getLocalTimeZone())}
-                        defaultValue={today(getLocalTimeZone())}
                         value={date}
                         onChange={handleChangeDate}
                         isDateUnavailable={isDateUnavailable}
