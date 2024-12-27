@@ -9,7 +9,7 @@ import {
   useGetClassesFuturesQuery,
 } from "@/redux/services/classApi";
 import { createClassSchema } from "@/schemas";
-import { TypeClass, typeClassLabels } from "@/types";
+import { MethodPayment, TypeClass, typeClassLabels } from "@/types";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { AlertCircle, UsersRound } from "lucide-react";
@@ -46,6 +46,7 @@ import {
   TooltipTrigger,
 } from "../ui/tooltip";
 import ClassScheduleEditable from "./ClassScheduleEditable";
+import { PaymentMethodSelection } from "./PaymentMethodSelection";
 
 interface CreateClassFormProps
   extends Omit<React.ComponentPropsWithRef<"form">, "onSubmit"> {
@@ -407,9 +408,8 @@ export default function CreateClassForm({
                 <FormControl>
                   <Input
                     type="number"
-                    defaultValue={1}
+                    value={1}
                     min={1}
-                    {...field}
                     onChange={(e) => {
                       const value = e.target.value;
                       const parsedValue = parseInt(value, 10);
@@ -435,9 +435,8 @@ export default function CreateClassForm({
                 <FormControl>
                   <Input
                     type="number"
-                    defaultValue={0}
+                    value={0}
                     min={0}
-                    {...field}
                     onChange={(e) => {
                       const value = e.target.value;
                       const parsedValue = parseInt(value, 10);
@@ -466,9 +465,8 @@ export default function CreateClassForm({
                   <div className="flex gap-2">
                     <Input
                       type="number"
-                      defaultValue={field.value}
+                      value={field.value}
                       min={0}
-                      {...field}
                       onChange={(e) => {
                         const value = e.target.value;
                         const parsedValue = parseInt(value, 10);
@@ -501,9 +499,8 @@ export default function CreateClassForm({
                 <FormControl>
                   <Input
                     type="number"
-                    defaultValue={field.value}
+                    value={field.value}
                     min={0}
-                    {...field}
                     onChange={(e) => {
                       const value = e.target.value;
                       const parsedValue = parseInt(value, 10);
@@ -534,13 +531,7 @@ export default function CreateClassForm({
             <FormItem>
               <FormLabel>Precio total</FormLabel>
               <FormControl>
-                <Input
-                  readOnly
-                  type="number"
-                  defaultValue={field.value}
-                  min={0}
-                  {...field}
-                />
+                <Input readOnly type="number" {...field} min={0} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -600,7 +591,27 @@ export default function CreateClassForm({
             <FormItem>
               <FormLabel>Comentarios</FormLabel>
               <FormControl>
-                <Textarea placeholder="Agrega un comentario" {...field} />
+                <Textarea
+                  placeholder="Agrega un comentario"
+                  value={field.value}
+                  onChange={field.onChange}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="methodPayment"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Selecciona el método de pago</FormLabel>
+              <FormControl>
+                <PaymentMethodSelection
+                  value={field.value as MethodPayment}
+                  onChange={field.onChange}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>

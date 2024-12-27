@@ -58,8 +58,11 @@ export function CreateClassDialog() {
       totalPriceAdults: 0,
       totalPriceChildren: 0,
       totalPrice: 0,
+      comments: "",
+      methodPayment: "",
     },
   });
+  console.log("🚀 ~ CreateClassDialog ~ form:", form.watch());
   const { createClass, isLoadingCreateClass } = useClasses();
   const { classCapacities, isLoadingClassCapacities } = useClassCapacity();
   const onSubmit = async () => {
@@ -151,7 +154,7 @@ export function CreateClassDialog() {
                           </AlertDialogDescription>
                           <SummaryClass class={form} />
                         </AlertDialogHeader>
-                        <AlertDialogFooter className="space-y-2">
+                        <AlertDialogFooter>
                           <AlertDialogCancel>Cancelar</AlertDialogCancel>
                           <AlertDialogAction asChild>
                             <Button

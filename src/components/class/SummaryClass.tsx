@@ -1,10 +1,17 @@
 "use client";
+import { Izipay, Paypal } from "@/assets/icons";
 import { createClassSchema } from "@/schemas";
-import { TypeClass, typeClassColors, typeClassLabels } from "@/types";
+import {
+  MethodPayment,
+  TypeClass,
+  typeClassColors,
+  typeClassLabels,
+} from "@/types";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import {
   AlertCircle,
+  Banknote,
   CalendarDays,
   Clock,
   CreditCard,
@@ -79,10 +86,24 @@ export const SummaryClass = ({ class: classForm }: SummaryClassProps) => {
           </div>
 
           <div className="flex items-center gap-3 text-sm">
-            <CreditCard className="h-4 w-4 text-muted-foreground" />
+            <Banknote className="h-4 w-4 text-muted-foreground" />
             <span className="text-muted-foreground">Total:</span>
             <span className="font-medium">
               {classForm.getValues().totalPrice}
+            </span>
+          </div>
+          <div className="flex items-center gap-3 text-sm">
+            <CreditCard className="h-4 w-4 text-muted-foreground" />
+            <span className="text-muted-foreground">Método de pago:</span>
+            <span className="inline-flex items-center justify-center font-medium">
+              {classForm.getValues().methodPayment}
+              {""}
+              {classForm.getValues().methodPayment === MethodPayment.PAYPAL && (
+                <Paypal className="ml-2 h-4 w-4" />
+              )}
+              {classForm.getValues().methodPayment === MethodPayment.IZIPAY && (
+                <Izipay className="ml-2 h-4" />
+              )}
             </span>
           </div>
         </div>
