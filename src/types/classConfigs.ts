@@ -31,7 +31,7 @@ export type TypeClassScheduleData = {
 };
 
 export type TypeClassPricesData = {
-  [key in TypeClass]: ClassPriceConfigData;
+  [key in TypeClass]: ClassPriceConfigData[];
 };
 
 export type ClassCapacityData = {

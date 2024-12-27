@@ -1,6 +1,6 @@
 "use client";
 import { createClassSchema } from "@/schemas";
-import { TypeClass, typeClassLabels } from "@/types";
+import { TypeClass, typeClassColors, typeClassLabels } from "@/types";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { CalendarDays, Clock, UsersRound } from "lucide-react";
@@ -14,6 +14,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
+import { cn } from "@/lib/utils";
+
 interface SummaryClassProps {
   class: UseFormReturn<createClassSchema>;
 }
@@ -24,7 +26,13 @@ export const SummaryClass = ({ class: classForm }: SummaryClassProps) => {
         <CardTitle>Resumen de la clase</CardTitle>
         <CardDescription>
           Clase tipo{" "}
-          {typeClassLabels[classForm.getValues().typeClass as TypeClass]}
+          <span
+            className={cn(
+              typeClassColors[classForm.getValues().typeClass as TypeClass],
+            )}
+          >
+            {typeClassLabels[classForm.getValues().typeClass as TypeClass]}
+          </span>
         </CardDescription>
       </CardHeader>
       <CardContent>

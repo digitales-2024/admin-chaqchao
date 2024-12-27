@@ -99,7 +99,7 @@ export function PriceConfigSection() {
                                 ? "Adulto"
                                 : "Niño"}
                             </p>
-                            <p className="flex flex-wrap gap-2">
+                            <div className="flex flex-wrap gap-2">
                               <Badge variant="outline" className="flex gap-2">
                                 {price.typeCurrency === "DOLAR" ? (
                                   <DollarSign
@@ -120,7 +120,7 @@ export function PriceConfigSection() {
                                 {price.typeCurrency === "DOLAR" ? "$" : "S/"}{" "}
                                 {price.price}
                               </span>
-                            </p>
+                            </div>
                           </div>
                         </div>
                         <div className="flex space-x-2">
