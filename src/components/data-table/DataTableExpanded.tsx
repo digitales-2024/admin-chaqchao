@@ -14,7 +14,13 @@ import {
   useReactTable,
   VisibilityState,
 } from "@tanstack/react-table";
-import { CSSProperties, Fragment, ReactElement, useState } from "react";
+import {
+  CSSProperties,
+  Fragment,
+  ReactElement,
+  useEffect,
+  useState,
+} from "react";
 
 import {
   Table,
@@ -102,6 +108,14 @@ export function DataTableExpanded<TData, TValue>({
       backgroundColor: "white",
     };
   };
+
+  useEffect(() => {
+    if (data) {
+      table.setRowSelection({});
+      table.resetExpanded();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data]);
 
   return (
     <div className="w-full space-y-2.5 overflow-auto p-1">
