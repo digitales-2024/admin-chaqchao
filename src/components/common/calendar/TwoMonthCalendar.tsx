@@ -115,7 +115,7 @@ export function TwoMonthCalendar({
                 "relative h-9 w-9 p-0 font-normal",
                 !isCurrentMonth && "text-gray-400",
                 isSelected && "bg-primary text-primary-foreground",
-                isBlocked && "cursor-not-allowed bg-slate-100 text-gray-400",
+                isBlocked && "cursor-not-allowed bg-rose-100 text-rose-400",
                 isToday(date) && "bg-accent text-accent-foreground",
                 isCreated && "bg-emerald-100 text-emerald-700",
                 isSelected &&

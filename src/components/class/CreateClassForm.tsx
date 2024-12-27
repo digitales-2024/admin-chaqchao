@@ -163,6 +163,13 @@ export default function CreateClassForm({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.watch("typeClass")]);
 
+  useEffect(() => {
+    if (form.watch("scheduleClass")) {
+      form.resetField("dateClass");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form.watch("scheduleClass")]);
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5 p-5">
