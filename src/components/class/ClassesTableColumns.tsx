@@ -7,15 +7,31 @@ import {
 import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { Calendar, ChevronDown, ChevronUp, Clock } from "lucide-react";
+import {
+  Calendar,
+  ChevronDown,
+  ChevronUp,
+  ClipboardX,
+  Clock,
+  Ellipsis,
+} from "lucide-react";
+import { useState } from "react";
 
 import { DataTableColumnHeader } from "@/components/data-table/DataTableColumnHeader";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuShortcut,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 import { cn } from "@/lib/utils";
 
 import { Badge } from "../ui/badge";
+import { ClosedClassDialog } from "./ClosedClassDialog";
 import ParticipantsCell from "./ParticipantsClassCell";
 
 export const classesTableColumns = (
@@ -177,5 +193,46 @@ export const classesTableColumns = (
     enableSorting: false,
     enableHiding: false,
     enablePinning: true,
+  },
+  {
+    id: "actions",
+    cell: function Cell({ row }) {
+      const [setshowClosedClass, setSetshowClosedClass] =
+        useState<boolean>(false);
+      return (
+        <>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                aria-label="Open menu"
+                variant="ghost"
+                className="flex size-8 p-0 data-[state=open]:bg-muted"
+                disabled={row.original.isClosed}
+              >
+                <Ellipsis className="size-4" aria-hidden="true" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem
+                onSelect={() => {
+                  setSetshowClosedClass(true);
+                }}
+                disabled={row.original.isClosed}
+              >
+                Cerrar clase
+                <DropdownMenuShortcut>
+                  <ClipboardX className="ml-2 size-4" aria-hidden="true" />
+                </DropdownMenuShortcut>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <ClosedClassDialog
+            open={setshowClosedClass}
+            onOpenChange={setSetshowClosedClass}
+            id={row.original.id as string}
+          />
+        </>
+      );
+    },
   },
 ];
