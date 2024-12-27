@@ -95,14 +95,24 @@ export const classesTableColumns = (
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Horario" />
     ),
-    cell: ({ row }) => (
-      <div className="flex items-center">
-        <Clock className="mr-1 h-4 w-4" />
-        <div className="min-w-40 truncate lowercase">
-          {row.getValue("horario")}
+    cell: ({ row }) => {
+      return (
+        <div className="flex min-w-40 items-center gap-4">
+          <Clock className="mr-1 h-4 w-4" />
+          <div className="truncate lowercase">{row.getValue("horario")}</div>
+          <Badge
+            variant="outline"
+            className={cn("truncate text-xs font-thin lowercase", {
+              "border-none bg-rose-50 text-rose-500": row.original.isClosed,
+              "border-none bg-emerald-50 text-emerald-500":
+                !row.original.isClosed,
+            })}
+          >
+            {row.original.isClosed ? "cerrada" : "abierta"}
+          </Badge>
         </div>
-      </div>
-    ),
+      );
+    },
   },
   {
     id: "lenguaje",
@@ -138,6 +148,7 @@ export const classesTableColumns = (
 
       return (
         <ParticipantsCell
+          typeClass={row.original.typeClass}
           totalParticipants={totalParticipants}
           newParticipantsCount={newParticipantsCount}
         />
