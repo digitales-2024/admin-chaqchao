@@ -6,26 +6,13 @@ import { useClassPrices } from "@/hooks/use-class-price";
 import { useClassSchedules } from "@/hooks/use-class-schedule";
 import {
   useCheckClassExistQuery,
-  useGetClosedClassesQuery,
+  useGetClassesFuturesQuery,
 } from "@/redux/services/classApi";
 import { createClassSchema } from "@/schemas";
-import { ClassesDataAdmin, TypeClass, typeClassLabels } from "@/types";
-import {
-  CalendarDate,
-  getLocalTimeZone,
-  isEqualDay,
-  isEqualMonth,
-  isEqualYear,
-  parseDate,
-  today,
-} from "@internationalized/date";
-import type { DateValue } from "@react-aria/calendar";
+import { TypeClass, typeClassLabels } from "@/types";
 import { format } from "date-fns";
-import {
-  AlertCircle,
-  Calendar as CalendarIcon,
-  UsersRound,
-} from "lucide-react";
+import { es } from "date-fns/locale";
+import { AlertCircle, UsersRound } from "lucide-react";
 import { useEffect, useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 
@@ -47,11 +34,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-import { Calendar } from "../common/calendar";
+import { TwoMonthCalendar } from "../common/calendar/TwoMonthCalendar";
 import Loading from "../common/Loading";
-import { Button } from "../ui/button";
 import { PhoneInput } from "../ui/phone-input";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Separator } from "../ui/separator";
 import { Textarea } from "../ui/textarea";
 import {
@@ -74,12 +59,6 @@ export default function CreateClassForm({
   onSubmit,
   children,
 }: CreateClassFormProps) {
-  const [date, setDate] = useState<CalendarDate | null>();
-
-  const handleChangeDate = (date: DateValue) => {
-    setDate(date as CalendarDate);
-  };
-
   const { pricesDolar } = useClassPrices(
     form.getValues("typeClass") as TypeClass,
   );
@@ -95,82 +74,21 @@ export default function CreateClassForm({
     children: 0,
   });
 
-  const { data: closedClasses } = useGetClosedClassesQuery(
+  const { data: classesFutures } = useGetClassesFuturesQuery(
     {
-      date: form.getValues("dateClass"),
+      typeClass: form.getValues("typeClass") as TypeClass,
       schedule: form.getValues("scheduleClass"),
     },
     {
-      skip: !form.getValues("dateClass") || !form.getValues("scheduleClass"),
+      skip: !form.getValues("typeClass") || !form.getValues("scheduleClass"),
     },
   );
 
-  const [classClosed, setClassClosed] = useState<ClassesDataAdmin[]>([]);
-  useEffect(() => {
-    if (closedClasses) {
-      setClassClosed(closedClasses);
-    }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [closedClasses]);
-
   useEffect(() => {
     if (form.getValues("dateClass") && form.getValues("scheduleClass")) {
-      console.log("form.getValues(dateClass)", form.getValues("dateClass"));
-      // Busco en los closedClasses si el dia seleccionado es hoy entonces y esta cerrado entonces reseteo dateclass
-      if (
-        classClosed.find(
-          (closedClass) =>
-            isEqualYear(
-              parseDate(closedClass.dateClass),
-              today(getLocalTimeZone()),
-            ) &&
-            isEqualMonth(
-              parseDate(closedClass.dateClass),
-              today(getLocalTimeZone()),
-            ) &&
-            isEqualDay(
-              parseDate(closedClass.dateClass),
-              today(getLocalTimeZone()),
-            ) &&
-            closedClass.scheduleClass === form.getValues("scheduleClass"),
-        )
-      ) {
-        form.setValue("dateClass", "");
-      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.watch("dateClass"), form.watch("scheduleClass")]);
-
-  const disabledRanges =
-    classClosed &&
-    classClosed.map((closedClass) => {
-      const dateParse = parseDate(format(closedClass.dateClass, "yyyy-MM-dd"));
-
-      return [dateParse, dateParse];
-    });
-  const isDateUnavailable = (date: DateValue) => {
-    if (!date) {
-      return false;
-    }
-
-    if (!disabledRanges) {
-      return false;
-    }
-    if (disabledRanges.length === 0) {
-      return false;
-    }
-
-    return disabledRanges.some(
-      (interval) =>
-        date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0,
-    );
-  };
-
-  useEffect(() => {
-    if (date) form.setValue("dateClass", date.toString());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [date]);
 
   useEffect(() => {
     if (pricesDolar) {
@@ -221,11 +139,12 @@ export default function CreateClassForm({
       date:
         form.getValues("dateClass") &&
         format(form.getValues("dateClass"), "yyyy-MM-dd"),
+      typeClass: form.getValues("typeClass") as TypeClass,
     },
     {
       skip:
-        !form.getValues("scheduleClass") &&
-        !form.getValues("dateClass") &&
+        !form.getValues("scheduleClass") ||
+        !form.getValues("dateClass") ||
         !form.getValues("typeClass"),
     },
   );
@@ -239,7 +158,7 @@ export default function CreateClassForm({
   useEffect(() => {
     if (form.watch("typeClass")) {
       form.setValue("scheduleClass", "");
-      form.setValue("dateClass", "");
+      form.resetField("dateClass");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.watch("typeClass")]);
@@ -326,71 +245,107 @@ export default function CreateClassForm({
         </div>
         <Separator />
         <span className="font-bold">Datos de la clase</span>
-        <div className="grid grid-cols-2 gap-4">
-          <FormField
-            control={form.control}
-            name="dateClass"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Selecciona la fecha de la clase</FormLabel>
-                <FormControl>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="w-full px-20"
-                      >
-                        <CalendarIcon className="mr-2 h-4 w-4" />
-                        {field.value ? (
-                          field.value.toString()
-                        ) : (
-                          <span className="text-muted-foreground">
-                            Selecciona una fecha
-                          </span>
+
+        <FormField
+          control={form.control}
+          name="scheduleClass"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Selecciona el horario</FormLabel>
+              <FormControl>
+                {isLoadingClassSchedulesByTypeClass ? (
+                  <span>Loading...</span>
+                ) : errorClassSchedulesByTypeClass ? (
+                  <span>Error</span>
+                ) : (
+                  dataClassSchedulesByTypeClass && (
+                    <ClassScheduleEditable
+                      options={dataClassSchedulesByTypeClass}
+                      value={field.value}
+                      onChange={field.onChange}
+                    />
+                  )
+                )}
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="dateClass"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Selecciona la fecha de la clase</FormLabel>
+              <FormControl>
+                <>
+                  {form.getValues("dateClass") && (
+                    <div className="flex w-full flex-wrap justify-between">
+                      <div className="flex items-center gap-2 text-xs text-gray-400">
+                        <span className="text-sm">Fecha:</span>
+                        <span className="text-sm">
+                          {format(form.getValues("dateClass"), "PPP", {
+                            locale: es,
+                          })}
+                        </span>
+                      </div>
+                      {data &&
+                        classCapacities &&
+                        classCapacities[
+                          form.getValues("typeClass") as TypeClass
+                        ] && (
+                          <Tooltip>
+                            <TooltipTrigger type="button">
+                              <div className="sticky top-0 flex items-center gap-2 rounded-md border border-emerald-500 px-2 py-1 text-xs text-gray-400">
+                                <UsersRound
+                                  className="size-4 text-emerald-600"
+                                  strokeWidth={1}
+                                />
+                                <span className="text-sm">
+                                  <span className="text-emerald-600">
+                                    {data.totalParticipants}{" "}
+                                  </span>
+                                  /{" "}
+                                  {
+                                    classCapacities[
+                                      form.getValues("typeClass") as TypeClass
+                                    ].maxCapacity
+                                  }
+                                </span>
+                              </div>
+                            </TooltipTrigger>
+                            <TooltipContent className="max-w-32">
+                              <p>
+                                En esta clase ya estan inscritos{" "}
+                                <span className="font-semibold">
+                                  {data.totalParticipants}
+                                </span>{" "}
+                                de un máximo de{" "}
+                                <span className="font-semibold">
+                                  {
+                                    classCapacities[
+                                      form.getValues("typeClass") as TypeClass
+                                    ].maxCapacity
+                                  }
+                                </span>{" "}
+                                cupos.
+                              </p>
+                            </TooltipContent>
+                          </Tooltip>
                         )}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-full p-0 lg:max-w-full">
-                      <Calendar
-                        minValue={today(getLocalTimeZone())}
-                        value={date}
-                        onChange={handleChangeDate}
-                        isDateUnavailable={isDateUnavailable}
-                      />
-                    </PopoverContent>
-                  </Popover>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="scheduleClass"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Selecciona el horario</FormLabel>
-                <FormControl>
-                  {isLoadingClassSchedulesByTypeClass ? (
-                    <span>Loading...</span>
-                  ) : errorClassSchedulesByTypeClass ? (
-                    <span>Error</span>
-                  ) : (
-                    dataClassSchedulesByTypeClass && (
-                      <ClassScheduleEditable
-                        options={dataClassSchedulesByTypeClass}
-                        value={field.value}
-                        onChange={field.onChange}
-                      />
-                    )
+                    </div>
                   )}
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
+                  <TwoMonthCalendar
+                    value={field.value}
+                    onChange={field.onChange}
+                    classes={classesFutures}
+                  />
+                </>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <FormField
           control={form.control}
           name="languageClass"
