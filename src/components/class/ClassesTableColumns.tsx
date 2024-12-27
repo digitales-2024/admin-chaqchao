@@ -170,6 +170,9 @@ export const classesTableColumns = (
         />
       );
     },
+    enableSorting: false,
+    enableHiding: false,
+    enablePinning: true,
   },
   {
     id: "detalles",
