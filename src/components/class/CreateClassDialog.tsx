@@ -148,7 +148,7 @@ export function CreateClassDialog() {
                           </AlertDialogDescription>
                           <SummaryClass class={form} />
                         </AlertDialogHeader>
-                        <AlertDialogFooter>
+                        <AlertDialogFooter className="space-y-2">
                           <AlertDialogCancel>Cancelar</AlertDialogCancel>
                           <AlertDialogAction asChild>
                             <Button

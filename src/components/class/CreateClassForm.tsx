@@ -173,7 +173,7 @@ export default function CreateClassForm({
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5 p-5">
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <FormField
             control={form.control}
             name="typeClass"
@@ -548,7 +548,7 @@ export default function CreateClassForm({
         />
         <Separator />
         <span className="font-bold">Datos del cliente</span>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <FormField
             control={form.control}
             name="userName"
@@ -585,11 +585,7 @@ export default function CreateClassForm({
             <FormItem className="flex flex-col items-start">
               <FormLabel>Teléfono</FormLabel>
               <FormControl className="w-full">
-                <PhoneInput
-                  placeholder="984 521 113"
-                  {...field}
-                  defaultCountry="PE"
-                />
+                <PhoneInput {...field} defaultCountry="PE" />
               </FormControl>
               <FormMessage />
             </FormItem>
