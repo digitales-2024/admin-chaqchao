@@ -3,11 +3,10 @@ import {
   useExportClassesToExcelMutation,
   useExportClassesToPdfMutation,
   useCreateClassMutation,
-  useGetClosedClassesQuery,
 } from "@/redux/services/classApi";
 import { createClassSchema } from "@/schemas";
 import { socket } from "@/socket/socket";
-import { ClassesDataAdmin, CustomErrorData, TypeClass } from "@/types";
+import { ClassesDataAdmin, CustomErrorData } from "@/types";
 import { translateError } from "@/utils/translateError";
 import { format } from "date-fns";
 import { useEffect } from "react";
@@ -52,23 +51,9 @@ const mapSelectedRowsToClassesData = (
 };
 
 // Hook para obtener todas las clases
-export const useClasses = (date?: string, typeClass?: TypeClass) => {
+export const useClasses = (date?: string) => {
   // Validacion de la fecha de consulta o fecha actual
   const queryDate = date || new Date().toISOString().split("T")[0];
-
-  const {
-    data: closedClasses,
-    isLoading: isLoadingClosedClasses,
-    error: errorClosedClasses,
-  } = useGetClosedClassesQuery(
-    {
-      date: queryDate,
-      typeClass,
-    },
-    {
-      skip: !typeClass && !date,
-    },
-  );
 
   const [createClassMutation] = useCreateClassMutation();
 
@@ -259,8 +244,5 @@ export const useClasses = (date?: string, typeClass?: TypeClass) => {
     isLoadingExportPdf,
     errorExportPdf,
     createClass,
-    closedClasses,
-    isLoadingClosedClasses,
-    errorClosedClasses,
   };
 };
