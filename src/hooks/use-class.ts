@@ -3,6 +3,7 @@ import {
   useExportClassesToExcelMutation,
   useExportClassesToPdfMutation,
   useCreateClassMutation,
+  useCloseClassMutation,
 } from "@/redux/services/classApi";
 import { createClassSchema } from "@/schemas";
 import { socket } from "@/socket/socket";
@@ -91,6 +92,8 @@ export const useClasses = (date?: string) => {
     exportToPdf,
     { isLoading: isLoadingExportPdf, error: errorExportPdf },
   ] = useExportClassesToPdfMutation();
+
+  const [closeClassMutation] = useCloseClassMutation();
 
   /**
    * Descargar las clases seleccionadas en un archivo Excel
@@ -234,6 +237,39 @@ export const useClasses = (date?: string) => {
     });
   };
 
+  /**
+   * Cerrar una clase
+   * @param id Id de la clase
+   * @returns Datos de la clase cerrada
+   */
+  const closeClass = async (id: string) => {
+    const promise = () =>
+      new Promise(async (resolve, reject) => {
+        try {
+          const result = await closeClassMutation(id).unwrap();
+          resolve(result);
+        } catch (error) {
+          if (error && typeof error === "object" && "data" in error) {
+            const errorMessage = (error.data as CustomErrorData).message;
+            const message = translateError(errorMessage as string);
+            reject(new Error(message));
+          } else {
+            reject(
+              new Error(
+                "Ocurrió un error inesperado, por favor intenta de nuevo",
+              ),
+            );
+          }
+        }
+      });
+
+    return toast.promise(promise(), {
+      loading: "Cerrando clase...",
+      success: "Clase cerrada con suceceso",
+      error: (err) => err.message,
+    });
+  };
+
   return {
     allDataClasses,
     error,
@@ -246,5 +282,6 @@ export const useClasses = (date?: string) => {
     errorExportPdf,
     createClass,
     isLoadingCreateClass,
+    closeClass,
   };
 };

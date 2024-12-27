@@ -18,6 +18,7 @@ export type ClassData = {
 };
 
 export type ClassesDataAdmin = {
+  id?: string;
   dateClass: string;
   scheduleClass: string;
   totalParticipants: number;

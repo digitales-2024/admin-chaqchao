@@ -80,6 +80,16 @@ export const classApi = createApi({
         credentials: "include",
       }),
     }),
+
+    // Cerrar una clase
+    closeClass: build.mutation<ClassesDataAdmin, string>({
+      query: (id) => ({
+        url: `/class/admin/close/${id}`,
+        method: "PATCH",
+        credentials: "include",
+      }),
+      invalidatesTags: ["Class Admin"],
+    }),
   }),
 });
 
@@ -90,4 +100,5 @@ export const {
   useExportClassesToPdfMutation,
   useGetClassesFuturesQuery,
   useCheckClassExistQuery,
+  useCloseClassMutation,
 } = classApi;
