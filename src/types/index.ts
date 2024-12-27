@@ -57,6 +57,7 @@ export interface Option {
 export {
   type ClassData,
   type ClassesDataAdmin,
+  MethodPayment,
   TypeClass,
   typeClassLabels,
   typeClassColors,

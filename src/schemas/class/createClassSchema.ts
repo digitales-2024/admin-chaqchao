@@ -47,6 +47,9 @@ export const CreateClassSchema = z.object({
   comments: z.string().min(1, {
     message: "Los comentarios son obligatorios",
   }),
+  methodPayment: z.string().min(1, {
+    message: "El tipo de pago es obligatorio",
+  }),
 });
 
 export type createClassSchema = z.infer<typeof CreateClassSchema>;

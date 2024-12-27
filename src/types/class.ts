@@ -46,3 +46,8 @@ export const typeClassColors = {
   [TypeClass.PRIVATE]: "border-cyan-200 bg-cyan-50/30 text-cyan-500",
   [TypeClass.GROUP]: "border-blue-200 bg-blue-50/30 text-blue-500",
 };
+
+export enum MethodPayment {
+  PAYPAL = "PAYPAL",
+  IZIPAY = "IZIPAY",
+}
