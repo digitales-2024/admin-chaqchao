@@ -159,17 +159,17 @@ export function CreateClassDialog() {
                             <AlertDialogTitle>
                               ¿Quieres cerrar la clase?
                             </AlertDialogTitle>
-                            <SummaryClass class={form} />
                             <AlertDialogDescription>
-                              No se podrán inscribir más personas a esta clase.
-                              ¿Estás seguro de que quieres cerrar la clase?
+                              Resumen de la clase
                             </AlertDialogDescription>
+                            <SummaryClass class={form} />
                           </AlertDialogHeader>
                           <AlertDialogFooter>
-                            <AlertDialogCancel asChild>
+                            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                            <AlertDialogAction asChild>
                               <Button
-                                className="w-full"
-                                variant="outline"
+                                className="w-full border-none bg-slate-200 text-gray-900 hover:bg-slate-300"
+                                variant="ghost"
                                 onClick={handleCreateClass}
                               >
                                 {isLoadingCreateClass ? (
@@ -184,7 +184,7 @@ export function CreateClassDialog() {
                                   "No, solo crear registro"
                                 )}
                               </Button>
-                            </AlertDialogCancel>
+                            </AlertDialogAction>
                             <AlertDialogAction asChild>
                               <Button
                                 className="w-full"
