@@ -46,6 +46,7 @@ const mapSelectedRowsToClassesData = (
         scheduleClass: classDetail.scheduleClass,
         comments: classDetail.comments,
         typeClass: classDetail.typeClass,
+        methodPayment: classDetail.methodPayment,
       })),
     };
   });

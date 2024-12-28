@@ -15,6 +15,7 @@ export type ClassData = {
   scheduleClass: string;
   comments: string;
   typeClass: TypeClass;
+  methodPayment: MethodPayment;
 };
 
 export type ClassesDataAdmin = {
