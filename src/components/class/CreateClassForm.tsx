@@ -408,7 +408,7 @@ export default function CreateClassForm({
                 <FormControl>
                   <Input
                     type="number"
-                    value={1}
+                    value={field.value}
                     min={1}
                     onChange={(e) => {
                       const value = e.target.value;
@@ -435,7 +435,7 @@ export default function CreateClassForm({
                 <FormControl>
                   <Input
                     type="number"
-                    value={0}
+                    value={field.value}
                     min={0}
                     onChange={(e) => {
                       const value = e.target.value;
@@ -481,11 +481,7 @@ export default function CreateClassForm({
                 </FormControl>
                 <FormMessage />
                 <FormDescription>
-                  {pricesDolar &&
-                    `USD ${pricesDolar
-                      .filter((item) => item.classTypeUser === "ADULT")
-                      .map((item) => item.price)
-                      .join(",")}`}
+                  USD {prices.adults.toFixed(2)}
                 </FormDescription>
               </FormItem>
             )}
@@ -514,11 +510,7 @@ export default function CreateClassForm({
                 </FormControl>
                 <FormMessage />
                 <FormDescription>
-                  {pricesDolar &&
-                    `USD ${pricesDolar
-                      .filter((item) => item.classTypeUser === "CHILD")
-                      .map((item) => item.price)
-                      .join(",")}`}
+                  USD {prices.children.toFixed(2)}
                 </FormDescription>
               </FormItem>
             )}
