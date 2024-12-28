@@ -133,8 +133,13 @@ export default function CreateClassForm({
   );
 
   const { dataClassLanguagesAll, isLoading } = useClassLanguages();
-  const { classCapacities, isLoadingClassCapacities } = useClassCapacity();
-  const { data, isLoading: isLoadingClassExist } = useCheckClassExistQuery(
+  const { classCapacities, isLoadingClassCapacities, refetchClassCapacities } =
+    useClassCapacity();
+  const {
+    data,
+    isLoading: isLoadingClassExist,
+    refetch,
+  } = useCheckClassExistQuery(
     {
       schedule: form.getValues("scheduleClass"),
       date:
@@ -144,8 +149,8 @@ export default function CreateClassForm({
     },
     {
       skip:
-        !form.getValues("scheduleClass") ||
-        !form.getValues("dateClass") ||
+        !form.getValues("scheduleClass") &&
+        !form.getValues("dateClass") &&
         !form.getValues("typeClass"),
     },
   );
@@ -160,6 +165,8 @@ export default function CreateClassForm({
     if (form.watch("typeClass")) {
       form.setValue("scheduleClass", "");
       form.resetField("dateClass");
+      refetch();
+      refetchClassCapacities();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.watch("typeClass")]);
@@ -167,6 +174,8 @@ export default function CreateClassForm({
   useEffect(() => {
     if (form.watch("scheduleClass")) {
       form.resetField("dateClass");
+      refetch();
+      refetchClassCapacities();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.watch("scheduleClass")]);
