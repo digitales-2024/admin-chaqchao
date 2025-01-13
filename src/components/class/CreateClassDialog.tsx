@@ -62,7 +62,6 @@ export function CreateClassDialog() {
       methodPayment: "",
     },
   });
-  console.log("🚀 ~ CreateClassDialog ~ form:", form.watch());
   const { createClass, isLoadingCreateClass } = useClasses();
   const { classCapacities, isLoadingClassCapacities } = useClassCapacity();
   const onSubmit = async () => {
