@@ -19,6 +19,9 @@ export type {
   ClassLanguageData,
   ClassRegistrationData,
   ClassScheduleData,
+  TypeClassPricesData,
+  ClassCapacityData,
+  TypeClassCapacitiesData,
 } from "./classConfigs";
 export {
   type Category,
@@ -51,4 +54,11 @@ export interface Option {
   withCount?: boolean;
 }
 
-export type { ClassData, ClassesDataAdmin } from "./class";
+export {
+  type ClassData,
+  type ClassesDataAdmin,
+  MethodPayment,
+  TypeClass,
+  typeClassLabels,
+  typeClassColors,
+} from "./class";
