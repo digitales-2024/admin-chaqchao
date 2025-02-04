@@ -1,11 +1,12 @@
 "use client";
 
 import { useProducts } from "@/hooks/use-products";
-import { ProductData } from "@/types";
+import { familyLabels, ProductData } from "@/types";
 import { type ColumnDef } from "@tanstack/react-table";
 import {
   Ellipsis,
   ImageOff,
+  Package,
   PackageCheck,
   PackageX,
   RefreshCcwDot,
@@ -29,6 +30,7 @@ import {
 import { DataTableColumnHeader } from "../data-table/DataTableColumnHeader";
 import { Badge } from "../ui/badge";
 import { Switch } from "../ui/switch";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { DeleteProductsDialog } from "./DeleteProductDialog";
 import { ProductImageDialog } from "./ProductImageDialog";
 import { ReactivateProductsDialog } from "./ReactivateProductsDialog";
@@ -81,7 +83,7 @@ export const productsColumns = (
       ),
       cell: function ImageCell({ row }) {
         const imageUrl = row.getValue("imagen") as string;
-        const categoryName = row.getValue("categoria") as string;
+        const categoryName = row.getValue("categoría") as string;
         const index = uniqueCategories.indexOf(categoryName);
         const borderColor = colors[index];
 
@@ -104,6 +106,7 @@ export const productsColumns = (
                   key={row.original.id}
                   width={80}
                   height={80}
+                  priority
                   className="h-full w-full rounded-md object-cover"
                   onError={() => setImageError(true)}
                 />
@@ -129,17 +132,17 @@ export const productsColumns = (
       ),
     },
     {
-      id: "categoria",
+      id: "categoría",
       accessorKey: "category.name",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Categoria" />
+        <DataTableColumnHeader column={column} title="Categoría" />
       ),
       cell: ({ row }) => {
-        const categoryName = row.getValue("categoria") as string;
+        const categoryName = row.getValue("categoría") as string;
         const index = uniqueCategories.indexOf(categoryName);
         const borderColor = colors[index];
         return (
-          <div className="flex justify-center">
+          <div className="inline-flex justify-center gap-2">
             <Badge
               variant="outline"
               className="truncate capitalize"
@@ -147,6 +150,20 @@ export const productsColumns = (
             >
               {categoryName}
             </Badge>
+            <Tooltip delayDuration={0}>
+              <TooltipTrigger>
+                <Package
+                  className="size-5 opacity-55"
+                  style={{ color: borderColor }}
+                />
+              </TooltipTrigger>
+              <TooltipContent
+                className="relative w-fit max-w-28 text-xs"
+                align="end"
+              >
+                {familyLabels[row.original.category.family]}
+              </TooltipContent>
+            </Tooltip>
           </div>
         );
       },
@@ -251,29 +268,36 @@ export const productsColumns = (
         return (
           <div>
             <div>
-              <UpdateProductSheet
-                open={showEditDialog}
-                onOpenChange={setShowEditDialog}
-                product={row?.original}
-              />
-              <DeleteProductsDialog
-                open={showDeleteDialog}
-                onOpenChange={setShowDeleteDialog}
-                products={[row?.original]}
-                showTrigger={false}
-                onSuccess={() => {
-                  row.toggleSelected(false);
-                }}
-              />
-              <ReactivateProductsDialog
-                open={showReactivateDialog}
-                onOpenChange={setShowReactivateDialog}
-                products={[row?.original]}
-                showTrigger={false}
-                onSuccess={() => {
-                  row.toggleSelected(false);
-                }}
-              />
+              {showEditDialog && (
+                <UpdateProductSheet
+                  open={showEditDialog}
+                  onOpenChange={setShowEditDialog}
+                  product={row?.original}
+                />
+              )}
+
+              {showDeleteDialog && (
+                <DeleteProductsDialog
+                  open={showDeleteDialog}
+                  onOpenChange={setShowDeleteDialog}
+                  products={[row?.original]}
+                  showTrigger={false}
+                  onSuccess={() => {
+                    row.toggleSelected(false);
+                  }}
+                />
+              )}
+              {showReactivateDialog && (
+                <ReactivateProductsDialog
+                  open={showReactivateDialog}
+                  onOpenChange={setShowReactivateDialog}
+                  products={[row?.original]}
+                  showTrigger={false}
+                  onSuccess={() => {
+                    row.toggleSelected(false);
+                  }}
+                />
+              )}
             </div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

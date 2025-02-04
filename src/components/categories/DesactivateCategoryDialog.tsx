@@ -40,7 +40,7 @@ export const DesactivateCategoryDialog = ({
         <AlertDialogHeader>
           <AlertDialogTitle>¿Estás absolutamente seguro?</AlertDialogTitle>
           <AlertDialogDescription>
-            {`Esta acción desactivará la categoría "${category.name}".`}
+            {`Esta acción eliminará la categoría "${category.name}".`}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
@@ -50,7 +50,7 @@ export const DesactivateCategoryDialog = ({
             </Button>
           </AlertDialogCancel>
           <AlertDialogAction onClick={handleDesactivate}>
-            Desactivar
+            Eliminar
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

@@ -3,6 +3,7 @@
 import { useCategories } from "@/hooks/use-categories";
 import { useMediaQuery } from "@/hooks/use-media-query"; // Asegúrate de tener este hook disponible
 import { CreateCategoriesSchema, categoriesSchema } from "@/schemas";
+import { Families } from "@/types/category";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus, RefreshCcw } from "lucide-react";
 import { useEffect, useState, useTransition } from "react";
@@ -51,9 +52,9 @@ export function CreateCategoryDialog() {
     defaultValues: {
       name: "",
       description: "",
+      family: Families[0],
     },
   });
-
   const onSubmit = async (input: CreateCategoriesSchema) => {
     startCreateTransition(async () => {
       await onCreateCategory(input);
@@ -87,26 +88,28 @@ export function CreateCategoryDialog() {
             <DialogDescription>{dataForm.description}</DialogDescription>
           </DialogHeader>
           <CreateCategoryForm form={form} onSubmit={onSubmit}>
-            <DialogFooter className="gap-2 sm:space-x-0">
-              <Button disabled={isCreatePending} className="w-full">
-                {isCreatePending && (
-                  <RefreshCcw
-                    className="mr-2 size-4 animate-spin"
-                    aria-hidden="true"
-                  />
-                )}
-                Registrar
-              </Button>
-              <DialogClose asChild>
-                <Button
-                  onClick={handleClose}
-                  type="button"
-                  variant="outline"
-                  className="w-full"
-                >
-                  Cancelar
+            <DialogFooter>
+              <div className="flex w-full flex-row-reverse gap-2">
+                <Button disabled={isCreatePending} className="w-full">
+                  {isCreatePending && (
+                    <RefreshCcw
+                      className="mr-2 size-4 animate-spin"
+                      aria-hidden="true"
+                    />
+                  )}
+                  Registrar
                 </Button>
-              </DialogClose>
+                <DialogClose asChild>
+                  <Button
+                    onClick={handleClose}
+                    type="button"
+                    variant="outline"
+                    className="w-full"
+                  >
+                    Cancelar
+                  </Button>
+                </DialogClose>
+              </div>
             </DialogFooter>
           </CreateCategoryForm>
         </DialogContent>

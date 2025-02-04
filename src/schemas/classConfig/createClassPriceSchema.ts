@@ -1,6 +1,9 @@
 import * as z from "zod";
 
 export const createClassPriceSchema = z.object({
+  typeClass: z.string().min(1, {
+    message: "El tipo de clase es obligatorio",
+  }),
   classTypeUser: z.string().min(1, {
     message: "El tipo de usuario es obligatorio",
   }),

@@ -2,7 +2,7 @@
 
 import { useCategories } from "@/hooks/use-categories";
 import { UpdateCategoriesSchema, updateCategoriesSchema } from "@/schemas";
-import { Category } from "@/types";
+import { Category, familyOptions } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { RefreshCcw } from "lucide-react";
 import { useEffect } from "react";
@@ -30,6 +30,16 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+import { Textarea } from "../ui/textarea";
+
 const infoSheet = {
   title: "Actualizar Categoría",
   description: "Actualiza la información de la categoría y guarda los cambios",
@@ -50,42 +60,30 @@ export function UpdateCategorySheet({
     id: category.id,
     name: category?.name || "",
     description: category?.description || "",
+    family: category.family,
   };
 
   const form = useForm<UpdateCategoriesSchema>({
     resolver: zodResolver(updateCategoriesSchema),
     defaultValues,
   });
-
   useEffect(() => {
     if (category) {
       form.reset({
         id: category.id, // Solo resetear cuando category está disponible
         name: category.name ?? "",
         description: category.description ?? "",
+        family: category.family,
       });
     }
   }, [category, form]);
 
-  function onSubmit(input: UpdateCategoriesSchema) {
-    const { id, name, description } = input;
-    onUpdateCategory({
-      id, // Enviar el ID junto con los demás campos
-      name,
-      description,
-    });
-  }
-
-  useEffect(() => {
-    const errors = form.formState.errors;
-    if (Object.keys(errors).length > 0) {
-      console.log("Errores de validación:", errors);
-    }
-  }, [form.formState.errors]);
-
   return (
     <Sheet {...props}>
-      <SheetContent className="flex flex-col gap-6 sm:max-w-md">
+      <SheetContent
+        className="flex flex-col gap-6 sm:max-w-md"
+        tabIndex={undefined}
+      >
         <SheetHeader className="text-left">
           <SheetTitle className="flex flex-col items-start">
             {infoSheet.title}
@@ -101,7 +99,7 @@ export function UpdateCategorySheet({
         <ScrollArea className="mt-4 w-full gap-4 rounded-md border p-4">
           <Form {...form}>
             <form
-              onSubmit={form.handleSubmit(onSubmit)}
+              onSubmit={form.handleSubmit(onUpdateCategory)}
               className="flex flex-col gap-4 p-4"
             >
               <FormField
@@ -131,10 +129,11 @@ export function UpdateCategorySheet({
                       Descripción
                     </FormLabel>
                     <FormControl>
-                      <Input
+                      <Textarea
+                        rows={5}
+                        className="resize-y"
                         id="category-description"
                         placeholder="Descripción de la categoría"
-                        className="resize-none"
                         {...field}
                       />
                     </FormControl>
@@ -142,21 +141,56 @@ export function UpdateCategorySheet({
                   </FormItem>
                 )}
               />
+              <FormField
+                control={form.control}
+                name="family"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel htmlFor="family">Familia</FormLabel>
+                    <FormControl>
+                      <Select
+                        value={field.value}
+                        onValueChange={field.onChange}
+                      >
+                        <SelectTrigger className="capitalize">
+                          <SelectValue placeholder="Selecciona una categoría" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            {familyOptions?.map((family) => (
+                              <SelectItem
+                                key={family.value}
+                                value={family.value}
+                                className="capitalize"
+                              >
+                                {family.label}
+                              </SelectItem>
+                            ))}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <SheetFooter className="gap-2 pt-2 sm:space-x-0">
-                <SheetClose asChild>
-                  <Button type="button" variant="outline">
-                    Cancelar
+                <div className="flex flex-row-reverse flex-wrap gap-2">
+                  <Button type="submit" disabled={isLoadingUpdateCategory}>
+                    {isLoadingUpdateCategory && (
+                      <RefreshCcw
+                        className="mr-2 size-4 animate-spin"
+                        aria-hidden="true"
+                      />
+                    )}
+                    Actualizar
                   </Button>
-                </SheetClose>
-                <Button type="submit" disabled={isLoadingUpdateCategory}>
-                  {isLoadingUpdateCategory && (
-                    <RefreshCcw
-                      className="mr-2 size-4 animate-spin"
-                      aria-hidden="true"
-                    />
-                  )}
-                  Actualizar
-                </Button>
+                  <SheetClose asChild>
+                    <Button type="button" variant="outline">
+                      Cancelar
+                    </Button>
+                  </SheetClose>
+                </div>
               </SheetFooter>
             </form>
           </Form>

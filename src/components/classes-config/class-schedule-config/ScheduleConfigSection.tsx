@@ -1,5 +1,10 @@
 import { useClassSchedules } from "@/hooks/use-class-schedule";
-import { ClassScheduleData } from "@/types";
+import {
+  ClassScheduleData,
+  TypeClass,
+  typeClassColors,
+  typeClassLabels,
+} from "@/types";
 import {
   Edit,
   Trash,
@@ -33,6 +38,8 @@ import {
   DropdownMenuShortcut,
 } from "@/components/ui/dropdown-menu";
 
+import { cn } from "@/lib/utils";
+
 import { AddScheduleDialog } from "./AddScheduleDialog";
 import { DeleteScheduleDialog } from "./DeleteScheduleDialog";
 import { EditScheduleSheet } from "./EditScheduleSheet";
@@ -50,7 +57,6 @@ export function ScheduleConfigSection() {
     isSuccess: isSuccessSchedules,
     refetch: refetchClassSchedules,
   } = useClassSchedules();
-
   // Función para editar
   const handleEdit = (scheduleData: ClassScheduleData) => {
     setSelectedSchedule(scheduleData);
@@ -97,51 +103,83 @@ export function ScheduleConfigSection() {
       </div>
 
       <div className="space-y-5">
-        {isSuccessSchedules &&
-        dataClassSchedulesAll &&
-        dataClassSchedulesAll.length > 0 ? (
-          dataClassSchedulesAll.map((schedule) => (
-            <Card key={schedule.id}>
-              <CardContent className="mt-4 flex items-center justify-between">
-                <div className="flex items-center">
-                  {getClockIcon(schedule.startTime)}
-                  <div>
-                    <p className="mt-4 text-base font-semibold">
-                      {schedule.startTime}
-                    </p>
-                  </div>
+        {isSuccessSchedules && dataClassSchedulesAll ? (
+          Object.keys(TypeClass).map((type) => {
+            const schedules =
+              dataClassSchedulesAll[type as keyof typeof dataClassSchedulesAll];
+            return (
+              <div key={type}>
+                <h4
+                  className={cn(
+                    "text-xs font-semibold",
+                    typeClassColors[type as keyof typeof TypeClass],
+                    "bg-transparent",
+                  )}
+                >
+                  {typeClassLabels[type as keyof typeof TypeClass]}
+                </h4>
+                <div
+                  className={cn(
+                    "space-y-5 rounded-lg border p-4",
+                    typeClassColors[type as keyof typeof TypeClass],
+                  )}
+                >
+                  {schedules?.map((schedule) => (
+                    <Card key={schedule.id}>
+                      <CardContent className="mt-4 flex items-center justify-between text-slate-800">
+                        <div className="flex items-center">
+                          {getClockIcon(schedule.startTime)}
+                          <div>
+                            <p className="mt-4 text-base font-semibold">
+                              {schedule.startTime}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex space-x-2">
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button
+                                aria-label="Open menu"
+                                variant="ghost"
+                                className="flex size-8 p-0 data-[state=open]:bg-muted"
+                              >
+                                <Ellipsis
+                                  className="size-4"
+                                  aria-hidden="true"
+                                />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-40">
+                              <DropdownMenuItem
+                                onSelect={() => handleEdit(schedule)}
+                              >
+                                Editar
+                                <DropdownMenuShortcut>
+                                  <Edit className="size-4" aria-hidden="true" />
+                                </DropdownMenuShortcut>
+                              </DropdownMenuItem>
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem
+                                onSelect={() => handleDelete(schedule)}
+                              >
+                                Eliminar
+                                <DropdownMenuShortcut>
+                                  <Trash
+                                    className="size-4"
+                                    aria-hidden="true"
+                                  />
+                                </DropdownMenuShortcut>
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
                 </div>
-                <div className="flex space-x-2">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button
-                        aria-label="Open menu"
-                        variant="ghost"
-                        className="flex size-8 p-0 data-[state=open]:bg-muted"
-                      >
-                        <Ellipsis className="size-4" aria-hidden="true" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-40">
-                      <DropdownMenuItem onSelect={() => handleEdit(schedule)}>
-                        Editar
-                        <DropdownMenuShortcut>
-                          <Edit className="size-4" aria-hidden="true" />
-                        </DropdownMenuShortcut>
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem onSelect={() => handleDelete(schedule)}>
-                        Eliminar
-                        <DropdownMenuShortcut>
-                          <Trash className="size-4" aria-hidden="true" />
-                        </DropdownMenuShortcut>
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
-              </CardContent>
-            </Card>
-          ))
+              </div>
+            );
+          })
         ) : (
           <Badge className="font-medium text-slate-400" variant="outline">
             <Info className="mr-2 size-3" aria-hidden="true" />

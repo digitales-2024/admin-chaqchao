@@ -15,3 +15,14 @@ export {
   updateCategoriesSchema,
   categoriesSchema,
 } from "./categories/createCategoriesSchema";
+
+export {
+  type UpdateClientsSchema,
+  updateClientsSchema,
+  clientsSchema,
+} from "./clients/updateClientsSchema";
+
+export {
+  CreateClassSchema,
+  type createClassSchema,
+} from "./class/createClassSchema";

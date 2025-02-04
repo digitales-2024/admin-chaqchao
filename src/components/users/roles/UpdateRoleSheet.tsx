@@ -98,6 +98,7 @@ export function UpdateRoleSheet({ rol, ...props }: UpdateRoleSheetProps) {
     if (rol) {
       setSelectedPermissions(idsModulesPermissions ?? []);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rol]);
 
   useEffect(() => {
@@ -121,17 +122,22 @@ export function UpdateRoleSheet({ rol, ...props }: UpdateRoleSheetProps) {
       form.reset();
       props.onOpenChange?.(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSuccessUpdateRole]);
 
   const { setValue, clearErrors } = form;
   useEffect(() => {
     setValue("rolPermissions", selectedPermissions);
     clearErrors("rolPermissions");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedPermissions]);
 
   return (
     <Sheet {...props}>
-      <SheetContent className="flex flex-col gap-6 sm:max-w-md">
+      <SheetContent
+        className="flex flex-col gap-6 sm:max-w-md"
+        tabIndex={undefined}
+      >
         <SheetHeader className="text-left">
           <SheetTitle className="flex flex-col items-start">
             {infoSheet.title}

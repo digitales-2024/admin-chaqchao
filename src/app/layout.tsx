@@ -23,7 +23,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
-      <body className={lexend.className}>
+      <body className={`relative ${lexend.className}`}>
         <Toaster
           richColors
           position="top-center"
@@ -35,10 +35,8 @@ export default function RootLayout({
           }}
           closeButton
         />
-        <Providers>
-          <ApiStatus />
-          {children}
-        </Providers>
+        <ApiStatus />
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

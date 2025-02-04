@@ -1,6 +1,7 @@
 import {
   useCreateRoleMutation,
   useDeleteRolesMutation,
+  useGetRoleQuery,
   useGetRolesQuery,
   useGetRolPermissionsQuery,
   useReactivateRolesMutation,
@@ -12,9 +13,23 @@ import { translateError } from "@/utils/translateError";
 import { toast } from "sonner";
 
 import { UpdateRoleSchema } from "@/components/users/roles/UpdateRoleSheet";
+interface UseRolProps {
+  id?: string;
+}
 
-export const useRol = () => {
+export const useRol = (options: UseRolProps = {}) => {
+  const { id } = options;
+
   const { data: dataRoles, isLoading: isLoadingRoles } = useGetRolesQuery();
+
+  const { data: dataRole, isLoading: isLoadingRole } = useGetRoleQuery(
+    {
+      id: id as string,
+    },
+    {
+      skip: !id,
+    },
+  );
   const [
     createRole,
     { isLoading: isLoadingCreateRole, isSuccess: isSuccessCreateRole },
@@ -177,6 +192,8 @@ export const useRol = () => {
   return {
     dataRoles,
     isLoadingRoles,
+    dataRole,
+    isLoadingRole,
     onCreateRole,
     isLoadingCreateRole,
     isSuccessCreateRole,

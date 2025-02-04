@@ -59,11 +59,12 @@ export const CreateRolesForm = ({
   useEffect(() => {
     setValue("rolPermissions", selectedPermissions);
     clearErrors("rolPermissions");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedPermissions]);
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 p-2">
         <div className="flex flex-col gap-6 p-4 sm:p-0">
           <FormField
             control={form.control}
@@ -97,7 +98,7 @@ export const CreateRolesForm = ({
           />
           <h3 className="text-lg font-semibold">Módulos y Permisos</h3>
           <ScrollArea className="h-[35vh] py-4">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               {dataRolPermissions?.map(({ module, permissions }) => (
                 <Card
                   key={module.id}

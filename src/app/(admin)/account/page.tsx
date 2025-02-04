@@ -27,8 +27,8 @@ export default function PageAccount() {
   return (
     <div className="container mx-auto py-10">
       <h1 className="mb-6 text-3xl font-bold">Administración de la cuenta</h1>
-      <div className="grid gap-6 md:grid-cols-[1fr_3fr]">
-        <Card className="relative mx-auto flex h-[500px] w-[320px] flex-col gap-6 overflow-hidden">
+      <div className="grid gap-4 lg:grid-cols-[1fr_2fr]">
+        <Card className="relative mx-auto hidden h-[500px] w-full max-w-[320px] flex-col gap-6 overflow-hidden lg:flex">
           <div className="pattern absolute bottom-0 left-0 right-0 top-0 opacity-5"></div>
           <CardHeader>
             <CardTitle className="text-balance text-xl">
@@ -50,17 +50,17 @@ export default function PageAccount() {
           </CardContent>
         </Card>
         <Tabs defaultValue="general">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="general" className="truncate">
-              <User className="mr-2 h-4 w-4" />
+          <TabsList className="grid h-fit w-full grid-cols-1 grid-rows-3 gap-2 sm:grid-cols-3 sm:grid-rows-1">
+            <TabsTrigger value="general" className="flex truncate">
+              <User className="mr-2 h-4 w-4 flex-shrink-0" />
               General
             </TabsTrigger>
-            <TabsTrigger value="security" className="truncate">
-              <Lock className="mr-2 h-4 w-4" />
+            <TabsTrigger value="security" className="flex truncate">
+              <Lock className="mr-2 h-4 w-4 flex-shrink-0" />
               <span>Seguridad</span>
             </TabsTrigger>
-            <TabsTrigger value="admin" className="truncate">
-              <Settings className="mr-2 block size-4" />
+            <TabsTrigger value="admin" className="flex truncate">
+              <Settings className="mr-2 block size-4 flex-shrink-0" />
               <span>Permisos</span>
             </TabsTrigger>
           </TabsList>

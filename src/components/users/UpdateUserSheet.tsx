@@ -85,11 +85,15 @@ export function UpdateUserSheet({ user, ...props }: UpdateUserSheetProps) {
       form.reset();
       props.onOpenChange?.(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSuccessUpdateUser]);
 
   return (
     <Sheet {...props}>
-      <SheetContent className="flex flex-col gap-6 sm:max-w-md">
+      <SheetContent
+        className="flex flex-col gap-6 sm:max-w-md"
+        tabIndex={undefined}
+      >
         <SheetHeader className="text-left">
           <SheetTitle className="flex flex-col items-start">
             {infoSheet.title}

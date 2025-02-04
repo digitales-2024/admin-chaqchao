@@ -2,13 +2,14 @@ import {
   useCreateClassScheduleMutation,
   useDeleteClassScheduleMutation,
   useGetClassSchedulesAllQuery,
+  useGetClassSchedulesByTypeClassQuery,
   useUpdateClassScheduleMutation,
 } from "@/redux/services/classScheduleApi";
-import { ClassScheduleData, CustomErrorData } from "@/types";
+import { ClassScheduleData, CustomErrorData, TypeClass } from "@/types";
 import { translateError } from "@/utils/translateError";
 import { toast } from "sonner";
 
-export const useClassSchedules = () => {
+export const useClassSchedules = (typeClass?: TypeClass) => {
   const {
     data: dataClassSchedulesAll,
     error,
@@ -17,6 +18,16 @@ export const useClassSchedules = () => {
     refetch,
   } = useGetClassSchedulesAllQuery();
 
+  const {
+    data: dataClassSchedulesByTypeClass,
+    error: errorClassSchedulesByTypeClass,
+    isLoading: isLoadingClassSchedulesByTypeClass,
+  } = useGetClassSchedulesByTypeClassQuery(
+    { typeClass: typeClass as TypeClass },
+    {
+      skip: !typeClass,
+    },
+  );
   const [createClassSchedule] = useCreateClassScheduleMutation();
 
   const [updateClassSchedule] = useUpdateClassScheduleMutation();
@@ -136,5 +147,8 @@ export const useClassSchedules = () => {
     onCreateClassSchedule,
     onUpdateClassSchedule,
     onDeleteClassSchedule,
+    dataClassSchedulesByTypeClass,
+    errorClassSchedulesByTypeClass,
+    isLoadingClassSchedulesByTypeClass,
   };
 };

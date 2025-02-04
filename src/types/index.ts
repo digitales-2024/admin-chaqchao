@@ -19,13 +19,33 @@ export type {
   ClassLanguageData,
   ClassRegistrationData,
   ClassScheduleData,
+  TypeClassPricesData,
+  ClassCapacityData,
+  TypeClassCapacitiesData,
 } from "./classConfigs";
-export type { Category } from "./category";
+export {
+  type Category,
+  type Family,
+  familyLabels,
+  familyOptions,
+} from "./category";
 export type {
   ProductData,
   ProductVariationData,
   CategoryData,
+  ProductFilters,
+  TopProductFilters,
+  TopProduct,
 } from "./product";
+export type { Client } from "./client";
+
+export type {
+  Order,
+  OrderDetails,
+  OrderReportData,
+  OrderFilters,
+} from "./orders";
+export { OrderStatus } from "./orders";
 
 export interface Option {
   label: string;
@@ -33,3 +53,12 @@ export interface Option {
   icon?: React.ComponentType<{ className?: string }>;
   withCount?: boolean;
 }
+
+export {
+  type ClassData,
+  type ClassesDataAdmin,
+  MethodPayment,
+  TypeClass,
+  typeClassLabels,
+  typeClassColors,
+} from "./class";

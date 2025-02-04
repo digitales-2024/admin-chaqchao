@@ -2,9 +2,10 @@ import { LogoChaqchao } from "@/assets/icons";
 import ImagePlaceholder from "@/assets/images/placeholder.webp";
 import { ArrowRight } from "lucide-react";
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 
+import { BorderBeam } from "@/components/common/BorderBeam ";
+import { Safari } from "@/components/common/Safari";
 import { FormLogin } from "@/components/sign-in";
 
 export const metadata: Metadata = {
@@ -42,14 +43,21 @@ export default function PageSignIn() {
           </span>
         </div>
       </div>
-      <div className="hidden bg-muted lg:block">
-        <Image
-          src={ImagePlaceholder}
-          alt="Image"
-          width="1920"
-          height="1080"
-          className="h-full w-full object-cover object-center"
+      <div className="relative hidden items-center justify-center overflow-hidden lg:flex">
+        <div
+          className="hero absolute bottom-0 right-0 top-0 z-[1] h-full w-full opacity-10"
+          style={{
+            maskImage: `linear-gradient(to right, transparent, black 20%)`,
+          }}
         />
+        <div className="relative z-[3] translate-x-16 -rotate-6 rounded-lg">
+          <BorderBeam size={500} duration={12} delay={9} />
+          <Safari
+            url="chaqchao"
+            className="relative size-[98%] opacity-70"
+            src={ImagePlaceholder.src}
+          />
+        </div>
       </div>
     </div>
   );

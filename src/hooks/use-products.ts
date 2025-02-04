@@ -10,6 +10,7 @@ import {
 } from "@/redux/services/productsApi";
 import { ProductData, CustomErrorData } from "@/types";
 import { translateError } from "@/utils/translateError";
+import { useRef } from "react";
 import { toast } from "sonner";
 
 export const useProducts = () => {
@@ -20,8 +21,10 @@ export const useProducts = () => {
     isSuccess,
     refetch,
   } = useGetAllProductsQuery();
-  const [createProduct, { isSuccess: isSuccessCreateProduct }] =
-    useCreateProductMutation();
+  const [
+    createProduct,
+    { isSuccess: isSuccessCreateProduct, isLoading: isLoadingCreateProduct },
+  ] = useCreateProductMutation();
 
   const [
     updateProduct,
@@ -52,6 +55,7 @@ export const useProducts = () => {
     {
       isSuccess: isSuccessUploadImageProduct,
       isLoading: isLoadingUploadImageProduct,
+      status: uploadImageProductStatus,
     },
   ] = useUploadProductImageMutation();
 
@@ -248,15 +252,26 @@ export const useProducts = () => {
     });
   };
 
+  const abortControllerRef = useRef<AbortController | null>(null);
+
   const onUploadImageProduct = async (file: File) => {
     const formData = new FormData();
     formData.append("image", file);
+    abortControllerRef.current = new AbortController();
 
     try {
-      const result = await uploadImageProduct(formData).unwrap();
+      const result = await uploadImageProduct({
+        formData,
+        signal: abortControllerRef.current.signal,
+      }).unwrap();
       return result;
     } catch (error) {
+      if ((error as Error).name === "AbortError") {
+        return null;
+      }
       throw error;
+    } finally {
+      abortControllerRef.current = null;
     }
   };
 
@@ -275,6 +290,13 @@ export const useProducts = () => {
     }
   };
 
+  const cancelUploadImage = () => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      toast.error("Creación de producto cancelada");
+    }
+  };
+
   return {
     dataProductsAll,
     error,
@@ -283,6 +305,8 @@ export const useProducts = () => {
     refetch,
     onCreateProduct,
     isSuccessCreateProduct,
+    isLoadingCreateProduct,
+    cancelUploadImage,
     onUpdateProduct,
     isSuccessUpdateProduct,
     isLoadingUpdateProduct,
@@ -300,5 +324,6 @@ export const useProducts = () => {
     onUpdateImageProduct,
     isSuccessUpdateImageProduct,
     isLoadingUpdateImageProduct,
+    uploadImageProductStatus,
   };
 };

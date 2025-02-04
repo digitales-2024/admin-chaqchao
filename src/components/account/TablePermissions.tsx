@@ -1,5 +1,4 @@
-import { useAuth } from "@/hooks/use-auth";
-import { useGetRoleQuery } from "@/redux/services/rolesApi";
+import { useRol } from "@/hooks/use-rol";
 import { Module, Permission } from "@/types";
 import { extractUniquePermissions } from "@/utils/extractUniquePermissions";
 import { ChevronDown, ChevronUp } from "lucide-react";
@@ -18,22 +17,27 @@ import {
   TableRow,
 } from "../ui/table";
 
-export const TablePermissions = () => {
+interface TablePermissionsProps {
+  rol?: string;
+}
+
+export const TablePermissions = ({ rol }: TablePermissionsProps) => {
   const [expandedModule, setExpandedModule] = useState<string | null>(null);
 
   const toggleModule = (moduleName: string) => {
     setExpandedModule(expandedModule === moduleName ? null : moduleName);
   };
 
-  const { user } = useAuth();
-  const { data } = useGetRoleQuery(user?.roles[0].id as string);
+  const { dataRole } = useRol({
+    id: rol,
+  });
   const [headerPermissions, setHeaderPermissions] = useState<Permission[]>();
   useEffect(() => {
-    if (data) {
-      const uniquePermissions = extractUniquePermissions(data);
+    if (dataRole) {
+      const uniquePermissions = extractUniquePermissions(dataRole);
       setHeaderPermissions(uniquePermissions);
     }
-  }, [data]);
+  }, [dataRole]);
 
   return (
     <div className="w-full">
@@ -53,7 +57,7 @@ export const TablePermissions = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {data?.rolPermissions.map(
+              {dataRole?.rolPermissions.map(
                 ({
                   module,
                   permissions,
@@ -93,7 +97,7 @@ export const TablePermissions = () => {
 
       {/* Mobile view */}
       <div className="md:hidden">
-        {data?.rolPermissions.map(
+        {dataRole?.rolPermissions.map(
           ({
             module,
             permissions,

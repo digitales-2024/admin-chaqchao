@@ -1,13 +1,13 @@
 "use client";
 
 import { useProfile } from "@/hooks/use-profile";
-import { Category } from "@/types";
+import { Category, familyLabels } from "@/types";
+import { capitalizeSentences } from "@/utils/capitalizeSentences";
 import { type ColumnDef } from "@tanstack/react-table";
-import { Ellipsis, RefreshCcwDot, Trash } from "lucide-react";
+import { Trash, Ellipsis, RefreshCcwDot } from "lucide-react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,6 +16,8 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+
+import { cn } from "@/lib/utils";
 
 import { DataTableColumnHeader } from "../data-table/DataTableColumnHeader";
 import { Badge } from "../ui/badge";
@@ -28,31 +30,7 @@ export const categoriesColumns = (): ColumnDef<Category>[] => {
     {
       id: "select",
       size: 10,
-      header: ({ table }) => (
-        <div className="px-2">
-          <Checkbox
-            checked={
-              table.getIsAllPageRowsSelected() ||
-              (table.getIsSomePageRowsSelected() && "indeterminate")
-            }
-            onCheckedChange={(value) =>
-              table.toggleAllPageRowsSelected(!!value)
-            }
-            aria-label="Select all"
-            className="translate-y-0.5"
-          />
-        </div>
-      ),
-      cell: ({ row }) => (
-        <div className="px-2">
-          <Checkbox
-            checked={row.getIsSelected()}
-            onCheckedChange={(value) => row.toggleSelected(!!value)}
-            aria-label="Select row"
-            className="translate-y-0.5"
-          />
-        </div>
-      ),
+      header: () => null,
       enableSorting: false,
       enableHiding: false,
       enablePinning: true,
@@ -73,8 +51,40 @@ export const categoriesColumns = (): ColumnDef<Category>[] => {
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Descripción" />
       ),
+      cell: function Cell({ row }) {
+        const description = row.getValue("descripción") as string;
+        const [expandido, setExpandido] = useState(false);
+
+        const handleToggle = () => {
+          setExpandido(!expandido);
+        };
+        return (
+          <div
+            className={cn(
+              "w-72 truncate",
+              expandido ? "whitespace-normal" : "whitespace-nowrap",
+            )}
+            onClick={handleToggle}
+          >
+            {description ? (
+              capitalizeSentences(description)
+            ) : (
+              <span className="text-xs text-slate-300">Sin descripción</span>
+            )}
+          </div>
+        );
+      },
+    },
+    {
+      id: "familia",
+      accessorKey: "family",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Familia" />
+      ),
       cell: ({ row }) => (
-        <div className="truncate capitalize">{row.getValue("descripción")}</div>
+        <div className="w-56 truncate capitalize">
+          {familyLabels[row.original.family]}
+        </div>
       ),
     },
     {
@@ -113,11 +123,13 @@ export const categoriesColumns = (): ColumnDef<Category>[] => {
 
         return (
           <div>
-            <UpdateCategorySheet
-              open={showEditDialog}
-              onOpenChange={setShowEditDialog}
-              category={category}
-            />
+            {showEditDialog && (
+              <UpdateCategorySheet
+                open={showEditDialog}
+                onOpenChange={setShowEditDialog}
+                category={category}
+              />
+            )}
             <ReactivateCategoryDialog
               category={category}
               open={showReactivateDialog}

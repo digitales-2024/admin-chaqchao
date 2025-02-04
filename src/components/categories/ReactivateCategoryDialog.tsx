@@ -55,7 +55,7 @@ export const ReactivateCategoryDialog = ({
           <AlertDialogHeader>
             <AlertDialogTitle>¿Estás absolutamente seguro?</AlertDialogTitle>
             <AlertDialogDescription>
-              {`Esta acción desactivará la categoría "${category.name}".`}
+              {`Esta acción reactivará la categoría "${category.name}".`}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="gap-2 sm:space-x-0">

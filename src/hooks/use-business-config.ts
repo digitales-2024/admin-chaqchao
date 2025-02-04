@@ -71,7 +71,6 @@ export const useBussinessConfig = () => {
 
         return result;
       } catch (error) {
-        console.error("Error creating business config:", error);
         throw error;
       }
     };
@@ -107,7 +106,6 @@ export const useBussinessConfig = () => {
         }
         return result;
       } catch (error) {
-        console.error("Error updating business config:", error);
         throw error;
       }
     };

@@ -2,6 +2,7 @@ import { ProductData } from "@/types";
 import { createApi } from "@reduxjs/toolkit/query/react";
 
 import baseQueryWithReauth from "./baseQuery";
+import { reportsApi } from "./reportsApi";
 
 interface UploadImageResponse {
   statusCode: number;
@@ -91,16 +92,35 @@ export const productsApi = createApi({
         body: ids,
         credentials: "include",
       }),
+      async onQueryStarted(_args, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          dispatch(
+            reportsApi.endpoints.getProductsReport.initiate(
+              { filter: {} },
+              {
+                forceRefetch: true,
+              },
+            ),
+          );
+        } catch (error) {
+          console.error(error);
+        }
+      },
       invalidatesTags: ["Product"],
     }),
 
     // Subir Imagenes de un Producto a CloudFlare
-    uploadProductImage: build.mutation<UploadImageResponse, FormData>({
-      query: (formData) => ({
+    uploadProductImage: build.mutation<
+      UploadImageResponse,
+      { formData: FormData; signal: AbortSignal }
+    >({
+      query: ({ formData, signal }) => ({
         url: "products/upload/image",
         method: "POST",
         body: formData,
         credentials: "include",
+        signal,
       }),
       invalidatesTags: ["Product"],
     }),

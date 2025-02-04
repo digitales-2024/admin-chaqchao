@@ -14,7 +14,13 @@ import {
   useReactTable,
   VisibilityState,
 } from "@tanstack/react-table";
-import { CSSProperties, Fragment, ReactElement, useState } from "react";
+import {
+  CSSProperties,
+  Fragment,
+  ReactElement,
+  useEffect,
+  useState,
+} from "react";
 
 import {
   Table,
@@ -38,6 +44,8 @@ interface DataTableExpandedProps<TData, TValue> {
   viewOptions?: boolean;
   getSubRows?: (row: TData) => TData[] | undefined;
   renderExpandedRow?: (row: TData) => ReactElement;
+  onClickRow?: (row: TData) => void;
+  customExcelExport?: (data: TData[]) => void;
 }
 
 export function DataTableExpanded<TData, TValue>({
@@ -48,6 +56,8 @@ export function DataTableExpanded<TData, TValue>({
   viewOptions,
   getSubRows,
   renderExpandedRow,
+  onClickRow,
+  customExcelExport,
 }: DataTableExpandedProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
@@ -99,6 +109,14 @@ export function DataTableExpanded<TData, TValue>({
     };
   };
 
+  useEffect(() => {
+    if (data) {
+      table.setRowSelection({});
+      table.resetExpanded();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data]);
+
   return (
     <div className="w-full space-y-2.5 overflow-auto p-1">
       <DataTableToolbar
@@ -138,7 +156,12 @@ export function DataTableExpanded<TData, TValue>({
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <Fragment key={row.id}>
-                  <TableRow data-state={row.getIsSelected() && "selected"}>
+                  <TableRow
+                    data-state={row.getIsSelected() && "selected"}
+                    onClick={
+                      onClickRow ? () => onClickRow(row.original) : undefined
+                    }
+                  >
                     {row.getVisibleCells().map((cell) => {
                       const { column } = cell;
 
@@ -182,7 +205,10 @@ export function DataTableExpanded<TData, TValue>({
       </div>
       <DataTablePagination table={table} />
       {table.getFilteredSelectedRowModel().rows.length > 0 && (
-        <DataTableFloatingBar table={table} />
+        <DataTableFloatingBar
+          table={table}
+          customExcelExport={customExcelExport}
+        />
       )}
     </div>
   );
