@@ -1,4 +1,5 @@
 import { ClassScheduleData } from "@/types";
+import { TypeClassScheduleData } from "@/types/classConfigs";
 import { createApi } from "@reduxjs/toolkit/query/react";
 
 import baseQueryWithReauth from "./baseQuery";
@@ -39,7 +40,7 @@ export const classScheduleApi = createApi({
       }),
       providesTags: (result, error, id) => [{ type: "ClassSchedule", id }],
     }),
-    getClassSchedulesAll: build.query<ClassScheduleData[], void>({
+    getClassSchedulesAll: build.query<TypeClassScheduleData, void>({
       query: () => ({
         url: "/class-schedule",
         method: "GET",
@@ -55,6 +56,19 @@ export const classScheduleApi = createApi({
       }),
       invalidatesTags: ["ClassSchedule"],
     }),
+
+    // Horarios de un tipo de clase
+    getClassSchedulesByTypeClass: build.query<
+      ClassScheduleData[],
+      { typeClass: string }
+    >({
+      query: ({ typeClass }) => ({
+        url: `/class-schedule/type-class/${typeClass}`,
+        method: "GET",
+        credentials: "include",
+      }),
+      providesTags: ["ClassSchedule"],
+    }),
   }),
 });
 
@@ -64,4 +78,5 @@ export const {
   useGetClassScheduleByIdQuery,
   useGetClassSchedulesAllQuery,
   useDeleteClassScheduleMutation,
+  useGetClassSchedulesByTypeClassQuery,
 } = classScheduleApi;

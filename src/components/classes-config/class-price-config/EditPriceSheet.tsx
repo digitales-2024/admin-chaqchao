@@ -4,7 +4,7 @@ import {
   createClassPriceSchema,
   CreateClassPriceSchema,
 } from "@/schemas/classConfig/createClassPriceSchema";
-import { ClassPriceConfigData } from "@/types";
+import { ClassPriceConfigData, TypeClass } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useForm, Controller, FormProvider } from "react-hook-form";
@@ -50,6 +50,7 @@ export function EditPriceSheet({
   const methods = useForm<CreateClassPriceSchema>({
     resolver: zodResolver(createClassPriceSchema),
     defaultValues: {
+      typeClass: priceData.typeClass,
       classTypeUser: priceData.classTypeUser,
       price: priceData.price,
       typeCurrency: priceData.typeCurrency,
@@ -69,6 +70,7 @@ export function EditPriceSheet({
       classTypeUser: priceData.classTypeUser,
       price: priceData.price,
       typeCurrency: priceData.typeCurrency,
+      typeClass: priceData.typeClass,
     });
   }, [priceData, reset]);
 
@@ -82,6 +84,7 @@ export function EditPriceSheet({
       await onUpdateClassPrice({
         ...data,
         id: priceData.id,
+        typeClass: priceData.typeClass as TypeClass,
         businessId,
       });
       reset();

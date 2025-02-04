@@ -1,4 +1,4 @@
-import { ClassPriceConfigData } from "@/types";
+import { ClassPriceConfigData, TypeClassPricesData } from "@/types";
 import { createApi } from "@reduxjs/toolkit/query/react";
 
 import baseQueryWithReauth from "./baseQuery";
@@ -39,7 +39,7 @@ export const classPriceApi = createApi({
       }),
       providesTags: (result, error, id) => [{ type: "ClassPrice", id }],
     }),
-    getClassPricesAll: build.query<ClassPriceConfigData[], void>({
+    getClassPricesAll: build.query<TypeClassPricesData, void>({
       query: () => ({
         url: "/class-price",
         method: "GET",
@@ -55,6 +55,19 @@ export const classPriceApi = createApi({
       }),
       invalidatesTags: ["ClassPrice"],
     }),
+
+    // Precios dolares de un tipo de clase
+    getClassPricesByTypeClass: build.query<
+      ClassPriceConfigData[],
+      { typeClass: string; typeCurrency?: string }
+    >({
+      query: ({ typeClass, typeCurrency = "DOLAR" }) => ({
+        url: `/class-price/${typeCurrency}/${typeClass}`,
+        method: "GET",
+        credentials: "include",
+      }),
+      providesTags: ["ClassPrice"],
+    }),
   }),
 });
 
@@ -64,4 +77,5 @@ export const {
   useGetClassPriceByIdQuery,
   useGetClassPricesAllQuery,
   useDeleteClassPriceMutation,
+  useGetClassPricesByTypeClassQuery,
 } = classPriceApi;

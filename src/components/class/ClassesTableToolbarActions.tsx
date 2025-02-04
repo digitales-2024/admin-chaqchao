@@ -7,6 +7,8 @@ import { Download, FileText } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
+import { CreateClassDialog } from "./CreateClassDialog";
+
 export interface ClassesTableToolbarActionsProps {
   table?: Table<ClassesDataAdmin>;
 }
@@ -56,6 +58,7 @@ export function ClassesTableToolbarActions({
 
   return (
     <div className="flex flex-wrap items-center justify-end gap-2">
+      <CreateClassDialog />
       <Button variant="outline" size="sm" onClick={handleExportToExcel}>
         <Download className="mr-2 size-4" aria-hidden="true" />
         Exportar

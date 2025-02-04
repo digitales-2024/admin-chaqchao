@@ -2,7 +2,10 @@ import {
   useGetAllClassesQuery,
   useExportClassesToExcelMutation,
   useExportClassesToPdfMutation,
+  useCreateClassMutation,
+  useCloseClassMutation,
 } from "@/redux/services/classApi";
+import { createClassSchema } from "@/schemas";
 import { socket } from "@/socket/socket";
 import { ClassesDataAdmin, CustomErrorData } from "@/types";
 import { translateError } from "@/utils/translateError";
@@ -23,8 +26,10 @@ const mapSelectedRowsToClassesData = (
       dateClass: original.dateClass,
       scheduleClass: original.scheduleClass,
       totalParticipants: original.totalParticipants,
-      classLanguage: original.classLanguage,
-      classes: original.classes.map((classDetail) => ({
+      languageClass: original.languageClass,
+      typeClass: original.typeClass,
+      isClosed: original.isClosed,
+      registers: original.registers.map((classDetail) => ({
         id: classDetail.id,
         userName: classDetail.userName,
         userEmail: classDetail.userEmail,
@@ -40,6 +45,8 @@ const mapSelectedRowsToClassesData = (
         dateClass: classDetail.dateClass,
         scheduleClass: classDetail.scheduleClass,
         comments: classDetail.comments,
+        typeClass: classDetail.typeClass,
+        methodPayment: classDetail.methodPayment,
       })),
     };
   });
@@ -49,6 +56,9 @@ const mapSelectedRowsToClassesData = (
 export const useClasses = (date?: string) => {
   // Validacion de la fecha de consulta o fecha actual
   const queryDate = date || new Date().toISOString().split("T")[0];
+
+  const [createClassMutation, { isLoading: isLoadingCreateClass }] =
+    useCreateClassMutation();
 
   const {
     data: allDataClasses,
@@ -83,6 +93,8 @@ export const useClasses = (date?: string) => {
     exportToPdf,
     { isLoading: isLoadingExportPdf, error: errorExportPdf },
   ] = useExportClassesToPdfMutation();
+
+  const [closeClassMutation] = useCloseClassMutation();
 
   /**
    * Descargar las clases seleccionadas en un archivo Excel
@@ -186,6 +198,79 @@ export const useClasses = (date?: string) => {
     });
   };
 
+  /**
+   * Crear una nueva clase
+   * @param data Datos de la clase
+   * @returns Datos de la clase creada
+   */
+  const createClass = async (
+    data:
+      | createClassSchema
+      | {
+          isClosed: boolean;
+          typeCurrency: string;
+        },
+  ) => {
+    const promise = () =>
+      new Promise(async (resolve, reject) => {
+        try {
+          const result = await createClassMutation(data).unwrap();
+          resolve(result);
+        } catch (error) {
+          if (error && typeof error === "object" && "data" in error) {
+            const errorMessage = (error.data as CustomErrorData).message;
+            const message = translateError(errorMessage as string);
+            reject(new Error(message));
+          } else {
+            reject(
+              new Error(
+                "Ocurrió un error inesperado, por favor intenta de nuevo",
+              ),
+            );
+          }
+        }
+      });
+
+    return toast.promise(promise(), {
+      loading: "Creando nueva clase...",
+      success: "Clase creada con éxito",
+      error: (err) => err.message,
+    });
+  };
+
+  /**
+   * Cerrar una clase
+   * @param id Id de la clase
+   * @returns Datos de la clase cerrada
+   */
+  const closeClass = async (id: string) => {
+    const promise = () =>
+      new Promise(async (resolve, reject) => {
+        try {
+          const result = await closeClassMutation(id).unwrap();
+          resolve(result);
+        } catch (error) {
+          if (error && typeof error === "object" && "data" in error) {
+            const errorMessage = (error.data as CustomErrorData).message;
+            const message = translateError(errorMessage as string);
+            reject(new Error(message));
+          } else {
+            reject(
+              new Error(
+                "Ocurrió un error inesperado, por favor intenta de nuevo",
+              ),
+            );
+          }
+        }
+      });
+
+    return toast.promise(promise(), {
+      loading: "Cerrando clase...",
+      success: "Clase cerrada con suceceso",
+      error: (err) => err.message,
+    });
+  };
+
   return {
     allDataClasses,
     error,
@@ -196,5 +281,8 @@ export const useClasses = (date?: string) => {
     exportClassesToPdf,
     isLoadingExportPdf,
     errorExportPdf,
+    createClass,
+    isLoadingCreateClass,
+    closeClass,
   };
 };

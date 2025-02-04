@@ -1,12 +1,37 @@
-import { ClassesDataAdmin } from "@/types";
+import {
+  ClassesDataAdmin,
+  TypeClass,
+  typeClassColors,
+  typeClassLabels,
+} from "@/types";
 import { ColumnDef } from "@tanstack/react-table";
-import { Calendar, ChevronDown, ChevronUp, Clock } from "lucide-react";
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
+import {
+  Calendar,
+  ChevronDown,
+  ChevronUp,
+  ClipboardX,
+  Clock,
+  Ellipsis,
+} from "lucide-react";
+import { useState } from "react";
 
 import { DataTableColumnHeader } from "@/components/data-table/DataTableColumnHeader";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuShortcut,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
+import { cn } from "@/lib/utils";
 
 import { Badge } from "../ui/badge";
+import { ClosedClassDialog } from "./ClosedClassDialog";
 import ParticipantsCell from "./ParticipantsClassCell";
 
 export const classesTableColumns = (
@@ -53,8 +78,29 @@ export const classesTableColumns = (
     cell: ({ row }) => (
       <div className="flex items-center">
         <Calendar className="mr-2 h-4 w-4" />
+        <div className="min-w-40 truncate normal-case">
+          {format(new Date(row.getValue("fecha")), "PPP", { locale: es })}
+        </div>
+      </div>
+    ),
+  },
+  {
+    id: "tipo clase",
+    accessorKey: "typeClass",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Tipo de Clase" />
+    ),
+    cell: ({ row }) => (
+      <div className="flex items-center">
         <div className="min-w-40 truncate capitalize">
-          {row.getValue("fecha")}
+          <span
+            className={cn(
+              "font-medium",
+              typeClassColors[row.getValue("tipo clase") as TypeClass],
+            )}
+          >
+            {typeClassLabels[row.getValue("tipo clase") as TypeClass]}
+          </span>
         </div>
       </div>
     ),
@@ -65,14 +111,24 @@ export const classesTableColumns = (
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Horario" />
     ),
-    cell: ({ row }) => (
-      <div className="flex items-center">
-        <Clock className="mr-1 h-4 w-4" />
-        <div className="min-w-40 truncate lowercase">
-          {row.getValue("horario")}
+    cell: ({ row }) => {
+      return (
+        <div className="flex min-w-40 items-center gap-4">
+          <Clock className="mr-1 h-4 w-4" />
+          <div className="truncate lowercase">{row.getValue("horario")}</div>
+          <Badge
+            variant="outline"
+            className={cn("truncate text-xs font-thin lowercase", {
+              "border-none bg-rose-50 text-rose-500": row.original.isClosed,
+              "border-none bg-emerald-50 text-emerald-500":
+                !row.original.isClosed,
+            })}
+          >
+            {row.original.isClosed ? "cerrada" : "abierta"}
+          </Badge>
         </div>
-      </div>
-    ),
+      );
+    },
   },
   {
     id: "lenguaje",
@@ -108,11 +164,15 @@ export const classesTableColumns = (
 
       return (
         <ParticipantsCell
+          typeClass={row.original.typeClass}
           totalParticipants={totalParticipants}
           newParticipantsCount={newParticipantsCount}
         />
       );
     },
+    enableSorting: false,
+    enableHiding: false,
+    enablePinning: true,
   },
   {
     id: "detalles",
@@ -136,5 +196,46 @@ export const classesTableColumns = (
     enableSorting: false,
     enableHiding: false,
     enablePinning: true,
+  },
+  {
+    id: "actions",
+    cell: function Cell({ row }) {
+      const [setshowClosedClass, setSetshowClosedClass] =
+        useState<boolean>(false);
+      return (
+        <>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                aria-label="Open menu"
+                variant="ghost"
+                className="flex size-8 p-0 data-[state=open]:bg-muted"
+                disabled={row.original.isClosed}
+              >
+                <Ellipsis className="size-4" aria-hidden="true" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem
+                onSelect={() => {
+                  setSetshowClosedClass(true);
+                }}
+                disabled={row.original.isClosed}
+              >
+                Cerrar clase
+                <DropdownMenuShortcut>
+                  <ClipboardX className="ml-2 size-4" aria-hidden="true" />
+                </DropdownMenuShortcut>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <ClosedClassDialog
+            open={setshowClosedClass}
+            onOpenChange={setSetshowClosedClass}
+            id={row.original.id as string}
+          />
+        </>
+      );
+    },
   },
 ];

@@ -3,12 +3,13 @@ import {
   useGetClassPricesAllQuery,
   useUpdateClassPriceMutation,
   useDeleteClassPriceMutation,
+  useGetClassPricesByTypeClassQuery,
 } from "@/redux/services/classPriceApi";
-import { ClassPriceConfigData, CustomErrorData } from "@/types";
+import { ClassPriceConfigData, CustomErrorData, TypeClass } from "@/types";
 import { translateError } from "@/utils/translateError";
 import { toast } from "sonner";
 
-export const useClassPrices = () => {
+export const useClassPrices = (typeClass?: TypeClass) => {
   const {
     data: dataClassPricesAll,
     error,
@@ -16,6 +17,19 @@ export const useClassPrices = () => {
     isSuccess,
     refetch,
   } = useGetClassPricesAllQuery();
+
+  const {
+    data: pricesDolar,
+    isLoading: isLoadingPricesDolar,
+    error: errorPricesDolar,
+  } = useGetClassPricesByTypeClassQuery(
+    {
+      typeClass: typeClass || TypeClass.NORMAL,
+    },
+    {
+      skip: !typeClass,
+    },
+  );
 
   const [createClassPrice] = useCreateClassPriceMutation();
 
@@ -136,5 +150,8 @@ export const useClassPrices = () => {
     onCreateClassPrice,
     onUpdateClassPrice,
     onDeleteClassPrice,
+    pricesDolar,
+    isLoadingPricesDolar,
+    errorPricesDolar,
   };
 };

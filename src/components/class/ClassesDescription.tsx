@@ -1,6 +1,14 @@
 "use client";
 
-import { ClassesDataAdmin } from "@/types";
+import { Izipay, Paypal } from "@/assets/icons";
+import { useClassCapacity } from "@/hooks/use-class-capacity";
+import {
+  ClassesDataAdmin,
+  MethodPayment,
+  TypeClass,
+  typeClassColors,
+  typeClassLabels,
+} from "@/types";
 import { format, parseISO } from "date-fns";
 import { es } from "date-fns/locale";
 import {
@@ -17,6 +25,8 @@ import {
 
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+
+import { cn } from "@/lib/utils";
 
 import {
   Accordion,
@@ -45,7 +55,10 @@ const formatCurrency = (amount: number, currency: string) => {
 };
 
 export const ClassesDescription = ({ row }: { row: ClassesDataAdmin }) => {
-  const { dateClass, scheduleClass, classes, totalParticipants } = row;
+  const { classCapacities } = useClassCapacity();
+
+  const { dateClass, scheduleClass, registers, totalParticipants, typeClass } =
+    row;
   return (
     <div className="p-4">
       <div className="flex items-center justify-between">
@@ -68,21 +81,41 @@ export const ClassesDescription = ({ row }: { row: ClassesDataAdmin }) => {
                 </CardTitle>
                 <Badge variant="secondary">
                   <Users className="mr-1 h-4 w-4" />
-                  <span className="text-sm font-light">
-                    {totalParticipants}/8{" "}
-                  </span>
+                  {classCapacities && (
+                    <span className="text-sm font-light">
+                      {totalParticipants}/
+                      {classCapacities[typeClass as TypeClass].maxCapacity ?? 0}{" "}
+                    </span>
+                  )}
+                </Badge>
+              </div>
+              <div>
+                <Badge
+                  className={cn(
+                    "font-medium hover:bg-transparent",
+                    typeClassColors[typeClass],
+                  )}
+                >
+                  {typeClassLabels[typeClass]}
                 </Badge>
               </div>
             </div>
           </CardHeader>
 
           <CardContent>
-            <Progress
-              value={(totalParticipants / 8) * 100}
-              className="mb-4 h-1"
-            />{" "}
+            {classCapacities && (
+              <Progress
+                value={
+                  (totalParticipants /
+                    (classCapacities[typeClass as TypeClass].maxCapacity ??
+                      0)) *
+                  100
+                }
+                className="mb-4 h-1"
+              />
+            )}
             <div className="space-y-4">
-              {classes.map((classData) => (
+              {registers.map((classData) => (
                 <Card key={classData.id} className="p-3">
                   <CardContent className="p-5">
                     <div className="grid w-full grid-cols-3 items-center gap-4">
@@ -154,8 +187,16 @@ export const ClassesDescription = ({ row }: { row: ClassesDataAdmin }) => {
                               />
                             </>
                           )}
-                          <span className="text-lg font-semibold">
-                            {classData.totalPrice}
+                          <span className="inline-flex items-center justify-center gap-2 text-lg font-semibold">
+                            {classData.totalPrice.toFixed(2)}
+                            {classData.methodPayment ===
+                              MethodPayment.IZIPAY && (
+                              <Izipay className="h-4" />
+                            )}
+                            {classData.methodPayment ===
+                              MethodPayment.PAYPAL && (
+                              <Paypal className="h-4" />
+                            )}
                           </span>
                         </div>
                         <div className="mt-2 flex flex-col items-end justify-end gap-2">

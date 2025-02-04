@@ -21,3 +21,8 @@ export {
   updateClientsSchema,
   clientsSchema,
 } from "./clients/updateClientsSchema";
+
+export {
+  CreateClassSchema,
+  type createClassSchema,
+} from "./class/createClassSchema";
