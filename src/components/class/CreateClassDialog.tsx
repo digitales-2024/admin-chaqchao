@@ -73,7 +73,7 @@ export function CreateClassDialog() {
       await createClass({
         ...form.getValues(),
         isClosed: false,
-        typeCurrency: "DOLAR",
+        typeCurrency: "USD",
       });
       setOpen(!open);
       form.reset();
@@ -86,7 +86,7 @@ export function CreateClassDialog() {
       await createClass({
         ...form.getValues(),
         isClosed: true,
-        typeCurrency: "DOLAR",
+        typeCurrency: "USD",
       });
       setOpen(!open);
       form.reset();

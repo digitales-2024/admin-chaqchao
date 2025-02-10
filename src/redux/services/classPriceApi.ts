@@ -61,7 +61,7 @@ export const classPriceApi = createApi({
       ClassPriceConfigData[],
       { typeClass: string; typeCurrency?: string }
     >({
-      query: ({ typeClass, typeCurrency = "DOLAR" }) => ({
+      query: ({ typeClass, typeCurrency = "USD" }) => ({
         url: `/class-price/${typeCurrency}/${typeClass}`,
         method: "GET",
         credentials: "include",
