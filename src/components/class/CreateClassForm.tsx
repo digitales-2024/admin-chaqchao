@@ -430,32 +430,30 @@ export default function CreateClassForm({
                                 />
                                 <span className="text-sm">
                                   <span className="text-emerald-600">
-                                    {data.totalParticipants}{" "}
+                                    {classCapacities[
+                                      form.getValues("typeClass") as TypeClass
+                                    ].maxCapacity - data.totalParticipants}{" "}
                                   </span>
-                                  /{" "}
+                                  cupos disponibles
+                                </span>
+                              </div>
+                            </TooltipTrigger>
+                            <TooltipContent className="max-w-32">
+                              <p>
+                                Quedan{" "}
+                                <span className="font-semibold">
+                                  {classCapacities[
+                                    form.getValues("typeClass") as TypeClass
+                                  ].maxCapacity - data.totalParticipants}
+                                </span>{" "}
+                                cupos disponibles de un total de{" "}
+                                <span className="font-semibold">
                                   {
                                     classCapacities[
                                       form.getValues("typeClass") as TypeClass
                                     ].maxCapacity
                                   }
                                 </span>
-                              </div>
-                            </TooltipTrigger>
-                            <TooltipContent className="max-w-32">
-                              <p>
-                                En esta clase ya estan inscritos{" "}
-                                <span className="font-semibold">
-                                  {data.totalParticipants}
-                                </span>{" "}
-                                de un máximo de{" "}
-                                <span className="font-semibold">
-                                  {
-                                    classCapacities[
-                                      form.getValues("typeClass") as TypeClass
-                                    ].maxCapacity
-                                  }
-                                </span>{" "}
-                                cupos.
                               </p>
                             </TooltipContent>
                           </Tooltip>

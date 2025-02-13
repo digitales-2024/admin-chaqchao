@@ -54,6 +54,7 @@ export const CreateClassSchema = z.object({
   methodPayment: z.string().min(1, {
     message: "El tipo de pago es obligatorio",
   }),
+  status: z.string().default("CONFIRMED"),
 });
 
 export type createClassSchema = z.infer<typeof CreateClassSchema>;

@@ -62,6 +62,7 @@ export function CreateClassDialog() {
       comments: "",
       typeCurrency: "USD",
       methodPayment: "",
+      status: "CONFIRMED",
     },
   });
   const { createClass, isLoadingCreateClass } = useClasses();
@@ -80,6 +81,7 @@ export function CreateClassDialog() {
         ...formValues,
         totalParticipants,
         isClosed: false,
+        status: "CONFIRMED",
       });
       setOpen(!open);
       form.reset();
@@ -97,6 +99,7 @@ export function CreateClassDialog() {
         ...formValues,
         totalParticipants,
         isClosed: true,
+        status: "CONFIRMED",
       });
       setOpen(!open);
       form.reset();
