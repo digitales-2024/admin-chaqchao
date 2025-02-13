@@ -727,82 +727,78 @@ export default function CreateClassForm({
           )}
           {!isLoadingPrices && !errorPrices ? (
             <>
-              <div className="grid grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="totalPriceAdults"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Precio adultos</FormLabel>
-                      <FormControl>
-                        <div className="flex gap-2">
-                          <Input
-                            type="number"
-                            value={field.value}
-                            min={0}
-                            onChange={(e) => {
-                              const value = e.target.value;
-                              const parsedValue = parseInt(value, 10);
-                              if (!isNaN(parsedValue)) {
-                                field.onChange(parsedValue);
-                              } else {
-                                field.onChange(0);
-                              }
-                            }}
-                          />
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                      <FormDescription>
-                        {currency === "USD" ? "$" : "S/."}
-                        {pricesSelect.adults.toFixed(2)}
-                      </FormDescription>
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="totalPriceChildren"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Precio niños</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="number"
-                          value={field.value}
-                          min={0}
-                          onChange={(e) => {
-                            const value = e.target.value;
-                            const parsedValue = parseInt(value, 10);
-                            if (!isNaN(parsedValue)) {
-                              field.onChange(parsedValue);
-                            } else {
-                              field.onChange(0);
-                            }
-                          }}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                      <FormDescription>
-                        {currency === "USD" ? "$" : "S/."}
-                        {pricesSelect.children.toFixed(2)}
-                      </FormDescription>
-                    </FormItem>
-                  )}
-                />
+              <div className="space-y-4 rounded-md border border-gray-100 p-4">
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <h4 className="font-medium">Precio Adultos</h4>
+                    <div className="rounded-md bg-gray-50 p-3">
+                      <div className="text-sm text-gray-600">
+                        Precio por persona:
+                        <span className="ml-1 font-medium">
+                          {currency === "USD" ? "$" : "S/."}{" "}
+                          {pricesSelect.adults.toFixed(2)}
+                        </span>
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        Cantidad:{" "}
+                        <span className="ml-1 font-medium">
+                          {form.watch("totalAdults")}
+                        </span>
+                      </div>
+                      <Separator className="my-2" />
+                      <div className="font-medium">
+                        Total: {currency === "USD" ? "$" : "S/."}{" "}
+                        {form.watch("totalPriceAdults").toFixed(2)}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <h4 className="font-medium">Precio Niños</h4>
+                    <div className="rounded-md bg-gray-50 p-3">
+                      <div className="text-sm text-gray-600">
+                        Precio por persona:
+                        <span className="ml-1 font-medium">
+                          {currency === "USD" ? "$" : "S/."}{" "}
+                          {pricesSelect.children.toFixed(2)}
+                        </span>
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        Cantidad:{" "}
+                        <span className="ml-1 font-medium">
+                          {form.watch("totalChildren")}
+                        </span>
+                      </div>
+                      <Separator className="my-2" />
+                      <div className="font-medium">
+                        Total: {currency === "USD" ? "$" : "S/."}{" "}
+                        {form.watch("totalPriceChildren").toFixed(2)}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <Separator />
+                <div className="flex items-center justify-between rounded-md bg-primary/10 p-3">
+                  <span className="text-lg font-medium">Total a Pagar:</span>
+                  <span className="text-lg font-bold text-primary">
+                    {currency === "USD" ? "$" : "S/."}{" "}
+                    {form.watch("totalPrice").toFixed(2)}
+                  </span>
+                </div>
               </div>
               <FormField
                 control={form.control}
                 name="totalPrice"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Precio total</FormLabel>
-                    <FormControl>
-                      <Input readOnly type="number" {...field} min={0} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                render={({ field }) => <Input type="hidden" {...field} />}
+              />
+              <FormField
+                control={form.control}
+                name="totalPriceAdults"
+                render={({ field }) => <Input type="hidden" {...field} />}
+              />
+              <FormField
+                control={form.control}
+                name="totalPriceChildren"
+                render={({ field }) => <Input type="hidden" {...field} />}
               />
             </>
           ) : (
