@@ -58,6 +58,7 @@ export function CreateClassDialog() {
       totalPriceAdults: 0,
       totalPriceChildren: 0,
       totalPrice: 0,
+      totalParticipants: 1,
       comments: "",
       typeCurrency: "USD",
       methodPayment: "",
@@ -71,8 +72,13 @@ export function CreateClassDialog() {
 
   const handleCreateClass = async () => {
     try {
+      const formValues = form.getValues();
+      const totalParticipants =
+        formValues.totalAdults + formValues.totalChildren;
+
       await createClass({
-        ...form.getValues(),
+        ...formValues,
+        totalParticipants,
         isClosed: false,
       });
       setOpen(!open);
@@ -83,8 +89,13 @@ export function CreateClassDialog() {
   };
   const handleCreateClassClosed = async () => {
     try {
+      const formValues = form.getValues();
+      const totalParticipants =
+        formValues.totalAdults + formValues.totalChildren;
+
       await createClass({
-        ...form.getValues(),
+        ...formValues,
+        totalParticipants,
         isClosed: true,
       });
       setOpen(!open);

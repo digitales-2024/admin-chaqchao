@@ -44,6 +44,9 @@ export const CreateClassSchema = z.object({
   totalPrice: z.number().int().min(0, {
     message: "El precio total es obligatorio",
   }),
+  totalParticipants: z.number().int().min(1, {
+    message: "El total de participantes es obligatorio",
+  }),
   comments: z.string().optional(),
   typeCurrency: z.string().min(1, {
     message: "El tipo de moneda es obligatorio",

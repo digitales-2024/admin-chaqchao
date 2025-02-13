@@ -236,7 +236,12 @@ export default function CreateClassForm({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.watch("scheduleClass")]);
 
+  // Mantener actualizado el total de participantes
   useEffect(() => {
+    const totalParticipants =
+      form.watch("totalAdults") + form.watch("totalChildren");
+    form.setValue("totalParticipants", totalParticipants);
+
     // Si hay una clase creada con participantes, el mínimo es 1 adulto
     if (data && data.totalParticipants > 0) {
       const newMin = 1;
@@ -249,8 +254,6 @@ export default function CreateClassForm({
 
     // Si no hay clase creada o la clase tiene 0 participantes, validamos capacidad mínima
     if (classCapactity) {
-      const totalParticipants =
-        form.watch("totalAdults") + form.watch("totalChildren");
       let newMin: number;
 
       // Si el total ya cumple la capacidad mínima, permite mínimo 1 adulto
@@ -267,7 +270,7 @@ export default function CreateClassForm({
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, form.watch("totalAdults"), form.watch("totalAdults")]);
+  }, [data, form.watch("totalAdults"), form.watch("totalChildren")]);
 
   return (
     <Form {...form}>
