@@ -15,6 +15,7 @@ import { TypeClass, typeClassLabels } from "@/types";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { AlertCircle, UsersRound } from "lucide-react";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 
@@ -334,14 +335,32 @@ export default function CreateClassForm({
                   <span>Loading...</span>
                 ) : errorClassSchedulesByTypeClass ? (
                   <span>Error</span>
+                ) : dataClassSchedulesByTypeClass &&
+                  dataClassSchedulesByTypeClass.length > 0 ? (
+                  <ClassScheduleEditable
+                    options={dataClassSchedulesByTypeClass}
+                    value={field.value}
+                    onChange={field.onChange}
+                  />
                 ) : (
-                  dataClassSchedulesByTypeClass && (
-                    <ClassScheduleEditable
-                      options={dataClassSchedulesByTypeClass}
-                      value={field.value}
-                      onChange={field.onChange}
-                    />
-                  )
+                  <Alert className="border-rose-500 [&>svg]:text-rose-500">
+                    <AlertCircle className="size-4" />
+                    <AlertTitle className="text-rose-500">
+                      Error de configuración
+                    </AlertTitle>
+                    <AlertDescription className="text-xs">
+                      No se encontraron horarios para el tipo de clase
+                      seleccionado. Por favor, configure un horario en la
+                      sección de horarios de la clase en el panel de
+                      administración de la plataforma.
+                    </AlertDescription>
+                    <Link
+                      href="/bussiness/classes-configuration"
+                      className="ml-2 mt-3 block w-fit rounded-md border border-rose-500 p-2 text-sm"
+                    >
+                      Ir a configuración
+                    </Link>
+                  </Alert>
                 )}
               </FormControl>
               <FormMessage />
@@ -686,13 +705,22 @@ export default function CreateClassForm({
           />
           {isLoadingPrices ? <Loading /> : ""}
           {errorPrices ? (
-            <Alert variant="destructive">
-              <AlertTitle>Error</AlertTitle>
-              <AlertDescription>
+            <Alert className="border-rose-500 [&>svg]:text-rose-500">
+              <AlertCircle className="size-4" />
+              <AlertTitle className="text-rose-500">
+                Error de configuración
+              </AlertTitle>
+              <AlertDescription className="text-xs">
                 Ocurrió un error al cargar los precios, por favor intenta de
                 nuevo o revisa que los precios estén configurados en la sección
                 de precios en el panel de administración de la plataforma.
               </AlertDescription>
+              <Link
+                href="/bussiness/classes-configuration"
+                className="ml-2 mt-3 block w-fit rounded-md border border-rose-500 p-2 text-sm"
+              >
+                Ir a configuración
+              </Link>
             </Alert>
           ) : (
             ""
