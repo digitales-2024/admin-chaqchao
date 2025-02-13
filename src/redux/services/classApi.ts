@@ -79,6 +79,7 @@ export const classApi = createApi({
         params: { schedule, date, typeClass },
         credentials: "include",
       }),
+      providesTags: ["Class Admin"],
     }),
 
     // Cerrar una clase
