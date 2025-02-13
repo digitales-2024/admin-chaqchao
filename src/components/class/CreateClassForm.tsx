@@ -232,10 +232,31 @@ export default function CreateClassForm({
   }, [form.watch("scheduleClass")]);
 
   // Mantener actualizado el total de participantes
+  const [capacityError, setCapacityError] = useState<string | null>(null);
+
   useEffect(() => {
     const totalParticipants =
       form.watch("totalAdults") + form.watch("totalChildren");
     form.setValue("totalParticipants", totalParticipants);
+
+    // Validación de capacidad máxima
+    if (classCapacity) {
+      const currentOccupancy = data?.totalParticipants || 0;
+      const totalWithNew = currentOccupancy + totalParticipants;
+
+      if (totalWithNew > classCapacity.maxCapacity) {
+        const available = classCapacity.maxCapacity - currentOccupancy;
+        setCapacityError(
+          `La capacidad máxima es de ${classCapacity.maxCapacity} participantes. ${
+            currentOccupancy > 0
+              ? `Ya hay ${currentOccupancy} participantes registrados, solo quedan ${available} cupos disponibles.`
+              : "No puedes exceder esta cantidad."
+          }`,
+        );
+      } else {
+        setCapacityError(null);
+      }
+    }
 
     // Si hay una clase creada con participantes, el mínimo es 1 adulto
     if (data && data.totalParticipants > 0) {
@@ -527,6 +548,13 @@ export default function CreateClassForm({
             )}
           />
         </div>
+        {capacityError && (
+          <Alert variant="destructive" className="mt-2">
+            <AlertCircle className="size-4" />
+            <AlertTitle>Error de capacidad</AlertTitle>
+            <AlertDescription>{capacityError}</AlertDescription>
+          </Alert>
+        )}
         <div className="space-y-4 rounded-sm border border-gray-100 p-3">
           <span className="font-bold">Datos del cliente</span>
           <Separator />
