@@ -80,9 +80,35 @@ export default function CreateClassForm({
   const currency = form.watch("typeCurrency") || "USD";
 
   useEffect(() => {
+    // Limpiar método de pago al cambiar moneda
     form.setValue("methodPayment", "");
+
+    // Forzar recalculo de precios con la nueva moneda
+    if (prices) {
+      const priceAdult = prices.filter(
+        (price) => price.classTypeUser === "ADULT",
+      );
+      const priceChildren = prices.filter(
+        (price) => price.classTypeUser === "CHILD",
+      );
+
+      setPricesSelect({
+        adults: priceAdult[0]?.price || 0,
+        children: priceChildren[0]?.price || 0,
+      });
+
+      // Actualizar totales inmediatamente
+      const totalAdults =
+        priceAdult[0]?.price * form.getValues("totalAdults") || 0;
+      const totalChildren =
+        priceChildren[0]?.price * form.getValues("totalChildren") || 0;
+
+      form.setValue("totalPriceAdults", totalAdults);
+      form.setValue("totalPriceChildren", totalChildren);
+      form.setValue("totalPrice", totalAdults + totalChildren);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [form.watch("typeCurrency")]);
+  }, [form.watch("typeCurrency"), prices]);
 
   const {
     dataClassSchedulesByTypeClass,
@@ -110,45 +136,47 @@ export default function CreateClassForm({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.watch("dateClass"), form.watch("scheduleClass")]);
 
-  useEffect(() => {
-    if (prices) {
-      const priceAdult =
-        prices && prices.filter((price) => price.classTypeUser === "ADULT");
-      const priceChildren = prices.filter(
-        (price) => price.classTypeUser === "CHILD",
-      );
-      setPricesSelect({
-        adults: priceAdult[0].price,
-        children: priceChildren[0].price,
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [prices, form.watch("typeClass"), form.watch("typeCurrency")]);
-
-  useEffect(() => {
-    if (pricesSelect) {
-      form.setValue(
-        "totalPriceAdults",
-        pricesSelect.adults * form.getValues("totalAdults"),
-      );
-      form.setValue(
-        "totalPriceChildren",
-        pricesSelect.children * form.getValues("totalChildren"),
-      );
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [prices, form.watch("totalAdults"), form.watch("totalChildren")]);
-
+  // Actualizar precios cuando cambian los precios del servidor o cantidades
   useEffect(
     () => {
-      form.setValue(
-        "totalPrice",
-        form.getValues("totalPriceAdults") +
-          form.getValues("totalPriceChildren"),
-      );
+      if (prices) {
+        // Obtener precios actualizados
+        const priceAdult = prices.filter(
+          (price) => price.classTypeUser === "ADULT",
+        );
+        const priceChildren = prices.filter(
+          (price) => price.classTypeUser === "CHILD",
+        );
+
+        // Actualizar precios unitarios
+        const newPricesSelect = {
+          adults: priceAdult[0]?.price || 0,
+          children: priceChildren[0]?.price || 0,
+        };
+        setPricesSelect(newPricesSelect);
+
+        // Calcular totales
+        const totalAdults =
+          newPricesSelect.adults * form.getValues("totalAdults");
+        const totalChildren =
+          newPricesSelect.children * form.getValues("totalChildren");
+
+        // Actualizar todos los campos de precios
+        form.setValue("totalPriceAdults", totalAdults);
+        form.setValue("totalPriceChildren", totalChildren);
+        form.setValue("totalPrice", totalAdults + totalChildren);
+      }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [form.watch("totalPriceAdults"), form.watch("totalPriceChildren")],
+    [
+      prices,
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      form.watch("totalAdults"),
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      form.watch("totalChildren"),
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      form.watch("typeCurrency"),
+    ],
   );
 
   const { dataClassLanguagesAll, isLoading } = useClassLanguages();
