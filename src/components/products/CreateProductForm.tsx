@@ -2,11 +2,25 @@
 
 import { useCategories } from "@/hooks/use-categories";
 import { CreateProductsSchema } from "@/schemas/products/createProductsSchema";
-import { ImagePlus, ShieldAlert, ShieldMinus } from "lucide-react";
-import Image from "next/image";
-import { useState } from "react";
+import {
+  ShieldAlert,
+  ShieldMinus,
+  CloudUploadIcon,
+  Trash2Icon,
+} from "lucide-react";
 import { UseFormReturn } from "react-hook-form";
 
+import {
+  Dropzone,
+  DropZoneArea,
+  DropzoneDescription,
+  DropzoneFileList,
+  DropzoneFileListItem,
+  DropzoneMessage,
+  DropzoneRemoveFile,
+  DropzoneTrigger,
+  useDropzone,
+} from "@/components/ui/dropzone";
 import { Input } from "@/components/ui/input";
 
 import { cn } from "@/lib/utils";
@@ -43,22 +57,22 @@ export const CreateProductsForm = ({
   onSubmit,
 }: CreateProductsFormProps) => {
   const { data } = useCategories();
-  const [preview, setPreview] = useState<string | null>(null);
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      // Crear una URL de vista previa para la imagen seleccionada
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreview(reader.result as string);
+  const dropzone = useDropzone({
+    onDropFile: async (file: File) => {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      return {
+        status: "success",
+        result: URL.createObjectURL(file),
       };
-      reader.readAsDataURL(file);
-
-      // Actualizar el valor del campo de imagen con el archivo seleccionado
-      form.setValue("image", file);
-    }
-  };
+    },
+    validation: {
+      accept: {
+        "image/*": [".png", ".jpg", ".jpeg"],
+      },
+      maxSize: 10 * 1024 * 1024,
+      maxFiles: 10,
+    },
+  });
 
   return (
     <Form {...form}>
@@ -157,12 +171,12 @@ export const CreateProductsForm = ({
           {/* Área de Subida de Imagen */}
           <FormField
             control={form.control}
-            name="image"
-            render={({ field }) => (
+            name="images"
+            render={({}) => (
               <FormItem>
-                <FormLabel htmlFor="image">Imagen del Producto</FormLabel>
+                <FormLabel htmlFor="image">Imagenes del Producto</FormLabel>
                 <FormControl>
-                  <div
+                  {/* <div
                     className="cursor-pointer rounded-md border border-dashed border-gray-300 text-center transition-colors duration-300 hover:bg-gray-50"
                     onClick={() => document.getElementById("image")?.click()}
                   >
@@ -205,6 +219,70 @@ export const CreateProductsForm = ({
                       }}
                       className="hidden"
                     />
+                  </div> */}
+                  <div className="not-prose flex flex-col gap-4">
+                    <Dropzone {...dropzone}>
+                      <div>
+                        <div className="flex justify-between">
+                          <DropzoneDescription>
+                            Please select up to 10 images
+                          </DropzoneDescription>
+                          <DropzoneMessage />
+                        </div>
+                        <DropZoneArea>
+                          <DropzoneTrigger className="flex flex-col items-center gap-4 bg-transparent p-10 text-center text-sm">
+                            <CloudUploadIcon className="size-8" />
+                            <div>
+                              <p className="font-semibold">
+                                Upload listing images
+                              </p>
+                              <p className="text-sm text-muted-foreground">
+                                Click here or drag and drop to upload
+                              </p>
+                            </div>
+                          </DropzoneTrigger>
+                        </DropZoneArea>
+                      </div>
+
+                      <DropzoneFileList className="grid grid-cols-3 gap-3 p-0">
+                        {dropzone.fileStatuses.map((file) => (
+                          <DropzoneFileListItem
+                            className="overflow-hidden rounded-md bg-secondary p-0 shadow-sm"
+                            key={file.id}
+                            file={file}
+                          >
+                            {file.status === "pending" && (
+                              <div className="aspect-video animate-pulse bg-black/20" />
+                            )}
+                            {file.status === "success" && (
+                              // eslint-disable-next-line @next/next/no-img-element
+                              <img
+                                src={file.result}
+                                alt={`uploaded-${file.fileName}`}
+                                className="aspect-video object-cover"
+                              />
+                            )}
+                            <div className="flex items-center justify-between p-2 pl-4">
+                              <div className="min-w-0">
+                                <p className="truncate text-sm">
+                                  {file.fileName}
+                                </p>
+                                <p className="text-xs text-muted-foreground">
+                                  {(file.file.size / (1024 * 1024)).toFixed(2)}{" "}
+                                  MB
+                                </p>
+                              </div>
+                              <DropzoneRemoveFile
+                                variant="ghost"
+                                className="shrink-0 hover:outline"
+                              >
+                                <Trash2Icon className="size-4" />
+                              </DropzoneRemoveFile>
+                            </div>
+                          </DropzoneFileListItem>
+                        ))}
+                      </DropzoneFileList>
+                    </Dropzone>
                   </div>
                 </FormControl>
                 <FormMessage />

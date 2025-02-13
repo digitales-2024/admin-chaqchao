@@ -15,9 +15,10 @@ export const productsSchema = z.object({
     .regex(/^[0-9]+(\.[0-9]{1,2})?$/, {
       message: "El precio debe ser un número válido",
     }),
-
   isRestricted: z.boolean().optional(),
-  image: z.instanceof(File).optional(),
+  images: z
+    .array(z.instanceof(File))
+    .min(1, { message: "Debes subir al menos una imagen" }),
   categoryId: z.string().min(1, { message: "Debes seleccionar una categoría" }),
 });
 
