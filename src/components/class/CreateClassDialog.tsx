@@ -1,6 +1,6 @@
 "use client";
 import { useClasses } from "@/hooks/use-class";
-import { useClassCapacity } from "@/hooks/use-class-capacity";
+import { useGetClassesCapacityQuery } from "@/redux/services/classApi";
 import { CreateClassSchema, createClassSchema } from "@/schemas";
 import { TypeClass } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -66,7 +66,15 @@ export function CreateClassDialog() {
     },
   });
   const { createClass, isLoadingCreateClass } = useClasses();
-  const { classCapacities, isLoadingClassCapacities } = useClassCapacity();
+  const { data: classCapacities, isLoading: isLoadingClassCapacities } =
+    useGetClassesCapacityQuery(
+      {
+        typeClass: form.getValues("typeClass") as TypeClass,
+      },
+      {
+        skip: !form.getValues("typeClass"),
+      },
+    );
   const onSubmit = async () => {
     setOpenAlertConfirm(true);
   };
@@ -114,12 +122,7 @@ export function CreateClassDialog() {
   };
 
   const isDisabled =
-    !!(
-      classCapacities &&
-      classCapacities[form.getValues("typeClass") as TypeClass]
-    ) ||
-    isLoadingClassCapacities ||
-    isLoadingCreateClass;
+    !!classCapacities || isLoadingClassCapacities || isLoadingCreateClass;
 
   const [openAlertConfirm, setOpenAlertConfirm] = useState<boolean>(false);
 
