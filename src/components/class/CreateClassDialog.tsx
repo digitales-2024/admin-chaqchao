@@ -1,6 +1,6 @@
 "use client";
 import { useClasses } from "@/hooks/use-class";
-import { useClassCapacity } from "@/hooks/use-class-capacity";
+import { useGetClassesCapacityQuery } from "@/redux/services/classApi";
 import { CreateClassSchema, createClassSchema } from "@/schemas";
 import { TypeClass } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -58,22 +58,38 @@ export function CreateClassDialog() {
       totalPriceAdults: 0,
       totalPriceChildren: 0,
       totalPrice: 0,
+      totalParticipants: 1,
       comments: "",
+      typeCurrency: "USD",
       methodPayment: "",
+      status: "CONFIRMED",
     },
   });
   const { createClass, isLoadingCreateClass } = useClasses();
-  const { classCapacities, isLoadingClassCapacities } = useClassCapacity();
+  const { data: classCapacities, isLoading: isLoadingClassCapacities } =
+    useGetClassesCapacityQuery(
+      {
+        typeClass: form.getValues("typeClass") as TypeClass,
+      },
+      {
+        skip: !form.getValues("typeClass"),
+      },
+    );
   const onSubmit = async () => {
     setOpenAlertConfirm(true);
   };
 
   const handleCreateClass = async () => {
     try {
+      const formValues = form.getValues();
+      const totalParticipants =
+        formValues.totalAdults + formValues.totalChildren;
+
       await createClass({
-        ...form.getValues(),
+        ...formValues,
+        totalParticipants,
         isClosed: false,
-        typeCurrency: "USD",
+        status: "CONFIRMED",
       });
       setOpen(!open);
       form.reset();
@@ -83,10 +99,15 @@ export function CreateClassDialog() {
   };
   const handleCreateClassClosed = async () => {
     try {
+      const formValues = form.getValues();
+      const totalParticipants =
+        formValues.totalAdults + formValues.totalChildren;
+
       await createClass({
-        ...form.getValues(),
+        ...formValues,
+        totalParticipants,
         isClosed: true,
-        typeCurrency: "USD",
+        status: "CONFIRMED",
       });
       setOpen(!open);
       form.reset();
@@ -101,12 +122,7 @@ export function CreateClassDialog() {
   };
 
   const isDisabled =
-    !!(
-      classCapacities &&
-      classCapacities[form.getValues("typeClass") as TypeClass]
-    ) ||
-    isLoadingClassCapacities ||
-    isLoadingCreateClass;
+    !!classCapacities || isLoadingClassCapacities || isLoadingCreateClass;
 
   const [openAlertConfirm, setOpenAlertConfirm] = useState<boolean>(false);
 

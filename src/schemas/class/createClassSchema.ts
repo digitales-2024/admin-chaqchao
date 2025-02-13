@@ -44,12 +44,17 @@ export const CreateClassSchema = z.object({
   totalPrice: z.number().int().min(0, {
     message: "El precio total es obligatorio",
   }),
-  comments: z.string().min(1, {
-    message: "Los comentarios son obligatorios",
+  totalParticipants: z.number().int().min(1, {
+    message: "El total de participantes es obligatorio",
+  }),
+  comments: z.string().optional(),
+  typeCurrency: z.string().min(1, {
+    message: "El tipo de moneda es obligatorio",
   }),
   methodPayment: z.string().min(1, {
     message: "El tipo de pago es obligatorio",
   }),
+  status: z.string().default("CONFIRMED"),
 });
 
 export type createClassSchema = z.infer<typeof CreateClassSchema>;
