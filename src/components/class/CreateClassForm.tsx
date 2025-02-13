@@ -198,8 +198,6 @@ export default function CreateClassForm({
         !form.getValues("typeClass"),
     },
   );
-  console.log("🚀 ~ data:", data);
-
   const { data: classCapacity, isLoading: isLoadingCapacity } =
     useGetClassesCapacityQuery(
       {
