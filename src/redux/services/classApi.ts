@@ -90,6 +90,47 @@ export const classApi = createApi({
       }),
       invalidatesTags: ["Class Admin"],
     }),
+
+    // Capacidad de las clases
+    // Obtener capacidad de las clases
+    getClassesCapacity: build.query<
+      {
+        id: string;
+        typeClass: TypeClass;
+        minCapacity: number;
+        maxCapacity: number;
+      },
+      { typeClass?: TypeClass }
+    >({
+      query: ({ typeClass }) => ({
+        url: "/class/admin/capacity",
+        method: "GET",
+        params: { typeClass },
+        credentials: "include",
+      }),
+      providesTags: ["Class Admin"],
+    }),
+    // Endpoint para obtener los precios
+    prices: build.query<
+      {
+        id: string;
+        classTypeUser: string;
+        price: number;
+        typeCurrency: string;
+      }[],
+      { typeCurrency?: string; typeClass: "NORMAL" | "GROUP" | "PRIVATE" }
+    >({
+      query: (args) => ({
+        url: "/classes/prices",
+        method: "GET",
+        params: {
+          typeCurrency: args.typeCurrency || "DOLAR",
+          typeClass: args.typeClass,
+        },
+        credentials: "include",
+      }),
+      providesTags: ["Class Admin"],
+    }),
   }),
 });
 
@@ -101,4 +142,6 @@ export const {
   useGetClassesFuturesQuery,
   useCheckClassExistQuery,
   useCloseClassMutation,
+  useGetClassesCapacityQuery,
+  usePricesQuery,
 } = classApi;

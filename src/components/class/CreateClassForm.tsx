@@ -1,15 +1,17 @@
 "use client";
 
+import { Izipay, Paypal } from "@/assets/icons";
 import { useClassCapacity } from "@/hooks/use-class-capacity";
 import { useClassLanguages } from "@/hooks/use-class-language";
-import { useClassPrices } from "@/hooks/use-class-price";
 import { useClassSchedules } from "@/hooks/use-class-schedule";
 import {
   useCheckClassExistQuery,
+  useGetClassesCapacityQuery,
   useGetClassesFuturesQuery,
+  usePricesQuery,
 } from "@/redux/services/classApi";
 import { createClassSchema } from "@/schemas";
-import { MethodPayment, TypeClass, typeClassLabels } from "@/types";
+import { TypeClass, typeClassLabels } from "@/types";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { AlertCircle, UsersRound } from "lucide-react";
@@ -34,9 +36,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+import { cn } from "@/lib/utils";
+
 import { TwoMonthCalendar } from "../common/calendar/TwoMonthCalendar";
+import Counter from "../common/counter";
 import Loading from "../common/Loading";
+import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
 import { PhoneInput } from "../ui/phone-input";
+import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { Separator } from "../ui/separator";
 import { Textarea } from "../ui/textarea";
 import {
@@ -46,7 +53,6 @@ import {
   TooltipTrigger,
 } from "../ui/tooltip";
 import ClassScheduleEditable from "./ClassScheduleEditable";
-import { PaymentMethodSelection } from "./PaymentMethodSelection";
 
 interface CreateClassFormProps
   extends Omit<React.ComponentPropsWithRef<"form">, "onSubmit"> {
@@ -60,9 +66,22 @@ export default function CreateClassForm({
   onSubmit,
   children,
 }: CreateClassFormProps) {
-  const { pricesDolar } = useClassPrices(
-    form.getValues("typeClass") as TypeClass,
-  );
+  const {
+    data: prices,
+    isLoading: isLoadingPrices,
+    error: errorPrices,
+  } = usePricesQuery({
+    typeCurrency: form.getValues("typeCurrency") || "USD",
+    typeClass: (form.getValues("typeClass") as TypeClass) || "NORMAL",
+  });
+  const [counterMin, setCounterMin] = useState(1);
+
+  const currency = form.watch("typeCurrency") || "USD";
+
+  useEffect(() => {
+    form.setValue("methodPayment", "");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form.watch("typeCurrency")]);
 
   const {
     dataClassSchedulesByTypeClass,
@@ -70,11 +89,10 @@ export default function CreateClassForm({
     isLoadingClassSchedulesByTypeClass,
   } = useClassSchedules(form.getValues("typeClass") as TypeClass);
 
-  const [prices, setPrices] = useState({
+  const [pricesSelect, setPricesSelect] = useState({
     adults: 0,
     children: 0,
   });
-
   const { data: classesFutures } = useGetClassesFuturesQuery(
     {
       typeClass: form.getValues("typeClass") as TypeClass,
@@ -92,29 +110,29 @@ export default function CreateClassForm({
   }, [form.watch("dateClass"), form.watch("scheduleClass")]);
 
   useEffect(() => {
-    if (pricesDolar) {
+    if (prices) {
       const priceAdult =
-        pricesDolar &&
-        pricesDolar.filter((price) => price.classTypeUser === "ADULT");
-      const priceChildren = pricesDolar.filter(
+        prices && prices.filter((price) => price.classTypeUser === "ADULT");
+      const priceChildren = prices.filter(
         (price) => price.classTypeUser === "CHILD",
       );
-      setPrices({
-        adults: priceAdult[0]?.price ?? 0,
-        children: priceChildren[0]?.price ?? 0,
+      setPricesSelect({
+        adults: priceAdult[0].price,
+        children: priceChildren[0].price,
       });
     }
-  }, [pricesDolar]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [prices, form.watch("typeClass"), form.watch("typeCurrency")]);
 
   useEffect(() => {
-    if (prices) {
+    if (pricesSelect) {
       form.setValue(
         "totalPriceAdults",
-        prices.adults * form.getValues("totalAdults"),
+        pricesSelect.adults * form.getValues("totalAdults"),
       );
       form.setValue(
         "totalPriceChildren",
-        prices.children * form.getValues("totalChildren"),
+        pricesSelect.children * form.getValues("totalChildren"),
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -154,6 +172,15 @@ export default function CreateClassForm({
         !form.getValues("typeClass"),
     },
   );
+
+  const { data: classCapactity } = useGetClassesCapacityQuery(
+    {
+      typeClass: form.getValues("typeClass") as TypeClass,
+    },
+    {
+      skip: !form.getValues("typeClass"),
+    },
+  );
   useEffect(() => {
     if (data) {
       form.setValue("languageClass", data.languageClass);
@@ -179,6 +206,39 @@ export default function CreateClassForm({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.watch("scheduleClass")]);
+
+  useEffect(() => {
+    // Si hay una clase creada con participantes, el mínimo es 1 adulto
+    if (data && data.totalParticipants > 0) {
+      const newMin = 1;
+      setCounterMin(newMin);
+      if (form.watch("totalAdults") < newMin) {
+        form.setValue("totalAdults", newMin);
+      }
+      return;
+    }
+
+    // Si no hay clase creada o la clase tiene 0 participantes, validamos capacidad mínima
+    if (classCapactity) {
+      const totalParticipants =
+        form.watch("totalAdults") + form.watch("totalChildren");
+      let newMin: number;
+
+      // Si el total ya cumple la capacidad mínima, permite mínimo 1 adulto
+      if (totalParticipants >= classCapactity.minCapacity) {
+        newMin = 1;
+      } else {
+        // Si no cumple, el mínimo de adultos debe ser la capacidad mínima
+        newMin = classCapactity.minCapacity;
+      }
+
+      setCounterMin(newMin);
+      if (form.watch("totalAdults") < newMin) {
+        form.setValue("totalAdults", newMin);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data, form.watch("totalAdults"), form.watch("totalAdults")]);
 
   return (
     <Form {...form}>
@@ -415,19 +475,10 @@ export default function CreateClassForm({
               <FormItem>
                 <FormLabel>Adultos</FormLabel>
                 <FormControl>
-                  <Input
-                    type="number"
-                    value={field.value}
-                    min={1}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      const parsedValue = parseInt(value, 10);
-                      if (!isNaN(parsedValue)) {
-                        field.onChange(parsedValue);
-                      } else {
-                        field.onChange(1);
-                      }
-                    }}
+                  <Counter
+                    name={field.name}
+                    control={form.control}
+                    min={counterMin}
                   />
                 </FormControl>
                 <FormDescription>Los adultos de 12 años o más.</FormDescription>
@@ -442,20 +493,7 @@ export default function CreateClassForm({
               <FormItem>
                 <FormLabel>Niños</FormLabel>
                 <FormControl>
-                  <Input
-                    type="number"
-                    value={field.value}
-                    min={0}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      const parsedValue = parseInt(value, 10);
-                      if (!isNaN(parsedValue)) {
-                        field.onChange(parsedValue);
-                      } else {
-                        field.onChange(0);
-                      }
-                    }}
-                  />
+                  <Counter name={field.name} control={form.control} min={0} />
                 </FormControl>
                 <FormDescription>Los niños de 5 a 12 años.</FormDescription>
                 <FormMessage />
@@ -463,161 +501,286 @@ export default function CreateClassForm({
             )}
           />
         </div>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-4 rounded-sm border border-gray-100 p-3">
+          <span className="font-bold">Datos del cliente</span>
+          <Separator />
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <FormField
+              control={form.control}
+              name="userName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Nombre</FormLabel>
+                  <FormControl>
+                    <Input placeholder="" type="" {...field} />
+                  </FormControl>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="userEmail"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Correo electrónico</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
           <FormField
             control={form.control}
-            name="totalPriceAdults"
+            name="userPhone"
             render={({ field }) => (
-              <FormItem>
-                <FormLabel>Precio adultos</FormLabel>
-                <FormControl>
-                  <div className="flex gap-2">
-                    <Input
-                      type="number"
-                      value={field.value}
-                      min={0}
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        const parsedValue = parseInt(value, 10);
-                        if (!isNaN(parsedValue)) {
-                          field.onChange(parsedValue);
-                        } else {
-                          field.onChange(0);
-                        }
-                      }}
-                    />
-                  </div>
+              <FormItem className="flex flex-col items-start">
+                <FormLabel>Teléfono</FormLabel>
+                <FormControl className="w-full">
+                  <PhoneInput {...field} defaultCountry="PE" />
                 </FormControl>
                 <FormMessage />
-                <FormDescription>
-                  USD {prices.adults.toFixed(2)}
-                </FormDescription>
               </FormItem>
             )}
           />
           <FormField
             control={form.control}
-            name="totalPriceChildren"
+            name="comments"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Precio niños</FormLabel>
+                <FormLabel>Comentarios</FormLabel>
                 <FormControl>
-                  <Input
-                    type="number"
+                  <Textarea
+                    placeholder="Agrega un comentario"
                     value={field.value}
-                    min={0}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      const parsedValue = parseInt(value, 10);
-                      if (!isNaN(parsedValue)) {
-                        field.onChange(parsedValue);
-                      } else {
-                        field.onChange(0);
-                      }
-                    }}
+                    onChange={field.onChange}
                   />
                 </FormControl>
                 <FormMessage />
-                <FormDescription>
-                  USD {prices.children.toFixed(2)}
-                </FormDescription>
               </FormItem>
             )}
           />
         </div>
-        <FormField
-          control={form.control}
-          name="totalPrice"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Precio total</FormLabel>
-              <FormControl>
-                <Input readOnly type="number" {...field} min={0} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Separator />
-        <span className="font-bold">Datos del cliente</span>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+
+        <div className="space-y-4 rounded-sm border border-gray-100 p-3">
+          <span className="font-bold">Datos de la facturación</span>
+          <Separator />
+          {/* Currency Selection */}
           <FormField
             control={form.control}
-            name="userName"
+            name="typeCurrency"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Nombre</FormLabel>
+                <FormLabel>Selecciona el tipo de moneda para el pago</FormLabel>
                 <FormControl>
-                  <Input placeholder="" type="" {...field} />
-                </FormControl>
-
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="userEmail"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Correo electrónico</FormLabel>
-                <FormControl>
-                  <Input {...field} />
+                  <RadioGroup
+                    onValueChange={(value) => {
+                      field.onChange(value);
+                    }}
+                    defaultValue={field.value}
+                    value={field.value}
+                    className="flex gap-4"
+                  >
+                    <FormItem>
+                      <label className="flex items-center gap-2">
+                        <RadioGroupItem value="USD" />
+                        <span>DOLAR ($)</span>
+                      </label>
+                    </FormItem>
+                    <FormItem>
+                      <label className="flex items-center gap-2">
+                        <RadioGroupItem value="PEN" />
+                        <span>SOL (S/.)</span>
+                      </label>
+                    </FormItem>
+                  </RadioGroup>
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
+          <FormField
+            control={form.control}
+            name="methodPayment"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Selecciona el método de pago</FormLabel>
+                <FormControl>
+                  <RadioGroup
+                    onValueChange={(value) => {
+                      field.onChange(value);
+                    }}
+                    defaultValue={field.value}
+                    className="grid grid-cols-1 gap-4 md:grid-cols-2"
+                  >
+                    {currency === "USD" && (
+                      <FormItem className="m-0">
+                        <label
+                          htmlFor="PAYPAL"
+                          className={cn(
+                            "relative flex w-full cursor-pointer rounded-lg border-2 p-4 transition-all hover:bg-accent",
+                            field.value === "PAYPAL"
+                              ? "border-primary bg-accent"
+                              : "border-muted",
+                          )}
+                        >
+                          <FormControl>
+                            <RadioGroupItem
+                              value="PAYPAL"
+                              id="PAYPAL"
+                              className="sr-only"
+                            />
+                          </FormControl>
+                          <div className="flex w-full items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <span className="font-medium">Paypal</span>
+                              <Paypal className="h-5 w-auto" />
+                            </div>
+                            {field.value === "PAYPAL" && (
+                              <div className="h-2 w-2 rounded-full bg-primary" />
+                            )}
+                          </div>
+                        </label>
+                      </FormItem>
+                    )}
+
+                    {currency === "PEN" && (
+                      <FormItem className="m-0">
+                        <label
+                          htmlFor="IZIPAY"
+                          className={cn(
+                            "relative flex w-full cursor-pointer rounded-lg border-2 p-4 transition-all hover:bg-accent",
+                            field.value === "IZIPAY"
+                              ? "border-primary bg-accent"
+                              : "border-muted",
+                          )}
+                        >
+                          <FormControl>
+                            <RadioGroupItem
+                              value="IZIPAY"
+                              id="IZIPAY"
+                              className="sr-only"
+                            />
+                          </FormControl>
+                          <div className="flex w-full items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <span className="font-medium">Izipay</span>
+                              <Izipay className="h-5 w-auto" />
+                            </div>
+                            {field.value === "IZIPAY" && (
+                              <div className="h-2 w-2 rounded-full bg-primary" />
+                            )}
+                          </div>
+                        </label>
+                      </FormItem>
+                    )}
+                  </RadioGroup>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          {isLoadingPrices ? <Loading /> : ""}
+          {errorPrices ? (
+            <Alert variant="destructive">
+              <AlertTitle>Error</AlertTitle>
+              <AlertDescription>
+                Ocurrió un error al cargar los precios, por favor intenta de
+                nuevo o revisa que los precios estén configurados en la sección
+                de precios en el panel de administración de la plataforma.
+              </AlertDescription>
+            </Alert>
+          ) : (
+            ""
+          )}
+          {!isLoadingPrices && !errorPrices ? (
+            <>
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="totalPriceAdults"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Precio adultos</FormLabel>
+                      <FormControl>
+                        <div className="flex gap-2">
+                          <Input
+                            type="number"
+                            value={field.value}
+                            min={0}
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              const parsedValue = parseInt(value, 10);
+                              if (!isNaN(parsedValue)) {
+                                field.onChange(parsedValue);
+                              } else {
+                                field.onChange(0);
+                              }
+                            }}
+                          />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                      <FormDescription>
+                        {currency === "USD" ? "$" : "S/."}
+                        {pricesSelect.adults.toFixed(2)}
+                      </FormDescription>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="totalPriceChildren"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Precio niños</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          value={field.value}
+                          min={0}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            const parsedValue = parseInt(value, 10);
+                            if (!isNaN(parsedValue)) {
+                              field.onChange(parsedValue);
+                            } else {
+                              field.onChange(0);
+                            }
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                      <FormDescription>
+                        {currency === "USD" ? "$" : "S/."}
+                        {pricesSelect.children.toFixed(2)}
+                      </FormDescription>
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <FormField
+                control={form.control}
+                name="totalPrice"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Precio total</FormLabel>
+                    <FormControl>
+                      <Input readOnly type="number" {...field} min={0} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </>
+          ) : (
+            ""
+          )}
         </div>
-        <FormField
-          control={form.control}
-          name="userPhone"
-          render={({ field }) => (
-            <FormItem className="flex flex-col items-start">
-              <FormLabel>Teléfono</FormLabel>
-              <FormControl className="w-full">
-                <PhoneInput {...field} defaultCountry="PE" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Separator />
-        <span className="font-bold">Información adicional</span>
-        <FormField
-          control={form.control}
-          name="comments"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Comentarios</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Agrega un comentario"
-                  value={field.value}
-                  onChange={field.onChange}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="methodPayment"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Selecciona el método de pago</FormLabel>
-              <FormControl>
-                <PaymentMethodSelection
-                  value={field.value as MethodPayment}
-                  onChange={field.onChange}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
 
         {children}
       </form>

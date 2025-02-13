@@ -59,6 +59,7 @@ export function CreateClassDialog() {
       totalPriceChildren: 0,
       totalPrice: 0,
       comments: "",
+      typeCurrency: "USD",
       methodPayment: "",
     },
   });
