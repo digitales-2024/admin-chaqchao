@@ -1,7 +1,6 @@
 "use client";
 
 import { Izipay, Paypal } from "@/assets/icons";
-import { useClassCapacity } from "@/hooks/use-class-capacity";
 import { useClassLanguages } from "@/hooks/use-class-language";
 import { useClassSchedules } from "@/hooks/use-class-schedule";
 import {
@@ -180,8 +179,6 @@ export default function CreateClassForm({
   );
 
   const { dataClassLanguagesAll, isLoading } = useClassLanguages();
-  const { classCapacities, isLoadingClassCapacities, refetchClassCapacities } =
-    useClassCapacity();
   const {
     data,
     isLoading: isLoadingClassExist,
@@ -201,15 +198,17 @@ export default function CreateClassForm({
         !form.getValues("typeClass"),
     },
   );
+  console.log("🚀 ~ data:", data);
 
-  const { data: classCapactity } = useGetClassesCapacityQuery(
-    {
-      typeClass: form.getValues("typeClass") as TypeClass,
-    },
-    {
-      skip: !form.getValues("typeClass"),
-    },
-  );
+  const { data: classCapacity, isLoading: isLoadingCapacity } =
+    useGetClassesCapacityQuery(
+      {
+        typeClass: form.getValues("typeClass") as TypeClass,
+      },
+      {
+        skip: !form.getValues("typeClass"),
+      },
+    );
   useEffect(() => {
     if (data) {
       form.setValue("languageClass", data.languageClass);
@@ -222,7 +221,6 @@ export default function CreateClassForm({
       form.setValue("scheduleClass", "");
       form.resetField("dateClass");
       refetch();
-      refetchClassCapacities();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.watch("typeClass")]);
@@ -231,7 +229,6 @@ export default function CreateClassForm({
     if (form.watch("scheduleClass")) {
       form.resetField("dateClass");
       refetch();
-      refetchClassCapacities();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.watch("scheduleClass")]);
@@ -253,15 +250,15 @@ export default function CreateClassForm({
     }
 
     // Si no hay clase creada o la clase tiene 0 participantes, validamos capacidad mínima
-    if (classCapactity) {
+    if (classCapacity) {
       let newMin: number;
 
       // Si el total ya cumple la capacidad mínima, permite mínimo 1 adulto
-      if (totalParticipants >= classCapactity.minCapacity) {
+      if (totalParticipants >= classCapacity.minCapacity) {
         newMin = 1;
       } else {
         // Si no cumple, el mínimo de adultos debe ser la capacidad mínima
-        newMin = classCapactity.minCapacity;
+        newMin = classCapacity.minCapacity;
       }
 
       setCounterMin(newMin);
@@ -306,22 +303,15 @@ export default function CreateClassForm({
           <div className="flex h-full flex-col gap-2">
             <span className="text-sm">Capacidad</span>
             <div className="inline-flex flex-1 items-center gap-2">
-              {isLoadingClassCapacities ? (
+              {isLoadingCapacity ? (
                 <Loading />
-              ) : classCapacities &&
-                classCapacities[form.getValues("typeClass") as TypeClass] ? (
+              ) : classCapacity ? (
                 <span className="inline-flex items-center gap-2">
                   <UsersRound className="size-4" />
                   <span className="text-xs text-gray-500">min: </span>
-                  {
-                    classCapacities[form.getValues("typeClass") as TypeClass]
-                      .minCapacity
-                  }{" "}
+                  {classCapacity.minCapacity}{" "}
                   <span className="text-xs text-gray-500">- max: </span>
-                  {
-                    classCapacities[form.getValues("typeClass") as TypeClass]
-                      .maxCapacity
-                  }
+                  {classCapacity.maxCapacity}
                 </span>
               ) : (
                 <span className="inline-flex items-center gap-1 text-rose-500">
@@ -416,48 +406,38 @@ export default function CreateClassForm({
                           })}
                         </span>
                       </div>
-                      {data &&
-                        classCapacities &&
-                        classCapacities[
-                          form.getValues("typeClass") as TypeClass
-                        ] && (
-                          <Tooltip>
-                            <TooltipTrigger type="button">
-                              <div className="sticky top-0 flex items-center gap-2 rounded-md border border-emerald-500 px-2 py-1 text-xs text-gray-400">
-                                <UsersRound
-                                  className="size-4 text-emerald-600"
-                                  strokeWidth={1}
-                                />
-                                <span className="text-sm">
-                                  <span className="text-emerald-600">
-                                    {classCapacities[
-                                      form.getValues("typeClass") as TypeClass
-                                    ].maxCapacity - data.totalParticipants}{" "}
-                                  </span>
-                                  cupos disponibles
+                      {data && classCapacity && (
+                        <Tooltip>
+                          <TooltipTrigger type="button">
+                            <div className="sticky top-0 flex items-center gap-2 rounded-md border border-emerald-500 px-2 py-1 text-xs text-gray-400">
+                              <UsersRound
+                                className="size-4 text-emerald-600"
+                                strokeWidth={1}
+                              />
+                              <span className="text-sm">
+                                <span className="text-emerald-600">
+                                  {classCapacity.maxCapacity -
+                                    data.totalParticipants}{" "}
                                 </span>
-                              </div>
-                            </TooltipTrigger>
-                            <TooltipContent className="max-w-32">
-                              <p>
-                                Quedan{" "}
-                                <span className="font-semibold">
-                                  {classCapacities[
-                                    form.getValues("typeClass") as TypeClass
-                                  ].maxCapacity - data.totalParticipants}
-                                </span>{" "}
-                                cupos disponibles de un total de{" "}
-                                <span className="font-semibold">
-                                  {
-                                    classCapacities[
-                                      form.getValues("typeClass") as TypeClass
-                                    ].maxCapacity
-                                  }
-                                </span>
-                              </p>
-                            </TooltipContent>
-                          </Tooltip>
-                        )}
+                                cupos disponibles
+                              </span>
+                            </div>
+                          </TooltipTrigger>
+                          <TooltipContent className="max-w-32">
+                            <p>
+                              Quedan{" "}
+                              <span className="font-semibold">
+                                {classCapacity.maxCapacity -
+                                  data.totalParticipants}
+                              </span>{" "}
+                              cupos disponibles de un total de{" "}
+                              <span className="font-semibold">
+                                {classCapacity.maxCapacity}
+                              </span>
+                            </p>
+                          </TooltipContent>
+                        </Tooltip>
+                      )}
                     </div>
                   )}
                   <TwoMonthCalendar
