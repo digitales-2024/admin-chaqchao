@@ -18,7 +18,8 @@ export const productsSchema = z.object({
   isRestricted: z.boolean().optional(),
   images: z
     .array(z.instanceof(File))
-    .min(1, { message: "Debes subir al menos una imagen" }),
+    .min(1, { message: "Debes subir al menos una imagen" })
+    .max(3, { message: "Puedes subir máximo 3 imágenes" }),
   categoryId: z.string().min(1, { message: "Debes seleccionar una categoría" }),
 });
 

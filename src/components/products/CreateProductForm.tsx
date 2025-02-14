@@ -8,6 +8,7 @@ import {
   CloudUploadIcon,
   Trash2Icon,
 } from "lucide-react";
+import Link from "next/link";
 import { UseFormReturn } from "react-hook-form";
 
 import {
@@ -25,6 +26,7 @@ import { Input } from "@/components/ui/input";
 
 import { cn } from "@/lib/utils";
 
+import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
 import {
   Form,
   FormControl,
@@ -44,6 +46,8 @@ import {
 import { Switch } from "../ui/switch";
 import { Textarea } from "../ui/textarea";
 
+const MAX_FILES = 3;
+
 interface CreateProductsFormProps
   extends Omit<React.ComponentPropsWithRef<"form">, "onSubmit"> {
   children: React.ReactNode;
@@ -57,20 +61,81 @@ export const CreateProductsForm = ({
   onSubmit,
 }: CreateProductsFormProps) => {
   const { data } = useCategories();
+  const currentImages = form.watch("images") || [];
   const dropzone = useDropzone({
     onDropFile: async (file: File) => {
       await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      // Obtener los valores más recientes
+      const formImages = form.getValues("images") || [];
+      const totalImages = formImages.length;
+
+      // Verificación de límite considerando ambos estados
+      if (totalImages >= MAX_FILES) {
+        return {
+          status: "error" as const,
+          error: "Ya has alcanzado el límite máximo de 3 imágenes",
+        };
+      }
+
+      // Verificar duplicados
+      const isDuplicate = formImages.some(
+        (img) => img.name === file.name && img.size === file.size,
+      );
+
+      if (isDuplicate) {
+        return {
+          status: "error" as const,
+          error: "Esta imagen ya ha sido agregada",
+        };
+      }
+
+      // Actualizar el formulario
+      form.setValue("images", [...formImages, file], {
+        shouldValidate: true,
+        shouldDirty: true,
+        shouldTouch: true, // Asegurar que el campo se marque como tocado
+      });
+
       return {
-        status: "success",
+        status: "success" as const,
         result: URL.createObjectURL(file),
       };
     },
+    onRemoveFile: (fileId) => {
+      const fileStatus = dropzone.fileStatuses.find((f) => f.id === fileId);
+      if (!fileStatus) return;
+
+      // Obtener el estado más reciente del formulario
+      const formImages = form.getValues("images") || [];
+
+      // Filtrar la imagen a eliminar
+      const updatedImages = formImages.filter(
+        (img) =>
+          !(
+            img.name === fileStatus.file.name &&
+            img.size === fileStatus.file.size
+          ),
+      );
+
+      // Actualizar el formulario
+      form.setValue("images", updatedImages, {
+        shouldValidate: true,
+        shouldDirty: true,
+        shouldTouch: true,
+      });
+
+      // Limpiar recursos
+      if (fileStatus.status === "success" && fileStatus.result) {
+        URL.revokeObjectURL(fileStatus.result as string);
+      }
+    },
     validation: {
       accept: {
-        "image/*": [".png", ".jpg", ".jpeg"],
+        "image/*": [".png", ".jpg", ".jpeg", ".webp"],
       },
-      maxSize: 10 * 1024 * 1024,
-      maxFiles: 10,
+      maxSize: 10 * 1024 * 1024, // 10MB
+      maxFiles: MAX_FILES,
     },
   });
 
@@ -133,111 +198,91 @@ export const CreateProductsForm = ({
               </FormItem>
             )}
           />
-          {/* Campo de Categoría */}
-          <FormField
-            control={form.control}
-            name="categoryId"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel htmlFor="categoryId">Categoría</FormLabel>
-                <FormControl>
-                  <Select
-                    onValueChange={(value) => field.onChange(value)}
-                    defaultValue={field.value || ""}
-                  >
-                    <SelectTrigger className="capitalize">
-                      <SelectValue placeholder="Selecciona una categoría" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        {data?.map((category) => (
-                          <SelectItem
-                            key={category.id}
-                            value={category.id}
-                            className="capitalize"
-                          >
-                            {category.name}
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
 
-          {/* Área de Subida de Imagen */}
+          {/* Campo de Categoría */}
+          {data && data?.length > 0 ? (
+            <FormField
+              control={form.control}
+              name="categoryId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel htmlFor="categoryId">Categoría</FormLabel>
+                  <FormControl>
+                    <Select
+                      onValueChange={(value) => field.onChange(value)}
+                      defaultValue={field.value || ""}
+                    >
+                      <SelectTrigger className="capitalize">
+                        <SelectValue placeholder="Selecciona una categoría" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          {data?.map((category) => (
+                            <SelectItem
+                              key={category.id}
+                              value={category.id}
+                              className="capitalize"
+                            >
+                              {category.name}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          ) : (
+            <Alert className="space-y-3 border-rose-500">
+              <AlertTitle className="text-rose-600">Error</AlertTitle>
+              <AlertDescription className="text-rose-600">
+                No hay categorías disponibles. Por favor, crea una categoría
+              </AlertDescription>
+              <Link
+                href="/products/categories"
+                className="block w-fit rounded-md border border-rose-400 p-2"
+              >
+                Crear Categoría
+              </Link>
+            </Alert>
+          )}
+
+          {/* Área de Subida de Imágenes */}
           <FormField
             control={form.control}
             name="images"
-            render={({}) => (
+            render={() => (
               <FormItem>
-                <FormLabel htmlFor="image">Imagenes del Producto</FormLabel>
+                <FormLabel>Imágenes del Producto</FormLabel>
                 <FormControl>
-                  {/* <div
-                    className="cursor-pointer rounded-md border border-dashed border-gray-300 text-center transition-colors duration-300 hover:bg-gray-50"
-                    onClick={() => document.getElementById("image")?.click()}
-                  >
-                    {preview ? (
-                      <div className="flex flex-col items-center gap-2">
-                        <div className="relative h-40 w-40">
-                          <Image
-                            src={preview}
-                            alt="Imagen del producto"
-                            layout="fill"
-                            objectFit="contain"
-                            className="rounded-md"
-                          />
-                        </div>
-                        <p className="py-4 text-xs text-gray-400">
-                          {(field.value as File)?.name}
-                        </p>
-                      </div>
-                    ) : (
-                      <div
-                        className="flex size-60 w-full flex-col items-center justify-center"
-                        tabIndex={0}
-                      >
-                        <ImagePlus
-                          className="h-10 w-10 text-gray-300"
-                          strokeWidth={1}
-                        />
-                        <p className="text-xs text-gray-600">
-                          Haga clic o arrastre una imagen aquí
-                        </p>
-                      </div>
-                    )}
-                    <Input
-                      id="image"
-                      type="file"
-                      accept="['image/jpeg', 'image/png', 'image/gif', 'image/webp']"
-                      onChange={(e) => {
-                        handleFileChange(e);
-                        field.onChange(e.target.files?.[0] || null);
-                      }}
-                      className="hidden"
-                    />
-                  </div> */}
                   <div className="not-prose flex flex-col gap-4">
                     <Dropzone {...dropzone}>
                       <div>
                         <div className="flex justify-between">
                           <DropzoneDescription>
-                            Seleccione hasta 10 imágenes
+                            {currentImages.length >= MAX_FILES
+                              ? "Has alcanzado el límite de 3 imágenes"
+                              : `Selecciona hasta ${MAX_FILES} imágenes (${currentImages.length}/${MAX_FILES})`}
                           </DropzoneDescription>
                           <DropzoneMessage />
                         </div>
-                        <DropZoneArea className="border-none">
+                        <DropZoneArea
+                          className={cn(
+                            "border-none",
+                            currentImages.length >= MAX_FILES &&
+                              "pointer-events-none opacity-50",
+                          )}
+                        >
                           <DropzoneTrigger className="flex flex-col items-center gap-4 border bg-transparent p-10 text-center text-sm">
-                            <CloudUploadIcon className="size-8 text-gray-500" />
+                            <CloudUploadIcon className="size-8" />
                             <div>
-                              <p className="font-semibold text-gray-600">
-                                Cargar listado de imágenes
+                              <p className="font-semibold">
+                                Sube imágenes del producto
                               </p>
                               <p className="text-sm text-muted-foreground">
-                                Haga clic aquí o arrastre y suelte para cargar
+                                Haz clic aquí o arrastra las imágenes
                               </p>
                             </div>
                           </DropzoneTrigger>
@@ -275,6 +320,22 @@ export const CreateProductsForm = ({
                               <DropzoneRemoveFile
                                 variant="ghost"
                                 className="shrink-0 hover:outline"
+                                onClick={() => {
+                                  // Eliminar la imagen del formulario
+                                  const updatedImages = currentImages.filter(
+                                    (img) =>
+                                      !(
+                                        img.name === file.file.name &&
+                                        img.size === file.file.size
+                                      ),
+                                  );
+                                  form.setValue("images", updatedImages, {
+                                    shouldValidate: true,
+                                    shouldDirty: true,
+                                  });
+                                  // También eliminamos el archivo del dropzone
+                                  dropzone.onRemoveFile(file.id);
+                                }}
                               >
                                 <Trash2Icon className="size-4" />
                               </DropzoneRemoveFile>
@@ -289,6 +350,7 @@ export const CreateProductsForm = ({
               </FormItem>
             )}
           />
+
           {/* Campo de Restricción */}
           <FormField
             control={form.control}
