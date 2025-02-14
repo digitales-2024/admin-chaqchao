@@ -5,6 +5,7 @@ export type Order = {
   pickupTime: Date;
   isActive: boolean;
   someonePickup: boolean;
+  isShipping: boolean;
   pickupCode: string;
   totalAmount: null;
   client: Client;
@@ -21,6 +22,7 @@ export type OrderDetails = {
   pickupTime: Date;
   isActive: boolean;
   someonePickup: boolean;
+  isShipping: boolean;
   pickupCode: string;
   totalAmount: null;
   client: Client;
@@ -112,6 +114,11 @@ export type OrderReportData = {
   orderStatus: string;
   pickupAddress: string;
   someonePickup: boolean;
+  isShipping: boolean;
+  shippingState: string;
+  shippingCity: string;
+  shippingAddress: string;
+  shippingReferences: string;
   comments: string;
   isActive: boolean;
   createdAt: string;
