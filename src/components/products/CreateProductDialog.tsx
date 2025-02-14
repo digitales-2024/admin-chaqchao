@@ -66,15 +66,15 @@ export function CreateProductDialog() {
       categoryId: "",
       description: "",
       price: "",
-      image: undefined,
+      images: [],
       isRestricted: false,
     },
   });
 
   const onSubmit = async (input: CreateProductsSchema) => {
     try {
-      if (input.image) {
-        const imageResponse = await onUploadImageProduct(input.image);
+      if (input.images && input.images.length > 0) {
+        const imageResponse = await onUploadImageProduct(input.images[0]);
         const imageUrl = imageResponse?.data;
 
         const productData = {
@@ -188,7 +188,7 @@ export function CreateProductDialog() {
               <DialogTitle>{dataForm.title}</DialogTitle>
               <DialogDescription>{dataForm.description}</DialogDescription>
             </DialogHeader>
-            <ScrollArea className="h-full max-h-[80vh] w-full justify-center gap-4">
+            <ScrollArea className="h-full max-h-[80vh] w-full justify-center gap-4 p-4">
               {open && (
                 <CreateProductsForm form={form} onSubmit={onSubmit}>
                   {isLoadingCreateProduct || isLoadingUploadImageProduct ? (
