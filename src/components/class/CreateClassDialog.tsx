@@ -52,7 +52,7 @@ export function CreateClassDialog() {
       userPhone: "",
       scheduleClass: "",
       languageClass: "",
-      dateClass: undefined,
+      dateClass: new Date(),
       totalAdults: 1,
       totalChildren: 0,
       totalPriceAdults: 0,
