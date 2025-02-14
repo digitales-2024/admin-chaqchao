@@ -186,9 +186,7 @@ export default function CreateClassForm({
   } = useCheckClassExistQuery(
     {
       schedule: form.getValues("scheduleClass"),
-      date:
-        form.getValues("dateClass") &&
-        format(form.getValues("dateClass"), "yyyy-MM-dd"),
+      date: format(form.getValues("dateClass"), "yyyy-MM-dd"),
       typeClass: form.getValues("typeClass") as TypeClass,
     },
     {
