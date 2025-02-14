@@ -225,19 +225,19 @@ export const CreateProductsForm = ({
                       <div>
                         <div className="flex justify-between">
                           <DropzoneDescription>
-                            Please select up to 10 images
+                            Seleccione hasta 10 imágenes
                           </DropzoneDescription>
                           <DropzoneMessage />
                         </div>
-                        <DropZoneArea>
-                          <DropzoneTrigger className="flex flex-col items-center gap-4 bg-transparent p-10 text-center text-sm">
-                            <CloudUploadIcon className="size-8" />
+                        <DropZoneArea className="border-none">
+                          <DropzoneTrigger className="flex flex-col items-center gap-4 border bg-transparent p-10 text-center text-sm">
+                            <CloudUploadIcon className="size-8 text-gray-500" />
                             <div>
-                              <p className="font-semibold">
-                                Upload listing images
+                              <p className="font-semibold text-gray-600">
+                                Cargar listado de imágenes
                               </p>
                               <p className="text-sm text-muted-foreground">
-                                Click here or drag and drop to upload
+                                Haga clic aquí o arrastre y suelte para cargar
                               </p>
                             </div>
                           </DropzoneTrigger>
