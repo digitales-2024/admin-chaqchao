@@ -59,8 +59,8 @@ export const getColumnsOrders = (newOrders: Order[]): ColumnDef<Order>[] => [
       const datePassed = pickupDate < currentDate;
 
       return (
-        <div className="flex flex-col items-start justify-start">
-          {formatInTimeZone(pickupDate, TIMEZONE, "PPPpp", {
+        <div className="flex flex-col items-start justify-start text-pretty capitalize">
+          {formatInTimeZone(pickupDate, TIMEZONE, "EEEE, dd MMMM, hh:mm a", {
             locale: es,
           })}
           <div className="inline-flex w-full items-center justify-start gap-2 truncate">
@@ -84,7 +84,7 @@ export const getColumnsOrders = (newOrders: Order[]): ColumnDef<Order>[] => [
             </TooltipProvider>
             <Badge
               variant={"outline"}
-              className={cn("font-light text-slate-500", {
+              className={cn("font-light normal-case text-slate-500", {
                 "text-emerald-500": !datePassed,
                 "text-rose-500": datePassed,
               })}
