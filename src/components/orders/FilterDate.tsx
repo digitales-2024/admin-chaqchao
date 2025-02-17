@@ -1,5 +1,5 @@
 "use client";
-import { format } from "date-fns";
+import { formatInTimeZone, toZonedTime } from "date-fns-tz";
 import { es } from "date-fns/locale";
 import { CalendarIcon } from "lucide-react";
 
@@ -9,13 +9,21 @@ import { Button } from "../ui/button";
 import { Calendar } from "../ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 
+const TIMEZONE = "America/Lima";
+
 interface FilterDateProps {
   date: Date;
   setDate: (date: Date) => void;
 }
 
 export const FilterDate = ({ date, setDate }: FilterDateProps) => {
-  const isNow = date && format(date, "PPP") === format(new Date(), "PPP");
+  const zonedCurrentDate = toZonedTime(new Date(), TIMEZONE);
+  const zonedSelectedDate = toZonedTime(date, TIMEZONE);
+
+  const isNow =
+    date &&
+    formatInTimeZone(date, TIMEZONE, "PPP", { locale: es }) ===
+      formatInTimeZone(new Date(), TIMEZONE, "PPP", { locale: es });
 
   return (
     <Popover>
@@ -32,7 +40,9 @@ export const FilterDate = ({ date, setDate }: FilterDateProps) => {
           <span className="inline-flex gap-2">
             Fecha:{" "}
             <span className="font-black">
-              {isNow ? "Hoy" : format(date, "PPP", { locale: es })}
+              {isNow
+                ? "Hoy"
+                : formatInTimeZone(date, TIMEZONE, "PPP", { locale: es })}
             </span>
           </span>
         </Button>
@@ -40,8 +50,14 @@ export const FilterDate = ({ date, setDate }: FilterDateProps) => {
       <PopoverContent className="w-auto p-0">
         <Calendar
           mode="single"
-          selected={date}
-          onSelect={(day) => setDate(day ?? new Date())}
+          selected={zonedSelectedDate}
+          onSelect={(day) => {
+            if (!day) return setDate(zonedCurrentDate);
+            // La fecha del calendario viene en UTC midnight (00:00)
+            // La convertimos a la zona horaria local manteniendo la misma hora
+            const selectedDate = toZonedTime(day, TIMEZONE);
+            setDate(selectedDate);
+          }}
           initialFocus
           locale={es}
         />
