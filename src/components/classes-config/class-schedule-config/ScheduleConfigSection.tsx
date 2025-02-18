@@ -206,7 +206,7 @@ export function ScheduleConfigSection() {
                                     : "Niños"}
                                   :
                                   <span className="ml-1 font-medium">
-                                    ${price.price}
+                                    ${price.price.toFixed(2)}
                                   </span>
                                 </p>
                               </div>
@@ -223,7 +223,7 @@ export function ScheduleConfigSection() {
                                     : "Niños"}
                                   :
                                   <span className="ml-1 font-medium">
-                                    S/. {price.price}
+                                    S/. {price.price.toFixed(2)}
                                   </span>
                                 </p>
                               </div>

@@ -3,7 +3,7 @@
 import { useBussinessConfig } from "@/hooks/use-business-config";
 import { useClassCapacity } from "@/hooks/use-class-capacity";
 import { useClassPrices } from "@/hooks/use-class-price";
-import { TypeClass } from "@/types";
+import { TypeClass, typeClassLabels } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Settings2 } from "lucide-react";
 import { useState, useEffect, useMemo } from "react";
@@ -346,7 +346,8 @@ export default function ConfigDialog({ typeClass }: ConfigProps) {
       <DialogContent tabIndex={undefined}>
         <DialogHeader>
           <DialogTitle>
-            {isEditing ? "Editar" : "Configurar"} el tipo de clase {typeClass}
+            {isEditing ? "Editar" : "Configurar"} el tipo de clase{" "}
+            {typeClassLabels[typeClass]}
           </DialogTitle>
           <DialogDescription></DialogDescription>
         </DialogHeader>
