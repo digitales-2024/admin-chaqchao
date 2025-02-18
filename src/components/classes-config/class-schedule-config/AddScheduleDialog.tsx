@@ -30,25 +30,20 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
-const formData = {
-  button: "Agregar Horario",
-  title: "Agregar Horario de la Clase",
-};
 interface AddScheduleDialogProps {
+  typeClass: TypeClass;
   refetchClassSchedules: () => void;
 }
 
 export function AddScheduleDialog({
   refetchClassSchedules,
+  typeClass,
 }: AddScheduleDialogProps) {
+  const formData = {
+    button: "Agregar horario",
+    title: `Agregar horario de la clase ${typeClassLabels[typeClass]}`,
+  };
   const [isOpen, setIsOpen] = useState(false);
 
   const { onCreateClassSchedule } = useClassSchedules();
@@ -59,7 +54,6 @@ export function AddScheduleDialog({
     resolver: zodResolver(createClassScheduleSchema),
     defaultValues: {
       startTime: "",
-      typeClass: TypeClass.NORMAL,
     },
   });
 
@@ -79,7 +73,7 @@ export function AddScheduleDialog({
       const businessId = dataBusinessConfigAll[0].id;
       await onCreateClassSchedule({
         ...data,
-        typeClass: data.typeClass as TypeClass,
+        typeClass,
         businessId,
       });
       reset();
@@ -99,7 +93,7 @@ export function AddScheduleDialog({
     return (
       <>
         <div>
-          <Button onClick={() => setIsOpen(true)}>
+          <Button onClick={() => setIsOpen(true)} variant="outline">
             <Plus className="h-4 w-4" />
             {formData.button}
           </Button>
@@ -112,39 +106,6 @@ export function AddScheduleDialog({
             <FormProvider {...methods}>
               <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="mt-4 space-y-4">
-                  <div className="flex items-center justify-between gap-4">
-                    <Label htmlFor="startTime">Tipo de clase</Label>
-                    <Controller
-                      name="typeClass"
-                      control={control}
-                      render={({ field }) => (
-                        <Select
-                          value={field.value}
-                          onValueChange={field.onChange}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Selecciona el tipo de clase" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {Object.keys(TypeClass).map((type) => (
-                              <SelectItem key={type} value={type}>
-                                {
-                                  typeClassLabels[
-                                    type as keyof typeof TypeClass
-                                  ]
-                                }
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      )}
-                    />
-                    {errors.typeClass && (
-                      <p className="text-sm text-red-500">
-                        {errors.typeClass.message}
-                      </p>
-                    )}
-                  </div>
                   <div className="flex items-center justify-between gap-4">
                     <Label htmlFor="startTime">Hora de Inicio</Label>
                     <Controller
