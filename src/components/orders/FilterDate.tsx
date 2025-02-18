@@ -2,6 +2,7 @@
 import { formatInTimeZone, toZonedTime } from "date-fns-tz";
 import { es } from "date-fns/locale";
 import { CalendarIcon } from "lucide-react";
+import { useState } from "react";
 
 import { cn } from "@/lib/utils";
 
@@ -19,6 +20,7 @@ interface FilterDateProps {
 export const FilterDate = ({ date, setDate }: FilterDateProps) => {
   const zonedCurrentDate = toZonedTime(new Date(), TIMEZONE);
   const zonedSelectedDate = toZonedTime(date, TIMEZONE);
+  const [open, setOpen] = useState(false);
 
   const isNow =
     date &&
@@ -26,7 +28,7 @@ export const FilterDate = ({ date, setDate }: FilterDateProps) => {
       formatInTimeZone(new Date(), TIMEZONE, "PPP", { locale: es });
 
   return (
-    <Popover>
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
           variant={"outline"}
@@ -52,11 +54,16 @@ export const FilterDate = ({ date, setDate }: FilterDateProps) => {
           mode="single"
           selected={zonedSelectedDate}
           onSelect={(day) => {
-            if (!day) return setDate(zonedCurrentDate);
+            if (!day) {
+              setDate(zonedCurrentDate);
+              setOpen(false);
+              return;
+            }
             // La fecha del calendario viene en UTC midnight (00:00)
             // La convertimos a la zona horaria local manteniendo la misma hora
             const selectedDate = toZonedTime(day, TIMEZONE);
             setDate(selectedDate);
+            setOpen(false);
           }}
           initialFocus
           locale={es}
