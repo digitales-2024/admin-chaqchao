@@ -168,7 +168,9 @@ export function CreateClassDialog() {
                           <AlertDialogDescription>
                             Resumen de la clase
                           </AlertDialogDescription>
-                          <SummaryClass class={form} />
+                          <ScrollArea className="h-full max-h-[70vh] w-full justify-center gap-4">
+                            <SummaryClass class={form} />
+                          </ScrollArea>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                           <AlertDialogCancel>Cancelar</AlertDialogCancel>

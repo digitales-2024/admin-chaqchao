@@ -79,8 +79,20 @@ export default function CreateClassForm({
   const currency = form.watch("typeCurrency") || "USD";
 
   useEffect(() => {
-    // Limpiar método de pago al cambiar moneda
-    form.setValue("methodPayment", "");
+    const currentCurrency = form.watch("typeCurrency");
+    const currentPaymentMethod = form.watch("methodPayment");
+
+    // Validar si el método de pago actual es válido para la nueva moneda
+    const isValidPaymentMethod =
+      (currentCurrency === "USD" &&
+        ["CASH", "PAYPAL"].includes(currentPaymentMethod)) ||
+      (currentCurrency === "PEN" &&
+        ["CASH", "IZIPAY"].includes(currentPaymentMethod));
+
+    // Limpiar método de pago si no es válido para la nueva moneda
+    if (!isValidPaymentMethod) {
+      form.setValue("methodPayment", "");
+    }
 
     // Forzar recalculo de precios con la nueva moneda
     if (prices) {

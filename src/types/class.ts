@@ -51,4 +51,5 @@ export const typeClassColors = {
 export enum MethodPayment {
   PAYPAL = "PAYPAL",
   IZIPAY = "IZIPAY",
+  CASH = "CASH",
 }

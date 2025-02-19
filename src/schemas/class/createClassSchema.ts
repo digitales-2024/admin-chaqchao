@@ -52,13 +52,13 @@ export const CreateClassSchema = z.object({
   totalChildren: z.number().int().min(0, {
     message: "El total de niños es obligatorio",
   }),
-  totalPriceAdults: z.number().int().min(0, {
+  totalPriceAdults: z.number().min(0, {
     message: "El precio total de adultos es obligatorio",
   }),
-  totalPriceChildren: z.number().int().min(0, {
+  totalPriceChildren: z.number().min(0, {
     message: "El precio total de niños es obligatorio",
   }),
-  totalPrice: z.number().int().min(0, {
+  totalPrice: z.number().min(0, {
     message: "El precio total es obligatorio",
   }),
   totalParticipants: z.number().int().min(1, {
