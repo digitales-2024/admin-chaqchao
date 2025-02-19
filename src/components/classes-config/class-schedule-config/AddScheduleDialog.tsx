@@ -138,7 +138,7 @@ export function AddScheduleDialog({
   return (
     <Drawer open={isOpen} onOpenChange={setIsOpen}>
       <DrawerTrigger asChild>
-        <Button onClick={() => setIsOpen(true)}>
+        <Button onClick={() => setIsOpen(true)} variant="outline">
           <Plus className="h-4 w-4" />
           {formData.button}
         </Button>

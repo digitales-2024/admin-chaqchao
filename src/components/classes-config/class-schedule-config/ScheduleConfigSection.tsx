@@ -98,7 +98,7 @@ export function ScheduleConfigSection() {
   };
 
   return (
-    <div className="container mx-auto flex flex-col py-5">
+    <div className="container mx-auto flex flex-col sm:px-5 sm:py-5">
       <div className="mb-8 flex flex-wrap items-center justify-between px-4">
         <div>
           <h2 className="text-2xl font-bold">Configuración del Horario</h2>
@@ -108,7 +108,7 @@ export function ScheduleConfigSection() {
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-8">
+      <div className="grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-8">
         {isSuccessSchedules && dataClassSchedulesAll ? (
           Object.keys(TypeClass).map((type) => {
             const schedules =
