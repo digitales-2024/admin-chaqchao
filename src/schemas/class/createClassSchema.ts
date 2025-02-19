@@ -5,15 +5,32 @@ export const CreateClassSchema = z.object({
   typeClass: z.string().min(1, {
     message: "El tipo de clase es obligatorio",
   }),
-  userName: z.string().min(1, {
-    message: "El nombre de la clase es obligatorio",
-  }),
-  userEmail: z.string().email({
-    message: "El correo electrónico es obligatorio",
-  }),
-  userPhone: z.string().refine(isValidPhoneNumber, {
-    message: "El número de teléfono es inválido",
-  }),
+  userName: z.string().optional(),
+  userEmail: z
+    .string()
+    .optional()
+    .transform((val) => val || undefined)
+    .pipe(
+      z
+        .string()
+        .email({
+          message: "El correo electrónico debe ser válido",
+        })
+        .optional(),
+    ),
+  userPhone: z
+    .string()
+    .optional()
+    .transform((val) => val || undefined)
+    .refine(
+      (val) => {
+        if (!val) return true;
+        return isValidPhoneNumber(val);
+      },
+      {
+        message: "El número de teléfono es inválido",
+      },
+    ),
   scheduleClass: z
     .string()
     .min(1, {

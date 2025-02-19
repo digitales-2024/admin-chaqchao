@@ -468,49 +468,69 @@ export default function CreateClassForm({
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
-          name="languageClass"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Lenguaje de la clase</FormLabel>
+        {dataClassLanguagesAll && dataClassLanguagesAll.length > 0 ? (
+          <FormField
+            control={form.control}
+            name="languageClass"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Lenguaje de la clase</FormLabel>
 
-              <Select
-                onValueChange={field.onChange}
-                defaultValue={field.value}
-                value={field.value}
-                disabled={
-                  isLoading ||
-                  isLoadingClassExist ||
-                  data?.languageClass === field.value
-                }
-              >
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Seleccione un lenguaje" />
-                  </SelectTrigger>
-                </FormControl>
-                {isLoading ? (
-                  <SelectContent>
-                    <SelectItem value="loading">Loading...</SelectItem>
-                  </SelectContent>
-                ) : (
-                  <SelectContent>
-                    {dataClassLanguagesAll?.map((language) => (
-                      <SelectItem
-                        key={language.id}
-                        value={language.languageName}
-                      >
-                        {language.languageName}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                )}
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  value={field.value}
+                  disabled={
+                    isLoading ||
+                    isLoadingClassExist ||
+                    data?.languageClass === field.value
+                  }
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Seleccione un lenguaje" />
+                    </SelectTrigger>
+                  </FormControl>
+                  {isLoading ? (
+                    <SelectContent>
+                      <SelectItem value="loading">Loading...</SelectItem>
+                    </SelectContent>
+                  ) : (
+                    <SelectContent>
+                      {dataClassLanguagesAll?.map((language) => (
+                        <SelectItem
+                          key={language.id}
+                          value={language.languageName}
+                        >
+                          {language.languageName}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  )}
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        ) : (
+          <Alert className="border-rose-500 [&>svg]:text-rose-500">
+            <AlertCircle className="size-4" />
+            <AlertTitle className="text-rose-500">
+              Error de configuración
+            </AlertTitle>
+            <AlertDescription className="text-xs">
+              No se encontraron lenguajes para la clase seleccionada. Por favor,
+              configure un lenguaje en la sección de lenguajes de la clase en el
+              panel de administración de la plataforma.
+            </AlertDescription>
+            <Link
+              href="/bussiness/classes-configuration"
+              className="ml-2 mt-3 block w-fit rounded-md border border-rose-500 p-2 text-sm"
+            >
+              Ir a configuración
+            </Link>
+          </Alert>
+        )}
 
         <div className="grid grid-cols-2 gap-4">
           <FormField
