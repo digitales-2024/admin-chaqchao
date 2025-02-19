@@ -13,7 +13,7 @@ import { createClassSchema } from "@/schemas";
 import { TypeClass, typeClassLabels } from "@/types";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { AlertCircle, UsersRound } from "lucide-react";
+import { AlertCircle, Banknote, UsersRound } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { UseFormReturn } from "react-hook-form";
@@ -186,7 +186,9 @@ export default function CreateClassForm({
   } = useCheckClassExistQuery(
     {
       schedule: form.getValues("scheduleClass"),
-      date: format(form.getValues("dateClass"), "yyyy-MM-dd"),
+      date:
+        form.getValues("dateClass") &&
+        format(form.getValues("dateClass"), "yyyy-MM-dd"),
       typeClass: form.getValues("typeClass") as TypeClass,
     },
     {
@@ -689,6 +691,34 @@ export default function CreateClassForm({
                     defaultValue={field.value}
                     className="grid grid-cols-1 gap-4 md:grid-cols-2"
                   >
+                    <FormItem className="m-0">
+                      <label
+                        htmlFor="CASH"
+                        className={cn(
+                          "relative flex w-full cursor-pointer rounded-lg border-2 p-4 transition-all hover:bg-accent",
+                          field.value === "CASH"
+                            ? "border-primary bg-accent"
+                            : "border-muted",
+                        )}
+                      >
+                        <FormControl>
+                          <RadioGroupItem
+                            value="CASH"
+                            id="CASH"
+                            className="sr-only"
+                          />
+                        </FormControl>
+                        <div className="flex w-full items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium">Efectivo</span>
+                            <Banknote className="h-5 w-auto -rotate-12 text-primary" />
+                          </div>
+                          {field.value === "CASH" && (
+                            <div className="h-2 w-2 rounded-full bg-primary" />
+                          )}
+                        </div>
+                      </label>
+                    </FormItem>
                     {currency === "USD" && (
                       <FormItem className="m-0">
                         <label

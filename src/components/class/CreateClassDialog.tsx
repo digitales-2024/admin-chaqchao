@@ -52,7 +52,7 @@ export function CreateClassDialog() {
       userPhone: "",
       scheduleClass: "",
       languageClass: "",
-      dateClass: new Date(),
+      dateClass: undefined,
       totalAdults: 1,
       totalChildren: 0,
       totalPriceAdults: 0,
@@ -65,6 +65,7 @@ export function CreateClassDialog() {
       status: "CONFIRMED",
     },
   });
+  console.log("🚀 ~ CreateClassDialog ~ form:", form.watch());
   const { createClass, isLoadingCreateClass } = useClasses();
   const { data: classCapacities, isLoading: isLoadingClassCapacities } =
     useGetClassesCapacityQuery(
