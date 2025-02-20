@@ -152,11 +152,17 @@ export const SummaryClass = ({ class: classForm }: SummaryClassProps) => {
               <div className="flex items-center gap-2">
                 <span className="text-muted-foreground">Método de pago:</span>
                 <span className="inline-flex items-center gap-2 rounded-md bg-white px-2 py-1 font-medium shadow-sm">
-                  {classForm.getValues().methodPayment}
+                  {classForm.getValues().methodPayment === "CASH"
+                    ? "Efectivo"
+                    : classForm.getValues().methodPayment}
                   {classForm.getValues().methodPayment ===
                     MethodPayment.PAYPAL && <Paypal className="h-4 w-4" />}
                   {classForm.getValues().methodPayment ===
                     MethodPayment.IZIPAY && <Izipay className="h-4" />}
+                  {classForm.getValues().methodPayment ===
+                    MethodPayment.CASH && (
+                    <Banknote className="h-4 w-4 -rotate-12 text-green-500" />
+                  )}
                 </span>
               </div>
             </div>
