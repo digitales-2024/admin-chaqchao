@@ -92,7 +92,7 @@ export const ClassesDescription = ({ row }: { row: ClassesDataAdmin }) => {
               <div>
                 <Badge
                   className={cn(
-                    "font-medium hover:bg-transparent",
+                    "bg-transparent font-medium hover:bg-transparent",
                     typeClassColors[typeClass],
                   )}
                 >
