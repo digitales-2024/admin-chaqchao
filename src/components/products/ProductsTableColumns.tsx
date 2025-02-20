@@ -75,47 +75,57 @@ export const productsColumns = (
       enablePinning: true,
     },
     {
-      id: "imagen",
+      id: "images",
       size: 10,
-      accessorKey: "image",
+      accessorKey: "images",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Imagen" />
       ),
       cell: function ImageCell({ row }) {
-        const imageUrl = row.getValue("imagen") as string;
+        const images = row.getValue("images") as { url: string }[];
         const categoryName = row.getValue("categoría") as string;
         const index = uniqueCategories.indexOf(categoryName);
         const borderColor = colors[index];
 
         const [imageError, setImageError] = useState(false);
-        return (
-          <ProductImageDialog
-            imageUrl={imageUrl}
-            product={row?.original}
-            borderColor={borderColor}
-          >
-            <div className="group relative flex h-20 w-20 cursor-pointer flex-col items-center justify-center text-center">
-              {imageError ? (
-                <>
-                  <ImageOff className="size-8 text-slate-400" strokeWidth={1} />
-                </>
-              ) : (
-                <Image
-                  src={imageUrl}
-                  alt={row.original.name}
-                  key={row.original.id}
-                  width={80}
-                  height={80}
-                  priority
-                  className="h-full w-full rounded-md object-cover"
-                  onError={() => setImageError(true)}
-                />
-              )}
-              <div className="absolute inset-0 flex items-center justify-center rounded-md bg-black bg-opacity-50 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
-                <ScanEye strokeWidth={1.5} className="h-12 w-12 text-white" />
+        if (images.length > 0)
+          return (
+            <ProductImageDialog
+              images={images}
+              product={row?.original}
+              borderColor={borderColor}
+            >
+              <div className="group relative flex h-20 w-20 cursor-pointer flex-col items-center justify-center text-center">
+                {imageError ? (
+                  <>
+                    <ImageOff
+                      className="size-8 text-slate-400"
+                      strokeWidth={1}
+                    />
+                  </>
+                ) : (
+                  <Image
+                    src={images[0].url}
+                    alt={row.original.name}
+                    key={row.original.id}
+                    width={80}
+                    height={80}
+                    priority
+                    className="h-full w-full rounded-md object-cover"
+                    onError={() => setImageError(true)}
+                  />
+                )}
+                <div className="absolute inset-0 flex items-center justify-center rounded-md bg-black bg-opacity-50 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+                  <ScanEye strokeWidth={1.5} className="h-12 w-12 text-white" />
+                </div>
               </div>
-            </div>
-          </ProductImageDialog>
+            </ProductImageDialog>
+          );
+
+        return (
+          <div className="flex h-20 w-20 items-center justify-center text-center">
+            <ImageOff className="size-8 text-slate-400" strokeWidth={1} />
+          </div>
         );
       },
     },

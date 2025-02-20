@@ -2,30 +2,15 @@
 
 import { useCategories } from "@/hooks/use-categories";
 import { CreateProductsSchema } from "@/schemas/products/createProductsSchema";
-import {
-  ShieldAlert,
-  ShieldMinus,
-  CloudUploadIcon,
-  Trash2Icon,
-} from "lucide-react";
+import { ShieldAlert, ShieldMinus } from "lucide-react";
 import Link from "next/link";
 import { UseFormReturn } from "react-hook-form";
 
-import {
-  Dropzone,
-  DropZoneArea,
-  DropzoneDescription,
-  DropzoneFileList,
-  DropzoneFileListItem,
-  DropzoneMessage,
-  DropzoneRemoveFile,
-  DropzoneTrigger,
-  useDropzone,
-} from "@/components/ui/dropzone";
 import { Input } from "@/components/ui/input";
 
 import { cn } from "@/lib/utils";
 
+import { FileUploader } from "../common/FileUploader";
 import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
 import {
   Form,
@@ -61,83 +46,6 @@ export const CreateProductsForm = ({
   onSubmit,
 }: CreateProductsFormProps) => {
   const { data } = useCategories();
-  const currentImages = form.watch("images") || [];
-  const dropzone = useDropzone({
-    onDropFile: async (file: File) => {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // Obtener los valores más recientes
-      const formImages = form.getValues("images") || [];
-      const totalImages = formImages.length;
-
-      // Verificación de límite considerando ambos estados
-      if (totalImages >= MAX_FILES) {
-        return {
-          status: "error" as const,
-          error: "Ya has alcanzado el límite máximo de 3 imágenes",
-        };
-      }
-
-      // Verificar duplicados
-      const isDuplicate = formImages.some(
-        (img) => img.name === file.name && img.size === file.size,
-      );
-
-      if (isDuplicate) {
-        return {
-          status: "error" as const,
-          error: "Esta imagen ya ha sido agregada",
-        };
-      }
-
-      // Actualizar el formulario
-      form.setValue("images", [...formImages, file], {
-        shouldValidate: true,
-        shouldDirty: true,
-        shouldTouch: true, // Asegurar que el campo se marque como tocado
-      });
-
-      return {
-        status: "success" as const,
-        result: URL.createObjectURL(file),
-      };
-    },
-    onRemoveFile: (fileId) => {
-      const fileStatus = dropzone.fileStatuses.find((f) => f.id === fileId);
-      if (!fileStatus) return;
-
-      // Obtener el estado más reciente del formulario
-      const formImages = form.getValues("images") || [];
-
-      // Filtrar la imagen a eliminar
-      const updatedImages = formImages.filter(
-        (img) =>
-          !(
-            img.name === fileStatus.file.name &&
-            img.size === fileStatus.file.size
-          ),
-      );
-
-      // Actualizar el formulario
-      form.setValue("images", updatedImages, {
-        shouldValidate: true,
-        shouldDirty: true,
-        shouldTouch: true,
-      });
-
-      // Limpiar recursos
-      if (fileStatus.status === "success" && fileStatus.result) {
-        URL.revokeObjectURL(fileStatus.result as string);
-      }
-    },
-    validation: {
-      accept: {
-        "image/*": [".png", ".jpg", ".jpeg", ".webp"],
-      },
-      maxSize: 10 * 1024 * 1024, // 10MB
-      maxFiles: MAX_FILES,
-    },
-  });
 
   return (
     <Form {...form}>
@@ -253,98 +161,20 @@ export const CreateProductsForm = ({
           <FormField
             control={form.control}
             name="images"
-            render={() => (
+            render={({ field }) => (
               <FormItem>
                 <FormLabel>Imágenes del Producto</FormLabel>
                 <FormControl>
-                  <div className="not-prose flex flex-col gap-4">
-                    <Dropzone {...dropzone}>
-                      <div>
-                        <div className="flex justify-between">
-                          <DropzoneDescription>
-                            {currentImages.length >= MAX_FILES
-                              ? "Has alcanzado el límite de 3 imágenes"
-                              : `Selecciona hasta ${MAX_FILES} imágenes (${currentImages.length}/${MAX_FILES})`}
-                          </DropzoneDescription>
-                          <DropzoneMessage />
-                        </div>
-                        <DropZoneArea
-                          className={cn(
-                            "border-none",
-                            currentImages.length >= MAX_FILES &&
-                              "pointer-events-none opacity-50",
-                          )}
-                        >
-                          <DropzoneTrigger className="flex flex-col items-center gap-4 border bg-transparent p-10 text-center text-sm">
-                            <CloudUploadIcon className="size-8" />
-                            <div>
-                              <p className="font-semibold">
-                                Sube imágenes del producto
-                              </p>
-                              <p className="text-sm text-muted-foreground">
-                                Haz clic aquí o arrastra las imágenes
-                              </p>
-                            </div>
-                          </DropzoneTrigger>
-                        </DropZoneArea>
-                      </div>
-
-                      <DropzoneFileList className="grid grid-cols-3 gap-3 p-0">
-                        {dropzone.fileStatuses.map((file) => (
-                          <DropzoneFileListItem
-                            className="overflow-hidden rounded-md bg-secondary p-0 shadow-sm"
-                            key={file.id}
-                            file={file}
-                          >
-                            {file.status === "pending" && (
-                              <div className="aspect-video animate-pulse bg-black/20" />
-                            )}
-                            {file.status === "success" && (
-                              // eslint-disable-next-line @next/next/no-img-element
-                              <img
-                                src={file.result}
-                                alt={`uploaded-${file.fileName}`}
-                                className="aspect-video object-cover"
-                              />
-                            )}
-                            <div className="flex items-center justify-between p-2 pl-4">
-                              <div className="min-w-0">
-                                <p className="truncate text-sm">
-                                  {file.fileName}
-                                </p>
-                                <p className="text-xs text-muted-foreground">
-                                  {(file.file.size / (1024 * 1024)).toFixed(2)}{" "}
-                                  MB
-                                </p>
-                              </div>
-                              <DropzoneRemoveFile
-                                variant="ghost"
-                                className="shrink-0 hover:outline"
-                                onClick={() => {
-                                  // Eliminar la imagen del formulario
-                                  const updatedImages = currentImages.filter(
-                                    (img) =>
-                                      !(
-                                        img.name === file.file.name &&
-                                        img.size === file.file.size
-                                      ),
-                                  );
-                                  form.setValue("images", updatedImages, {
-                                    shouldValidate: true,
-                                    shouldDirty: true,
-                                  });
-                                  // También eliminamos el archivo del dropzone
-                                  dropzone.onRemoveFile(file.id);
-                                }}
-                              >
-                                <Trash2Icon className="size-4" />
-                              </DropzoneRemoveFile>
-                            </div>
-                          </DropzoneFileListItem>
-                        ))}
-                      </DropzoneFileList>
-                    </Dropzone>
-                  </div>
+                  <FileUploader
+                    maxFileCount={MAX_FILES}
+                    maxSize={10 * 1024 * 1024} // 5MB
+                    multiple
+                    accept={{
+                      "image/*": [".png", ".jpg", ".jpeg", ".webp"],
+                    }}
+                    value={field.value}
+                    onValueChange={field.onChange}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>

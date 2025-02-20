@@ -1,4 +1,4 @@
-import { ProductData } from "@/types";
+import { ApiResponse, ProductData } from "@/types";
 import { createApi } from "@reduxjs/toolkit/query/react";
 
 import baseQueryWithReauth from "./baseQuery";
@@ -10,13 +10,22 @@ interface UploadImageResponse {
   data: string;
 }
 
+interface UploadMultipleImagesResponse {
+  statusCode: number;
+  message: string;
+  data: string[];
+}
+
 export const productsApi = createApi({
   reducerPath: "productsApi",
   baseQuery: baseQueryWithReauth,
   tagTypes: ["Product"],
   endpoints: (build) => ({
     // Crear un nuevo producto
-    createProduct: build.mutation<ProductData, Partial<ProductData>>({
+    createProduct: build.mutation<
+      ApiResponse<ProductData>,
+      Partial<ProductData>
+    >({
       query: (body) => ({
         url: "/products",
         method: "POST",
@@ -138,6 +147,33 @@ export const productsApi = createApi({
       }),
       invalidatesTags: ["Product"],
     }),
+
+    // Subir múltiples imágenes para un producto
+    uploadMultipleProductImages: build.mutation<
+      UploadMultipleImagesResponse,
+      { productId: string; formData: FormData }
+    >({
+      query: ({ productId, formData }) => ({
+        url: `products/${productId}/images`,
+        method: "POST",
+        body: formData,
+        credentials: "include",
+      }),
+      invalidatesTags: ["Product"],
+    }),
+
+    // Eliminar permanentemente un producto por su id
+    deleteProductPermanent: build.mutation<
+      { success: boolean },
+      { productId: string }
+    >({
+      query: ({ productId }) => ({
+        url: `products/permanent/${productId}`,
+        method: "DELETE",
+        credentials: "include",
+      }),
+      invalidatesTags: ["Product"],
+    }),
   }),
 });
 
@@ -152,4 +188,6 @@ export const {
   useDeleteProductsMutation,
   useUploadProductImageMutation,
   useUpdateProductImageMutation,
+  useUploadMultipleProductImagesMutation,
+  useDeleteProductPermanentMutation,
 } = productsApi;

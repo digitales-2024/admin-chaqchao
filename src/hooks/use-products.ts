@@ -1,17 +1,24 @@
 import {
   useCreateProductMutation,
-  useUpdateProductMutation,
-  useGetAllProductsQuery,
   useDeleteProductsMutation,
-  useToggleProductActivationMutation,
+  useGetAllProductsQuery,
   useReactivateProductsMutation,
-  useUploadProductImageMutation,
+  useToggleProductActivationMutation,
   useUpdateProductImageMutation,
+  useUpdateProductMutation,
+  useUploadMultipleProductImagesMutation,
+  useUploadProductImageMutation,
 } from "@/redux/services/productsApi";
-import { ProductData, CustomErrorData } from "@/types";
+import { CustomErrorData, ProductData } from "@/types";
 import { translateError } from "@/utils/translateError";
 import { useRef } from "react";
 import { toast } from "sonner";
+
+interface ApiResponse<T> {
+  statusCode: number;
+  message: string;
+  data: T;
+}
 
 export const useProducts = () => {
   const {
@@ -49,7 +56,6 @@ export const useProducts = () => {
       isLoading: isLoadingReactivateProducts,
     },
   ] = useReactivateProductsMutation();
-
   const [
     uploadImageProduct,
     {
@@ -60,6 +66,14 @@ export const useProducts = () => {
   ] = useUploadProductImageMutation();
 
   const [
+    uploadMultipleProductImages,
+    {
+      isSuccess: isSuccessUploadMultipleImages,
+      isLoading: isLoadingUploadMultipleImages,
+    },
+  ] = useUploadMultipleProductImagesMutation();
+
+  const [
     updateImageProduct,
     {
       isSuccess: isSuccessUpdateImageProduct,
@@ -67,9 +81,11 @@ export const useProducts = () => {
     },
   ] = useUpdateProductImageMutation();
 
-  const onCreateProduct = async (input: Partial<ProductData>) => {
+  const onCreateProduct = async (
+    input: Partial<Omit<ProductData, "images">>,
+  ) => {
     const promise = () =>
-      new Promise(async (resolve, reject) => {
+      new Promise<string>(async (resolve, reject) => {
         try {
           const result = await createProduct(input);
           if (result.error) {
@@ -84,19 +100,18 @@ export const useProducts = () => {
                 ),
               );
             }
+          } else if ("data" in result && result.data) {
+            const response = result.data as ApiResponse<ProductData>;
+            resolve(response.data.id);
           } else {
-            resolve(result);
+            reject(new Error("No se pudo obtener el ID del producto creado"));
           }
         } catch (error) {
           reject(error);
         }
       });
 
-    return toast.promise(promise(), {
-      loading: "Creando producto...",
-      success: "Producto creado con éxito",
-      error: (err) => err.message,
-    });
+    return await promise();
   };
 
   const onUpdateProduct = async (
@@ -137,6 +152,38 @@ export const useProducts = () => {
       },
     });
   };
+  const onDeleteProduct = async (productId: string) => {
+    const promise = () =>
+      new Promise(async (resolve, reject) => {
+        try {
+          const result = await deleteProducts({ ids: [productId] });
+          if (result.error) {
+            if (typeof result.error === "object" && "data" in result.error) {
+              const error = (result.error.data as CustomErrorData).message;
+              const message = translateError(error as string);
+              reject(new Error(message));
+            } else {
+              reject(
+                new Error(
+                  "Ocurrió un error inesperado, por favor intenta de nuevo",
+                ),
+              );
+            }
+          } else {
+            resolve(result);
+          }
+        } catch (error) {
+          reject(error);
+        }
+      });
+
+    return toast.promise(promise(), {
+      loading: "Eliminando producto...",
+      success: "Producto eliminado",
+      error: (err) => err.message,
+    });
+  };
+
   const onDeleteProducts = async (ids: ProductData[]) => {
     const onlyIds = ids.map((product) => product.id);
     const idsString = {
@@ -289,11 +336,34 @@ export const useProducts = () => {
       throw error;
     }
   };
-
   const cancelUploadImage = () => {
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
       toast.error("Creación de producto cancelada");
+    }
+  };
+
+  const onUploadMultipleProductImages = async (
+    productId: string,
+    files: File[],
+  ) => {
+    const formData = new FormData();
+    files.forEach((file) => {
+      formData.append("images", file);
+    });
+
+    try {
+      const result = await uploadMultipleProductImages({
+        productId,
+        formData,
+      }).unwrap();
+      return result;
+    } catch (error) {
+      // Si falla la subida de imágenes, eliminamos el producto
+      await onDeleteProduct(productId).catch(() => {
+        // Ignoramos error de eliminación ya que el error principal es la subida
+      });
+      throw error;
     }
   };
 
@@ -325,5 +395,8 @@ export const useProducts = () => {
     isSuccessUpdateImageProduct,
     isLoadingUpdateImageProduct,
     uploadImageProductStatus,
+    onUploadMultipleProductImages,
+    isSuccessUploadMultipleImages,
+    isLoadingUploadMultipleImages,
   };
 };

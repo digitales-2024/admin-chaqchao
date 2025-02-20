@@ -41,7 +41,7 @@ import { Switch } from "../ui/switch";
 
 interface ProductImageDialogProps
   extends React.ComponentPropsWithRef<typeof Dialog> {
-  imageUrl: string;
+  images: { url: string }[];
   children: React.ReactNode;
   product: ProductData;
   borderColor: string;
@@ -78,15 +78,17 @@ export function ProductImageDialog({
               </span>
             </div>
           ) : (
-            <Image
-              height={400}
-              width={400}
-              src={product.image}
-              alt={product.name}
-              key={product.id}
-              className="flex-1"
-              onError={() => setImageError(true)}
-            />
+            props.images.map((image) => (
+              <Image
+                height={400}
+                width={400}
+                src={image.url}
+                alt={product.name}
+                key={product.id}
+                className="flex-1"
+                onError={() => setImageError(true)}
+              />
+            ))
           )}
         </div>
       </div>
