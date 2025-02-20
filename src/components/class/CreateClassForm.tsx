@@ -13,7 +13,7 @@ import { createClassSchema } from "@/schemas";
 import { TypeClass, typeClassLabels } from "@/types";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { AlertCircle, UsersRound } from "lucide-react";
+import { AlertCircle, Banknote, UsersRound } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { UseFormReturn } from "react-hook-form";
@@ -79,8 +79,20 @@ export default function CreateClassForm({
   const currency = form.watch("typeCurrency") || "USD";
 
   useEffect(() => {
-    // Limpiar método de pago al cambiar moneda
-    form.setValue("methodPayment", "");
+    const currentCurrency = form.watch("typeCurrency");
+    const currentPaymentMethod = form.watch("methodPayment");
+
+    // Validar si el método de pago actual es válido para la nueva moneda
+    const isValidPaymentMethod =
+      (currentCurrency === "USD" &&
+        ["CASH", "PAYPAL"].includes(currentPaymentMethod)) ||
+      (currentCurrency === "PEN" &&
+        ["CASH", "IZIPAY"].includes(currentPaymentMethod));
+
+    // Limpiar método de pago si no es válido para la nueva moneda
+    if (!isValidPaymentMethod) {
+      form.setValue("methodPayment", "");
+    }
 
     // Forzar recalculo de precios con la nueva moneda
     if (prices) {
@@ -470,49 +482,69 @@ export default function CreateClassForm({
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
-          name="languageClass"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Lenguaje de la clase</FormLabel>
+        {dataClassLanguagesAll && dataClassLanguagesAll.length > 0 ? (
+          <FormField
+            control={form.control}
+            name="languageClass"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Lenguaje de la clase</FormLabel>
 
-              <Select
-                onValueChange={field.onChange}
-                defaultValue={field.value}
-                value={field.value}
-                disabled={
-                  isLoading ||
-                  isLoadingClassExist ||
-                  data?.languageClass === field.value
-                }
-              >
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Seleccione un lenguaje" />
-                  </SelectTrigger>
-                </FormControl>
-                {isLoading ? (
-                  <SelectContent>
-                    <SelectItem value="loading">Loading...</SelectItem>
-                  </SelectContent>
-                ) : (
-                  <SelectContent>
-                    {dataClassLanguagesAll?.map((language) => (
-                      <SelectItem
-                        key={language.id}
-                        value={language.languageName}
-                      >
-                        {language.languageName}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                )}
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  value={field.value}
+                  disabled={
+                    isLoading ||
+                    isLoadingClassExist ||
+                    data?.languageClass === field.value
+                  }
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Seleccione un lenguaje" />
+                    </SelectTrigger>
+                  </FormControl>
+                  {isLoading ? (
+                    <SelectContent>
+                      <SelectItem value="loading">Loading...</SelectItem>
+                    </SelectContent>
+                  ) : (
+                    <SelectContent>
+                      {dataClassLanguagesAll?.map((language) => (
+                        <SelectItem
+                          key={language.id}
+                          value={language.languageName}
+                        >
+                          {language.languageName}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  )}
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        ) : (
+          <Alert className="border-rose-500 [&>svg]:text-rose-500">
+            <AlertCircle className="size-4" />
+            <AlertTitle className="text-rose-500">
+              Error de configuración
+            </AlertTitle>
+            <AlertDescription className="text-xs">
+              No se encontraron lenguajes para la clase seleccionada. Por favor,
+              configure un lenguaje en la sección de lenguajes de la clase en el
+              panel de administración de la plataforma.
+            </AlertDescription>
+            <Link
+              href="/bussiness/classes-configuration"
+              className="ml-2 mt-3 block w-fit rounded-md border border-rose-500 p-2 text-sm"
+            >
+              Ir a configuración
+            </Link>
+          </Alert>
+        )}
 
         <div className="grid grid-cols-2 gap-4">
           <FormField
@@ -671,6 +703,34 @@ export default function CreateClassForm({
                     defaultValue={field.value}
                     className="grid grid-cols-1 gap-4 md:grid-cols-2"
                   >
+                    <FormItem className="m-0">
+                      <label
+                        htmlFor="CASH"
+                        className={cn(
+                          "relative flex w-full cursor-pointer rounded-lg border-2 p-4 transition-all hover:bg-accent",
+                          field.value === "CASH"
+                            ? "border-primary bg-accent"
+                            : "border-muted",
+                        )}
+                      >
+                        <FormControl>
+                          <RadioGroupItem
+                            value="CASH"
+                            id="CASH"
+                            className="sr-only"
+                          />
+                        </FormControl>
+                        <div className="flex w-full items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium">Efectivo</span>
+                            <Banknote className="h-5 w-auto -rotate-12 text-primary" />
+                          </div>
+                          {field.value === "CASH" && (
+                            <div className="h-2 w-2 rounded-full bg-primary" />
+                          )}
+                        </div>
+                      </label>
+                    </FormItem>
                     {currency === "USD" && (
                       <FormItem className="m-0">
                         <label

@@ -210,7 +210,6 @@ export const classesTableColumns = (
                 aria-label="Open menu"
                 variant="ghost"
                 className="flex size-8 p-0 data-[state=open]:bg-muted"
-                disabled={row.original.isClosed}
               >
                 <Ellipsis className="size-4" aria-hidden="true" />
               </Button>
@@ -220,9 +219,8 @@ export const classesTableColumns = (
                 onSelect={() => {
                   setSetshowClosedClass(true);
                 }}
-                disabled={row.original.isClosed}
               >
-                Cerrar clase
+                {row.original.isClosed ? "Abrir clase" : "Cerrar clase"}
                 <DropdownMenuShortcut>
                   <ClipboardX className="ml-2 size-4" aria-hidden="true" />
                 </DropdownMenuShortcut>
@@ -232,7 +230,7 @@ export const classesTableColumns = (
           <ClosedClassDialog
             open={setshowClosedClass}
             onOpenChange={setSetshowClosedClass}
-            id={row.original.id as string}
+            class={row.original}
           />
         </>
       );

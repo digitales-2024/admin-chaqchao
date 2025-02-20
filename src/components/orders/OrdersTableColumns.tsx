@@ -1,6 +1,7 @@
 import { Order } from "@/types";
 import { ColumnDef } from "@tanstack/react-table";
-import { format, formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow } from "date-fns";
+import { formatInTimeZone, toZonedTime } from "date-fns-tz";
 import { es } from "date-fns/locale";
 import { Calendar } from "lucide-react";
 
@@ -15,6 +16,8 @@ import {
   TooltipTrigger,
 } from "../ui/tooltip";
 import SelectStatus from "./SelectStatus";
+
+const TIMEZONE = "America/Lima";
 
 export const getColumnsOrders = (newOrders: Order[]): ColumnDef<Order>[] => [
   {
@@ -48,37 +51,50 @@ export const getColumnsOrders = (newOrders: Order[]): ColumnDef<Order>[] => [
       <DataTableColumnHeader column={column} title="Fecha" />
     ),
     cell: function Cell({ row }) {
-      const datePassed = new Date(row.original.pickupTime) < new Date();
+      const pickupDate = toZonedTime(
+        new Date(row.original.pickupTime),
+        TIMEZONE,
+      );
+      const currentDate = toZonedTime(new Date(), TIMEZONE);
+      const datePassed = pickupDate < currentDate;
+
       return (
-        <div className="inline-flex w-full items-center justify-start gap-2 truncate">
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger>
-                <Calendar
-                  className={cn("size-4 flex-shrink-0 text-slate-300", {
-                    "text-emerald-500": !datePassed,
-                    "text-rose-500": datePassed,
+        <div className="flex flex-col items-start justify-start text-pretty capitalize">
+          {formatInTimeZone(pickupDate, TIMEZONE, "EEEE, dd MMMM, hh:mm a", {
+            locale: es,
+          })}
+          <div className="inline-flex w-full items-center justify-start gap-2 truncate">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Calendar
+                    className={cn("size-4 flex-shrink-0 text-slate-300", {
+                      "text-emerald-500": !datePassed,
+                      "text-rose-500": datePassed,
+                    })}
+                  />
+                  <span className="sr-only">fecha del pedido</span>
+                </TooltipTrigger>
+                <TooltipContent>
+                  {formatInTimeZone(pickupDate, TIMEZONE, "PPPpp", {
+                    locale: es,
                   })}
-                />
-                <span className="sr-only">fecha del pedido</span>
-              </TooltipTrigger>
-              <TooltipContent>
-                {format(row.getValue("fecha"), "PPPpp", { locale: es })}
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-          <Badge
-            variant={"outline"}
-            className={cn("font-light text-slate-500", {
-              "text-emerald-500": !datePassed,
-              "text-rose-500": datePassed,
-            })}
-          >
-            {formatDistanceToNow(new Date(row.getValue("fecha")), {
-              addSuffix: true,
-              locale: es,
-            })}
-          </Badge>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            <Badge
+              variant={"outline"}
+              className={cn("font-light normal-case text-slate-500", {
+                "text-emerald-500": !datePassed,
+                "text-rose-500": datePassed,
+              })}
+            >
+              {formatDistanceToNow(pickupDate, {
+                addSuffix: true,
+                locale: es,
+              })}
+            </Badge>
+          </div>
         </div>
       );
     },
