@@ -2,7 +2,6 @@
 
 import { useCategories } from "@/hooks/use-categories";
 import { useProducts } from "@/hooks/use-products";
-import { useDeleteProductImageMutation } from "@/redux/services/productsApi";
 import {
   updateProductsSchema,
   UpdateProductsSchema,
@@ -69,20 +68,11 @@ export function UpdateProductSheet({
 }: UpdateProductSheetProps) {
   const { data } = useCategories();
 
-  const [deleteImage, { isLoading: isLoadingDelete }] =
-    useDeleteProductImageMutation();
-  const [imagesToDelete, setImagesToDelete] = useState<string[]>([]);
-  const {
-    onUpdateProduct,
-    isSuccessUpdateProduct,
-    isLoadingUpdateProduct,
-    onUploadMultipleProductImages,
-    isLoadingUploadMultipleImages,
-  } = useProducts();
+  const [imagesToDelete, setImagesToDelete] = useState<string[]>([]); // Array de IDs de imágenes
+  const { onUpdateProduct, isSuccessUpdateProduct, isLoadingUpdateProduct } =
+    useProducts();
 
   // Estado de carga general
-  const isLoading =
-    isLoadingDelete || isLoadingUpdateProduct || isLoadingUploadMultipleImages;
   const form = useForm<UpdateProductsSchema>({
     resolver: zodResolver(updateProductsSchema),
     defaultValues: {
@@ -108,37 +98,19 @@ export function UpdateProductSheet({
 
   const onSubmit = async (data: UpdateProductsSchema) => {
     try {
-      // Primero eliminar las imágenes marcadas para eliminar
-      for (const imageUrl of imagesToDelete) {
-        const image = product.images.find((image) => image.url === imageUrl);
-        if (!image) break;
-        try {
-          const isDelete = await deleteImage({
-            productId: product.id,
-            imageId: image.id,
-          });
-
-          // Si no se elimina no se sigue con el proceso y solo se envia un toast de fallo al actualizar el producto
-          if (isDelete.error) {
-            throw new Error("Error al actualizar las imágenes del producto");
-          }
-        } catch (error) {
-          console.error("Error al eliminar imagen:", error);
-        }
-      }
-
-      // Luego actualizar la información del producto
-      await onUpdateProduct({
-        ...data,
-        images: undefined,
-        id: product.id,
-        price: parseFloat(data.price),
-      });
-
-      // Finalmente, si hay nuevas imágenes, subirlas
-      if (data.images && data.images.length > 0) {
-        await onUploadMultipleProductImages(product.id, data.images);
-      }
+      await onUpdateProduct(
+        {
+          id: product.id,
+          name: data.name,
+          description: data.description,
+          categoryId: data.categoryId,
+          price: parseFloat(data.price),
+        },
+        // Pasamos las nuevas imágenes
+        data.images,
+        // Pasamos las ids de las imágenes a eliminar
+        imagesToDelete,
+      );
     } catch (error) {
       console.error("Error al actualizar producto:", error);
       throw error;
@@ -293,7 +265,9 @@ export function UpdateProductSheet({
                               maxSize={1024 * 1024 * 10}
                               multiple
                               className="h-64"
-                              disabled={isMaxImagesReached || isLoading}
+                              disabled={
+                                isMaxImagesReached || isLoadingUpdateProduct
+                              }
                               maxFileCount={maxNewImages}
                             />
                           );
@@ -307,7 +281,7 @@ export function UpdateProductSheet({
                               key={`existing-${index}`}
                               className="relative px-2"
                             >
-                              {!imagesToDelete.includes(image.url) && (
+                              {!imagesToDelete.includes(image.id) && (
                                 <div className="flex w-full flex-row items-center justify-between">
                                   <Image
                                     src={image.url}
@@ -323,10 +297,10 @@ export function UpdateProductSheet({
                                     variant="outline"
                                     className="size-7"
                                     onClick={() => {
-                                      if (!imagesToDelete.includes(image.url)) {
+                                      if (!imagesToDelete.includes(image.id)) {
                                         setImagesToDelete([
                                           ...imagesToDelete,
-                                          image.url,
+                                          image.id,
                                         ]);
                                       }
                                     }}
@@ -347,14 +321,8 @@ export function UpdateProductSheet({
 
               <SheetFooter className="gap-2 pt-2 sm:space-x-0">
                 <div className="flex flex-row-reverse gap-2">
-                  <Button
-                    type="submit"
-                    disabled={
-                      isLoadingUpdateProduct || isLoadingUploadMultipleImages
-                    }
-                  >
-                    {(isLoadingUpdateProduct ||
-                      isLoadingUploadMultipleImages) && (
+                  <Button type="submit" disabled={isLoadingUpdateProduct}>
+                    {isLoadingUpdateProduct && (
                       <RefreshCcw
                         className="mr-2 h-4 w-4 animate-spin"
                         aria-hidden="true"

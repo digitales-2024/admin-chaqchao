@@ -4,18 +4,6 @@ import { createApi } from "@reduxjs/toolkit/query/react";
 import baseQueryWithReauth from "./baseQuery";
 import { reportsApi } from "./reportsApi";
 
-interface UploadImageResponse {
-  statusCode: number;
-  message: string;
-  data: string;
-}
-
-interface UploadMultipleImagesResponse {
-  statusCode: number;
-  message: string;
-  data: string[];
-}
-
 export const productsApi = createApi({
   reducerPath: "productsApi",
   baseQuery: baseQueryWithReauth,
@@ -35,13 +23,14 @@ export const productsApi = createApi({
     // Actualizar un producto por id
     updateProduct: build.mutation<
       ProductData,
-      Partial<ProductData> & { id: string }
+      { id: string; formData: FormData }
     >({
-      query: ({ id, ...body }) => ({
+      query: ({ id, formData }) => ({
         url: `/products/${id}`,
         method: "PATCH",
-        body,
+        body: formData,
         credentials: "include",
+        // No incluir Content-Type, el navegador lo establecerá automáticamente con el boundary correcto
       }),
       invalidatesTags: ["Product"],
     }),
@@ -116,75 +105,6 @@ export const productsApi = createApi({
       },
       invalidatesTags: ["Product"],
     }),
-
-    // Subir Imagenes de un Producto a CloudFlare
-    uploadProductImage: build.mutation<
-      UploadImageResponse,
-      { formData: FormData; signal: AbortSignal }
-    >({
-      query: ({ formData, signal }) => ({
-        url: "products/upload/image",
-        method: "POST",
-        body: formData,
-        credentials: "include",
-        signal,
-      }),
-      invalidatesTags: ["Product"],
-    }),
-
-    // Actualizar Imagenes de un Producto en CloudFlare
-    updateProductImage: build.mutation<
-      UploadImageResponse,
-      { formData: FormData; existingFileName: string }
-    >({
-      query: ({ formData, existingFileName }) => ({
-        url: `products/update/image/${existingFileName}`,
-        method: "PATCH",
-        body: formData,
-        credentials: "include",
-      }),
-      invalidatesTags: ["Product"],
-    }),
-
-    // Subir múltiples imágenes para un producto
-    uploadMultipleProductImages: build.mutation<
-      UploadMultipleImagesResponse,
-      { productId: string; formData: FormData }
-    >({
-      query: ({ productId, formData }) => ({
-        url: `products/${productId}/images`,
-        method: "POST",
-        body: formData,
-        credentials: "include",
-      }),
-      invalidatesTags: ["Product"],
-    }),
-
-    // Eliminar permanentemente un producto por su id
-    deleteProductPermanent: build.mutation<
-      { success: boolean },
-      { productId: string }
-    >({
-      query: ({ productId }) => ({
-        url: `products/permanent/${productId}`,
-        method: "DELETE",
-        credentials: "include",
-      }),
-      invalidatesTags: ["Product"],
-    }),
-
-    // Eliminar una imagen especifica del producto
-    deleteProductImage: build.mutation<
-      { success: boolean },
-      { productId: string; imageId: string }
-    >({
-      query: ({ productId, imageId }) => ({
-        url: `products/${productId}/images/${imageId}`,
-        method: "DELETE",
-        credentials: "include",
-      }),
-      invalidatesTags: ["Product"],
-    }),
   }),
 });
 
@@ -197,9 +117,4 @@ export const {
   useToggleProductActivationMutation,
   useReactivateProductsMutation,
   useDeleteProductsMutation,
-  useUploadProductImageMutation,
-  useUpdateProductImageMutation,
-  useUploadMultipleProductImagesMutation,
-  useDeleteProductPermanentMutation,
-  useDeleteProductImageMutation,
 } = productsApi;

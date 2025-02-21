@@ -4,10 +4,7 @@ import {
   useGetAllProductsQuery,
   useReactivateProductsMutation,
   useToggleProductActivationMutation,
-  useUpdateProductImageMutation,
   useUpdateProductMutation,
-  useUploadMultipleProductImagesMutation,
-  useUploadProductImageMutation,
 } from "@/redux/services/productsApi";
 import { CustomErrorData, ProductData } from "@/types";
 import { translateError } from "@/utils/translateError";
@@ -56,30 +53,6 @@ export const useProducts = () => {
       isLoading: isLoadingReactivateProducts,
     },
   ] = useReactivateProductsMutation();
-  const [
-    uploadImageProduct,
-    {
-      isSuccess: isSuccessUploadImageProduct,
-      isLoading: isLoadingUploadImageProduct,
-      status: uploadImageProductStatus,
-    },
-  ] = useUploadProductImageMutation();
-
-  const [
-    uploadMultipleProductImages,
-    {
-      isSuccess: isSuccessUploadMultipleImages,
-      isLoading: isLoadingUploadMultipleImages,
-    },
-  ] = useUploadMultipleProductImagesMutation();
-
-  const [
-    updateImageProduct,
-    {
-      isSuccess: isSuccessUpdateImageProduct,
-      isLoading: isLoadingUpdateImageProduct,
-    },
-  ] = useUpdateProductImageMutation();
 
   const onCreateProduct = async (
     input: {
@@ -102,8 +75,8 @@ export const useProducts = () => {
 
           // Agregar las imágenes si existen
           if (files && files.length > 0) {
-            files.forEach((file) => {
-              formData.append("images", file);
+            Array.from(files).forEach((file) => {
+              formData.append("images", file, file.name);
             });
           }
 
@@ -142,11 +115,35 @@ export const useProducts = () => {
 
   const onUpdateProduct = async (
     input: Partial<ProductData> & { id: string },
+    files?: File[],
+    imagesToDelete?: string[],
   ) => {
     const promise = () =>
       new Promise(async (resolve, reject) => {
         try {
-          const result = await updateProduct(input);
+          const formData = new FormData();
+          // Agregar los datos del producto
+          Object.entries(input).forEach(([key, value]) => {
+            if (key !== "id") {
+              formData.append(key, value?.toString() ?? "");
+            }
+          });
+
+          // Agregar los archivos de imágenes con el mismo nombre de campo
+          if (files && files.length > 0) {
+            Array.from(files).forEach((file) => {
+              formData.append("images", file, file.name);
+            });
+          }
+
+          // Agregar el array de IDs de las imágenes a eliminar
+          if (imagesToDelete && imagesToDelete.length > 0) {
+            Array.from(imagesToDelete).forEach((id) => {
+              formData.append("deleteImages[]", id);
+            });
+          }
+
+          const result = await updateProduct({ id: input.id, formData });
           if (
             result.error &&
             typeof result.error === "object" &&
@@ -178,6 +175,7 @@ export const useProducts = () => {
       },
     });
   };
+
   const onDeleteProduct = async (productId: string) => {
     const promise = () =>
       new Promise(async (resolve, reject) => {
@@ -327,69 +325,10 @@ export const useProducts = () => {
 
   const abortControllerRef = useRef<AbortController | null>(null);
 
-  const onUploadImageProduct = async (file: File) => {
-    const formData = new FormData();
-    formData.append("image", file);
-    abortControllerRef.current = new AbortController();
-
-    try {
-      const result = await uploadImageProduct({
-        formData,
-        signal: abortControllerRef.current.signal,
-      }).unwrap();
-      return result;
-    } catch (error) {
-      if ((error as Error).name === "AbortError") {
-        return null;
-      }
-      throw error;
-    } finally {
-      abortControllerRef.current = null;
-    }
-  };
-
-  const onUpdateImageProduct = async (file: File, existingFileName: string) => {
-    const formData = new FormData();
-    formData.append("image", file);
-
-    try {
-      const result = await updateImageProduct({
-        formData,
-        existingFileName,
-      }).unwrap();
-      return result;
-    } catch (error) {
-      throw error;
-    }
-  };
   const cancelUploadImage = () => {
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
       toast.error("Creación de producto cancelada");
-    }
-  };
-
-  const onUploadMultipleProductImages = async (
-    productId: string,
-    files: File[],
-  ) => {
-    const formData = new FormData();
-    files.forEach((file) => {
-      formData.append("images", file);
-    });
-
-    try {
-      const result = await uploadMultipleProductImages({
-        productId,
-        formData,
-      }).unwrap();
-      return result;
-    } catch (error) {
-      // Si falla la subida de imágenes, eliminamos el producto
-      await onDeleteProduct(productId).catch(() => {
-        // Ignoramos error de eliminación ya que el error principal es la subida
-      });
-      throw error;
     }
   };
 
@@ -407,6 +346,7 @@ export const useProducts = () => {
     isSuccessUpdateProduct,
     isLoadingUpdateProduct,
     onDeleteProducts,
+    onDeleteProduct,
     isSuccessDeleteProducts,
     onToggleProductActivation,
     isSuccessToggleProductActivation,
@@ -414,15 +354,5 @@ export const useProducts = () => {
     onReactivateProducts,
     isSuccessReactivateProducts,
     isLoadingReactivateProducts,
-    onUploadImageProduct,
-    isSuccessUploadImageProduct,
-    isLoadingUploadImageProduct,
-    onUpdateImageProduct,
-    isSuccessUpdateImageProduct,
-    isLoadingUpdateImageProduct,
-    uploadImageProductStatus,
-    onUploadMultipleProductImages,
-    isSuccessUploadMultipleImages,
-    isLoadingUploadMultipleImages,
   };
 };
