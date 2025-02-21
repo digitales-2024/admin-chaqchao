@@ -68,6 +68,7 @@ export function UpdateProductSheet({
   onOpenChange,
 }: UpdateProductSheetProps) {
   const { data } = useCategories();
+
   const [deleteImage, { isLoading: isLoadingDelete }] =
     useDeleteProductImageMutation();
   const [imagesToDelete, setImagesToDelete] = useState<string[]>([]);
@@ -112,7 +113,15 @@ export function UpdateProductSheet({
         const image = product.images.find((image) => image.url === imageUrl);
         if (!image) break;
         try {
-          await deleteImage({ productId: product.id, imageId: image.id });
+          const isDelete = await deleteImage({
+            productId: product.id,
+            imageId: image.id,
+          });
+
+          // Si no se elimina no se sigue con el proceso y solo se envia un toast de fallo al actualizar el producto
+          if (isDelete.error) {
+            throw new Error("Error al actualizar las imágenes del producto");
+          }
         } catch (error) {
           console.error("Error al eliminar imagen:", error);
         }
