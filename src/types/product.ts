@@ -13,7 +13,6 @@ export type ProductData = {
   createdAt: string;
   updatedAt: string;
   isRestricted: boolean;
-  variations: ProductVariationData[];
 };
 
 export type ProductImage = {

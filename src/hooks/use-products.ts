@@ -82,12 +82,32 @@ export const useProducts = () => {
   ] = useUpdateProductImageMutation();
 
   const onCreateProduct = async (
-    input: Partial<Omit<ProductData, "images">>,
+    input: {
+      name: string;
+      categoryId: string;
+      description?: string;
+      price: number;
+      isRestricted?: boolean;
+    },
+    files?: File[],
   ) => {
     const promise = () =>
       new Promise<string>(async (resolve, reject) => {
         try {
-          const result = await createProduct(input);
+          const formData = new FormData();
+          // Agregar los datos del producto
+          Object.entries(input).forEach(([key, value]) => {
+            formData.append(key, value?.toString() ?? "");
+          });
+
+          // Agregar las imágenes si existen
+          if (files && files.length > 0) {
+            files.forEach((file) => {
+              formData.append("images", file);
+            });
+          }
+
+          const result = await createProduct(formData);
           if (result.error) {
             if (typeof result.error === "object" && "data" in result.error) {
               const error = (result.error.data as CustomErrorData).message;
@@ -111,7 +131,13 @@ export const useProducts = () => {
         }
       });
 
-    return await promise();
+    return toast.promise(promise(), {
+      loading: "Creando producto...",
+      success: "Producto creado",
+      error: (error) => {
+        return error.message;
+      },
+    });
   };
 
   const onUpdateProduct = async (

@@ -22,15 +22,13 @@ export const productsApi = createApi({
   tagTypes: ["Product"],
   endpoints: (build) => ({
     // Crear un nuevo producto
-    createProduct: build.mutation<
-      ApiResponse<ProductData>,
-      Partial<ProductData>
-    >({
-      query: (body) => ({
+    createProduct: build.mutation<ApiResponse<ProductData>, FormData>({
+      query: (formData) => ({
         url: "/products",
         method: "POST",
-        body,
+        body: formData,
         credentials: "include",
+        // No incluir Content-Type, el navegador lo establecerá automáticamente con el boundary correcto
       }),
       invalidatesTags: ["Product"],
     }),

@@ -73,6 +73,8 @@ export default function Gallery({ images, label }: GalleryProps) {
               width={100}
               height={100}
               className="object-cover"
+              priority={index < 3}
+              quality={index < 3 ? 100 : 50}
             />
           </button>
         ))}
