@@ -57,14 +57,20 @@ export function ProductImageDialog({
   };
 
   const content = (
-    <div className="grid w-full snap-center grid-cols-1 place-items-center gap-6 py-7 sm:grid-cols-2 sm:place-items-start">
+    <div className="grid w-full grid-cols-1 gap-6 py-7 sm:grid-cols-2">
       {/* Imagen y detalles básicos */}
       <div className="space-y-4">
         <div className="relative flex h-auto w-full items-center justify-center">
-          <Gallery
-            images={product.images}
-            label={product.name + product.description}
-          />
+          {product.images.length > 0 ? (
+            <Gallery
+              images={product.images}
+              label={product.name + product.description}
+            />
+          ) : (
+            <div className="inline-flex h-auto w-[500px] items-center justify-center rounded-lg bg-gray-200">
+              <span className="text-sm text-gray-500">No hay imágenes</span>
+            </div>
+          )}
         </div>
       </div>
       {/* Información detallada */}
