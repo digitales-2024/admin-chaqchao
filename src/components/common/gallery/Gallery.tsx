@@ -29,7 +29,7 @@ export default function Gallery({ images, label }: GalleryProps) {
   };
 
   return (
-    <div className="mx-auto w-full bg-red-600">
+    <div className="mx-auto w-full">
       <div className="relative mb-4 aspect-square">
         <Image
           src={images[currentIndex].url || "/placeholder.svg"}

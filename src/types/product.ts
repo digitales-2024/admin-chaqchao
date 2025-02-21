@@ -18,6 +18,7 @@ export type ProductData = {
 
 export type ProductImage = {
   url: string;
+  id: string;
 };
 
 export type ProductVariationData = {

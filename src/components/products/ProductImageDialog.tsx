@@ -34,7 +34,7 @@ import { Switch } from "../ui/switch";
 
 interface ProductImageDialogProps
   extends React.ComponentPropsWithRef<typeof Dialog> {
-  images: { url: string }[];
+  images?: { url: string }[];
   children: React.ReactNode;
   product: ProductData;
   borderColor: string;

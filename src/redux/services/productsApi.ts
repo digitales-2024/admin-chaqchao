@@ -174,6 +174,19 @@ export const productsApi = createApi({
       }),
       invalidatesTags: ["Product"],
     }),
+
+    // Eliminar una imagen especifica del producto
+    deleteProductImage: build.mutation<
+      { success: boolean },
+      { productId: string; imageId: string }
+    >({
+      query: ({ productId, imageId }) => ({
+        url: `products/${productId}/images/${imageId}`,
+        method: "DELETE",
+        credentials: "include",
+      }),
+      invalidatesTags: ["Product"],
+    }),
   }),
 });
 
@@ -190,4 +203,5 @@ export const {
   useUpdateProductImageMutation,
   useUploadMultipleProductImagesMutation,
   useDeleteProductPermanentMutation,
+  useDeleteProductImageMutation,
 } = productsApi;
