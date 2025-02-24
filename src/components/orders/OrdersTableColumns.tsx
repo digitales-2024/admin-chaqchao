@@ -1,7 +1,6 @@
 import { Order } from "@/types";
 import { ColumnDef } from "@tanstack/react-table";
 import { format, formatDistanceToNow } from "date-fns";
-import { toZonedTime } from "date-fns-tz";
 import { es } from "date-fns/locale";
 import { Calendar } from "lucide-react";
 
@@ -49,15 +48,22 @@ export const getColumnsOrders = (newOrders: Order[]): ColumnDef<Order>[] => [
       <DataTableColumnHeader column={column} title="Fecha" />
     ),
     cell: function Cell({ row }) {
-      const pickupDate = row.original.pickupTime;
-      const currentDate = toZonedTime(new Date(), "America/Lima");
+      const pickupDate = new Date(
+        row.original.pickupTime.toString().replace("Z", ""),
+      );
+      const currentDate = new Date();
       const datePassed = pickupDate < currentDate;
 
       return (
         <div className="flex flex-col items-start justify-start text-pretty capitalize">
-          {format(new Date(pickupDate), "EEEE, dd MMMM, hh:mm a", {
-            locale: es,
-          })}
+          {(() => {
+            const hour = pickupDate.getHours();
+            const minute = pickupDate.getMinutes().toString().padStart(2, "0");
+            const hour12 = hour % 12 || 12;
+            const ampm = hour >= 12 ? "PM" : "AM";
+
+            return `${format(pickupDate, "EEEE, dd MMMM", { locale: es })}, ${hour12}:${minute} ${ampm}`;
+          })()}
           <div className="inline-flex w-full items-center justify-start gap-2 truncate">
             <TooltipProvider>
               <Tooltip>
@@ -71,7 +77,7 @@ export const getColumnsOrders = (newOrders: Order[]): ColumnDef<Order>[] => [
                   <span className="sr-only">fecha del pedido</span>
                 </TooltipTrigger>
                 <TooltipContent>
-                  {format(new Date(pickupDate), "PPPpp", {
+                  {format(pickupDate, "PPPpp", {
                     locale: es,
                   })}
                 </TooltipContent>
@@ -84,7 +90,7 @@ export const getColumnsOrders = (newOrders: Order[]): ColumnDef<Order>[] => [
                 "text-rose-500": datePassed,
               })}
             >
-              {formatDistanceToNow(new Date(pickupDate), {
+              {formatDistanceToNow(pickupDate, {
                 addSuffix: true,
                 locale: es,
               })}
@@ -113,7 +119,7 @@ export const getColumnsOrders = (newOrders: Order[]): ColumnDef<Order>[] => [
     cell: ({ row }) => (
       <div className="inline-flex gap-2">
         <span className="text-xs text-slate-400">S/.</span>
-        {row.getValue("total") || 0}
+        {Number(row.getValue("total")).toFixed(2) || 0.0}
       </div>
     ),
   },
