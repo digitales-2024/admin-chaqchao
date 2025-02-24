@@ -1,17 +1,21 @@
 import {
   useCreateProductMutation,
-  useUpdateProductMutation,
-  useGetAllProductsQuery,
   useDeleteProductsMutation,
-  useToggleProductActivationMutation,
+  useGetAllProductsQuery,
   useReactivateProductsMutation,
-  useUploadProductImageMutation,
-  useUpdateProductImageMutation,
+  useToggleProductActivationMutation,
+  useUpdateProductMutation,
 } from "@/redux/services/productsApi";
-import { ProductData, CustomErrorData } from "@/types";
+import { CustomErrorData, ProductData } from "@/types";
 import { translateError } from "@/utils/translateError";
 import { useRef } from "react";
 import { toast } from "sonner";
+
+interface ApiResponse<T> {
+  statusCode: number;
+  message: string;
+  data: T;
+}
 
 export const useProducts = () => {
   const {
@@ -50,28 +54,33 @@ export const useProducts = () => {
     },
   ] = useReactivateProductsMutation();
 
-  const [
-    uploadImageProduct,
-    {
-      isSuccess: isSuccessUploadImageProduct,
-      isLoading: isLoadingUploadImageProduct,
-      status: uploadImageProductStatus,
+  const onCreateProduct = async (
+    input: {
+      name: string;
+      categoryId: string;
+      description?: string;
+      price: number;
+      isRestricted?: boolean;
     },
-  ] = useUploadProductImageMutation();
-
-  const [
-    updateImageProduct,
-    {
-      isSuccess: isSuccessUpdateImageProduct,
-      isLoading: isLoadingUpdateImageProduct,
-    },
-  ] = useUpdateProductImageMutation();
-
-  const onCreateProduct = async (input: Partial<ProductData>) => {
+    files?: File[],
+  ) => {
     const promise = () =>
-      new Promise(async (resolve, reject) => {
+      new Promise<string>(async (resolve, reject) => {
         try {
-          const result = await createProduct(input);
+          const formData = new FormData();
+          // Agregar los datos del producto
+          Object.entries(input).forEach(([key, value]) => {
+            formData.append(key, value?.toString() ?? "");
+          });
+
+          // Agregar las imágenes si existen
+          if (files && files.length > 0) {
+            Array.from(files).forEach((file) => {
+              formData.append("images", file, file.name);
+            });
+          }
+
+          const result = await createProduct(formData);
           if (result.error) {
             if (typeof result.error === "object" && "data" in result.error) {
               const error = (result.error.data as CustomErrorData).message;
@@ -84,8 +93,11 @@ export const useProducts = () => {
                 ),
               );
             }
+          } else if ("data" in result && result.data) {
+            const response = result.data as ApiResponse<ProductData>;
+            resolve(response.data.id);
           } else {
-            resolve(result);
+            reject(new Error("No se pudo obtener el ID del producto creado"));
           }
         } catch (error) {
           reject(error);
@@ -94,18 +106,44 @@ export const useProducts = () => {
 
     return toast.promise(promise(), {
       loading: "Creando producto...",
-      success: "Producto creado con éxito",
-      error: (err) => err.message,
+      success: "Producto creado",
+      error: (error) => {
+        return error.message;
+      },
     });
   };
 
   const onUpdateProduct = async (
     input: Partial<ProductData> & { id: string },
+    files?: File[],
+    imagesToDelete?: string[],
   ) => {
     const promise = () =>
       new Promise(async (resolve, reject) => {
         try {
-          const result = await updateProduct(input);
+          const formData = new FormData();
+          // Agregar los datos del producto
+          Object.entries(input).forEach(([key, value]) => {
+            if (key !== "id") {
+              formData.append(key, value?.toString() ?? "");
+            }
+          });
+
+          // Agregar los archivos de imágenes con el mismo nombre de campo
+          if (files && files.length > 0) {
+            Array.from(files).forEach((file) => {
+              formData.append("images", file, file.name);
+            });
+          }
+
+          // Agregar el array de IDs de las imágenes a eliminar
+          if (imagesToDelete && imagesToDelete.length > 0) {
+            Array.from(imagesToDelete).forEach((id) => {
+              formData.append("deleteImages[]", id);
+            });
+          }
+
+          const result = await updateProduct({ id: input.id, formData });
           if (
             result.error &&
             typeof result.error === "object" &&
@@ -137,6 +175,39 @@ export const useProducts = () => {
       },
     });
   };
+
+  const onDeleteProduct = async (productId: string) => {
+    const promise = () =>
+      new Promise(async (resolve, reject) => {
+        try {
+          const result = await deleteProducts({ ids: [productId] });
+          if (result.error) {
+            if (typeof result.error === "object" && "data" in result.error) {
+              const error = (result.error.data as CustomErrorData).message;
+              const message = translateError(error as string);
+              reject(new Error(message));
+            } else {
+              reject(
+                new Error(
+                  "Ocurrió un error inesperado, por favor intenta de nuevo",
+                ),
+              );
+            }
+          } else {
+            resolve(result);
+          }
+        } catch (error) {
+          reject(error);
+        }
+      });
+
+    return toast.promise(promise(), {
+      loading: "Eliminando producto...",
+      success: "Producto eliminado",
+      error: (err) => err.message,
+    });
+  };
+
   const onDeleteProducts = async (ids: ProductData[]) => {
     const onlyIds = ids.map((product) => product.id);
     const idsString = {
@@ -254,42 +325,6 @@ export const useProducts = () => {
 
   const abortControllerRef = useRef<AbortController | null>(null);
 
-  const onUploadImageProduct = async (file: File) => {
-    const formData = new FormData();
-    formData.append("image", file);
-    abortControllerRef.current = new AbortController();
-
-    try {
-      const result = await uploadImageProduct({
-        formData,
-        signal: abortControllerRef.current.signal,
-      }).unwrap();
-      return result;
-    } catch (error) {
-      if ((error as Error).name === "AbortError") {
-        return null;
-      }
-      throw error;
-    } finally {
-      abortControllerRef.current = null;
-    }
-  };
-
-  const onUpdateImageProduct = async (file: File, existingFileName: string) => {
-    const formData = new FormData();
-    formData.append("image", file);
-
-    try {
-      const result = await updateImageProduct({
-        formData,
-        existingFileName,
-      }).unwrap();
-      return result;
-    } catch (error) {
-      throw error;
-    }
-  };
-
   const cancelUploadImage = () => {
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
@@ -311,6 +346,7 @@ export const useProducts = () => {
     isSuccessUpdateProduct,
     isLoadingUpdateProduct,
     onDeleteProducts,
+    onDeleteProduct,
     isSuccessDeleteProducts,
     onToggleProductActivation,
     isSuccessToggleProductActivation,
@@ -318,12 +354,5 @@ export const useProducts = () => {
     onReactivateProducts,
     isSuccessReactivateProducts,
     isLoadingReactivateProducts,
-    onUploadImageProduct,
-    isSuccessUploadImageProduct,
-    isLoadingUploadImageProduct,
-    onUpdateImageProduct,
-    isSuccessUpdateImageProduct,
-    isLoadingUpdateImageProduct,
-    uploadImageProductStatus,
   };
 };

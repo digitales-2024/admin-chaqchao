@@ -65,7 +65,6 @@ export function CreateClassDialog() {
       status: "CONFIRMED",
     },
   });
-  console.log("🚀 ~ CreateClassDialog ~ form:", form.watch());
   const { createClass, isLoadingCreateClass } = useClasses();
   const { data: classCapacities, isLoading: isLoadingClassCapacities } =
     useGetClassesCapacityQuery(

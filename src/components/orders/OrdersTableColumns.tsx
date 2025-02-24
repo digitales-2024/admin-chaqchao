@@ -1,7 +1,6 @@
 import { Order } from "@/types";
 import { ColumnDef } from "@tanstack/react-table";
-import { formatDistanceToNow } from "date-fns";
-import { formatInTimeZone, toZonedTime } from "date-fns-tz";
+import { format, formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
 import { Calendar } from "lucide-react";
 
@@ -16,8 +15,6 @@ import {
   TooltipTrigger,
 } from "../ui/tooltip";
 import SelectStatus from "./SelectStatus";
-
-const TIMEZONE = "America/Lima";
 
 export const getColumnsOrders = (newOrders: Order[]): ColumnDef<Order>[] => [
   {
@@ -51,18 +48,22 @@ export const getColumnsOrders = (newOrders: Order[]): ColumnDef<Order>[] => [
       <DataTableColumnHeader column={column} title="Fecha" />
     ),
     cell: function Cell({ row }) {
-      const pickupDate = toZonedTime(
-        new Date(row.original.pickupTime),
-        TIMEZONE,
+      const pickupDate = new Date(
+        row.original.pickupTime.toString().replace("Z", ""),
       );
-      const currentDate = toZonedTime(new Date(), TIMEZONE);
+      const currentDate = new Date();
       const datePassed = pickupDate < currentDate;
 
       return (
         <div className="flex flex-col items-start justify-start text-pretty capitalize">
-          {formatInTimeZone(pickupDate, TIMEZONE, "EEEE, dd MMMM, hh:mm a", {
-            locale: es,
-          })}
+          {(() => {
+            const hour = pickupDate.getHours();
+            const minute = pickupDate.getMinutes().toString().padStart(2, "0");
+            const hour12 = hour % 12 || 12;
+            const ampm = hour >= 12 ? "PM" : "AM";
+
+            return `${format(pickupDate, "EEEE, dd MMMM", { locale: es })}, ${hour12}:${minute} ${ampm}`;
+          })()}
           <div className="inline-flex w-full items-center justify-start gap-2 truncate">
             <TooltipProvider>
               <Tooltip>
@@ -76,7 +77,7 @@ export const getColumnsOrders = (newOrders: Order[]): ColumnDef<Order>[] => [
                   <span className="sr-only">fecha del pedido</span>
                 </TooltipTrigger>
                 <TooltipContent>
-                  {formatInTimeZone(pickupDate, TIMEZONE, "PPPpp", {
+                  {format(pickupDate, "PPPpp", {
                     locale: es,
                   })}
                 </TooltipContent>
@@ -118,7 +119,7 @@ export const getColumnsOrders = (newOrders: Order[]): ColumnDef<Order>[] => [
     cell: ({ row }) => (
       <div className="inline-flex gap-2">
         <span className="text-xs text-slate-400">S/.</span>
-        {row.getValue("total") || 0}
+        {Number(row.getValue("total")).toFixed(2) || 0.0}
       </div>
     ),
   },

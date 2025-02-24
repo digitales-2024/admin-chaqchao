@@ -137,24 +137,31 @@ export const useOrders = (options: UseOrdersProps = {}) => {
   };
 
   const onDownloadPdf = async (id: string, code: string) => {
-    try {
-      const response = await onDownload({ id }).unwrap();
-      // Crear el enlace de descarga
-      const url = window.URL.createObjectURL(response);
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", `pedido-${code}.pdf`);
+    const promise = () =>
+      new Promise(async (resolve, reject) => {
+        try {
+          const response = await onDownload({ id }).unwrap();
+          const url = window.URL.createObjectURL(response);
+          const link = document.createElement("a");
+          link.href = url;
+          link.setAttribute("download", `pedido-${code}.pdf`);
 
-      // Añadir el enlace al DOM y disparar la descarga
-      document.body.appendChild(link);
-      link.click();
+          document.body.appendChild(link);
+          link.click();
 
-      // Eliminar el enlace temporal del DOM
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url); // Limpiar el objeto URL
-    } catch (error) {
-      toast.error("Error al descargar el PDF del pedido");
-    }
+          document.body.removeChild(link);
+          window.URL.revokeObjectURL(url);
+          resolve("PDF descargado correctamente");
+        } catch (error) {
+          reject(new Error("Error al descargar el PDF del pedido"));
+        }
+      });
+
+    return toast.promise(promise(), {
+      loading: "Descargando PDF del pedido...",
+      success: "PDF descargado correctamente",
+      error: (err) => err.message,
+    });
   };
 
   return {

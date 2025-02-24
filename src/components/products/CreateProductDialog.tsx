@@ -7,7 +7,7 @@ import {
   productsSchema,
 } from "@/schemas/products/createProductsSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Plus, RefreshCcw, X } from "lucide-react";
+import { Plus, RefreshCcw } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
@@ -47,16 +47,13 @@ const dataForm = {
 export function CreateProductDialog() {
   const [open, setOpen] = useState(false);
   const isDesktop = useMediaQuery("(min-width: 640px)");
-  const [isMinimized, setIsMinimized] = useState<boolean>(false);
-
   const {
     onCreateProduct,
     isLoadingCreateProduct,
     cancelUploadImage,
-    onUploadImageProduct,
-    isLoadingUploadImageProduct,
     isSuccessCreateProduct,
   } = useProducts();
+
   const [progress, setProgress] = useState(0);
 
   const form = useForm<CreateProductsSchema>({
@@ -66,82 +63,39 @@ export function CreateProductDialog() {
       categoryId: "",
       description: "",
       price: "",
-      image: undefined,
+      images: [],
       isRestricted: false,
     },
   });
 
   const onSubmit = async (input: CreateProductsSchema) => {
     try {
-      if (input.image) {
-        const imageResponse = await onUploadImageProduct(input.image);
-        const imageUrl = imageResponse?.data;
-
-        const productData = {
-          ...input,
-          image: imageUrl,
-          variations: [],
-        };
-
-        await onCreateProduct({
-          ...productData,
-          price: parseFloat(productData.price),
-        });
-      } else {
-        throw new Error("Image file is required");
+      if (!input.images || input.images.length === 0) {
+        throw new Error("Se requiere al menos una imagen");
       }
+
+      // Crear el producto con las imágenes en un solo request
+      await onCreateProduct(
+        {
+          name: input.name,
+          categoryId: input.categoryId,
+          description: input.description,
+          price: parseFloat(input.price),
+          isRestricted: input.isRestricted,
+        },
+        input.images,
+      );
     } catch (error) {
       throw error;
     }
   };
 
-  const handleClose = () => {
-    setOpen(!open);
-    form.reset();
-  };
-
-  // Actualiza el progreso de la subida de la imagen y la creacion del producto pero solo si esta en proceso
-  useEffect(() => {
-    let timer: NodeJS.Timeout | null = null;
-
-    if (isLoadingUploadImageProduct || isLoadingCreateProduct) {
-      timer = setInterval(() => {
-        setProgress((oldProgress) => {
-          if (oldProgress >= 100) {
-            if (timer) clearInterval(timer);
-            return 100;
-          }
-          const diff = Math.random() * 10;
-          return Math.min(oldProgress + diff, 100);
-        });
-      }, 500);
-    }
-
-    return () => {
-      if (timer) clearInterval(timer);
-    };
-  }, [isLoadingUploadImageProduct, isLoadingCreateProduct]);
-
-  // Minimiza el dialogo si la subida de la imagen esta en
-  useEffect(() => {
-    if (open) {
-      setIsMinimized(false);
-    }
-    if (!open && isLoadingUploadImageProduct) {
-      setIsMinimized(true);
-    }
-    if (!isLoadingUploadImageProduct) {
-      setIsMinimized(false);
-    }
-  }, [open, isLoadingUploadImageProduct]);
-
   /**
-   * Cancela la subida de la imagen, la creacion de un producto y minimiza el dialogo
+   * Cancela la subida de la imagen y cierra el diálogo
    */
   const cancelUploadImageAndProduct = () => {
     cancelUploadImage();
     setProgress(0);
-    setIsMinimized(false);
     setOpen(false);
   };
 
@@ -150,7 +104,6 @@ export function CreateProductDialog() {
       setProgress(0);
       form.reset();
       setOpen(false);
-      setIsMinimized(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSuccessCreateProduct]);
@@ -172,12 +125,27 @@ export function CreateProductDialog() {
   if (isDesktop)
     return (
       <>
-        <Dialog open={open} onOpenChange={handleClose}>
+        <Dialog
+          open={open}
+          onOpenChange={(isOpen) => {
+            // Si está intentando cerrar
+            if (isOpen === false) {
+              // Solo permitimos cerrar si no hay operaciones en progreso
+              if (!isLoadingCreateProduct) {
+                setOpen(false);
+                form.reset();
+              }
+              return;
+            }
+            // Si está abriendo, siempre permitimos
+            setOpen(true);
+          }}
+        >
           <DialogTrigger asChild>
             <Button
               variant="outline"
               size="sm"
-              disabled={isLoadingCreateProduct || isLoadingUploadImageProduct}
+              disabled={isLoadingCreateProduct}
             >
               <Plus className="mr-2 size-4" aria-hidden="true" />
               {dataForm.button}
@@ -188,18 +156,14 @@ export function CreateProductDialog() {
               <DialogTitle>{dataForm.title}</DialogTitle>
               <DialogDescription>{dataForm.description}</DialogDescription>
             </DialogHeader>
-            <ScrollArea className="h-full max-h-[80vh] w-full justify-center gap-4">
+            <ScrollArea className="h-full max-h-[80vh] w-full justify-center gap-4 p-4">
               {open && (
                 <CreateProductsForm form={form} onSubmit={onSubmit}>
-                  {isLoadingCreateProduct || isLoadingUploadImageProduct ? (
-                    <ProgressIndicator />
-                  ) : null}
+                  {isLoadingCreateProduct ? <ProgressIndicator /> : null}
                   <DialogFooter>
                     <div className="flex w-full flex-row-reverse gap-2">
                       <Button
-                        disabled={
-                          isLoadingCreateProduct || isLoadingUploadImageProduct
-                        }
+                        disabled={isLoadingCreateProduct}
                         className="w-full"
                       >
                         {isLoadingCreateProduct && (
@@ -227,24 +191,6 @@ export function CreateProductDialog() {
             </ScrollArea>
           </DialogContent>
         </Dialog>
-        {isMinimized && (
-          <div className="fixed bottom-4 right-4 z-50 w-64 rounded-lg border bg-background p-4 shadow-lg">
-            <div className="flex items-center justify-between">
-              <div className="inline-flex text-sm text-emerald-500">
-                <RefreshCcw className="mr-2 size-4 animate-spin" />
-                Creando Producto <span className="animate-pulse">...</span>
-              </div>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={cancelUploadImageAndProduct}
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            </div>
-            <ProgressIndicator />
-          </div>
-        )}
       </>
     );
 
@@ -252,17 +198,22 @@ export function CreateProductDialog() {
     <>
       <Drawer
         open={open}
-        onOpenChange={setOpen}
-        onClose={() => {
-          form.reset();
+        onOpenChange={(isOpen) => {
+          // Si está intentando cerrar
+          if (isOpen === false) {
+            // Solo permitimos cerrar si no hay operaciones en progreso
+            if (!isLoadingCreateProduct) {
+              setOpen(false);
+              form.reset();
+            }
+            return;
+          }
+          // Si está abriendo, siempre permitimos
+          setOpen(true);
         }}
       >
         <DrawerTrigger asChild>
-          <Button
-            variant="outline"
-            size="sm"
-            disabled={isLoadingCreateProduct || isLoadingUploadImageProduct}
-          >
+          <Button variant="outline" size="sm" disabled={isLoadingCreateProduct}>
             <Plus className="mr-2 size-4" aria-hidden="true" />
             {dataForm.button}
           </Button>
@@ -275,15 +226,9 @@ export function CreateProductDialog() {
           </DrawerHeader>
           <ScrollArea className="mt-4 max-h-full w-full gap-4 pr-4">
             <CreateProductsForm form={form} onSubmit={onSubmit}>
-              {isLoadingCreateProduct || isLoadingUploadImageProduct ? (
-                <ProgressIndicator />
-              ) : null}
+              {isLoadingCreateProduct ? <ProgressIndicator /> : null}
               <DrawerFooter className="gap-2 sm:space-x-0">
-                <Button
-                  disabled={
-                    isLoadingCreateProduct || isLoadingUploadImageProduct
-                  }
-                >
+                <Button disabled={isLoadingCreateProduct}>
                   {isLoadingCreateProduct && (
                     <RefreshCcw
                       className="mr-2 size-4 animate-spin"
@@ -305,24 +250,6 @@ export function CreateProductDialog() {
           </ScrollArea>
         </DrawerContent>
       </Drawer>
-      {isMinimized && (
-        <div className="fixed bottom-4 right-4 z-50 w-64 rounded-lg border bg-background p-4 shadow-lg">
-          <div className="flex items-center justify-between">
-            <div className="inline-flex text-sm text-emerald-500">
-              <RefreshCcw className="mr-2 size-4 animate-spin" />
-              Creando Producto <span className="animate-pulse">...</span>
-            </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={cancelUploadImageAndProduct}
-            >
-              <X className="h-4 w-4" />
-            </Button>
-          </div>
-          <ProgressIndicator />
-        </div>
-      )}
     </>
   );
 }

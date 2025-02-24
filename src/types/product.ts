@@ -4,15 +4,20 @@ export type ProductData = {
   id: string;
   name: string;
   price: number;
-  image: string;
+  images: ProductImage[];
   description: string;
   isAvailable: boolean;
   isActive: boolean;
+  categoryId: string;
   category: CategoryData;
   createdAt: string;
   updatedAt: string;
   isRestricted: boolean;
-  variations: ProductVariationData[];
+};
+
+export type ProductImage = {
+  url: string;
+  id: string;
 };
 
 export type ProductVariationData = {
@@ -48,7 +53,7 @@ export type TopProduct = {
   name: string;
   isActive: boolean;
   price: number;
-  image: string;
+  images: ProductImage[];
   category: CategoryData;
   totalOrdered: number;
 };

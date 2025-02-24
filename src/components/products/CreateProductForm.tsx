@@ -2,15 +2,16 @@
 
 import { useCategories } from "@/hooks/use-categories";
 import { CreateProductsSchema } from "@/schemas/products/createProductsSchema";
-import { ImagePlus, ShieldAlert, ShieldMinus } from "lucide-react";
-import Image from "next/image";
-import { useState } from "react";
+import { ShieldAlert, ShieldMinus } from "lucide-react";
+import Link from "next/link";
 import { UseFormReturn } from "react-hook-form";
 
 import { Input } from "@/components/ui/input";
 
 import { cn } from "@/lib/utils";
 
+import { FileUploader } from "../common/FileUploader";
+import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
 import {
   Form,
   FormControl,
@@ -30,6 +31,8 @@ import {
 import { Switch } from "../ui/switch";
 import { Textarea } from "../ui/textarea";
 
+const MAX_FILES = 3;
+
 interface CreateProductsFormProps
   extends Omit<React.ComponentPropsWithRef<"form">, "onSubmit"> {
   children: React.ReactNode;
@@ -43,22 +46,6 @@ export const CreateProductsForm = ({
   onSubmit,
 }: CreateProductsFormProps) => {
   const { data } = useCategories();
-  const [preview, setPreview] = useState<string | null>(null);
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      // Crear una URL de vista previa para la imagen seleccionada
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-
-      // Actualizar el valor del campo de imagen con el archivo seleccionado
-      form.setValue("image", file);
-    }
-  };
 
   return (
     <Form {...form}>
@@ -119,98 +106,81 @@ export const CreateProductsForm = ({
               </FormItem>
             )}
           />
+
           {/* Campo de Categoría */}
+          {data && data?.length > 0 ? (
+            <FormField
+              control={form.control}
+              name="categoryId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel htmlFor="categoryId">Categoría</FormLabel>
+                  <FormControl>
+                    <Select
+                      onValueChange={(value) => field.onChange(value)}
+                      defaultValue={field.value || ""}
+                    >
+                      <SelectTrigger className="capitalize">
+                        <SelectValue placeholder="Selecciona una categoría" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          {data?.map((category) => (
+                            <SelectItem
+                              key={category.id}
+                              value={category.id}
+                              className="capitalize"
+                            >
+                              {category.name}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          ) : (
+            <Alert className="space-y-3 border-rose-500">
+              <AlertTitle className="text-rose-600">Error</AlertTitle>
+              <AlertDescription className="text-rose-600">
+                No hay categorías disponibles. Por favor, crea una categoría
+              </AlertDescription>
+              <Link
+                href="/products/categories"
+                className="block w-fit rounded-md border border-rose-400 p-2"
+              >
+                Crear Categoría
+              </Link>
+            </Alert>
+          )}
+
+          {/* Área de Subida de Imágenes */}
           <FormField
             control={form.control}
-            name="categoryId"
+            name="images"
             render={({ field }) => (
               <FormItem>
-                <FormLabel htmlFor="categoryId">Categoría</FormLabel>
+                <FormLabel>Imágenes del Producto</FormLabel>
                 <FormControl>
-                  <Select
-                    onValueChange={(value) => field.onChange(value)}
-                    defaultValue={field.value || ""}
-                  >
-                    <SelectTrigger className="capitalize">
-                      <SelectValue placeholder="Selecciona una categoría" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        {data?.map((category) => (
-                          <SelectItem
-                            key={category.id}
-                            value={category.id}
-                            className="capitalize"
-                          >
-                            {category.name}
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
+                  <FileUploader
+                    maxFileCount={MAX_FILES}
+                    maxSize={10 * 1024 * 1024} // 5MB
+                    multiple
+                    accept={{
+                      "image/*": [".png", ".jpg", ".jpeg", ".webp"],
+                    }}
+                    value={field.value}
+                    onValueChange={field.onChange}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
 
-          {/* Área de Subida de Imagen */}
-          <FormField
-            control={form.control}
-            name="image"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel htmlFor="image">Imagen del Producto</FormLabel>
-                <FormControl>
-                  <div
-                    className="cursor-pointer rounded-md border border-dashed border-gray-300 text-center transition-colors duration-300 hover:bg-gray-50"
-                    onClick={() => document.getElementById("image")?.click()}
-                  >
-                    {preview ? (
-                      <div className="flex flex-col items-center gap-2">
-                        <div className="relative h-40 w-40">
-                          <Image
-                            src={preview}
-                            alt="Imagen del producto"
-                            layout="fill"
-                            objectFit="contain"
-                            className="rounded-md"
-                          />
-                        </div>
-                        <p className="py-4 text-xs text-gray-400">
-                          {(field.value as File)?.name}
-                        </p>
-                      </div>
-                    ) : (
-                      <div
-                        className="flex size-60 w-full flex-col items-center justify-center"
-                        tabIndex={0}
-                      >
-                        <ImagePlus
-                          className="h-10 w-10 text-gray-300"
-                          strokeWidth={1}
-                        />
-                        <p className="text-xs text-gray-600">
-                          Haga clic o arrastre una imagen aquí
-                        </p>
-                      </div>
-                    )}
-                    <Input
-                      id="image"
-                      type="file"
-                      accept="['image/jpeg', 'image/png', 'image/gif', 'image/webp']"
-                      onChange={(e) => {
-                        handleFileChange(e);
-                        field.onChange(e.target.files?.[0] || null);
-                      }}
-                      className="hidden"
-                    />
-                  </div>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
           {/* Campo de Restricción */}
           <FormField
             control={form.control}
