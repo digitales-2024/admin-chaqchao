@@ -5,7 +5,12 @@ import {
   createClassScheduleSchema,
   CreateClassScheduleSchema,
 } from "@/schemas/classConfig/createClassScheduleSchema";
-import { ClassScheduleData, TypeClass, typeClassLabels } from "@/types";
+import {
+  ClassScheduleData,
+  TypeClass,
+  typeClassColors,
+  typeClassLabels,
+} from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
@@ -22,13 +27,6 @@ import {
 } from "@/components/ui/form";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
   Sheet,
   SheetContent,
   SheetHeader,
@@ -36,6 +34,8 @@ import {
   SheetDescription,
   SheetFooter,
 } from "@/components/ui/sheet";
+
+import { cn } from "@/lib/utils";
 
 interface EditScheduleSheetProps {
   isOpen: boolean;
@@ -58,7 +58,6 @@ export function EditScheduleSheet({
     resolver: zodResolver(createClassScheduleSchema),
     defaultValues: {
       startTime: scheduleData.startTime,
-      typeClass: scheduleData.typeClass,
     },
   });
   const onSubmit = async (data: Partial<CreateClassScheduleSchema>) => {
@@ -83,7 +82,6 @@ export function EditScheduleSheet({
   useEffect(() => {
     form.reset({
       startTime: scheduleData.startTime,
-      typeClass: scheduleData.typeClass,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [scheduleData]);
@@ -103,34 +101,13 @@ export function EditScheduleSheet({
               onSubmit={form.handleSubmit(onSubmit)}
               className="space-y-5 p-5"
             >
-              <FormField
-                control={form.control}
-                name="typeClass"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Tipo de clase</FormLabel>
-                    <FormControl>
-                      <Select
-                        value={field.value}
-                        onValueChange={field.onChange}
-                        disabled
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Selecciona el tipo de clase" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {Object.keys(TypeClass).map((type) => (
-                            <SelectItem key={type} value={type}>
-                              {typeClassLabels[type as keyof typeof TypeClass]}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
+              <span
+                className={cn(
+                  "text-sm font-black",
+                  typeClassColors[scheduleData.typeClass],
                 )}
-              />
+              >{`Clase: ${typeClassLabels[scheduleData.typeClass]}`}</span>
+
               <FormField
                 control={form.control}
                 name="startTime"
