@@ -64,8 +64,8 @@ function ProductCard({ product }: { product: TopProduct }) {
   const [imageError, setImageError] = useState(false);
 
   useEffect(() => {
-    setImageError(false);
-  }, [product.image]);
+    if (product.images.length <= 0) setImageError(false);
+  }, [product.images]);
 
   return (
     <Card className="overflow-hidden">
@@ -80,7 +80,7 @@ function ProductCard({ product }: { product: TopProduct }) {
             </div>
           ) : (
             <Image
-              src={product.image}
+              src={product.images[0].url}
               alt={product.name}
               sizes="(min-width: 640px) 144px, 100px"
               fill

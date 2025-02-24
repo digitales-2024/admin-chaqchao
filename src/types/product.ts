@@ -53,7 +53,7 @@ export type TopProduct = {
   name: string;
   isActive: boolean;
   price: number;
-  image: string;
+  images: ProductImage[];
   category: CategoryData;
   totalOrdered: number;
 };
