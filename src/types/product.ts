@@ -5,6 +5,7 @@ export type ProductData = {
   name: string;
   price: number;
   images: ProductImage[];
+  maxStock: number;
   description: string;
   isAvailable: boolean;
   isActive: boolean;

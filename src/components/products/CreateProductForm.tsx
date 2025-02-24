@@ -106,6 +106,19 @@ export const CreateProductsForm = ({
               </FormItem>
             )}
           />
+          <FormField
+            control={form.control}
+            name="maxStock"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel htmlFor="price">Stock máximo</FormLabel>
+                <FormControl>
+                  <Input placeholder="Ingrese el stock máximo" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
           {/* Campo de Categoría */}
           {data && data?.length > 0 ? (
