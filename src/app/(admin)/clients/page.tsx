@@ -1,18 +1,21 @@
 "use client";
-"use memo";
 
-import { useClients } from "@/hooks/use-clients"; // Hook de clientes
+import { useClients } from "@/hooks/use-clients";
+import { usePermissions } from "@/hooks/use-permissions";
 
-import { ClientsTable } from "@/components/clients/ClientsTable"; // Tabla de clientes
-import { HeaderPage } from "@/components/common/HeaderPage"; // Componente unificado de cabecera
+import { ClientsTable } from "@/components/clients/ClientsTable";
+import { AccessDenied } from "@/components/common/AccessDenied";
+import { HeaderPage } from "@/components/common/HeaderPage";
 import { Shell } from "@/components/common/Shell";
 import { DataTableSkeleton } from "@/components/data-table/DataTableSkeleton";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function PageClients() {
-  const { dataClientsAll, isLoading } = useClients(); // Hook de clientes
+  const { hasPermission, isLoadingHas } = usePermissions();
+  const hasClientsPermission = hasPermission("CST", ["READ"]);
+  const { dataClientsAll, isLoading } = useClients();
 
-  if (isLoading) {
+  if (isLoading || isLoadingHas) {
     return (
       <Shell className="gap-2">
         <HeaderPage
@@ -29,6 +32,18 @@ export default function PageClients() {
             shrinkZero
           />
         </div>
+      </Shell>
+    );
+  }
+
+  if (!hasClientsPermission) {
+    return (
+      <Shell className="gap-2">
+        <HeaderPage
+          title="Clientes"
+          description="Lista de clientes registrados en el sistema."
+        />
+        <AccessDenied message="No tienes permisos para ver los clientes." />
       </Shell>
     );
   }
