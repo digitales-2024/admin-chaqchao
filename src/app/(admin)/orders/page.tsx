@@ -6,6 +6,7 @@ import { Order, OrderStatus } from "@/types";
 import { format } from "date-fns";
 import { useState } from "react";
 
+import { AccessDenied } from "@/components/common/AccessDenied";
 import { ErrorPage } from "@/components/common/ErrorPage";
 import { HeaderPage } from "@/components/common/HeaderPage";
 import { Shell } from "@/components/common/Shell";
@@ -50,14 +51,7 @@ export default function PagerOrders() {
     return (
       <Shell>
         <HeaderPage title="Pedidos" />
-        <div className="flex flex-col items-center justify-center p-8">
-          <h2 className="text-xl font-semibold text-red-600">
-            Acceso Denegado
-          </h2>
-          <p className="text-gray-600">
-            No tienes permisos para ver los pedidos.
-          </p>
-        </div>
+        <AccessDenied message="No tienes permisos para ver los pedidos." />
       </Shell>
     );
   }
