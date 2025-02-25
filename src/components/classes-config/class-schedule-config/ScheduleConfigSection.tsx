@@ -1,3 +1,5 @@
+import { useClassCapacity } from "@/hooks/use-class-capacity";
+import { useClassPrices } from "@/hooks/use-class-price";
 import { useClassSchedules } from "@/hooks/use-class-schedule";
 import {
   ClassScheduleData,
@@ -26,9 +28,10 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -37,10 +40,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuShortcut,
 } from "@/components/ui/dropdown-menu";
+import { Separator } from "@/components/ui/separator";
 
 import { cn } from "@/lib/utils";
 
 import { AddScheduleDialog } from "./AddScheduleDialog";
+import ConfigDialog from "./ConfigDialog";
 import { DeleteScheduleDialog } from "./DeleteScheduleDialog";
 import { EditScheduleSheet } from "./EditScheduleSheet";
 
@@ -51,6 +56,8 @@ export function ScheduleConfigSection() {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [scheduleToDelete, setScheduleToDelete] =
     useState<ClassScheduleData | null>(null);
+  const { classCapacities } = useClassCapacity();
+  const { dataClassPricesAll } = useClassPrices();
 
   const {
     dataClassSchedulesAll,
@@ -91,7 +98,7 @@ export function ScheduleConfigSection() {
   };
 
   return (
-    <div className="container mx-auto flex flex-col py-5">
+    <div className="container mx-auto flex flex-col sm:px-5 sm:py-5">
       <div className="mb-8 flex flex-wrap items-center justify-between px-4">
         <div>
           <h2 className="text-2xl font-bold">Configuración del Horario</h2>
@@ -99,85 +106,174 @@ export function ScheduleConfigSection() {
             Ingrese los horarios de las clases.
           </span>
         </div>
-        <AddScheduleDialog refetchClassSchedules={refetchClassSchedules} />
       </div>
 
-      <div className="space-y-5">
+      <div className="grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-8">
         {isSuccessSchedules && dataClassSchedulesAll ? (
           Object.keys(TypeClass).map((type) => {
             const schedules =
               dataClassSchedulesAll[type as keyof typeof dataClassSchedulesAll];
             return (
-              <div key={type}>
-                <h4
-                  className={cn(
-                    "text-xs font-semibold",
-                    typeClassColors[type as keyof typeof TypeClass],
-                    "bg-transparent",
-                  )}
-                >
-                  {typeClassLabels[type as keyof typeof TypeClass]}
-                </h4>
-                <div
-                  className={cn(
-                    "space-y-5 rounded-lg border p-4",
-                    typeClassColors[type as keyof typeof TypeClass],
-                  )}
-                >
+              <Card
+                key={type}
+                className={cn(
+                  "border-l-4",
+                  typeClassColors[type as keyof typeof TypeClass],
+                )}
+              >
+                <CardHeader className="flex flex-row items-center justify-between px-3 py-2">
+                  <CardTitle
+                    className={cn(
+                      "text-sm font-semibold",
+                      typeClassColors[type as keyof typeof TypeClass],
+                      "bg-transparent",
+                    )}
+                  >
+                    {typeClassLabels[type as keyof typeof TypeClass]}
+                  </CardTitle>
+                  <AddScheduleDialog
+                    refetchClassSchedules={refetchClassSchedules}
+                    typeClass={type as TypeClass}
+                  />
+                </CardHeader>
+                <CardContent className="space-y-5 p-3">
                   {schedules?.map((schedule) => (
-                    <Card key={schedule.id}>
-                      <CardContent className="mt-4 flex items-center justify-between text-slate-800">
-                        <div className="flex items-center">
-                          {getClockIcon(schedule.startTime)}
-                          <div>
-                            <p className="mt-4 text-base font-semibold">
-                              {schedule.startTime}
-                            </p>
-                          </div>
+                    <div
+                      key={schedule.id}
+                      className="flex items-center justify-between text-gray-700"
+                    >
+                      <div className="flex items-center">
+                        {getClockIcon(schedule.startTime)}
+                        <div>
+                          <p className="mt-4 text-base font-semibold">
+                            {schedule.startTime}
+                          </p>
                         </div>
-                        <div className="flex space-x-2">
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button
-                                aria-label="Open menu"
-                                variant="ghost"
-                                className="flex size-8 p-0 data-[state=open]:bg-muted"
-                              >
-                                <Ellipsis
-                                  className="size-4"
-                                  aria-hidden="true"
-                                />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" className="w-40">
-                              <DropdownMenuItem
-                                onSelect={() => handleEdit(schedule)}
-                              >
-                                Editar
-                                <DropdownMenuShortcut>
-                                  <Edit className="size-4" aria-hidden="true" />
-                                </DropdownMenuShortcut>
-                              </DropdownMenuItem>
-                              <DropdownMenuSeparator />
-                              <DropdownMenuItem
-                                onSelect={() => handleDelete(schedule)}
-                              >
-                                Eliminar
-                                <DropdownMenuShortcut>
-                                  <Trash
-                                    className="size-4"
-                                    aria-hidden="true"
-                                  />
-                                </DropdownMenuShortcut>
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </div>
-                      </CardContent>
-                    </Card>
+                      </div>
+                      <div className="flex space-x-2">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              aria-label="Open menu"
+                              variant="ghost"
+                              className="flex size-8 p-0 data-[state=open]:bg-muted"
+                            >
+                              <Ellipsis className="size-4" aria-hidden="true" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end" className="w-40">
+                            <DropdownMenuItem
+                              onSelect={() => handleEdit(schedule)}
+                            >
+                              Editar
+                              <DropdownMenuShortcut>
+                                <Edit className="size-4" aria-hidden="true" />
+                              </DropdownMenuShortcut>
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                              onSelect={() => handleDelete(schedule)}
+                            >
+                              Eliminar
+                              <DropdownMenuShortcut>
+                                <Trash className="size-4" aria-hidden="true" />
+                              </DropdownMenuShortcut>
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>
+                    </div>
                   ))}
-                </div>
-              </div>
+                  <Separator className="my-4" />
+                  <div className="space-y-3">
+                    <div className="inline-flex w-full justify-end">
+                      <ConfigDialog typeClass={type as TypeClass} />
+                    </div>
+                    {dataClassPricesAll &&
+                    dataClassPricesAll[type as TypeClass]?.length > 0 ? (
+                      <div className="space-y-2">
+                        <h4 className="text-sm font-semibold">
+                          Precios configurados:
+                        </h4>
+                        <div className="grid grid-cols-2 gap-2 text-sm text-slate-700">
+                          {dataClassPricesAll[type as TypeClass]
+                            .filter((p) => p.typeCurrency === "USD")
+                            .map((price) => (
+                              <div key={price.id}>
+                                <p>
+                                  {price.classTypeUser === "ADULT"
+                                    ? "Adultos"
+                                    : "Niños"}
+                                  :
+                                  <span className="ml-1 font-medium">
+                                    ${price.price.toFixed(2)}
+                                  </span>
+                                </p>
+                              </div>
+                            ))}
+                        </div>
+                        <div className="grid grid-cols-2 gap-2 text-sm text-slate-700">
+                          {dataClassPricesAll[type as TypeClass]
+                            .filter((p) => p.typeCurrency === "PEN")
+                            .map((price) => (
+                              <div key={price.id}>
+                                <p>
+                                  {price.classTypeUser === "ADULT"
+                                    ? "Adultos"
+                                    : "Niños"}
+                                  :
+                                  <span className="ml-1 font-medium">
+                                    S/. {price.price.toFixed(2)}
+                                  </span>
+                                </p>
+                              </div>
+                            ))}
+                        </div>
+                      </div>
+                    ) : (
+                      <Alert variant="destructive" className="py-2">
+                        <Info className="size-4" />
+                        <AlertTitle className="text-xs font-bold">
+                          Precios no configurados
+                        </AlertTitle>
+                        <AlertDescription className="text-xs">
+                          Configure los precios para este tipo de clase
+                        </AlertDescription>
+                      </Alert>
+                    )}
+
+                    {classCapacities?.[type as TypeClass] ? (
+                      <div className="space-y-1">
+                        <h4 className="text-sm font-semibold">Capacidad:</h4>
+                        <div className="grid grid-cols-2 gap-2 text-sm text-slate-800">
+                          <p>
+                            Mínimo:
+                            <span className="ml-1 font-medium">
+                              {classCapacities[type as TypeClass]?.minCapacity}
+                            </span>
+                          </p>
+                          <p>
+                            Máximo:
+                            <span className="ml-1 font-medium">
+                              {classCapacities[type as TypeClass]?.maxCapacity}
+                            </span>
+                          </p>
+                        </div>
+                      </div>
+                    ) : (
+                      <Alert variant="destructive" className="py-2">
+                        <Info className="size-4" />
+                        <AlertTitle className="text-xs font-bold">
+                          Capacidad no configurada
+                        </AlertTitle>
+                        <AlertDescription className="text-xs">
+                          Configure la capacidad para este tipo de clase
+                        </AlertDescription>
+                      </Alert>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
             );
           })
         ) : (

@@ -1,8 +1,10 @@
 "use client";
 "use memo";
 
+import { usePermissions } from "@/hooks/use-permissions";
 import { useUsers } from "@/hooks/use-users";
 
+import { AccessDenied } from "@/components/common/AccessDenied";
 import { ErrorPage } from "@/components/common/ErrorPage";
 import { HeaderPage } from "@/components/common/HeaderPage";
 import { Shell } from "@/components/common/Shell";
@@ -10,9 +12,11 @@ import { DataTableSkeleton } from "@/components/data-table/DataTableSkeleton";
 import { UsersTable } from "@/components/users/UsersTable";
 
 export default function PageUsers() {
+  const { hasPermission, isLoadingHas } = usePermissions();
+  const hasUsersPermission = hasPermission("USR", ["READ"]);
   const { data, isLoading } = useUsers();
 
-  if (isLoading) {
+  if (isLoading || isLoadingHas) {
     return (
       <Shell className="gap-2">
         <HeaderPage
@@ -33,6 +37,18 @@ export default function PageUsers() {
       </Shell>
     );
   }
+  if (!hasUsersPermission) {
+    return (
+      <Shell>
+        <HeaderPage
+          title="Usuarios"
+          description="Aquí puedes ver la lista de usuarios registrados en la aplicación."
+        />
+        <AccessDenied message="No tienes permisos para ver los usuarios." />
+      </Shell>
+    );
+  }
+
   if (!data) {
     return (
       <Shell>

@@ -41,8 +41,8 @@ import { Separator } from "../ui/separator";
 // Función para formatear la moneda
 const formatCurrency = (amount: number, currency: string) => {
   const currencyFormat: { [key: string]: Intl.NumberFormatOptions } = {
-    SOL: { style: "currency", currency: "PEN" },
-    DOLAR: { style: "currency", currency: "USD" },
+    PEN: { style: "currency", currency: "PEN" },
+    USD: { style: "currency", currency: "USD" },
   };
 
   if (!(currency in currencyFormat)) {
@@ -92,7 +92,7 @@ export const ClassesDescription = ({ row }: { row: ClassesDataAdmin }) => {
               <div>
                 <Badge
                   className={cn(
-                    "font-medium hover:bg-transparent",
+                    "bg-transparent font-medium hover:bg-transparent",
                     typeClassColors[typeClass],
                   )}
                 >
@@ -170,7 +170,7 @@ export const ClassesDescription = ({ row }: { row: ClassesDataAdmin }) => {
                       {/* Columna de precios */}
                       <div className="text-right">
                         <div className="flex items-center justify-end">
-                          {classData.typeCurrency === "SOL" ? (
+                          {classData.typeCurrency === "PEN" ? (
                             <>
                               <span
                                 className="mr-2 cursor-default select-none text-lg font-medium text-green-500"

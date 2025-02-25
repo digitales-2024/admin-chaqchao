@@ -1,5 +1,6 @@
 "use client";
 import { useClasses } from "@/hooks/use-class";
+import { ClassesDataAdmin } from "@/types";
 
 import {
   AlertDialog,
@@ -13,7 +14,7 @@ import {
 } from "@/components/ui/alert-dialog";
 
 interface ClosedClassDialogProps {
-  id: string;
+  class: ClassesDataAdmin;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
@@ -25,15 +26,22 @@ export const ClosedClassDialog = (props: ClosedClassDialogProps) => {
     <AlertDialog {...props}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>¿Estás seguro de cerrar la clase?</AlertDialogTitle>
+          <AlertDialogTitle>
+            ¿Estás seguro de {props.class.isClosed ? "Abrir" : "Cerrar"} la
+            clase?
+          </AlertDialogTitle>
           <AlertDialogDescription>
-            Esta acción no podrá deshacerse. Si deseas cerrar la clase, hazlo.
+            {props.class.isClosed
+              ? "Al abrir la clase, los usuarios podrán registrarse."
+              : "Al cerrar la clase, los usuarios no podrán registrarse."}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancelar</AlertDialogCancel>
-          <AlertDialogAction onClick={() => closeClass(props.id)}>
-            Cerrar clase
+          <AlertDialogAction
+            onClick={() => props.class.id && closeClass(props.class.id)}
+          >
+            {props.class.isClosed ? "Abrir" : "Cerrar"} clase
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

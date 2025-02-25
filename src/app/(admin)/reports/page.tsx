@@ -1,5 +1,6 @@
 "use client";
 import { useCategories } from "@/hooks/use-categories";
+import { usePermissions } from "@/hooks/use-permissions";
 import { useReports } from "@/hooks/use-reports";
 import { FilterOrdersSchema } from "@/schemas/reports/filterOrdersSchema";
 import { FilterTopProductsSchema } from "@/schemas/reports/filterProductSchema";
@@ -8,6 +9,7 @@ import { OrderReportData, OrderStatus } from "@/types/orders";
 import { addDays, format } from "date-fns";
 import * as React from "react";
 
+import { AccessDenied } from "@/components/common/AccessDenied";
 import { HeaderPage } from "@/components/common/HeaderPage";
 import { Shell } from "@/components/common/Shell";
 import { OrderFilters } from "@/components/reports/orders/OrderFilters";
@@ -16,6 +18,10 @@ import { ReportTabs } from "@/components/reports/TabsContent";
 import { TopProductsFilters } from "@/components/reports/top-products/TopProductsFilters";
 
 export default function ReportsPage() {
+  // Hooks de permisos
+  const { hasPermission, isLoadingHas } = usePermissions();
+  const hasReportsPermission = hasPermission("RPT", ["READ"]);
+
   // Estados para filtros de productos
   const [productDateRange, setProductDateRange] = React.useState({
     from: format(new Date(), "yyyy-MM-dd"),
@@ -151,6 +157,33 @@ export default function ReportsPage() {
     data: ordersData = [] as OrderReportData[],
     isLoading: isLoadingOrders,
   } = useGetOrdersReport(finalOrderFilters);
+
+  // Verificación de permisos después de cargar todos los hooks
+  if (isLoadingHas) {
+    return (
+      <Shell className="gap-6">
+        <HeaderPage
+          title="Reportes"
+          description="Reportes de productos y de pedidos."
+        />
+        <div className="flex flex-col items-center justify-center p-8">
+          <span>Cargando...</span>
+        </div>
+      </Shell>
+    );
+  }
+
+  if (!hasReportsPermission) {
+    return (
+      <Shell className="gap-6">
+        <HeaderPage
+          title="Reportes"
+          description="Reportes de productos y de pedidos."
+        />
+        <AccessDenied message="No tienes permisos para ver los reportes." />
+      </Shell>
+    );
+  }
 
   return (
     <Shell className="gap-6">

@@ -16,8 +16,8 @@ export const ProductRow = ({ product, categoryColors }: ProductRowProps) => {
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
 
   useEffect(() => {
-    setImageError(false);
-  }, [product.image]);
+    if (product.images.length <= 0) setImageError(false);
+  }, [product.images]);
 
   const handleDescriptionClick = () => {
     setIsDescriptionExpanded(!isDescriptionExpanded);
@@ -34,7 +34,7 @@ export const ProductRow = ({ product, categoryColors }: ProductRowProps) => {
         ) : (
           <div>
             <Image
-              src={product.image}
+              src={product.images[0].url}
               alt={product.name}
               width={144}
               height={144}

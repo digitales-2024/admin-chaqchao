@@ -1,9 +1,9 @@
 import {
-  useGetAllClassesQuery,
+  useCloseClassMutation,
+  useCreateClassMutation,
   useExportClassesToExcelMutation,
   useExportClassesToPdfMutation,
-  useCreateClassMutation,
-  useCloseClassMutation,
+  useGetAllClassesQuery,
 } from "@/redux/services/classApi";
 import { createClassSchema } from "@/schemas";
 import { socket } from "@/socket/socket";
@@ -266,7 +266,7 @@ export const useClasses = (date?: string) => {
 
     return toast.promise(promise(), {
       loading: "Cerrando clase...",
-      success: "Clase cerrada con suceceso",
+      success: "Clase actualizada con éxito",
       error: (err) => err.message,
     });
   };

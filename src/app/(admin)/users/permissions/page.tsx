@@ -1,11 +1,13 @@
 "use client";
 import { useMediaQuery } from "@/hooks/use-media-query";
+import { usePermissions } from "@/hooks/use-permissions";
 import { useRol } from "@/hooks/use-rol";
 import { Module, Permission } from "@/types";
 import { extractUniquePermissionsModules } from "@/utils/extractUniquePermissionsModules";
 import { ChevronDown, ChevronUp, Info } from "lucide-react";
 import { useEffect, useState } from "react";
 
+import { AccessDenied } from "@/components/common/AccessDenied";
 import { ErrorPage } from "@/components/common/ErrorPage";
 import { HeaderPage } from "@/components/common/HeaderPage";
 import { Shell } from "@/components/common/Shell";
@@ -29,6 +31,8 @@ import {
 } from "@/components/ui/tooltip";
 
 export default function PagePermissions() {
+  const { hasPermission, isLoadingHas } = usePermissions();
+  const hasPermissionsPermission = hasPermission("PRM", ["READ"]);
   const { dataRolPermissions, isLoadingRolPermissions } = useRol();
   const [headerPermissions, setHeaderPermissions] = useState<Permission[]>();
   useEffect(() => {
@@ -46,7 +50,7 @@ export default function PagePermissions() {
 
   const isDesktop = useMediaQuery("(min-width: 640px)");
 
-  if (isLoadingRolPermissions) {
+  if (isLoadingRolPermissions || isLoadingHas) {
     return (
       <Shell>
         <HeaderPage
@@ -66,6 +70,18 @@ export default function PagePermissions() {
             </div>
           ))}
         </div>
+      </Shell>
+    );
+  }
+
+  if (!hasPermissionsPermission) {
+    return (
+      <Shell>
+        <HeaderPage
+          title="Permisos"
+          description="Todos los permisos de cada módulo"
+        />
+        <AccessDenied message="No tienes permisos para ver la lista de permisos." />
       </Shell>
     );
   }

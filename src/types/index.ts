@@ -1,51 +1,51 @@
-export type { Credentials, UserLogin } from "./login";
-export type { CustomErrorData, ErrorFormData } from "./error";
-export type { User } from "./user";
-export type {
-  Role,
-  RolPermissions,
-  Module,
-  Permission,
-  ModulePermissions,
-} from "./roles";
 export type { BusinessConfigData } from "./businessConfig";
 export type {
-  BusinessHoursData,
   AllBusinessHoursData,
+  BusinessHoursData,
   BusinessHoursDataWithId,
 } from "./businessHours";
-export type {
-  ClassPriceConfigData,
-  ClassLanguageData,
-  ClassRegistrationData,
-  ClassScheduleData,
-  TypeClassPricesData,
-  ClassCapacityData,
-  TypeClassCapacitiesData,
-} from "./classConfigs";
 export {
-  type Category,
-  type Family,
   familyLabels,
   familyOptions,
+  type Category,
+  type Family,
 } from "./category";
 export type {
-  ProductData,
-  ProductVariationData,
-  CategoryData,
-  ProductFilters,
-  TopProductFilters,
-  TopProduct,
-} from "./product";
+  ClassCapacityData,
+  ClassLanguageData,
+  ClassPriceConfigData,
+  ClassRegistrationData,
+  ClassScheduleData,
+  TypeClassCapacitiesData,
+  TypeClassPricesData,
+} from "./classConfigs";
 export type { Client } from "./client";
+export type { CustomErrorData, ErrorFormData } from "./error";
+export type { Credentials, UserLogin } from "./login";
+export type {
+  CategoryData,
+  ProductData,
+  ProductFilters,
+  ProductVariationData,
+  TopProduct,
+  TopProductFilters,
+} from "./product";
+export type {
+  Module,
+  ModulePermissions,
+  Permission,
+  Role,
+  RolPermissions,
+} from "./roles";
+export type { User } from "./user";
 
+export { OrderStatus } from "./orders";
 export type {
   Order,
   OrderDetails,
-  OrderReportData,
   OrderFilters,
+  OrderReportData,
 } from "./orders";
-export { OrderStatus } from "./orders";
 
 export interface Option {
   label: string;
@@ -55,10 +55,16 @@ export interface Option {
 }
 
 export {
-  type ClassData,
-  type ClassesDataAdmin,
   MethodPayment,
   TypeClass,
-  typeClassLabels,
   typeClassColors,
+  typeClassLabels,
+  type ClassData,
+  type ClassesDataAdmin,
 } from "./class";
+
+export interface ApiResponse<T> {
+  statusCode: number;
+  message: string;
+  data: T;
+}

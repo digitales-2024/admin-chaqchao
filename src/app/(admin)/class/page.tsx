@@ -1,17 +1,21 @@
 "use client";
 import { useClasses } from "@/hooks/use-class";
+import { usePermissions } from "@/hooks/use-permissions";
 import { ClassesDataAdmin } from "@/types";
 import { format } from "date-fns";
 import { useEffect, useState } from "react";
 
 import { ClassesTable } from "@/components/class/ClassesTable";
 import { FilterDateClasses } from "@/components/class/FilterDateClasses";
+import { AccessDenied } from "@/components/common/AccessDenied";
 import { ErrorPage } from "@/components/common/ErrorPage";
 import { HeaderPage } from "@/components/common/HeaderPage";
 import { Shell } from "@/components/common/Shell";
 import { DataTableSkeleton } from "@/components/data-table/DataTableSkeleton";
 
 export default function ClassPage() {
+  const { hasPermission, isLoadingHas } = usePermissions();
+  const hasClassPermission = hasPermission("CLS", ["READ"]);
   const [date, setDate] = useState<Date>(new Date());
   const [previousData, setPreviousData] = useState<ClassesDataAdmin[]>([]);
   const [newParticipants, setNewParticipants] = useState<{
@@ -40,7 +44,7 @@ export default function ClassPage() {
     }
   }, [allDataClasses, previousData]);
 
-  if (isLoadingDataClasses) {
+  if (isLoadingDataClasses || isLoadingHas) {
     return (
       <Shell>
         <HeaderPage
@@ -48,6 +52,18 @@ export default function ClassPage() {
           description="Aquí puedes ver la lista de clases registradas."
         />
         <DataTableSkeleton columnCount={5} searchableColumnCount={1} />
+      </Shell>
+    );
+  }
+
+  if (!hasClassPermission) {
+    return (
+      <Shell>
+        <HeaderPage
+          title="Clases"
+          description="Aquí puedes ver la lista de clases registradas."
+        />
+        <AccessDenied message="No tienes permisos para ver las clases." />
       </Shell>
     );
   }

@@ -160,8 +160,8 @@ export function EditPriceSheet({
                       </FormControl>
                       <SelectContent>
                         <SelectGroup>
-                          <SelectItem value="DOLAR">Dólar</SelectItem>
-                          <SelectItem value="SOL">Sol</SelectItem>
+                          <SelectItem value="USD">Dólar</SelectItem>
+                          <SelectItem value="PEN">Sol</SelectItem>
                         </SelectGroup>
                       </SelectContent>
                     </Select>

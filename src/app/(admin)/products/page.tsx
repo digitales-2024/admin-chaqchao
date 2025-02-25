@@ -1,18 +1,22 @@
 "use client";
-"use memo";
 
+import { usePermissions } from "@/hooks/use-permissions";
 import { useProducts } from "@/hooks/use-products";
 
+import { AccessDenied } from "@/components/common/AccessDenied";
 import { HeaderPage } from "@/components/common/HeaderPage";
 import { Shell } from "@/components/common/Shell";
 import { DataTableSkeleton } from "@/components/data-table/DataTableSkeleton";
 import { ProductsTable } from "@/components/products/ProductsTable";
 import { Skeleton } from "@/components/ui/skeleton";
 
-export default function PageUsers() {
+export default function PageProducts() {
+  const { hasPermission, isLoadingHas } = usePermissions();
+  const hasProductsPermission = hasPermission("PRD", ["READ"]);
+
   const { dataProductsAll, isLoading } = useProducts();
 
-  if (isLoading) {
+  if (isLoading || isLoadingHas) {
     return (
       <Shell className="gap-2">
         <HeaderPage
@@ -32,6 +36,18 @@ export default function PageUsers() {
       </Shell>
     );
   }
+  if (!hasProductsPermission) {
+    return (
+      <Shell className="gap-2">
+        <HeaderPage
+          title="Productos"
+          description="Lista de productos registrados en el sistema."
+        />
+        <AccessDenied message="No tienes permisos para ver los productos." />
+      </Shell>
+    );
+  }
+
   if (!dataProductsAll) {
     return null;
   }

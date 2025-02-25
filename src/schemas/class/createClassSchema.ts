@@ -5,15 +5,32 @@ export const CreateClassSchema = z.object({
   typeClass: z.string().min(1, {
     message: "El tipo de clase es obligatorio",
   }),
-  userName: z.string().min(1, {
-    message: "El nombre de la clase es obligatorio",
-  }),
-  userEmail: z.string().email({
-    message: "El correo electrónico es obligatorio",
-  }),
-  userPhone: z.string().refine(isValidPhoneNumber, {
-    message: "El número de teléfono es inválido",
-  }),
+  userName: z.string().optional(),
+  userEmail: z
+    .string()
+    .optional()
+    .transform((val) => val || undefined)
+    .pipe(
+      z
+        .string()
+        .email({
+          message: "El correo electrónico debe ser válido",
+        })
+        .optional(),
+    ),
+  userPhone: z
+    .string()
+    .optional()
+    .transform((val) => val || undefined)
+    .refine(
+      (val) => {
+        if (!val) return true;
+        return isValidPhoneNumber(val);
+      },
+      {
+        message: "El número de teléfono es inválido",
+      },
+    ),
   scheduleClass: z
     .string()
     .min(1, {
@@ -35,21 +52,26 @@ export const CreateClassSchema = z.object({
   totalChildren: z.number().int().min(0, {
     message: "El total de niños es obligatorio",
   }),
-  totalPriceAdults: z.number().int().min(0, {
+  totalPriceAdults: z.number().min(0, {
     message: "El precio total de adultos es obligatorio",
   }),
-  totalPriceChildren: z.number().int().min(0, {
+  totalPriceChildren: z.number().min(0, {
     message: "El precio total de niños es obligatorio",
   }),
-  totalPrice: z.number().int().min(0, {
+  totalPrice: z.number().min(0, {
     message: "El precio total es obligatorio",
   }),
-  comments: z.string().min(1, {
-    message: "Los comentarios son obligatorios",
+  totalParticipants: z.number().int().min(1, {
+    message: "El total de participantes es obligatorio",
+  }),
+  comments: z.string().optional(),
+  typeCurrency: z.string().min(1, {
+    message: "El tipo de moneda es obligatorio",
   }),
   methodPayment: z.string().min(1, {
     message: "El tipo de pago es obligatorio",
   }),
+  status: z.string().default("CONFIRMED"),
 });
 
 export type createClassSchema = z.infer<typeof CreateClassSchema>;

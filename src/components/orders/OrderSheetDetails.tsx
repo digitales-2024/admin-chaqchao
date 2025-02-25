@@ -330,13 +330,16 @@ export const OrderSheetDetails = ({
                       <TableRow key={product.id}>
                         <TableCell className="flex items-center gap-2 truncate">
                           <Avatar className="rounded-md bg-slate-100">
-                            <AvatarImage
-                              src={product.image}
-                              alt={product.name}
-                            />
-                            <AvatarFallback>
-                              <PackageOpen />
-                            </AvatarFallback>
+                            {product.images && product.images.length > 0 ? (
+                              <AvatarImage
+                                src={product.images[0].url}
+                                alt={product.name}
+                              />
+                            ) : (
+                              <AvatarFallback>
+                                <PackageOpen />
+                              </AvatarFallback>
+                            )}
                           </Avatar>
                           <span className="text-muted-foreground">
                             {product.name}

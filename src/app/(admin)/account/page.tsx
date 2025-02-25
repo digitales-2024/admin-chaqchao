@@ -15,6 +15,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function PageAccount() {
   const { user } = useProfile();
+  console.log("🚀 ~ PageAccount ~ user:", user);
   if (!user) {
     return (
       <Shell>

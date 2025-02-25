@@ -48,37 +48,54 @@ export const getColumnsOrders = (newOrders: Order[]): ColumnDef<Order>[] => [
       <DataTableColumnHeader column={column} title="Fecha" />
     ),
     cell: function Cell({ row }) {
-      const datePassed = new Date(row.original.pickupTime) < new Date();
+      const pickupDate = new Date(
+        row.original.pickupTime.toString().replace("Z", ""),
+      );
+      const currentDate = new Date();
+      const datePassed = pickupDate < currentDate;
+
       return (
-        <div className="inline-flex w-full items-center justify-start gap-2 truncate">
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger>
-                <Calendar
-                  className={cn("size-4 flex-shrink-0 text-slate-300", {
-                    "text-emerald-500": !datePassed,
-                    "text-rose-500": datePassed,
+        <div className="flex flex-col items-start justify-start text-pretty capitalize">
+          {(() => {
+            const hour = pickupDate.getHours();
+            const minute = pickupDate.getMinutes().toString().padStart(2, "0");
+            const hour12 = hour % 12 || 12;
+            const ampm = hour >= 12 ? "PM" : "AM";
+
+            return `${format(pickupDate, "EEEE, dd MMMM", { locale: es })}, ${hour12}:${minute} ${ampm}`;
+          })()}
+          <div className="inline-flex w-full items-center justify-start gap-2 truncate">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Calendar
+                    className={cn("size-4 flex-shrink-0 text-slate-300", {
+                      "text-emerald-500": !datePassed,
+                      "text-rose-500": datePassed,
+                    })}
+                  />
+                  <span className="sr-only">fecha del pedido</span>
+                </TooltipTrigger>
+                <TooltipContent>
+                  {format(pickupDate, "PPPpp", {
+                    locale: es,
                   })}
-                />
-                <span className="sr-only">fecha del pedido</span>
-              </TooltipTrigger>
-              <TooltipContent>
-                {format(row.getValue("fecha"), "PPPpp", { locale: es })}
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-          <Badge
-            variant={"outline"}
-            className={cn("font-light text-slate-500", {
-              "text-emerald-500": !datePassed,
-              "text-rose-500": datePassed,
-            })}
-          >
-            {formatDistanceToNow(new Date(row.getValue("fecha")), {
-              addSuffix: true,
-              locale: es,
-            })}
-          </Badge>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            <Badge
+              variant={"outline"}
+              className={cn("font-light normal-case text-slate-500", {
+                "text-emerald-500": !datePassed,
+                "text-rose-500": datePassed,
+              })}
+            >
+              {formatDistanceToNow(pickupDate, {
+                addSuffix: true,
+                locale: es,
+              })}
+            </Badge>
+          </div>
         </div>
       );
     },
@@ -102,7 +119,7 @@ export const getColumnsOrders = (newOrders: Order[]): ColumnDef<Order>[] => [
     cell: ({ row }) => (
       <div className="inline-flex gap-2">
         <span className="text-xs text-slate-400">S/.</span>
-        {row.getValue("total") || 0}
+        {Number(row.getValue("total")).toFixed(2) || 0.0}
       </div>
     ),
   },
