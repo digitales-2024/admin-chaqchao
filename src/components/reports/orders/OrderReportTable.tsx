@@ -9,8 +9,6 @@ import {
   ChevronDown,
   Users,
   Info,
-  Truck,
-  Store,
 } from "lucide-react";
 import React, { useState } from "react";
 
@@ -114,28 +112,6 @@ export function OrderReportTable({ reportData }: OrderReportTableProps) {
                           : "Recogida personal"}
                       </span>
                     </div>
-
-                    <div className="flex items-center space-x-2">
-                      {order.isShipping ? (
-                        <Truck className="h-4 w-4" />
-                      ) : (
-                        <Store className="h-4 w-4" />
-                      )}
-
-                      <span>
-                        {order.isShipping
-                          ? `Se envía a otra ciudad${
-                              order.shippingState ||
-                              order.shippingCity ||
-                              order.shippingAddress ||
-                              order.shippingReferences
-                                ? ` (${order.shippingState}, ${order.shippingCity}, ${order.shippingAddress}, ${order.shippingReferences})`
-                                : ""
-                            }`
-                          : "Se recoge en esta ciudad"}
-                      </span>
-                    </div>
-
                     <div className="col-span-2 flex items-start space-x-2 md:col-span-3">
                       <MapPin className="mt-1 h-4 w-4 text-muted-foreground" />
                       <span>{order.pickupAddress}</span>
