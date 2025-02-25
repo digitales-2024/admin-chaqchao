@@ -46,6 +46,7 @@ export function ProductImageDialog({
   borderColor,
   ...props
 }: ProductImageDialogProps) {
+  console.log(product);
   const isDesktop = useMediaQuery("(min-width: 640px)");
 
   const { onToggleProductActivation } = useProducts();
@@ -115,6 +116,12 @@ export function ProductImageDialog({
                   style: "currency",
                   currency: "PEN",
                 }).format(product.price)}
+              </p>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="price">Stock Máximo</Label>
+              <p className="text-balance text-lg font-semibold text-emerald-500">
+                {product.maxStock || 0}
               </p>
             </div>
             <div className="space-y-2">

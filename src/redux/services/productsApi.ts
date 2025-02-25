@@ -41,7 +41,7 @@ export const productsApi = createApi({
         method: "GET",
         credentials: "include",
       }),
-      providesTags: (result, error, id) => [{ type: "Product", id }],
+      providesTags: ["Product"],
     }),
     // Obtener todos los productos
     getAllProducts: build.query<ProductData[], void>({

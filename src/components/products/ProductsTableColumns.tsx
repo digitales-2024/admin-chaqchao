@@ -187,6 +187,21 @@ export const productsColumns = (
       ),
     },
     {
+      id: "Stock Máximo",
+      accessorKey: "maxStock",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Stock Máximo" />
+      ),
+      cell: ({ row }) => (
+        <span
+          className="cursor-default justify-center text-base"
+          aria-hidden="true"
+        >
+          {row.original.maxStock}
+        </span>
+      ),
+    },
+    {
       id: "disponibilidad",
       accessorKey: "isAvailable",
       header: ({ column }) => (
