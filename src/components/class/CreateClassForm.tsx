@@ -1,18 +1,20 @@
 "use client";
 
-import { useClassCapacity } from "@/hooks/use-class-capacity";
+import { Izipay, Paypal } from "@/assets/icons";
 import { useClassLanguages } from "@/hooks/use-class-language";
-import { useClassPrices } from "@/hooks/use-class-price";
 import { useClassSchedules } from "@/hooks/use-class-schedule";
 import {
   useCheckClassExistQuery,
+  useGetClassesCapacityQuery,
   useGetClassesFuturesQuery,
+  usePricesQuery,
 } from "@/redux/services/classApi";
 import { createClassSchema } from "@/schemas";
-import { MethodPayment, TypeClass, typeClassLabels } from "@/types";
+import { TypeClass, typeClassLabels } from "@/types";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { AlertCircle, UsersRound } from "lucide-react";
+import { AlertCircle, Banknote, UsersRound } from "lucide-react";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 
@@ -34,9 +36,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+import { cn } from "@/lib/utils";
+
 import { TwoMonthCalendar } from "../common/calendar/TwoMonthCalendar";
+import Counter from "../common/counter";
 import Loading from "../common/Loading";
+import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
 import { PhoneInput } from "../ui/phone-input";
+import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { Separator } from "../ui/separator";
 import { Textarea } from "../ui/textarea";
 import {
@@ -46,7 +53,6 @@ import {
   TooltipTrigger,
 } from "../ui/tooltip";
 import ClassScheduleEditable from "./ClassScheduleEditable";
-import { PaymentMethodSelection } from "./PaymentMethodSelection";
 
 interface CreateClassFormProps
   extends Omit<React.ComponentPropsWithRef<"form">, "onSubmit"> {
@@ -60,9 +66,60 @@ export default function CreateClassForm({
   onSubmit,
   children,
 }: CreateClassFormProps) {
-  const { pricesDolar } = useClassPrices(
-    form.getValues("typeClass") as TypeClass,
-  );
+  const {
+    data: prices,
+    isLoading: isLoadingPrices,
+    error: errorPrices,
+  } = usePricesQuery({
+    typeCurrency: form.getValues("typeCurrency") || "USD",
+    typeClass: (form.getValues("typeClass") as TypeClass) || "NORMAL",
+  });
+  const [counterMin, setCounterMin] = useState(1);
+
+  const currency = form.watch("typeCurrency") || "USD";
+
+  useEffect(() => {
+    const currentCurrency = form.watch("typeCurrency");
+    const currentPaymentMethod = form.watch("methodPayment");
+
+    // Validar si el método de pago actual es válido para la nueva moneda
+    const isValidPaymentMethod =
+      (currentCurrency === "USD" &&
+        ["CASH", "PAYPAL"].includes(currentPaymentMethod)) ||
+      (currentCurrency === "PEN" &&
+        ["CASH", "IZIPAY"].includes(currentPaymentMethod));
+
+    // Limpiar método de pago si no es válido para la nueva moneda
+    if (!isValidPaymentMethod) {
+      form.setValue("methodPayment", "");
+    }
+
+    // Forzar recalculo de precios con la nueva moneda
+    if (prices) {
+      const priceAdult = prices.filter(
+        (price) => price.classTypeUser === "ADULT",
+      );
+      const priceChildren = prices.filter(
+        (price) => price.classTypeUser === "CHILD",
+      );
+
+      setPricesSelect({
+        adults: priceAdult[0]?.price || 0,
+        children: priceChildren[0]?.price || 0,
+      });
+
+      // Actualizar totales inmediatamente
+      const totalAdults =
+        priceAdult[0]?.price * form.getValues("totalAdults") || 0;
+      const totalChildren =
+        priceChildren[0]?.price * form.getValues("totalChildren") || 0;
+
+      form.setValue("totalPriceAdults", totalAdults);
+      form.setValue("totalPriceChildren", totalChildren);
+      form.setValue("totalPrice", totalAdults + totalChildren);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form.watch("typeCurrency"), prices]);
 
   const {
     dataClassSchedulesByTypeClass,
@@ -70,11 +127,10 @@ export default function CreateClassForm({
     isLoadingClassSchedulesByTypeClass,
   } = useClassSchedules(form.getValues("typeClass") as TypeClass);
 
-  const [prices, setPrices] = useState({
+  const [pricesSelect, setPricesSelect] = useState({
     adults: 0,
     children: 0,
   });
-
   const { data: classesFutures } = useGetClassesFuturesQuery(
     {
       typeClass: form.getValues("typeClass") as TypeClass,
@@ -91,50 +147,50 @@ export default function CreateClassForm({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.watch("dateClass"), form.watch("scheduleClass")]);
 
-  useEffect(() => {
-    if (pricesDolar) {
-      const priceAdult =
-        pricesDolar &&
-        pricesDolar.filter((price) => price.classTypeUser === "ADULT");
-      const priceChildren = pricesDolar.filter(
-        (price) => price.classTypeUser === "CHILD",
-      );
-      setPrices({
-        adults: priceAdult[0]?.price ?? 0,
-        children: priceChildren[0]?.price ?? 0,
-      });
-    }
-  }, [pricesDolar]);
-
-  useEffect(() => {
-    if (prices) {
-      form.setValue(
-        "totalPriceAdults",
-        prices.adults * form.getValues("totalAdults"),
-      );
-      form.setValue(
-        "totalPriceChildren",
-        prices.children * form.getValues("totalChildren"),
-      );
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [prices, form.watch("totalAdults"), form.watch("totalChildren")]);
-
+  // Actualizar precios cuando cambian los precios del servidor o cantidades
   useEffect(
     () => {
-      form.setValue(
-        "totalPrice",
-        form.getValues("totalPriceAdults") +
-          form.getValues("totalPriceChildren"),
-      );
+      if (prices) {
+        // Obtener precios actualizados
+        const priceAdult = prices.filter(
+          (price) => price.classTypeUser === "ADULT",
+        );
+        const priceChildren = prices.filter(
+          (price) => price.classTypeUser === "CHILD",
+        );
+
+        // Actualizar precios unitarios
+        const newPricesSelect = {
+          adults: priceAdult[0]?.price || 0,
+          children: priceChildren[0]?.price || 0,
+        };
+        setPricesSelect(newPricesSelect);
+
+        // Calcular totales
+        const totalAdults =
+          newPricesSelect.adults * form.getValues("totalAdults");
+        const totalChildren =
+          newPricesSelect.children * form.getValues("totalChildren");
+
+        // Actualizar todos los campos de precios
+        form.setValue("totalPriceAdults", totalAdults);
+        form.setValue("totalPriceChildren", totalChildren);
+        form.setValue("totalPrice", totalAdults + totalChildren);
+      }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [form.watch("totalPriceAdults"), form.watch("totalPriceChildren")],
+    [
+      prices,
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      form.watch("totalAdults"),
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      form.watch("totalChildren"),
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      form.watch("typeCurrency"),
+    ],
   );
 
   const { dataClassLanguagesAll, isLoading } = useClassLanguages();
-  const { classCapacities, isLoadingClassCapacities, refetchClassCapacities } =
-    useClassCapacity();
   const {
     data,
     isLoading: isLoadingClassExist,
@@ -154,6 +210,15 @@ export default function CreateClassForm({
         !form.getValues("typeClass"),
     },
   );
+  const { data: classCapacity, isLoading: isLoadingCapacity } =
+    useGetClassesCapacityQuery(
+      {
+        typeClass: form.getValues("typeClass") as TypeClass,
+      },
+      {
+        skip: !form.getValues("typeClass"),
+      },
+    );
   useEffect(() => {
     if (data) {
       form.setValue("languageClass", data.languageClass);
@@ -166,7 +231,6 @@ export default function CreateClassForm({
       form.setValue("scheduleClass", "");
       form.resetField("dateClass");
       refetch();
-      refetchClassCapacities();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.watch("typeClass")]);
@@ -175,10 +239,66 @@ export default function CreateClassForm({
     if (form.watch("scheduleClass")) {
       form.resetField("dateClass");
       refetch();
-      refetchClassCapacities();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.watch("scheduleClass")]);
+
+  // Mantener actualizado el total de participantes
+  const [capacityError, setCapacityError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const totalParticipants =
+      form.watch("totalAdults") + form.watch("totalChildren");
+    form.setValue("totalParticipants", totalParticipants);
+
+    // Validación de capacidad máxima
+    if (classCapacity) {
+      const currentOccupancy = data?.totalParticipants || 0;
+      const totalWithNew = currentOccupancy + totalParticipants;
+
+      if (totalWithNew > classCapacity.maxCapacity) {
+        const available = classCapacity.maxCapacity - currentOccupancy;
+        setCapacityError(
+          `La capacidad máxima es de ${classCapacity.maxCapacity} participantes. ${
+            currentOccupancy > 0
+              ? `Ya hay ${currentOccupancy} participantes registrados, solo quedan ${available} cupos disponibles.`
+              : "No puedes exceder esta cantidad."
+          }`,
+        );
+      } else {
+        setCapacityError(null);
+      }
+    }
+
+    // Si hay una clase creada con participantes, el mínimo es 1 adulto
+    if (data && data.totalParticipants > 0) {
+      const newMin = 1;
+      setCounterMin(newMin);
+      if (form.watch("totalAdults") < newMin) {
+        form.setValue("totalAdults", newMin);
+      }
+      return;
+    }
+
+    // Si no hay clase creada o la clase tiene 0 participantes, validamos capacidad mínima
+    if (classCapacity) {
+      let newMin: number;
+
+      // Si el total ya cumple la capacidad mínima, permite mínimo 1 adulto
+      if (totalParticipants >= classCapacity.minCapacity) {
+        newMin = 1;
+      } else {
+        // Si no cumple, el mínimo de adultos debe ser la capacidad mínima
+        newMin = classCapacity.minCapacity;
+      }
+
+      setCounterMin(newMin);
+      if (form.watch("totalAdults") < newMin) {
+        form.setValue("totalAdults", newMin);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data, form.watch("totalAdults"), form.watch("totalChildren")]);
 
   return (
     <Form {...form}>
@@ -214,22 +334,15 @@ export default function CreateClassForm({
           <div className="flex h-full flex-col gap-2">
             <span className="text-sm">Capacidad</span>
             <div className="inline-flex flex-1 items-center gap-2">
-              {isLoadingClassCapacities ? (
+              {isLoadingCapacity ? (
                 <Loading />
-              ) : classCapacities &&
-                classCapacities[form.getValues("typeClass") as TypeClass] ? (
+              ) : classCapacity ? (
                 <span className="inline-flex items-center gap-2">
                   <UsersRound className="size-4" />
                   <span className="text-xs text-gray-500">min: </span>
-                  {
-                    classCapacities[form.getValues("typeClass") as TypeClass]
-                      .minCapacity
-                  }{" "}
+                  {classCapacity.minCapacity}{" "}
                   <span className="text-xs text-gray-500">- max: </span>
-                  {
-                    classCapacities[form.getValues("typeClass") as TypeClass]
-                      .maxCapacity
-                  }
+                  {classCapacity.maxCapacity}
                 </span>
               ) : (
                 <span className="inline-flex items-center gap-1 text-rose-500">
@@ -274,14 +387,32 @@ export default function CreateClassForm({
                   <span>Loading...</span>
                 ) : errorClassSchedulesByTypeClass ? (
                   <span>Error</span>
+                ) : dataClassSchedulesByTypeClass &&
+                  dataClassSchedulesByTypeClass.length > 0 ? (
+                  <ClassScheduleEditable
+                    options={dataClassSchedulesByTypeClass}
+                    value={field.value}
+                    onChange={field.onChange}
+                  />
                 ) : (
-                  dataClassSchedulesByTypeClass && (
-                    <ClassScheduleEditable
-                      options={dataClassSchedulesByTypeClass}
-                      value={field.value}
-                      onChange={field.onChange}
-                    />
-                  )
+                  <Alert className="border-rose-500 [&>svg]:text-rose-500">
+                    <AlertCircle className="size-4" />
+                    <AlertTitle className="text-rose-500">
+                      Error de configuración
+                    </AlertTitle>
+                    <AlertDescription className="text-xs">
+                      No se encontraron horarios para el tipo de clase
+                      seleccionado. Por favor, configure un horario en la
+                      sección de horarios de la clase en el panel de
+                      administración de la plataforma.
+                    </AlertDescription>
+                    <Link
+                      href="/bussiness/classes-configuration"
+                      className="ml-2 mt-3 block w-fit rounded-md border border-rose-500 p-2 text-sm"
+                    >
+                      Ir a configuración
+                    </Link>
+                  </Alert>
                 )}
               </FormControl>
               <FormMessage />
@@ -306,50 +437,38 @@ export default function CreateClassForm({
                           })}
                         </span>
                       </div>
-                      {data &&
-                        classCapacities &&
-                        classCapacities[
-                          form.getValues("typeClass") as TypeClass
-                        ] && (
-                          <Tooltip>
-                            <TooltipTrigger type="button">
-                              <div className="sticky top-0 flex items-center gap-2 rounded-md border border-emerald-500 px-2 py-1 text-xs text-gray-400">
-                                <UsersRound
-                                  className="size-4 text-emerald-600"
-                                  strokeWidth={1}
-                                />
-                                <span className="text-sm">
-                                  <span className="text-emerald-600">
-                                    {data.totalParticipants}{" "}
-                                  </span>
-                                  /{" "}
-                                  {
-                                    classCapacities[
-                                      form.getValues("typeClass") as TypeClass
-                                    ].maxCapacity
-                                  }
+                      {data && classCapacity && (
+                        <Tooltip>
+                          <TooltipTrigger type="button">
+                            <div className="sticky top-0 flex items-center gap-2 rounded-md border border-emerald-500 px-2 py-1 text-xs text-gray-400">
+                              <UsersRound
+                                className="size-4 text-emerald-600"
+                                strokeWidth={1}
+                              />
+                              <span className="text-sm">
+                                <span className="text-emerald-600">
+                                  {classCapacity.maxCapacity -
+                                    data.totalParticipants}{" "}
                                 </span>
-                              </div>
-                            </TooltipTrigger>
-                            <TooltipContent className="max-w-32">
-                              <p>
-                                En esta clase ya estan inscritos{" "}
-                                <span className="font-semibold">
-                                  {data.totalParticipants}
-                                </span>{" "}
-                                de un máximo de{" "}
-                                <span className="font-semibold">
-                                  {
-                                    classCapacities[
-                                      form.getValues("typeClass") as TypeClass
-                                    ].maxCapacity
-                                  }
-                                </span>{" "}
-                                cupos.
-                              </p>
-                            </TooltipContent>
-                          </Tooltip>
-                        )}
+                                cupos disponibles
+                              </span>
+                            </div>
+                          </TooltipTrigger>
+                          <TooltipContent className="max-w-32">
+                            <p>
+                              Quedan{" "}
+                              <span className="font-semibold">
+                                {classCapacity.maxCapacity -
+                                  data.totalParticipants}
+                              </span>{" "}
+                              cupos disponibles de un total de{" "}
+                              <span className="font-semibold">
+                                {classCapacity.maxCapacity}
+                              </span>
+                            </p>
+                          </TooltipContent>
+                        </Tooltip>
+                      )}
                     </div>
                   )}
                   <TwoMonthCalendar
@@ -363,49 +482,69 @@ export default function CreateClassForm({
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
-          name="languageClass"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Lenguaje de la clase</FormLabel>
+        {dataClassLanguagesAll && dataClassLanguagesAll.length > 0 ? (
+          <FormField
+            control={form.control}
+            name="languageClass"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Lenguaje de la clase</FormLabel>
 
-              <Select
-                onValueChange={field.onChange}
-                defaultValue={field.value}
-                value={field.value}
-                disabled={
-                  isLoading ||
-                  isLoadingClassExist ||
-                  data?.languageClass === field.value
-                }
-              >
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Seleccione un lenguaje" />
-                  </SelectTrigger>
-                </FormControl>
-                {isLoading ? (
-                  <SelectContent>
-                    <SelectItem value="loading">Loading...</SelectItem>
-                  </SelectContent>
-                ) : (
-                  <SelectContent>
-                    {dataClassLanguagesAll?.map((language) => (
-                      <SelectItem
-                        key={language.id}
-                        value={language.languageName}
-                      >
-                        {language.languageName}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                )}
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  value={field.value}
+                  disabled={
+                    isLoading ||
+                    isLoadingClassExist ||
+                    data?.languageClass === field.value
+                  }
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Seleccione un lenguaje" />
+                    </SelectTrigger>
+                  </FormControl>
+                  {isLoading ? (
+                    <SelectContent>
+                      <SelectItem value="loading">Loading...</SelectItem>
+                    </SelectContent>
+                  ) : (
+                    <SelectContent>
+                      {dataClassLanguagesAll?.map((language) => (
+                        <SelectItem
+                          key={language.id}
+                          value={language.languageName}
+                        >
+                          {language.languageName}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  )}
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        ) : (
+          <Alert className="border-rose-500 [&>svg]:text-rose-500">
+            <AlertCircle className="size-4" />
+            <AlertTitle className="text-rose-500">
+              Error de configuración
+            </AlertTitle>
+            <AlertDescription className="text-xs">
+              No se encontraron lenguajes para la clase seleccionada. Por favor,
+              configure un lenguaje en la sección de lenguajes de la clase en el
+              panel de administración de la plataforma.
+            </AlertDescription>
+            <Link
+              href="/bussiness/classes-configuration"
+              className="ml-2 mt-3 block w-fit rounded-md border border-rose-500 p-2 text-sm"
+            >
+              Ir a configuración
+            </Link>
+          </Alert>
+        )}
 
         <div className="grid grid-cols-2 gap-4">
           <FormField
@@ -415,19 +554,10 @@ export default function CreateClassForm({
               <FormItem>
                 <FormLabel>Adultos</FormLabel>
                 <FormControl>
-                  <Input
-                    type="number"
-                    value={field.value}
-                    min={1}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      const parsedValue = parseInt(value, 10);
-                      if (!isNaN(parsedValue)) {
-                        field.onChange(parsedValue);
-                      } else {
-                        field.onChange(1);
-                      }
-                    }}
+                  <Counter
+                    name={field.name}
+                    control={form.control}
+                    min={counterMin}
                   />
                 </FormControl>
                 <FormDescription>Los adultos de 12 años o más.</FormDescription>
@@ -442,20 +572,7 @@ export default function CreateClassForm({
               <FormItem>
                 <FormLabel>Niños</FormLabel>
                 <FormControl>
-                  <Input
-                    type="number"
-                    value={field.value}
-                    min={0}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      const parsedValue = parseInt(value, 10);
-                      if (!isNaN(parsedValue)) {
-                        field.onChange(parsedValue);
-                      } else {
-                        field.onChange(0);
-                      }
-                    }}
-                  />
+                  <Counter name={field.name} control={form.control} min={0} />
                 </FormControl>
                 <FormDescription>Los niños de 5 a 12 años.</FormDescription>
                 <FormMessage />
@@ -463,161 +580,326 @@ export default function CreateClassForm({
             )}
           />
         </div>
-        <div className="grid grid-cols-2 gap-4">
+        {capacityError && (
+          <Alert variant="destructive" className="mt-2">
+            <AlertCircle className="size-4" />
+            <AlertTitle>Error de capacidad</AlertTitle>
+            <AlertDescription>{capacityError}</AlertDescription>
+          </Alert>
+        )}
+        <div className="space-y-4 rounded-sm border border-gray-100 p-3">
+          <span className="font-bold">Datos del cliente</span>
+          <Separator />
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <FormField
+              control={form.control}
+              name="userName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Nombre</FormLabel>
+                  <FormControl>
+                    <Input placeholder="" type="" {...field} />
+                  </FormControl>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="userEmail"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Correo electrónico</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
           <FormField
             control={form.control}
-            name="totalPriceAdults"
+            name="userPhone"
             render={({ field }) => (
-              <FormItem>
-                <FormLabel>Precio adultos</FormLabel>
-                <FormControl>
-                  <div className="flex gap-2">
-                    <Input
-                      type="number"
-                      value={field.value}
-                      min={0}
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        const parsedValue = parseInt(value, 10);
-                        if (!isNaN(parsedValue)) {
-                          field.onChange(parsedValue);
-                        } else {
-                          field.onChange(0);
-                        }
-                      }}
-                    />
-                  </div>
+              <FormItem className="flex flex-col items-start">
+                <FormLabel>Teléfono</FormLabel>
+                <FormControl className="w-full">
+                  <PhoneInput {...field} defaultCountry="PE" />
                 </FormControl>
                 <FormMessage />
-                <FormDescription>
-                  USD {prices.adults.toFixed(2)}
-                </FormDescription>
               </FormItem>
             )}
           />
           <FormField
             control={form.control}
-            name="totalPriceChildren"
+            name="comments"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Precio niños</FormLabel>
+                <FormLabel>Comentarios</FormLabel>
                 <FormControl>
-                  <Input
-                    type="number"
+                  <Textarea
+                    placeholder="Agrega un comentario"
                     value={field.value}
-                    min={0}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      const parsedValue = parseInt(value, 10);
-                      if (!isNaN(parsedValue)) {
-                        field.onChange(parsedValue);
-                      } else {
-                        field.onChange(0);
-                      }
-                    }}
+                    onChange={field.onChange}
                   />
                 </FormControl>
                 <FormMessage />
-                <FormDescription>
-                  USD {prices.children.toFixed(2)}
-                </FormDescription>
               </FormItem>
             )}
           />
         </div>
-        <FormField
-          control={form.control}
-          name="totalPrice"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Precio total</FormLabel>
-              <FormControl>
-                <Input readOnly type="number" {...field} min={0} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Separator />
-        <span className="font-bold">Datos del cliente</span>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+
+        <div className="space-y-4 rounded-sm border border-gray-100 p-3">
+          <span className="font-bold">Datos de la facturación</span>
+          <Separator />
+          {/* Currency Selection */}
           <FormField
             control={form.control}
-            name="userName"
+            name="typeCurrency"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Nombre</FormLabel>
+                <FormLabel>Selecciona el tipo de moneda para el pago</FormLabel>
                 <FormControl>
-                  <Input placeholder="" type="" {...field} />
-                </FormControl>
-
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="userEmail"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Correo electrónico</FormLabel>
-                <FormControl>
-                  <Input {...field} />
+                  <RadioGroup
+                    onValueChange={(value) => {
+                      field.onChange(value);
+                    }}
+                    defaultValue={field.value}
+                    value={field.value}
+                    className="flex gap-4"
+                  >
+                    <FormItem>
+                      <label className="flex items-center gap-2">
+                        <RadioGroupItem value="USD" />
+                        <span>DOLAR ($)</span>
+                      </label>
+                    </FormItem>
+                    <FormItem>
+                      <label className="flex items-center gap-2">
+                        <RadioGroupItem value="PEN" />
+                        <span>SOL (S/.)</span>
+                      </label>
+                    </FormItem>
+                  </RadioGroup>
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
+          <FormField
+            control={form.control}
+            name="methodPayment"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Selecciona el método de pago</FormLabel>
+                <FormControl>
+                  <RadioGroup
+                    onValueChange={(value) => {
+                      field.onChange(value);
+                    }}
+                    defaultValue={field.value}
+                    className="grid grid-cols-1 gap-4 md:grid-cols-2"
+                  >
+                    <FormItem className="m-0">
+                      <label
+                        htmlFor="CASH"
+                        className={cn(
+                          "relative flex w-full cursor-pointer rounded-lg border-2 p-4 transition-all hover:bg-accent",
+                          field.value === "CASH"
+                            ? "border-primary bg-accent"
+                            : "border-muted",
+                        )}
+                      >
+                        <FormControl>
+                          <RadioGroupItem
+                            value="CASH"
+                            id="CASH"
+                            className="sr-only"
+                          />
+                        </FormControl>
+                        <div className="flex w-full items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium">Efectivo</span>
+                            <Banknote className="h-5 w-auto -rotate-12 text-primary" />
+                          </div>
+                          {field.value === "CASH" && (
+                            <div className="h-2 w-2 rounded-full bg-primary" />
+                          )}
+                        </div>
+                      </label>
+                    </FormItem>
+                    {currency === "USD" && (
+                      <FormItem className="m-0">
+                        <label
+                          htmlFor="PAYPAL"
+                          className={cn(
+                            "relative flex w-full cursor-pointer rounded-lg border-2 p-4 transition-all hover:bg-accent",
+                            field.value === "PAYPAL"
+                              ? "border-primary bg-accent"
+                              : "border-muted",
+                          )}
+                        >
+                          <FormControl>
+                            <RadioGroupItem
+                              value="PAYPAL"
+                              id="PAYPAL"
+                              className="sr-only"
+                            />
+                          </FormControl>
+                          <div className="flex w-full items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <span className="font-medium">Paypal</span>
+                              <Paypal className="h-5 w-auto" />
+                            </div>
+                            {field.value === "PAYPAL" && (
+                              <div className="h-2 w-2 rounded-full bg-primary" />
+                            )}
+                          </div>
+                        </label>
+                      </FormItem>
+                    )}
+
+                    {currency === "PEN" && (
+                      <FormItem className="m-0">
+                        <label
+                          htmlFor="IZIPAY"
+                          className={cn(
+                            "relative flex w-full cursor-pointer rounded-lg border-2 p-4 transition-all hover:bg-accent",
+                            field.value === "IZIPAY"
+                              ? "border-primary bg-accent"
+                              : "border-muted",
+                          )}
+                        >
+                          <FormControl>
+                            <RadioGroupItem
+                              value="IZIPAY"
+                              id="IZIPAY"
+                              className="sr-only"
+                            />
+                          </FormControl>
+                          <div className="flex w-full items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <span className="font-medium">Izipay</span>
+                              <Izipay className="h-5 w-auto" />
+                            </div>
+                            {field.value === "IZIPAY" && (
+                              <div className="h-2 w-2 rounded-full bg-primary" />
+                            )}
+                          </div>
+                        </label>
+                      </FormItem>
+                    )}
+                  </RadioGroup>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          {isLoadingPrices ? <Loading /> : ""}
+          {errorPrices ? (
+            <Alert className="border-rose-500 [&>svg]:text-rose-500">
+              <AlertCircle className="size-4" />
+              <AlertTitle className="text-rose-500">
+                Error de configuración
+              </AlertTitle>
+              <AlertDescription className="text-xs">
+                Ocurrió un error al cargar los precios, por favor intenta de
+                nuevo o revisa que los precios estén configurados en la sección
+                de precios en el panel de administración de la plataforma.
+              </AlertDescription>
+              <Link
+                href="/bussiness/classes-configuration"
+                className="ml-2 mt-3 block w-fit rounded-md border border-rose-500 p-2 text-sm"
+              >
+                Ir a configuración
+              </Link>
+            </Alert>
+          ) : (
+            ""
+          )}
+          {!isLoadingPrices && !errorPrices ? (
+            <>
+              <div className="space-y-4 rounded-md border border-gray-100 p-4">
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <h4 className="font-medium">Precio Adultos</h4>
+                    <div className="rounded-md bg-gray-50 p-3">
+                      <div className="text-sm text-gray-600">
+                        Precio por persona:
+                        <span className="ml-1 font-medium">
+                          {currency === "USD" ? "$" : "S/."}{" "}
+                          {pricesSelect.adults.toFixed(2)}
+                        </span>
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        Cantidad:{" "}
+                        <span className="ml-1 font-medium">
+                          {form.watch("totalAdults")}
+                        </span>
+                      </div>
+                      <Separator className="my-2" />
+                      <div className="font-medium">
+                        Total: {currency === "USD" ? "$" : "S/."}{" "}
+                        {form.watch("totalPriceAdults").toFixed(2)}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <h4 className="font-medium">Precio Niños</h4>
+                    <div className="rounded-md bg-gray-50 p-3">
+                      <div className="text-sm text-gray-600">
+                        Precio por persona:
+                        <span className="ml-1 font-medium">
+                          {currency === "USD" ? "$" : "S/."}{" "}
+                          {pricesSelect.children.toFixed(2)}
+                        </span>
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        Cantidad:{" "}
+                        <span className="ml-1 font-medium">
+                          {form.watch("totalChildren")}
+                        </span>
+                      </div>
+                      <Separator className="my-2" />
+                      <div className="font-medium">
+                        Total: {currency === "USD" ? "$" : "S/."}{" "}
+                        {form.watch("totalPriceChildren").toFixed(2)}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <Separator />
+                <div className="flex items-center justify-between rounded-md bg-primary/10 p-3">
+                  <span className="text-lg font-medium">Total a Pagar:</span>
+                  <span className="text-lg font-bold text-primary">
+                    {currency === "USD" ? "$" : "S/."}{" "}
+                    {form.watch("totalPrice").toFixed(2)}
+                  </span>
+                </div>
+              </div>
+              <FormField
+                control={form.control}
+                name="totalPrice"
+                render={({ field }) => <Input type="hidden" {...field} />}
+              />
+              <FormField
+                control={form.control}
+                name="totalPriceAdults"
+                render={({ field }) => <Input type="hidden" {...field} />}
+              />
+              <FormField
+                control={form.control}
+                name="totalPriceChildren"
+                render={({ field }) => <Input type="hidden" {...field} />}
+              />
+            </>
+          ) : (
+            ""
+          )}
         </div>
-        <FormField
-          control={form.control}
-          name="userPhone"
-          render={({ field }) => (
-            <FormItem className="flex flex-col items-start">
-              <FormLabel>Teléfono</FormLabel>
-              <FormControl className="w-full">
-                <PhoneInput {...field} defaultCountry="PE" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Separator />
-        <span className="font-bold">Información adicional</span>
-        <FormField
-          control={form.control}
-          name="comments"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Comentarios</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Agrega un comentario"
-                  value={field.value}
-                  onChange={field.onChange}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="methodPayment"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Selecciona el método de pago</FormLabel>
-              <FormControl>
-                <PaymentMethodSelection
-                  value={field.value as MethodPayment}
-                  onChange={field.onChange}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
 
         {children}
       </form>

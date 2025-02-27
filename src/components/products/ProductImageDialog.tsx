@@ -4,15 +4,7 @@ import { useMediaQuery } from "@/hooks/use-media-query";
 import { useProducts } from "@/hooks/use-products";
 import { familyLabels, ProductData } from "@/types";
 import { DialogTitle as UIDialogTitle } from "@radix-ui/react-dialog";
-import {
-  ImageOff,
-  PackageCheck,
-  PackageX,
-  ShieldAlert,
-  ShieldMinus,
-} from "lucide-react";
-import Image from "next/image";
-import { useState } from "react";
+import { PackageCheck, PackageX, ShieldAlert, ShieldMinus } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -36,12 +28,13 @@ import { Separator } from "@/components/ui/separator";
 
 import { cn } from "@/lib/utils";
 
+import Gallery from "../common/gallery/Gallery";
 import { ScrollArea } from "../ui/scroll-area";
 import { Switch } from "../ui/switch";
 
 interface ProductImageDialogProps
   extends React.ComponentPropsWithRef<typeof Dialog> {
-  imageUrl: string;
+  images?: { url: string }[];
   children: React.ReactNode;
   product: ProductData;
   borderColor: string;
@@ -53,6 +46,7 @@ export function ProductImageDialog({
   borderColor,
   ...props
 }: ProductImageDialogProps) {
+  console.log(product);
   const isDesktop = useMediaQuery("(min-width: 640px)");
 
   const { onToggleProductActivation } = useProducts();
@@ -63,30 +57,20 @@ export function ProductImageDialog({
     props?.onOpenChange?.(false);
   };
 
-  const [imageError, setImageError] = useState(false);
-
   const content = (
-    <div className="grid w-full snap-center grid-cols-1 place-items-center gap-6 py-7 sm:grid-cols-2 sm:place-items-start">
+    <div className="grid w-full grid-cols-1 gap-6 py-7 sm:grid-cols-2">
       {/* Imagen y detalles básicos */}
       <div className="space-y-4">
         <div className="relative flex h-auto w-full items-center justify-center">
-          {imageError ? (
-            <div className="flex size-[400px] flex-col items-center justify-center gap-10 text-center">
-              <ImageOff className="size-14 text-slate-400" strokeWidth={1} />
-              <span className="text-xs text-gray-500">
-                Error al cargar la imagen
-              </span>
-            </div>
-          ) : (
-            <Image
-              height={400}
-              width={400}
-              src={product.image}
-              alt={product.name}
-              key={product.id}
-              className="flex-1"
-              onError={() => setImageError(true)}
+          {product.images.length > 0 ? (
+            <Gallery
+              images={product.images}
+              label={product.name + product.description}
             />
+          ) : (
+            <div className="inline-flex h-auto w-[500px] items-center justify-center rounded-lg bg-gray-200">
+              <span className="text-sm text-gray-500">No hay imágenes</span>
+            </div>
           )}
         </div>
       </div>
@@ -132,6 +116,12 @@ export function ProductImageDialog({
                   style: "currency",
                   currency: "PEN",
                 }).format(product.price)}
+              </p>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="price">Stock Máximo</Label>
+              <p className="text-balance text-lg font-semibold text-emerald-500">
+                {product.maxStock || 0}
               </p>
             </div>
             <div className="space-y-2">

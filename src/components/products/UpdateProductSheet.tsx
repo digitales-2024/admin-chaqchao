@@ -3,14 +3,14 @@
 import { useCategories } from "@/hooks/use-categories";
 import { useProducts } from "@/hooks/use-products";
 import {
-  CreateProductsSchema,
-  productsSchema,
+  updateProductsSchema,
+  UpdateProductsSchema,
 } from "@/schemas/products/createProductsSchema";
 import { ProductData } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ImageOff, ImagePlus, RefreshCcw } from "lucide-react";
+import { RefreshCcw, X } from "lucide-react";
 import Image from "next/image";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
 import { Badge } from "@/components/ui/badge";
@@ -43,7 +43,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 
-import { Progress } from "../ui/progress";
+import { FileUploader } from "../common/FileUploader";
 import { Textarea } from "../ui/textarea";
 
 const infoSheet = {
@@ -67,21 +67,21 @@ export function UpdateProductSheet({
   onOpenChange,
 }: UpdateProductSheetProps) {
   const { data } = useCategories();
+
+  const [imagesToDelete, setImagesToDelete] = useState<string[]>([]); // Array de IDs de imágenes
   const { onUpdateProduct, isSuccessUpdateProduct, isLoadingUpdateProduct } =
     useProducts();
-  const { onUpdateImageProduct, isLoadingUpdateImageProduct } = useProducts();
 
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [preview, setPreview] = useState<string | null>(null);
-
-  const form = useForm<CreateProductsSchema>({
-    resolver: zodResolver(productsSchema),
+  // Estado de carga general
+  const form = useForm<UpdateProductsSchema>({
+    resolver: zodResolver(updateProductsSchema),
     defaultValues: {
       name: product.name ?? "",
       description: product.description ?? "",
       categoryId: product.category.id ?? "",
       price: product.price.toString() ?? 0,
-      image: undefined,
+      maxStock: product.maxStock.toString() ?? 0,
+      images: [],
     },
   });
 
@@ -92,107 +92,41 @@ export function UpdateProductSheet({
         description: product.description ?? "",
         categoryId: product.category.id ?? "",
         price: product.price.toString() ?? 0,
-        image: undefined,
+        maxStock: product.maxStock.toString() ?? 0,
+        images: [],
       });
-      setSelectedFile(null);
-      setPreview(product.image ?? null);
     }
   }, [open, product, form]);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setSelectedFile(file);
-
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-
-      form.setValue("image", file);
+  const onSubmit = async (data: UpdateProductsSchema) => {
+    try {
+      await onUpdateProduct(
+        {
+          id: product.id,
+          name: data.name,
+          description: data.description,
+          categoryId: data.categoryId,
+          price: parseFloat(data.price),
+          maxStock: parseInt(data.maxStock),
+        },
+        // Pasamos las nuevas imágenes
+        data.images,
+        // Pasamos las ids de las imágenes a eliminar
+        imagesToDelete,
+      );
+    } catch (error) {
+      console.error("Error al actualizar producto:", error);
+      throw error;
     }
-  };
-
-  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-  };
-
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    const file = e.dataTransfer.files?.[0];
-    if (file && file.type.startsWith("image/")) {
-      setSelectedFile(file);
-
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-
-      form.setValue("image", file);
-    }
-  };
-
-  const onSubmit = async (input: CreateProductsSchema) => {
-    let imageUrl = product.image; // Usamos la imagen existente por defecto
-
-    if (selectedFile) {
-      const existingFileName = product.image?.split("/").pop(); // Extraemos el nombre del archivo existente
-      if (!existingFileName) {
-        return;
-      }
-      try {
-        const uploadResult = await onUpdateImageProduct(
-          selectedFile,
-          existingFileName,
-        ); // Actualizamos la imagen
-        imageUrl = uploadResult.data; // Obtenemos la nueva URL de la imagen
-      } catch (error) {
-        return;
-      }
-    }
-
-    const inputWithImage = {
-      ...input,
-      image: imageUrl, // Actualizamos con la nueva URL o mantenemos la anterior
-      variationsUpdate: [],
-    };
-
-    onUpdateProduct({
-      ...inputWithImage,
-      id: product.id,
-      price: parseFloat(input.price as string),
-    });
   };
 
   useEffect(() => {
     if (isSuccessUpdateProduct) {
       form.reset();
+      setImagesToDelete([]);
       onOpenChange(false);
     }
   }, [isSuccessUpdateProduct, form, onOpenChange]);
-
-  const [processLoadingImage, setProcessLoadingImage] = useState(0);
-
-  useEffect(() => {
-    if (isLoadingUpdateImageProduct) {
-      const interval = setInterval(() => {
-        setProcessLoadingImage((prev) => (prev + 10) % 100);
-      }, 500);
-      return () => clearInterval(interval);
-    }
-  }, [isLoadingUpdateImageProduct]);
-
-  const [imageError, setImageError] = useState(false);
-
-  useEffect(() => {
-    // Restablecer el estado de error de la imagen
-    setImageError(false);
-  }, [preview]);
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -271,6 +205,19 @@ export function UpdateProductSheet({
                   </FormItem>
                 )}
               />
+              <FormField
+                control={form.control}
+                name="maxStock"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Stock Máximo</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Ingrese el stock máximo" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
               {/* Categoría */}
               <FormField
@@ -307,86 +254,91 @@ export function UpdateProductSheet({
                 )}
               />
 
-              {/* Subida de Imagen */}
-              <FormItem>
-                <FormLabel>Imagen del Producto</FormLabel>
-                <FormControl>
-                  <div className="space-y-4">
-                    <div
-                      className="cursor-pointer rounded-md border border-dashed border-gray-300 text-center transition-colors duration-300 hover:bg-gray-50"
-                      onClick={() => document.getElementById("image")?.click()}
-                      onDragOver={handleDragOver}
-                      onDrop={handleDrop}
-                    >
-                      {preview && !imageError ? (
-                        <div
-                          className="flex flex-col items-center"
-                          tabIndex={0}
-                        >
-                          <div className="relative h-40 w-40">
-                            <Image
-                              src={preview}
-                              alt={product.name}
-                              key={product.id}
-                              width={160}
-                              height={160}
-                              className="rounded-md"
-                              onError={() => setImageError(true)}
-                              priority
+              {/* FileUploader para múltiples imágenes */}
+              <FormField
+                control={form.control}
+                name="images"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Imágenes del Producto</FormLabel>
+                    <FormControl>
+                      <div className="space-y-4">
+                        {/* Calcular límites de imágenes */}
+                        {(() => {
+                          const newImagesCount = field.value?.length || 0;
+                          const currentImagesCount =
+                            product.images.length -
+                            imagesToDelete.length +
+                            newImagesCount;
+                          const maxNewImages =
+                            3 - (product.images.length - imagesToDelete.length);
+                          const isMaxImagesReached = currentImagesCount >= 3;
+
+                          return (
+                            <FileUploader
+                              value={field.value}
+                              onValueChange={field.onChange}
+                              maxSize={1024 * 1024 * 10}
+                              multiple
+                              className="h-64"
+                              disabled={
+                                isMaxImagesReached || isLoadingUpdateProduct
+                              }
+                              maxFileCount={maxNewImages}
                             />
-                          </div>
+                          );
+                        })()}
+
+                        {/* Vista previa de todas las imágenes */}
+                        <div className="flex flex-col justify-center gap-4">
+                          {/* Imágenes existentes */}
+                          {product.images.map((image, index) => (
+                            <div
+                              key={`existing-${index}`}
+                              className="relative px-2"
+                            >
+                              {!imagesToDelete.includes(image.id) && (
+                                <div className="flex w-full flex-row items-center justify-between">
+                                  <Image
+                                    src={image.url}
+                                    alt={`Producto ${index + 1}`}
+                                    className="size-12 rounded-md object-cover"
+                                    width={50}
+                                    height={50}
+                                    priority={index < 3}
+                                  />
+                                  <Button
+                                    type="button"
+                                    size="icon"
+                                    variant="outline"
+                                    className="size-7"
+                                    onClick={() => {
+                                      if (!imagesToDelete.includes(image.id)) {
+                                        setImagesToDelete([
+                                          ...imagesToDelete,
+                                          image.id,
+                                        ]);
+                                      }
+                                    }}
+                                  >
+                                    <X className="size-4" />
+                                  </Button>
+                                </div>
+                              )}
+                            </div>
+                          ))}
                         </div>
-                      ) : (
-                        <div
-                          className="flex size-40 w-full flex-col items-center justify-center text-center"
-                          tabIndex={0}
-                        >
-                          {imageError ? (
-                            <>
-                              <ImageOff
-                                className="size-14 text-slate-400"
-                                strokeWidth={1}
-                              />
-                            </>
-                          ) : (
-                            <>
-                              <ImagePlus
-                                className="h-10 w-10 text-gray-400"
-                                strokeWidth={1}
-                              />
-                              <p className="mt-2 text-gray-600">
-                                Haga clic o arrastre una imagen aquí
-                              </p>
-                            </>
-                          )}
-                        </div>
-                      )}
-                      <Input
-                        id="image"
-                        type="file"
-                        accept="image/*"
-                        onChange={handleFileChange}
-                        className="hidden"
-                      />
-                    </div>
-                    {isLoadingUpdateImageProduct && (
-                      <Progress value={processLoadingImage} className="h-2" />
-                    )}
-                  </div>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
               <SheetFooter className="gap-2 pt-2 sm:space-x-0">
                 <div className="flex flex-row-reverse gap-2">
-                  <Button
-                    type="submit"
-                    disabled={
-                      isLoadingUpdateProduct || isLoadingUpdateImageProduct
-                    }
-                  >
-                    {(isLoadingUpdateProduct ||
-                      isLoadingUpdateImageProduct) && (
+                  <Button type="submit" disabled={isLoadingUpdateProduct}>
+                    {isLoadingUpdateProduct && (
                       <RefreshCcw
                         className="mr-2 h-4 w-4 animate-spin"
                         aria-hidden="true"

@@ -1,14 +1,8 @@
-import { ProductData } from "@/types";
+import { ApiResponse, ProductData } from "@/types";
 import { createApi } from "@reduxjs/toolkit/query/react";
 
 import baseQueryWithReauth from "./baseQuery";
 import { reportsApi } from "./reportsApi";
-
-interface UploadImageResponse {
-  statusCode: number;
-  message: string;
-  data: string;
-}
 
 export const productsApi = createApi({
   reducerPath: "productsApi",
@@ -16,25 +10,27 @@ export const productsApi = createApi({
   tagTypes: ["Product"],
   endpoints: (build) => ({
     // Crear un nuevo producto
-    createProduct: build.mutation<ProductData, Partial<ProductData>>({
-      query: (body) => ({
+    createProduct: build.mutation<ApiResponse<ProductData>, FormData>({
+      query: (formData) => ({
         url: "/products",
         method: "POST",
-        body,
+        body: formData,
         credentials: "include",
+        // No incluir Content-Type, el navegador lo establecerá automáticamente con el boundary correcto
       }),
       invalidatesTags: ["Product"],
     }),
     // Actualizar un producto por id
     updateProduct: build.mutation<
       ProductData,
-      Partial<ProductData> & { id: string }
+      { id: string; formData: FormData }
     >({
-      query: ({ id, ...body }) => ({
+      query: ({ id, formData }) => ({
         url: `/products/${id}`,
         method: "PATCH",
-        body,
+        body: formData,
         credentials: "include",
+        // No incluir Content-Type, el navegador lo establecerá automáticamente con el boundary correcto
       }),
       invalidatesTags: ["Product"],
     }),
@@ -45,7 +41,7 @@ export const productsApi = createApi({
         method: "GET",
         credentials: "include",
       }),
-      providesTags: (result, error, id) => [{ type: "Product", id }],
+      providesTags: ["Product"],
     }),
     // Obtener todos los productos
     getAllProducts: build.query<ProductData[], void>({
@@ -109,35 +105,6 @@ export const productsApi = createApi({
       },
       invalidatesTags: ["Product"],
     }),
-
-    // Subir Imagenes de un Producto a CloudFlare
-    uploadProductImage: build.mutation<
-      UploadImageResponse,
-      { formData: FormData; signal: AbortSignal }
-    >({
-      query: ({ formData, signal }) => ({
-        url: "products/upload/image",
-        method: "POST",
-        body: formData,
-        credentials: "include",
-        signal,
-      }),
-      invalidatesTags: ["Product"],
-    }),
-
-    // Actualizar Imagenes de un Producto en CloudFlare
-    updateProductImage: build.mutation<
-      UploadImageResponse,
-      { formData: FormData; existingFileName: string }
-    >({
-      query: ({ formData, existingFileName }) => ({
-        url: `products/update/image/${existingFileName}`,
-        method: "PATCH",
-        body: formData,
-        credentials: "include",
-      }),
-      invalidatesTags: ["Product"],
-    }),
   }),
 });
 
@@ -150,6 +117,4 @@ export const {
   useToggleProductActivationMutation,
   useReactivateProductsMutation,
   useDeleteProductsMutation,
-  useUploadProductImageMutation,
-  useUpdateProductImageMutation,
 } = productsApi;

@@ -1,6 +1,6 @@
 import { Order } from "@/types";
 import { DraggableProvided } from "@hello-pangea/dnd";
-import { format } from "date-fns";
+import { formatInTimeZone, toZonedTime } from "date-fns-tz";
 import { es } from "date-fns/locale";
 import * as React from "react";
 
@@ -33,6 +33,7 @@ function OrderItem({
   setOpenDetailsOrder,
   setSelectedOrder,
 }: OrderItemProps) {
+  const pickupDate = toZonedTime(new Date(order.pickupTime), "America/Lima");
   return (
     <li
       className="relative"
@@ -70,8 +71,15 @@ function OrderItem({
               <Badge variant="outline" className="mr-2">
                 Fecha:{" "}
               </Badge>
-              <span className="font-light">
-                {format(order.pickupTime, "PPPp", { locale: es })}
+              <span className="font-light capitalize">
+                {formatInTimeZone(
+                  pickupDate,
+                  "America/Lima",
+                  "EEEE, dd MMMM, hh:mm a",
+                  {
+                    locale: es,
+                  },
+                )}
               </span>
             </div>
           </div>
@@ -79,7 +87,9 @@ function OrderItem({
         <Separator className="my-4" />
         <CardFooter className="flex items-center justify-between font-bold">
           <span>Total</span>
-          <span>S/. {order.totalAmount}</span>
+          <span>
+            S/. {order.totalAmount && Number(order.totalAmount).toFixed(2)}
+          </span>
         </CardFooter>
       </Card>
     </li>

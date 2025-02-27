@@ -107,7 +107,12 @@ export function ClientOrderDetails({ orderId }: ClientOrderDetailsProps) {
               <TableRow key={product.id}>
                 <TableCell>
                   <Avatar className="rounded-lg">
-                    <AvatarImage src={product.image} />
+                    {product.images.length === 0 && (
+                      <AvatarFallback>
+                        <PackageOpen />
+                      </AvatarFallback>
+                    )}
+                    <AvatarImage src={product.images[0].url} />
                     <AvatarFallback>
                       <PackageOpen />
                     </AvatarFallback>

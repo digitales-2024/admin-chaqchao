@@ -22,8 +22,8 @@ export const ProductCard = ({
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false); // Estado para manejar la expansión de la descripción
 
   useEffect(() => {
-    setImageError(false);
-  }, [product.image]);
+    if (product.images.length <= 0) setImageError(false);
+  }, [product.images]);
 
   const handleDescriptionClick = () => {
     setIsDescriptionExpanded(!isDescriptionExpanded);
@@ -41,7 +41,7 @@ export const ProductCard = ({
           </div>
         ) : (
           <Image
-            src={product.image}
+            src={product.images[0].url}
             alt={product.name}
             width={144}
             height={144}
