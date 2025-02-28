@@ -46,7 +46,6 @@ export function ProductImageDialog({
   borderColor,
   ...props
 }: ProductImageDialogProps) {
-  console.log(product);
   const isDesktop = useMediaQuery("(min-width: 640px)");
 
   const { onToggleProductActivation } = useProducts();
