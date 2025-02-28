@@ -90,6 +90,14 @@ export const OrderSheetDetails = ({
 
   const { onOrderStatusUpdate, onDownloadPdf } = useOrders();
 
+  const pickupDate = new Date(
+    orderById?.pickupTime?.toString().replace("Z", "") ?? new Date(),
+  );
+  const hour = pickupDate.getHours();
+  const minute = pickupDate.getMinutes().toString().padStart(2, "0");
+  const hour12 = hour % 12 || 12;
+  const ampm = hour >= 12 ? "PM" : "AM";
+
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="m-2 flex h-full min-h-screen flex-col gap-5 rounded-xl border-none sm:max-w-[36rem]">
@@ -300,13 +308,7 @@ export const OrderSheetDetails = ({
               </div>
               <Line className="border-dashed" />
               <div className="w-full text-center text-xs font-thin">
-                {format(
-                  orderById ? orderById?.pickupTime : new Date(),
-                  "dd/MM/yyyy HH:mm:ss",
-                  {
-                    locale: es,
-                  },
-                )}
+                {`${format(pickupDate, "EEEE, dd MMMM", { locale: es })}, ${hour12}:${minute} ${ampm}`}
               </div>
               <Line className="border-dashed" />
             </SheetTitle>
