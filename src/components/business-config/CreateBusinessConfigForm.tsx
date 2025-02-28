@@ -17,6 +17,8 @@ import { Input } from "@/components/ui/input";
 
 import { getCustomerData } from "@/lib/api/api-sunat";
 
+import { PhoneInput } from "../ui/phone-input";
+
 interface CreateBusinessConfigFormProps
   extends Omit<React.ComponentPropsWithRef<"form">, "onSubmit"> {
   form: UseFormReturn<CreateBusinessConfigSchema>;
@@ -106,9 +108,9 @@ export const CreateBusinessConfigForm = ({
                   Número de Contacto
                 </FormLabel>
                 <FormControl>
-                  <Input
-                    id="contactNumber"
-                    placeholder="999 999 999"
+                  <PhoneInput
+                    defaultCountry="PE"
+                    placeholder="Número de contacto"
                     {...field}
                   />
                 </FormControl>

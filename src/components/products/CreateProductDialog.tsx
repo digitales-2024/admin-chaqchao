@@ -64,6 +64,7 @@ export function CreateProductDialog() {
       description: "",
       price: "",
       images: [],
+      maxStock: "",
       isRestricted: false,
     },
   });
@@ -81,6 +82,7 @@ export function CreateProductDialog() {
           categoryId: input.categoryId,
           description: input.description,
           price: parseFloat(input.price),
+          maxStock: parseInt(input.maxStock),
           isRestricted: input.isRestricted,
         },
         input.images,
@@ -113,7 +115,7 @@ export function CreateProductDialog() {
       <Progress value={progress} className="w-full" />
       <p className="text-sm">
         {progress < 100
-          ? `Subiendo imagen... ${Math.round(progress)}%`
+          ? `Subiendo imagen y creando el producto... ${Math.round(progress)}%`
           : "Creando producto..."}
       </p>
       <p className="text-xs text-muted-foreground">

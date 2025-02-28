@@ -60,6 +60,7 @@ export const useProducts = () => {
       categoryId: string;
       description?: string;
       price: number;
+      maxStock: number;
       isRestricted?: boolean;
     },
     files?: File[],

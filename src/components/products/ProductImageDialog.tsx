@@ -118,6 +118,12 @@ export function ProductImageDialog({
               </p>
             </div>
             <div className="space-y-2">
+              <Label htmlFor="price">Stock Máximo</Label>
+              <p className="text-balance text-lg font-semibold text-emerald-500">
+                {product.maxStock || 0}
+              </p>
+            </div>
+            <div className="space-y-2">
               <Label htmlFor="stock">Disponibilidad</Label>
               <div className="flex items-center gap-2">
                 <Switch

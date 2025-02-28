@@ -80,6 +80,7 @@ export function UpdateProductSheet({
       description: product.description ?? "",
       categoryId: product.category.id ?? "",
       price: product.price.toString() ?? 0,
+      maxStock: product.maxStock.toString() ?? 0,
       images: [],
     },
   });
@@ -91,6 +92,7 @@ export function UpdateProductSheet({
         description: product.description ?? "",
         categoryId: product.category.id ?? "",
         price: product.price.toString() ?? 0,
+        maxStock: product.maxStock.toString() ?? 0,
         images: [],
       });
     }
@@ -105,6 +107,7 @@ export function UpdateProductSheet({
           description: data.description,
           categoryId: data.categoryId,
           price: parseFloat(data.price),
+          maxStock: parseInt(data.maxStock),
         },
         // Pasamos las nuevas imágenes
         data.images,
@@ -197,6 +200,19 @@ export function UpdateProductSheet({
                         placeholder="Ingrese el precio del producto"
                         {...field}
                       />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="maxStock"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Stock Máximo</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Ingrese el stock máximo" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

@@ -2,6 +2,7 @@
 
 import { useBussinessConfig } from "@/hooks/use-business-config";
 import { useBusinessHours } from "@/hooks/use-business-hours";
+import { usePermissions } from "@/hooks/use-permissions";
 import {
   CreateBusinessConfigSchema,
   businessConfigSchema,
@@ -12,6 +13,7 @@ import { useForm } from "react-hook-form";
 
 import { BusinessTabs } from "@/components/business-config/BusinessTabs";
 import { CardBussiness } from "@/components/business-config/CardBussiness";
+import { AccessDenied } from "@/components/common/AccessDenied";
 import { ErrorPage } from "@/components/common/ErrorPage";
 import { HeaderPage } from "@/components/common/HeaderPage";
 import { Shell } from "@/components/common/Shell";
@@ -28,6 +30,8 @@ const daysOfWeek = {
 };
 
 export default function BusinessInformationPage() {
+  const { hasPermission, isLoadingHas } = usePermissions();
+  const hasBusinessPermission = hasPermission("BNSS", ["READ"]);
   const { dataBusinessConfigAll, error, isLoading } = useBussinessConfig();
   const { onCreateBusinessConfig } = useBussinessConfig();
   const { onUpdateBusinessConfig } = useBussinessConfig();
@@ -77,7 +81,7 @@ export default function BusinessInformationPage() {
 
   const businessHoursArray = dataBusinessHoursAll?.businessHours || [];
 
-  if (isLoading || isLoadingBusinessHours) {
+  if (isLoading || isLoadingBusinessHours || isLoadingHas) {
     return (
       <Shell className="gap-4">
         <HeaderPage
@@ -96,6 +100,18 @@ export default function BusinessInformationPage() {
             <Skeleton className="h-auto min-h-52 w-full flex-1 justify-end" />
           </div>
         </div>
+      </Shell>
+    );
+  }
+
+  if (!hasBusinessPermission) {
+    return (
+      <Shell>
+        <HeaderPage
+          title="Configuración de la Empresa"
+          description="Complete la información de su empresa y configure su horario de atención."
+        />
+        <AccessDenied message="No tienes permisos para ver la configuración de la empresa." />
       </Shell>
     );
   }

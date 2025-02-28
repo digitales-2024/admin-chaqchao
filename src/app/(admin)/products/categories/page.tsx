@@ -1,17 +1,20 @@
 "use client";
-"use memo";
-import { useCategories } from "@/hooks/use-categories"; // Usar el hook de categorías
+import { useCategories } from "@/hooks/use-categories";
+import { usePermissions } from "@/hooks/use-permissions";
 
-import { CategoriesTable } from "@/components/categories/CategoriesTable"; // Tabla de categorías
+import { CategoriesTable } from "@/components/categories/CategoriesTable";
+import { AccessDenied } from "@/components/common/AccessDenied";
 import { ErrorPage } from "@/components/common/ErrorPage";
 import { HeaderPage } from "@/components/common/HeaderPage";
 import { Shell } from "@/components/common/Shell";
 import { DataTableSkeleton } from "@/components/data-table/DataTableSkeleton";
 
 export default function PageCategories() {
-  const { data, isLoading } = useCategories(); // Hook de categorías
+  const { hasPermission, isLoadingHas } = usePermissions();
+  const hasCategoriesPermission = hasPermission("CAT", ["READ"]);
+  const { data, isLoading } = useCategories();
 
-  if (isLoading) {
+  if (isLoading || isLoadingHas) {
     return (
       <Shell className="gap-2">
         <HeaderPage
@@ -27,6 +30,18 @@ export default function PageCategories() {
             shrinkZero
           />
         </div>
+      </Shell>
+    );
+  }
+
+  if (!hasCategoriesPermission) {
+    return (
+      <Shell>
+        <HeaderPage
+          title="Categorías"
+          description="Lista de categorías registradas en el sistema"
+        />
+        <AccessDenied message="No tienes permisos para ver las categorías." />
       </Shell>
     );
   }

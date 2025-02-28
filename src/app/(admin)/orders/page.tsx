@@ -1,10 +1,12 @@
 "use client";
 import { useViewModeStore } from "@/hooks/use-mode-view-order";
 import { useOrders } from "@/hooks/use-orders";
+import { usePermissions } from "@/hooks/use-permissions";
 import { Order, OrderStatus } from "@/types";
 import { format } from "date-fns";
 import { useState } from "react";
 
+import { AccessDenied } from "@/components/common/AccessDenied";
 import { ErrorPage } from "@/components/common/ErrorPage";
 import { HeaderPage } from "@/components/common/HeaderPage";
 import { Shell } from "@/components/common/Shell";
@@ -21,22 +23,35 @@ import { Separator } from "@/components/ui/separator";
 export default function PagerOrders() {
   const [openDetailsOrder, setOpenDetailsOrder] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const { hasPermission, isLoadingHas } = usePermissions();
 
   const { viewMode } = useViewModeStore();
   const [date, setDate] = useState<Date>(new Date());
   const [filterStatus, setFilterStatus] = useState<OrderStatus>(
     OrderStatus.ALL,
   );
+
+  const hasOrdersPermission = hasPermission("ORD", ["READ"]);
+
   const { dataOrders, isLoadingOrders } = useOrders({
     dateFilter: format(date, "yyyy-MM-dd"),
-    status: filterStatus,
+    status: hasOrdersPermission ? filterStatus : undefined,
   });
 
-  if (isLoadingOrders) {
+  if (isLoadingOrders || isLoadingHas) {
     return (
       <Shell>
         <HeaderPage title="Pedidos" />
         <DataTableSkeleton columnCount={5} searchableColumnCount={1} />
+      </Shell>
+    );
+  }
+
+  if (!hasOrdersPermission) {
+    return (
+      <Shell>
+        <HeaderPage title="Pedidos" />
+        <AccessDenied message="No tienes permisos para ver los pedidos." />
       </Shell>
     );
   }

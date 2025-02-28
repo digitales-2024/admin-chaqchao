@@ -1,3 +1,4 @@
+import { isValidPhoneNumber } from "react-phone-number-input";
 import * as z from "zod";
 
 export const businessConfigSchema = z.object({
@@ -16,9 +17,9 @@ export const businessConfigSchema = z.object({
   businessName: z.string().min(1, {
     message: "Ingrese el nombre de su negocio",
   }),
-  contactNumber: z.string().min(1, {
-    message: "Ingrese el número de contacto de su negocio",
-  }),
+  contactNumber: z
+    .string()
+    .refine(isValidPhoneNumber, { message: "Número de teléfono no válido" }),
   email: z
     .string()
     .min(1, {
