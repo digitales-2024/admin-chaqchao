@@ -190,7 +190,7 @@ export const OrderSheetDetails = ({
                       {orderById?.client.name} {orderById?.client.lastName}{" "}
                     </dd>
                   </div>
-                  <div className="flex flex-wrap items-center">
+                  <div className="flex flex-col flex-wrap items-start">
                     <dt className="text-xs font-thin text-gray-500">
                       Correo electrónico
                     </dt>
@@ -265,25 +265,25 @@ export const OrderSheetDetails = ({
                       Dirección
                     </dt>
                     <dd className="font-normal capitalize">
-                      {orderById?.billingDocument.address}
+                      {orderById?.billingDocument.address ?? "--"}
                     </dd>
                   </div>
                   <div className="flex flex-col items-start">
                     <dt className="text-xs font-thin text-gray-500">País</dt>
                     <dd className="font-normal capitalize">
-                      {orderById?.billingDocument.country}
+                      {orderById?.billingDocument.country ?? "--"}
                     </dd>
                   </div>
                   <div className="flex flex-col items-start">
                     <dt className="text-xs font-thin text-gray-500">Estado</dt>
                     <dd className="font-normal capitalize">
-                      {orderById?.billingDocument.state}
+                      {orderById?.billingDocument.state ?? "--"}
                     </dd>
                   </div>
                   <div className="flex flex-col items-start">
                     <dt className="text-xs font-thin text-gray-500">Ciudad</dt>
                     <dd className="font-normal capitalize">
-                      {orderById?.billingDocument.city}
+                      {orderById?.billingDocument.city ?? "--"}
                     </dd>
                   </div>
                   {orderById?.billingDocument.businessName !== "" && (
