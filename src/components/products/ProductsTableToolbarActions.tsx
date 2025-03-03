@@ -53,7 +53,7 @@ export function ProductsTableToolbarActions({
               if (table) {
                 exportTableToCSV(table, {
                   filename: "products",
-                  excludeColumns: ["select", "actions"],
+                  excludeColumns: ["images", "select", "actions"],
                 });
               }
             }}
