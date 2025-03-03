@@ -1,6 +1,7 @@
 import {
   useCreateProductMutation,
   useDeleteProductsMutation,
+  useDownloadCVSMutation,
   useGetAllProductsQuery,
   useReactivateProductsMutation,
   useToggleProductActivationMutation,
@@ -8,6 +9,7 @@ import {
 } from "@/redux/services/productsApi";
 import { CustomErrorData, ProductData } from "@/types";
 import { translateError } from "@/utils/translateError";
+import { format } from "date-fns";
 import { useRef } from "react";
 import { toast } from "sonner";
 
@@ -29,6 +31,7 @@ export const useProducts = () => {
     createProduct,
     { isSuccess: isSuccessCreateProduct, isLoading: isLoadingCreateProduct },
   ] = useCreateProductMutation();
+  const [downloadCVSMutation] = useDownloadCVSMutation();
 
   const [
     updateProduct,
@@ -333,6 +336,33 @@ export const useProducts = () => {
     }
   };
 
+  const onDownloadExcel = async () => {
+    const promise = () =>
+      new Promise(async (resolve, reject) => {
+        try {
+          const blob = await downloadCVSMutation().unwrap();
+          const url = window.URL.createObjectURL(blob);
+          const link = document.createElement("a");
+          link.href = url;
+          const currentDate = format(new Date(), "yyyy-MM-dd");
+          link.setAttribute("download", `productos_${currentDate}.xlsx`);
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+          window.URL.revokeObjectURL(url);
+          resolve("Productos exportados a Excel con éxito");
+        } catch (error) {
+          reject(new Error("Error al exportar productos a Excel"));
+        }
+      });
+
+    return toast.promise(promise(), {
+      loading: "Exportando productos a Excel...",
+      success: "Productos exportados a Excel con éxito",
+      error: (err) => err.message,
+    });
+  };
+
   return {
     dataProductsAll,
     error,
@@ -355,5 +385,6 @@ export const useProducts = () => {
     onReactivateProducts,
     isSuccessReactivateProducts,
     isLoadingReactivateProducts,
+    onDownloadExcel,
   };
 };
