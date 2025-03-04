@@ -61,7 +61,7 @@ export function ClassesTableToolbarActions({
       <CreateClassDialog />
       <Button variant="outline" size="sm" onClick={handleExportToExcel}>
         <Download className="mr-2 size-4" aria-hidden="true" />
-        Exportar
+        Exportar Excel
       </Button>
       <Button variant="outline" size="sm" onClick={handleExportToPdf}>
         <FileText className="mr-2 size-4" aria-hidden="true" />
