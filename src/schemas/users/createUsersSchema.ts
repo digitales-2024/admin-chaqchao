@@ -1,3 +1,4 @@
+import { isValidPhoneNumber } from "react-phone-number-input";
 import * as z from "zod";
 
 export const usersSchema = z.object({
@@ -8,7 +9,9 @@ export const usersSchema = z.object({
     .string()
     .email({ message: "Ingrese un correo electrónico válido" })
     .min(1, { message: "El correo electrónico es obligatorio" }),
-  phone: z.string().optional(),
+  phone: z.string().refine(isValidPhoneNumber, {
+    message: "Ingrese un número de teléfono válido",
+  }),
   password: z
     .string()
     .min(6, { message: "Debes generar una contraseña" })
