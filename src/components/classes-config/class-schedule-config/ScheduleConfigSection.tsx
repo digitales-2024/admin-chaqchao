@@ -197,7 +197,11 @@ export function ScheduleConfigSection() {
                         </h4>
                         <div className="grid grid-cols-2 gap-2 text-sm text-slate-700">
                           {dataClassPricesAll[type as TypeClass]
+
                             .filter((p) => p.typeCurrency === "USD")
+                            .sort((a, b) =>
+                              a.classTypeUser > b.classTypeUser ? -1 : 1,
+                            )
                             .map((price) => (
                               <div key={price.id}>
                                 <p>
@@ -215,6 +219,9 @@ export function ScheduleConfigSection() {
                         <div className="grid grid-cols-2 gap-2 text-sm text-slate-700">
                           {dataClassPricesAll[type as TypeClass]
                             .filter((p) => p.typeCurrency === "PEN")
+                            .sort((a, b) =>
+                              a.classTypeUser > b.classTypeUser ? -1 : 1,
+                            )
                             .map((price) => (
                               <div key={price.id}>
                                 <p>
