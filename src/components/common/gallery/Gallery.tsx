@@ -28,28 +28,26 @@ export default function Gallery({ images, label }: GalleryProps) {
   };
 
   return (
-    <div className="mx-auto w-full">
-      <div className="relative mb-4 aspect-square">
+    <div className="mx-auto grid w-full grid-rows-[1fr_100px]">
+      <div className="relative mb-4 overflow-hidden rounded-lg">
         <img
           src={images[currentIndex].url || "/placeholder.svg"}
           alt={label}
-          width={500}
-          height={500}
-          className="rounded-lg object-cover"
+          className="h-auto w-full object-cover object-center transition-all duration-300 hover:scale-110"
         />
         <Button
-          variant="outline"
+          variant="ghost"
           size="icon"
-          className="absolute left-2 top-1/2 -translate-y-1/2 transform"
+          className="absolute left-2 top-1/2 -translate-y-1/2 transform rounded-lg"
           onClick={prevImage}
         >
           <ChevronLeft className="h-4 w-4" />
           <span className="sr-only">Previous image</span>
         </Button>
         <Button
-          variant="outline"
+          variant="ghost"
           size="icon"
-          className="absolute right-2 top-1/2 -translate-y-1/2 transform"
+          className="absolute right-2 top-1/2 -translate-y-1/2 transform rounded-lg"
           onClick={nextImage}
         >
           <ChevronRight className="h-4 w-4" />
@@ -61,16 +59,15 @@ export default function Gallery({ images, label }: GalleryProps) {
           <button
             key={index}
             onClick={() => setCurrentIndex(index)}
-            className={`relative aspect-square overflow-hidden rounded-md ${
+            className={`relative overflow-hidden rounded-md ${
               index === currentIndex ? "ring-2 ring-primary" : ""
             }`}
           >
             <img
               src={image.url || "/placeholder.svg"}
-              alt={label}
-              width={100}
-              height={100}
-              className="object-cover"
+              alt={`${label} thumbnail ${index + 1}`}
+              className="aspect-square h-[100px] w-[100px] object-cover object-center"
+              loading={index < 3 ? "eager" : "lazy"}
             />
           </button>
         ))}

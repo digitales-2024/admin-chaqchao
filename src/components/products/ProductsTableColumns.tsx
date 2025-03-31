@@ -13,7 +13,6 @@ import {
   ScanEye,
   Trash,
 } from "lucide-react";
-import Image from "next/image";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -98,13 +97,12 @@ export const productsColumns = (
               {imageError ? (
                 <ImageOff className="size-8 text-slate-400" strokeWidth={1} />
               ) : images.length > 0 ? (
-                <Image
+                <img
                   src={images[0]?.url}
                   alt={row.original.name}
                   key={row.original.id}
                   width={80}
                   height={80}
-                  priority
                   className="h-full w-full rounded-md object-cover"
                   onError={() => setImageError(true)}
                 />
