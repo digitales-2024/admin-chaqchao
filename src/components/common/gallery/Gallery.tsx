@@ -1,7 +1,6 @@
 "use client";
 
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import Image from "next/image";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -31,13 +30,12 @@ export default function Gallery({ images, label }: GalleryProps) {
   return (
     <div className="mx-auto w-full">
       <div className="relative mb-4 aspect-square">
-        <Image
+        <img
           src={images[currentIndex].url || "/placeholder.svg"}
           alt={label}
           width={500}
           height={500}
           className="rounded-lg object-cover"
-          priority
         />
         <Button
           variant="outline"
@@ -67,14 +65,12 @@ export default function Gallery({ images, label }: GalleryProps) {
               index === currentIndex ? "ring-2 ring-primary" : ""
             }`}
           >
-            <Image
+            <img
               src={image.url || "/placeholder.svg"}
               alt={label}
               width={100}
               height={100}
               className="object-cover"
-              priority={index < 3}
-              quality={index < 3 ? 100 : 50}
             />
           </button>
         ))}
