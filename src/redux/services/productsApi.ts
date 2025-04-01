@@ -105,6 +105,15 @@ export const productsApi = createApi({
       },
       invalidatesTags: ["Product"],
     }),
+
+    downloadCVS: build.mutation<Blob, void>({
+      query: () => ({
+        url: "/products/export/excel",
+        method: "POST",
+        credentials: "include",
+        responseHandler: async (response: Response) => response.blob(),
+      }),
+    }),
   }),
 });
 
@@ -117,4 +126,5 @@ export const {
   useToggleProductActivationMutation,
   useReactivateProductsMutation,
   useDeleteProductsMutation,
+  useDownloadCVSMutation,
 } = productsApi;

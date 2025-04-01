@@ -18,10 +18,10 @@ import {
 import {
   Drawer,
   DrawerContent,
-  DrawerHeader,
-  DrawerTitle as UIDrawerTitle,
-  DrawerTrigger,
   DrawerDescription,
+  DrawerHeader,
+  DrawerTrigger,
+  DrawerTitle as UIDrawerTitle,
 } from "@/components/ui/drawer";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
@@ -46,7 +46,6 @@ export function ProductImageDialog({
   borderColor,
   ...props
 }: ProductImageDialogProps) {
-  console.log(product);
   const isDesktop = useMediaQuery("(min-width: 640px)");
 
   const { onToggleProductActivation } = useProducts();
@@ -203,7 +202,7 @@ export function ProductImageDialog({
           tabIndex={undefined}
         >
           <DialogHeader>
-            <UIDialogTitle className="w-full text-2xl font-bold uppercase">
+            <UIDialogTitle className="w-full text-wrap text-2xl font-bold uppercase">
               {product.name}
             </UIDialogTitle>
             <DialogDescription></DialogDescription>
@@ -219,7 +218,7 @@ export function ProductImageDialog({
       <DrawerTrigger asChild>{children}</DrawerTrigger>
       <DrawerContent className="h-4/5" tabIndex={undefined}>
         <DrawerHeader>
-          <UIDrawerTitle className="text-2xl font-bold uppercase">
+          <UIDrawerTitle className="text-wrap text-2xl font-bold uppercase">
             {product.name}
           </UIDrawerTitle>
           <DrawerDescription />

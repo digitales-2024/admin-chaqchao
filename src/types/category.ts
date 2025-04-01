@@ -10,29 +10,29 @@ export type Category = {
 
 export type Family =
   | "CHOCOLAT"
-  | "DRINK"
-  | "SPICES"
-  | "PERSONAL_CARE"
-  | "MERCH"
+  | "COCOA_DERIVATIVE" // Derivados del cacao
+  | "SPECIAL" // Especiales
+  | "BODY_PRODUCTS"
+  | "MERCHANDISING"
   | "OTHER";
 
 // hacer una funcion o tipado para que pueda poner un label de family tipo "CHOCOLAT" y que me devuelva "Chocolates"
 
 export const familyLabels: Record<Family, string> = {
   CHOCOLAT: "Chocolates",
-  DRINK: "Bebidas",
-  SPICES: "Especias",
-  PERSONAL_CARE: "Cuidado Personal",
-  MERCH: "Indumentaria y Accesorios",
+  COCOA_DERIVATIVE: "Derivados del Cacao y otros",
+  SPECIAL: "Especiales varios y agregados",
+  BODY_PRODUCTS: "Body Products",
+  MERCHANDISING: "Merchandising",
   OTHER: "Otro",
 };
 
 export const Families: Family[] = [
   "CHOCOLAT",
-  "DRINK",
-  "SPICES",
-  "PERSONAL_CARE",
-  "MERCH",
+  "COCOA_DERIVATIVE",
+  "SPECIAL",
+  "BODY_PRODUCTS",
+  "MERCHANDISING",
   "OTHER",
 ];
 

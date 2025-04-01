@@ -18,6 +18,7 @@ import {
   FormLabel,
   FormMessage,
 } from "../ui/form";
+import { PhoneInput } from "../ui/phone-input";
 import {
   Select,
   SelectContent,
@@ -96,11 +97,7 @@ export const CreateUsersForm = ({
               <FormItem>
                 <FormLabel htmlFor="phone">Teléfono</FormLabel>
                 <FormControl>
-                  <Input
-                    id="phone"
-                    placeholder="Ejemplo: 999 999 999"
-                    {...field}
-                  />
+                  <PhoneInput id="phone" defaultCountry="PE" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

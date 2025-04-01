@@ -90,6 +90,14 @@ export const OrderSheetDetails = ({
 
   const { onOrderStatusUpdate, onDownloadPdf } = useOrders();
 
+  const pickupDate = new Date(
+    orderById?.pickupTime?.toString().replace("Z", "") ?? new Date(),
+  );
+  const hour = pickupDate.getHours();
+  const minute = pickupDate.getMinutes().toString().padStart(2, "0");
+  const hour12 = hour % 12 || 12;
+  const ampm = hour >= 12 ? "PM" : "AM";
+
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="m-2 flex h-full min-h-screen flex-col gap-5 rounded-xl border-none sm:max-w-[36rem]">
@@ -190,7 +198,7 @@ export const OrderSheetDetails = ({
                       {orderById?.client.name} {orderById?.client.lastName}{" "}
                     </dd>
                   </div>
-                  <div className="flex flex-wrap items-center">
+                  <div className="flex flex-col flex-wrap items-start">
                     <dt className="text-xs font-thin text-gray-500">
                       Correo electrónico
                     </dt>
@@ -265,25 +273,25 @@ export const OrderSheetDetails = ({
                       Dirección
                     </dt>
                     <dd className="font-normal capitalize">
-                      {orderById?.billingDocument.address}
+                      {orderById?.billingDocument.address ?? "--"}
                     </dd>
                   </div>
                   <div className="flex flex-col items-start">
                     <dt className="text-xs font-thin text-gray-500">País</dt>
                     <dd className="font-normal capitalize">
-                      {orderById?.billingDocument.country}
+                      {orderById?.billingDocument.country ?? "--"}
                     </dd>
                   </div>
                   <div className="flex flex-col items-start">
                     <dt className="text-xs font-thin text-gray-500">Estado</dt>
                     <dd className="font-normal capitalize">
-                      {orderById?.billingDocument.state}
+                      {orderById?.billingDocument.state ?? "--"}
                     </dd>
                   </div>
                   <div className="flex flex-col items-start">
                     <dt className="text-xs font-thin text-gray-500">Ciudad</dt>
                     <dd className="font-normal capitalize">
-                      {orderById?.billingDocument.city}
+                      {orderById?.billingDocument.city ?? "--"}
                     </dd>
                   </div>
                   {orderById?.billingDocument.businessName !== "" && (
@@ -300,13 +308,7 @@ export const OrderSheetDetails = ({
               </div>
               <Line className="border-dashed" />
               <div className="w-full text-center text-xs font-thin">
-                {format(
-                  orderById ? orderById?.pickupTime : new Date(),
-                  "dd/MM/yyyy HH:mm:ss",
-                  {
-                    locale: es,
-                  },
-                )}
+                {`${format(pickupDate, "EEEE, dd MMMM", { locale: es })}, ${hour12}:${minute} ${ampm}`}
               </div>
               <Line className="border-dashed" />
             </SheetTitle>
