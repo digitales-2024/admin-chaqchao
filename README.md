@@ -1,36 +1,116 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Panel de Administración Chaqchao
 
-## Getting Started
+Este es el panel de administración para Chaqchao, una aplicación web construida con [Next.js](https://nextjs.org/) que permite gestionar todos los aspectos del negocio.
 
-First, run the development server:
+## Características Principales
+
+- **Dashboard Interactivo**
+
+  - Visualización de estadísticas en tiempo real
+  - Gráficos de ventas y pedidos
+  - Calendario de eventos
+  - Seguimiento de nuevos clientes y pedidos
+
+- **Gestión de Pedidos**
+
+  - Vista en tabla y kanban
+  - Filtrado por fecha y estado
+  - Detalles completos de cada pedido
+
+- **Gestión de Productos**
+
+  - Catálogo de productos
+  - Categorías
+  - Reportes de productos más vendidos
+
+- **Gestión de Usuarios**
+
+  - Sistema de roles y permisos
+  - Administración de cuentas
+  - Configuración de seguridad
+
+- **Reportes y Análisis**
+
+  - Reportes de ventas
+  - Análisis de productos
+  - Filtros personalizables
+
+- **Gestión de Reclamos**
+
+  - Seguimiento de reclamos
+  - Filtrado por fecha
+
+- **Configuración de Clases**
+  - Personalización de la experiencia de usuario
+
+## Tecnologías Utilizadas
+
+- Next.js 14
+- TypeScript
+- Tailwind CSS
+- Shadcn/ui
+- React Query
+- NextAuth.js
+
+## Requisitos Previos
+
+- Node.js 18.x o superior
+- npm o yarn
+
+## Instalación
+
+1. Clona el repositorio:
+
+```bash
+git clone [URL_DEL_REPOSITORIO]
+```
+
+2. Instala las dependencias:
+
+```bash
+npm install
+# o
+yarn install
+```
+
+3. Configura las variables de entorno:
+
+```bash
+cp .env.example .env.local
+```
+
+4. Inicia el servidor de desarrollo:
 
 ```bash
 npm run dev
-# or
+# o
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abre [http://localhost:3000](http://localhost:3000) en tu navegador para ver el resultado.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Estructura del Proyecto
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+```
+src/
+├── app/                 # Rutas y páginas de la aplicación
+├── components/         # Componentes reutilizables
+├── hooks/             # Hooks personalizados
+├── lib/               # Utilidades y configuraciones
+├── schemas/           # Esquemas de validación
+└── types/             # Definiciones de tipos TypeScript
+```
 
-## Learn More
+## Contribución
 
-To learn more about Next.js, take a look at the following resources:
+Las contribuciones son bienvenidas. Por favor, asegúrate de:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Hacer fork del repositorio
+2. Crear una rama para tu feature (`git checkout -b feature/AmazingFeature`)
+3. Commit de tus cambios (`git commit -m 'Add some AmazingFeature'`)
+4. Push a la rama (`git push origin feature/AmazingFeature`)
+5. Abrir un Pull Request
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## Licencia
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Este proyecto está bajo la Licencia [MIT](LICENSE).
