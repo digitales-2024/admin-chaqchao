@@ -1,5 +1,11 @@
 FROM node:22-alpine AS builder
 
+ENV TZ=America/Lima
+RUN apk add --no-cache tzdata && \
+    ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
+    echo $TZ > /etc/timezone
+
+
 ARG NEXT_PUBLIC_BACKEND_URL="/"
 ENV NEXT_PUBLIC_BACKEND_URL=${NEXT_PUBLIC_BACKEND_URL}
 
